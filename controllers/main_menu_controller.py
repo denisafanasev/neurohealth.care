@@ -1,0 +1,52 @@
+import json
+import utils.ada as ada
+from services.main_menu_service import MainMenuService
+
+
+class MainManuPageController():
+
+    def __init__(self):
+        """
+        Constructor
+        @params:
+        """
+
+        pass
+
+    def get_main_menu(self):
+        """
+        Return main menu structure for visualization
+        @params:
+        """
+
+        main_menu_service = MainMenuService()
+        data = main_menu_service.get_data()
+        menu = []
+
+        main_menu = set()
+        # получаем список всех модулей для главного меню
+        for i, item in enumerate(data):
+            main_menu.add(item['module'])
+
+        main_menu = sorted(main_menu)
+
+        for main_item in main_menu:
+            module_menu = []
+            for i, item in enumerate(data):
+                if item['module'] == main_item:
+                    item['value'] = i
+                    module_menu.append(item)
+
+            menu.append([main_item, module_menu])
+        return menu
+
+    def get_active_menu_item_number(self, _endpoind):
+        """
+        Return a number of _endpoind element in the menu
+        @params:
+            _endpoind     - Required  : menu element endpoint (Str)
+        """
+
+        main_menu_service = MainMenuService()
+        active_menu_item = main_menu_service.get_active_menu_item_number(_endpoind)
+        return active_menu_item
