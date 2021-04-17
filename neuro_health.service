@@ -1,0 +1,15 @@
+[Unit]
+Description=uWSGI instance to serve NeuroHealthCase
+After=network.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/neuro_health
+Environment="PATH=/home/ubuntu/neuro_health/.neuro_health_env/bin"
+ExecStart=/home/ubuntu/neuro_health/.neuro_health_env/bin/uwsgi --enable-threads --lazy-apps --ini nhc.ini
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
