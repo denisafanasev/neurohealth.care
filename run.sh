@@ -6,15 +6,15 @@ systemctl daemon-reload
 sudo systemctl restart nhc.service
 
 # --------   for installation 
-conda create -p .neuro_health_env python==3.8
-conda activate .neuro_health_env
+conda create -p neuro_health_env_prod python==3.8
+conda activate neuro_health_env_prod
 conda install --force-reinstall -y -q -c conda-forge --file requirements_conda.txt
 ...
 conda deactivate
 
 # ---------- for local debug
 # source .venv/bin/activate
-conda activate /home/ubuntu/neuro_health/.neuro_health_env
+conda activate /home/ubuntu/neuro_health_env_prod
 # flask run --host=0.0.0.0 &
 # uwsgi --socket 0.0.0.0:5000 --protocol=http -w wsgi:app &
 uwsgi --enable-threads --lazy-apps --ini neuro_health_uat.ini

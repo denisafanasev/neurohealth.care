@@ -5,9 +5,9 @@ After=network.target
 [Service]
 User=ubuntu
 Group=ubuntu
-WorkingDirectory=/home/ubuntu/neuro_health
-Environment="PATH=/home/ubuntu/neuro_health/.neuro_health_env/bin"
-ExecStart=/home/ubuntu/neuro_health/.neuro_health_env/bin/uwsgi --enable-threads --lazy-apps --ini nhc.ini
+WorkingDirectory=/home/ubuntu/neurohealth.care
+Environment="PATH=/home/ubuntu/neuro_health_env_prod/bin"
+ExecStart=/home/ubuntu/neuro_health_env_prod/bin/uwsgi --enable-threads --lazy-apps --ini nhc.ini
 Restart=on-failure
 RestartSec=5s
 

@@ -11,7 +11,7 @@ git pull
 
 # ---------- for local debug
 # source .venv/bin/activate
-conda activate /home/ubuntu/neuro_health/.neuro_health_env
+conda activate /home/ubuntu/neuro_health_env_prod
 
 #conda install -c anaconda flask
 #conda install -c conda-forge fastavro
