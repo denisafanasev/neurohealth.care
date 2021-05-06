@@ -21,8 +21,10 @@ jobs:
           activate-conda: false
       - name: Create conda environment with "environment.yml"
         run: conda env create --name nhc_dev --file environment.yml
+      - name: Init conda environment
+        run: conda init nhc_dev
       - name: Activate conda environment
-        run: conda activate nhc_dev
+        run: source activate nhc_dev
       - name: Run tests
         run: coverage run tests/TestNeuroHealthApp.py
       - name: Tests report

@@ -1,7 +1,7 @@
 https://www.daterangepicker.com
 
 
-conda env export | grep -v "^prefix: " > environment.yml
+conda env export --no-builds > environment.yml
 
 # ------- update solution on the server
 git pull
