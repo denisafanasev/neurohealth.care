@@ -13,18 +13,16 @@ jobs:
     steps:
       # Чекаутим код
       - uses: actions/checkout@master
-      # Устанавливаем python нужной версии
-      - uses: actions/setup-python@v1
-        with:
-          python-version: '3.8'
-          architecture: 'x64'
+
       - uses: s-weigand/setup-conda@v1
         with:
-          activate-conda: true
-      - name: Update Conda environment with "environment.yml"
-        uses: matthewrmshin/conda-action@v1
-        with:
-          args: conda env update -f ./environment.yml
+          activate-conda: false
+      - name: Update conda
+        run: conda update conda
+      - name: Create conda environment with "environment.yml"
+        run: conda create --name nhc_dev --file environment.yml
+      - name: Activate conda environment nhc_dev
+        run: conda activate nhc_dev
       - name: Run tests
         run: coverage run tests/TestNeuroHealthApp.py
       - name: Tests report
