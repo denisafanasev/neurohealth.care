@@ -137,7 +137,7 @@ def datetime_to_string(_date):
         _date              - Required  : date in date format (Date)
     """
 
-    if date == '':
+    if _date == '':
         return ''
     else:
         item = str(_date)
