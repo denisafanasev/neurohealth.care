@@ -1,5 +1,8 @@
 https://www.daterangepicker.com
 
+
+conda env export | grep -v "^prefix: " > environment.yml
+
 # ------- update solution on the server
 git pull
 systemctl daemon-reload
