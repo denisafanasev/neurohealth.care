@@ -17,9 +17,8 @@ jobs:
       - uses: s-weigand/setup-conda@v1
         with:
           update-conda: true
+          conda-channels: anaconda, conda-forge
           activate-conda: false
-      - name: conda add channels conda-forge
-        run: conda config --add channels conda-forge
       - name: Create conda environment with "environment.yml"
         run: conda env create --name nhc_dev --file environment.yml
       - name: Activate conda environment
