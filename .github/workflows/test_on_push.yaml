@@ -19,6 +19,8 @@ jobs:
           activate-conda: false
       - name: Update conda
         run: conda update conda
+      - name: Update anaconda
+        run: conda update anaconda
       - name: Create conda environment with "environment.yml"
         run: conda env create --name nhc_dev --file environment.yml
       - name: Activate conda environment
