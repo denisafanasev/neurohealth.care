@@ -20,8 +20,8 @@ jobs:
       - name: Update conda
         run: conda update conda
       - name: Create conda environment with "environment.yml"
-        run: conda create --name nhc_dev --file environment.yml
-      - name: Activate conda environment nhc_dev
+        run: conda env create --name nhc_dev --file environment.yml
+      - name: Activate conda environment
         run: conda activate nhc_dev
       - name: Run tests
         run: coverage run tests/TestNeuroHealthApp.py
