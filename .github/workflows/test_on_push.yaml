@@ -18,8 +18,6 @@ jobs:
         with:
           update-conda: true
           activate-conda: false
-      - name: conda remove channels conda-forge
-        run: conda config --remove channels conda-forge
       - name: conda add channels conda-forge
         run: conda config --add channels conda-forge
       - name: Create conda environment with "environment.yml"
