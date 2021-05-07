@@ -6,12 +6,6 @@ on:
 
 jobs:
   publishing_to_prod:
-    needs: [unittests_and_coverage]
-
-    env:
-      SERVER: ${{ secrets.SERVER }}
-      LOGIN: ${{ secrets.DOCKER_LOGIN }}
-      NAME: ${{ secrets.DOCKER_NAME }}
 
     runs-on: ubuntu-latest
 
