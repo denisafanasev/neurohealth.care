@@ -25,7 +25,7 @@ jobs:
           activate-environment: nhc_dev
           environment-file: environment.yml
           python-version: 3.8
-          auto-activate-base: true
+          auto-activate-base: false
       - run: |
           conda info
           conda list
@@ -55,7 +55,9 @@ jobs:
       #   run: conda activate base
       
       - name: Run unit tests
+        shell: bash -l {0}
         run: python -m coverage run tests/TestNeuroHealthApp.py
       
       - name: Show tests report
+        shell: bash -l {0}
         run: python -m coverage report
