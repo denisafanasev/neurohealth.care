@@ -1,4 +1,4 @@
-name: Run tests on any Push event
+name: Run tests and publish to UAT
 # Запуск при любом push евенте в любой ветке, за исключением релизных тэгов.
 # Они будт тестироваться перед сборкой
 on:
@@ -59,3 +59,32 @@ jobs:
       - name: Show tests report
         shell: bash -l {0}
         run: python -m coverage report
+
+
+  publishing_to_uat:
+    needs: [unittests_and_coverage]
+
+    env:
+      SERVER: ${{ secrets.SERVER }}
+      LOGIN: ${{ secrets.DOCKER_LOGIN }}
+      NAME: ${{ secrets.DOCKER_NAME }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # code update
+      # ssh -i shaman_aws_key.pem ubuntu@app.neurohealth.care 'cd /home/ubuntu/uat/neurohealth.care; git pull'
+
+      - name: application update
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: 'cd /home/ubuntu/uat/neurohealth.care; git pull'
+
+    # env update
+
+    # restart uat service
