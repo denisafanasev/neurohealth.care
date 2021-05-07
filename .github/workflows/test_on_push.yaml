@@ -19,10 +19,8 @@ jobs:
           update-conda: true
           conda-channels: anaconda, conda-forge
           activate-conda: false
-      - name: Init conda environment
-        run: conda init bash
-      - name: Restart bash
-        run: exec bash
+      - name: Conda info
+        run: conda info | grep -i 'base environment'
       - name: Create conda environment with "environment.yml"
         run: conda env create --name nhc_dev --file environment.yml
       - name: Activate conda environment
