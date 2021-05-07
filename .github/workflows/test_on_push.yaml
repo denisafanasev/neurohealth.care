@@ -21,6 +21,8 @@ jobs:
           activate-conda: false
       - name: Conda info
         run: conda info | grep -i 'base environment'
+      - name: Conda activation
+        run: source /usr/share/miniconda/etc/profile.d/conda.sh
       - name: Create conda environment with "environment.yml"
         run: conda env create --name nhc_dev --file environment.yml
       - name: Activate conda environment
