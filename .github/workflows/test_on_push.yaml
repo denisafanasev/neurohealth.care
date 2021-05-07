@@ -97,7 +97,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /home/ubuntu/uat/neurohealth.care
-            conda env update -p /home/ubuntu/uat/neuro_health_env -f environment.yml
+            /home/ubuntu/anaconda3/bin/conda env update -p /home/ubuntu/uat/neuro_health_env -f environment.yml
 
       # restart uat service
       - name: restart uat application service
