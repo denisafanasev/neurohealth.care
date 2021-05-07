@@ -8,7 +8,7 @@ on:
     branches:
       - '*'
 jobs:
-  unittests_nad_coverage:
+  unittests_and_coverage:
     runs-on: ubuntu-latest
     steps:
       # Чекаутим код
@@ -38,8 +38,8 @@ jobs:
       # - name: Conda init
       #   run: conda init
       
-      # - name: Activate conda environment
-      #   run: conda activate nhc_dev
+      - name: Activate conda environment
+        run: conda activate base
       
       - name: Run unit tests
         run: coverage run tests/TestNeuroHealthApp.py
