@@ -20,15 +20,15 @@ jobs:
           python-version: 3.8
 
 
-      # - uses: conda-incubator/setup-miniconda@v2
-      #   with:
-      #     activate-environment: nhc_dev-client-env
-      #     environment-file: environment.yml
-      #     python-version: 3.8
-      #     auto-activate-base: true
-      # - run: |
-      #     conda info
-      #     conda list
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: nhc_dev
+          environment-file: environment.yml
+          python-version: 3.8
+          auto-activate-base: true
+      - run: |
+          conda info
+          conda list
         
       # - uses: s-weigand/setup-conda@v1
       #   with:
@@ -39,20 +39,20 @@ jobs:
       # - name: Conda info
       #   run: conda info | grep -i 'base environment'
 
-      - name: Create conda environment with "environment.yml"
-      #  run: conda env create --name nhc_dev --file environment.yml
-        run: conda env update --file environment.yml --name base
+      # - name: Create conda environment with "environment.yml"
+      #   run: conda env create --name nhc_dev --file environment.yml
+      #   run: conda env update --file environment.yml --name base
       
       # - name: Conda activation with conda.sh
       #   run: source /usr/share/miniconda/etc/profile.d/conda.sh
       
-      - name: Conda init
-        shell: bash -l {0}
-        run: conda init
+      # - name: Conda init
+      #   shell: bash -l {0}
+      #   run: conda init
       
-      - name: Activate conda environment
-        shell: bash -l {0}
-        run: conda activate base
+      # - name: Activate conda environment
+      #   shell: bash -l {0}
+      #   run: conda activate base
       
       - name: Run unit tests
         run: coverage run tests/TestNeuroHealthApp.py
