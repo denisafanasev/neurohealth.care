@@ -14,26 +14,32 @@ jobs:
       # Чекаутим код
       - uses: actions/checkout@master
 
-      - uses: s-weigand/setup-conda@v1
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
         with:
-          update-conda: true
-          conda-channels: anaconda, conda-forge
-          activate-conda: false
+          python-version: 3.8
+
+      # - uses: s-weigand/setup-conda@v1
+      #   with:
+      #     update-conda: true
+      #     conda-channels: anaconda, conda-forge
+      #     activate-conda: false
       
       - name: Conda info
         run: conda info | grep -i 'base environment'
 
       - name: Create conda environment with "environment.yml"
-        run: conda env create --name nhc_dev --file environment.yml
+      #  run: conda env create --name nhc_dev --file environment.yml
+        run: conda env update --file environment.yml --name base
       
-      - name: Conda activation with conda.sh
-        run: source /usr/share/miniconda/etc/profile.d/conda.sh
+      # - name: Conda activation with conda.sh
+      #   run: source /usr/share/miniconda/etc/profile.d/conda.sh
       
-      - name: Conda init
-        run: conda init
+      # - name: Conda init
+      #   run: conda init
       
-      - name: Activate conda environment
-        run: conda activate nhc_dev
+      # - name: Activate conda environment
+      #   run: conda activate nhc_dev
       
       - name: Run unit tests
         run: coverage run tests/TestNeuroHealthApp.py
