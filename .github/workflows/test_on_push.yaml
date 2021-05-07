@@ -87,6 +87,24 @@ jobs:
             cd /home/ubuntu/uat/neurohealth.care
             git pull
 
-    # env update
+      # env update
+      - name: conda environment update
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            conda env update --p /home/ubuntu/uat/neuro_health_env --file local.yml
 
-    # restart uat service
+      # restart uat service
+      - name: restart uat application service
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            sudo systemctl restart neuro_health_uat.service
