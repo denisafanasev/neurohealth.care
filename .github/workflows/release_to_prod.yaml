@@ -1,0 +1,55 @@
+name: Push release to production
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  publishing_to_prod:
+    needs: [unittests_and_coverage]
+
+    env:
+      SERVER: ${{ secrets.SERVER }}
+      LOGIN: ${{ secrets.DOCKER_LOGIN }}
+      NAME: ${{ secrets.DOCKER_NAME }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # code update
+      # ssh -i shaman_aws_key.pem ubuntu@app.neurohealth.care 'cd /home/ubuntu/uat/neurohealth.care; git pull'
+
+      - name: application update
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/ubuntu/prod/neurohealth.care
+            git pull
+
+      # env update
+      - name: conda environment update
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/ubuntu/prod/neurohealth.care
+            /home/ubuntu/anaconda3/bin/conda env update -p /home/ubuntu/prod/neuro_health_env -f environment.yml
+
+      # restart uat service
+      - name: restart prod application service
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            sudo systemctl restart neuro_health.service
