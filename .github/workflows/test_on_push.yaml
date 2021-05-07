@@ -19,17 +19,24 @@ jobs:
           update-conda: true
           conda-channels: anaconda, conda-forge
           activate-conda: false
+      
       - name: Conda info
         run: conda info | grep -i 'base environment'
-      # - name: Conda activation
-      #   run: source /usr/share/miniconda/etc/profile.d/conda.sh
-      - name: Conda activation
-        run: conda init
+
       - name: Create conda environment with "environment.yml"
         run: conda env create --name nhc_dev --file environment.yml
+      
+      - name: Conda activation with conda.sh
+        run: source /usr/share/miniconda/etc/profile.d/conda.sh
+      
+      - name: Conda init
+        run: conda init
+      
       - name: Activate conda environment
         run: conda activate nhc_dev
-      - name: Run tests
+      
+      - name: Run unit tests
         run: coverage run tests/TestNeuroHealthApp.py
-      - name: Tests report
+      
+      - name: Show tests report
         run: coverage report
