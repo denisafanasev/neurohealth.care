@@ -1,4 +1,4 @@
-name: Push release to production
+name: Release to production
 
 on:
   release:
