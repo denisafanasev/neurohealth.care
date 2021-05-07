@@ -82,8 +82,10 @@ jobs:
           host: ${{ secrets.SERVER }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          port: 22
-          script: 'cd /home/ubuntu/uat/neurohealth.care; git pull'
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/ubuntu/uat/neurohealth.care
+            git pull
 
     # env update
 
