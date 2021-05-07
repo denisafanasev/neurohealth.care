@@ -1,18 +1,15 @@
 name: Push release to production
+
 on:
   release:
     types:
       - published
 
 jobs:
+
   publishing_to_prod:
-
     runs-on: ubuntu-latest
-
     steps:
-
-      # code update
-      # ssh -i shaman_aws_key.pem ubuntu@app.neurohealth.care 'cd /home/ubuntu/uat/neurohealth.care; git pull'
 
       - name: application update
         uses: appleboy/ssh-action@master
