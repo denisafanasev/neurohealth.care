@@ -12,23 +12,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Чекаутим код
-      - uses: actions/checkout@master
+      - name: Checkout code from master
+        uses: actions/checkout@master
 
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
+      # - name: Set up Python 3.8
+      #   uses: actions/setup-python@v2
+      #   with:
+      #     python-version: 3.8
 
-
-      - uses: conda-incubator/setup-miniconda@v2
+      - name: Setup conda environment
+        uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: nhc_dev
           environment-file: environment.yml
           python-version: 3.8
           auto-activate-base: false
-      - run: |
-          conda info
-          conda list
         
       # - uses: s-weigand/setup-conda@v1
       #   with:
