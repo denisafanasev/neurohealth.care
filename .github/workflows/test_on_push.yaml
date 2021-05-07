@@ -55,7 +55,7 @@ jobs:
       #   run: conda activate base
       
       - name: Run unit tests
-        run: coverage run tests/TestNeuroHealthApp.py
+        run: python -m coverage run tests/TestNeuroHealthApp.py
       
       - name: Show tests report
-        run: coverage report
+        run: python -m coverage report
