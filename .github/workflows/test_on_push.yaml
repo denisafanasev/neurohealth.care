@@ -54,11 +54,12 @@ jobs:
       
       - name: Run unit tests
         shell: bash -l {0}
-        run: python -m coverage run tests/TestNeuroHealthApp.py
+        # run: python -m coverage run tests/TestNeuroHealthApp.py
+        run: bash run_tests.sh
       
-      - name: Show tests report
-        shell: bash -l {0}
-        run: python -m coverage report
+      # - name: Show tests report
+      #   shell: bash -l {0}
+      #   run: python -m coverage report
 
 
   publishing_to_uat:

@@ -1,17 +1,22 @@
 name: nhc_dev
 channels:
-  - conda-forge
   - anaconda
+  - conda-forge
   - defaults
 dependencies:
   - autopep8=1.5.6
-  - ca-certificates=2020.10.14
-  - certifi=2020.6.20
+  - blinker=1.4
+  - brotlipy=0.7.0
+  - ca-certificates=2020.12.5
+  - certifi=2020.12.5
+  - cffi=1.14.5
   - click=7.1.2
   - coverage=5.3
+  - cryptography=3.4.7
   - flask=1.1.2
   - flask-login=0.5.0
   - icu=68.1
+  - idna=3.1
   - itsdangerous=1.1.0
   - jansson=2.13.1
   - jinja2=2.11.2
@@ -25,13 +30,20 @@ dependencies:
   - pcre=8.44
   - pip=21.0.1
   - pycodestyle=2.7.0
+  - pycparser=2.20
+  - pyopenssl=20.0.1
+  - pysocks=1.7.1
   - python=3.8.8
   - python_abi=3.8
   - readline=8.1
+  - sentry-sdk=0.20.3
   - setuptools=52.0.0
+  - six=1.16.0
   - sqlite=3.35.4
+  - tinydb=4.4.0
   - tk=8.6.10
   - toml=0.10.2
+  - urllib3=1.26.4
   - uwsgi=2.0.19.1
   - werkzeug=1.0.1
   - wheel=0.36.2
