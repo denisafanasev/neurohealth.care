@@ -1,4 +1,6 @@
 import hashlib
+import flask_login
+
 
 from models.user import User
 from data_adapters.data_store import DataStore
@@ -171,4 +173,36 @@ class UserManager():
         
         # создаем новую запись
         user_data = {"login": login, "password": password, "email": email, "role": role, "name": name}
-        user_id = data_store.add_row(user_data)
+        data_store.add_row(user_data)
+    
+    def get_current_user_id(self):
+        """
+        Возвращает id текущего авторизованного пользователя
+
+        Returns:
+            Int: id пользователя
+        """        
+        
+        id = None
+
+        if flask_login.current_user.is_authenticated:
+            id = flask_login.current_user.id
+        
+        return id
+    
+    def get_user_role(self, _id):
+        """
+        Возвращает роль пользователя по id
+
+        Args:
+            _id (Int): id пользователя
+
+        Returns:
+            String: роль пользователя
+        """        
+
+        user_id = self.get_current_user_id()
+        user = self.get_user_by_id(user_id)
+        user_role = user.role
+
+        return user_role

@@ -1,5 +1,5 @@
 import config
-
+from models.user_manager import UserManager
 
 class MainMenuService():
 
@@ -17,7 +17,16 @@ class MainMenuService():
         @params:
         """
 
-        return config.MAIN_MENU
+        user_manager = UserManager()
+
+        menu = config.MAIN_MENU
+
+        curent_user_role = user_manager.get_user_role(user_manager.get_current_user_id())
+
+        if curent_user_role == "superuser":
+            menu = menu + config.SUPERUSER_MENU
+
+        return menu
 
     def get_active_menu_item_number(self, _endpoint):
         """

@@ -59,7 +59,7 @@ login_manager.init_app(app)
 
 @app.context_processor
 def inject_global_context():
-    return dict(app_version=config.VERSION)
+    return dict(app_version=config.VERSION, app_name=config.APP_NAME)
 
 
 @login_manager.user_loader
@@ -201,7 +201,7 @@ def user_manager():
 
     endpoint = request.endpoint
 
-    return render_template('index.html', view="dashboard", _menu=mpc.get_main_menu(),
+    return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=ipc.get_data())
                                

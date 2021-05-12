@@ -1,26 +1,28 @@
 VERSION = "0.0.2"
+APP_NAME = "Neuro Health"
 
 # system settings
 THREADING_ENABLE = True
 DEBUG = False
 LOG_FILE = "neuro_health.log"
 
-SUPERUSER_MENU = [
-    {"module": "System", "name": "Task manager",
-        "endpoint": "index", "icon": "layers"},
-    {"module": "System", "name": "Segmentator settings",
-        "endpoint": "index", "icon": "settings"},
-    {"module": "System", "name": "User manager",
-        "endpoint": "user_manager", "icon": "user"}
+SUPERUSER_MENU = [    
+    {"module": "Центр управление", "name": "Пользователи",
+        "endpoint": "user_manager", "icon": "user"},
+    {"module": "Центр управление", "name": "Настройки",
+        "endpoint": "index", "icon": "settings"}
 ]
 
 MAIN_MENU = [
     {"module": "", "name": "Рабочий стол", "endpoint": "index", "icon": "sliders"},
     
-    {"module": "Тестирование", "name": "Результаты",
-        "endpoint": "index", "icon": "trending-up"},
-    {"module": "Тестирование", "name": "Дети",
+    {"module": "Центр тестирование", "name": "Испытуемые",
         "endpoint": "index", "icon": "users"},
-    {"module": "Тестирование", "name": "Тесты",
-     "endpoint": "index", "icon": "list"}
+    {"module": "Центр тестирование", "name": "Испытания",
+     "endpoint": "index", "icon": "list"},
+     {"module": "Центр тестирование", "name": "Результаты",
+        "endpoint": "index", "icon": "trending-up"},
+
+     {"module": "", "name": "Мой профиль", "endpoint": "index", "icon": "sliders"}
+    
 ]
