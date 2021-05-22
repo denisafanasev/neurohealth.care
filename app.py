@@ -16,6 +16,7 @@ from logging.handlers import RotatingFileHandler
 from controllers.index_page_controller import IndexPageController
 from controllers.main_menu_controller import MainManuPageController
 from controllers.login_page_controller import LoginPageController
+from controllers.user_profile_page_controller import UserProfilePageController
 
 from error import UserManagerException
 
@@ -202,6 +203,26 @@ def user_manager():
     endpoint = request.endpoint
 
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _data=ipc.get_data())
+
+
+@app.route('/user_profile', methods=['GET', 'POST'])
+@login_required
+def user_profile():
+    """
+    Просмотр и редактирование собственнного профиля
+
+    Returns:
+        
+    """    
+
+    ipc = UserProfilePageController()
+    mpc = MainManuPageController()
+
+    endpoint = request.endpoint
+
+    return render_template('user_profile.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=ipc.get_data())
                                

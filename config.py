@@ -8,7 +8,7 @@ LOG_FILE = "neuro_health.log"
 
 SUPERUSER_MENU = [    
     {"module": "Центр управление", "name": "Пользователи",
-        "endpoint": "user_manager", "icon": "user"},
+        "endpoint": "user_manager", "icon": "users"},
     {"module": "Центр управление", "name": "Настройки",
         "endpoint": "index", "icon": "settings"}
 ]
@@ -23,6 +23,6 @@ MAIN_MENU = [
      {"module": "Центр тестирование", "name": "Результаты",
         "endpoint": "index", "icon": "trending-up"},
 
-     {"module": "", "name": "Мой профиль", "endpoint": "index", "icon": "sliders"}
+     {"module": "", "name": "Мой профиль", "endpoint": "user_profile", "icon": "user"}
     
 ]
