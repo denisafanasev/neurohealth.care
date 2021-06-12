@@ -1,5 +1,5 @@
 
-class UserProfileService():
+class MainPageService():
 
     def init(self):
         pass

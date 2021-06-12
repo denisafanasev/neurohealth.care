@@ -13,10 +13,15 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 # general page controllers
-from controllers.index_page_controller import IndexPageController
-from controllers.main_menu_controller import MainManuPageController
+from controllers.main_page_controller import MainPageController
+from controllers.main_menu_controller import MainMenuPageController
 from controllers.login_page_controller import LoginPageController
-from controllers.user_profile_page_controller import UserProfilePageController
+
+from controllers.corrections_page_controller import CorrectionsPageController
+from controllers.probes_page_controller import ProbesPageController
+from controllers.settings_page_controller import SettingsPageController
+from controllers.results_page_controller import ResultsPageController
+from controllers.probationers_page_controller import ProbationersPageController
 
 from error import UserManagerException
 
@@ -94,7 +99,7 @@ def logout():
     """    
 
     logout_user()
-    return redirect('index')
+    return redirect('main_page')
 
 @app.route('/create_superuser', methods=['GET', 'POST'])
 def create_superuser():
@@ -151,7 +156,6 @@ def login():
 
         # пользователей нет, надо создать первого суперпользователя
         return redirect('create_superuser')
-        pass
 
     # пользователи есть, проходим процедуру идентификации
     login_error = False
@@ -165,7 +169,7 @@ def login():
 
         if user is not None:
             login_user(user)
-            return redirect('index')
+            return redirect('main_page')
         else:
             login_error = True
 
@@ -177,14 +181,7 @@ def login():
 @login_required
 def index():
 
-    ipc = IndexPageController()
-    mpc = MainManuPageController()
-
-    endpoint = request.endpoint
-
-    return render_template('index.html', view="dashboard", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=ipc.get_data())
+    return redirect("main_page")
 
 
 @app.route('/user_manager', methods=['GET', 'POST'])
@@ -197,8 +194,8 @@ def user_manager():
         
     """    
 
-    ipc = IndexPageController()
-    mpc = MainManuPageController()
+    ipc = MainPageController()
+    mpc = MainMenuPageController()
 
     endpoint = request.endpoint
 
@@ -207,9 +204,9 @@ def user_manager():
                                endpoint), _data=ipc.get_data())
 
 
-@app.route('/user_profile', methods=['GET', 'POST'])
+@app.route('/main_page', methods=['GET', 'POST'])
 @login_required
-def user_profile():
+def main_page():
     """
     Просмотр и редактирование собственнного профиля
 
@@ -217,15 +214,110 @@ def user_profile():
         
     """    
 
-    ipc = UserProfilePageController()
-    mpc = MainManuPageController()
+    ipc = MainPageController()
+    mpc = MainMenuPageController()
 
     endpoint = request.endpoint
 
-    return render_template('user_profile.html', view="user_manager", _menu=mpc.get_main_menu(),
+    return render_template('main_page.html', view="main_page", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=ipc.get_data())
-                               
+
+
+@app.route('/corrections', methods=['GET', 'POST'])
+@login_required
+def corrections():
+    """
+    Просмотр выполнение нейро-психологических коррекций
+
+    Returns:
+        
+    """    
+
+    page_controller = CorrectionsPageController()
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+
+    return render_template('corrections.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _data=page_controller.get_data())
+
+@app.route('/probes', methods=['GET', 'POST'])
+@login_required
+def probes():
+    """
+    Просмотр проведение нейро-психологических проб
+
+    Returns:
+        
+    """    
+
+    page_controller = ProbesPageController()
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+
+    return render_template('probes.html', view="probes", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _data=page_controller.get_data())
+
+@app.route('/results', methods=['GET', 'POST'])
+@login_required
+def results():
+    """
+    Просмотр результатов тестирования
+
+    Returns:
+        
+    """    
+
+    page_controller = ResultsPageController()
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+
+    return render_template('results.html', view="results", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _data=page_controller.get_data())
+
+@app.route('/probationers', methods=['GET', 'POST'])
+@login_required
+def probationers():
+    """
+    Просмотр и редактирование списка испытуемых
+
+    Returns:
+        
+    """    
+
+    page_controller = ProbationersPageController()
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+
+    return render_template('probationers.html', view="probationers", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _data=page_controller.get_data())
+
+@app.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    """
+    Генерация страницы просмотра и редактирования настроек системы
+
+    Returns:
+        
+    """    
+
+    page_controller = SettingsPageController()
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+
+    return render_template('settings.html', view="settings", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _data=page_controller.get_data())
 
 @app.errorhandler(404)
 @login_required
