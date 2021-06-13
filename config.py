@@ -1,4 +1,4 @@
-VERSION = "0.0.2"
+VERSION = "0.0.3"
 APP_NAME = "Neuro Health"
 
 # system settings
