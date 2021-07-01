@@ -50,7 +50,8 @@ class DataStore():
 
         result = []
 
-        result = self.data_store.get(doc_id=int(_id))
+        if _id != '':
+            result = self.data_store.get(doc_id=int(_id))
 
         return result
 

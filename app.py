@@ -16,6 +16,7 @@ from logging.handlers import RotatingFileHandler
 from controllers.main_page_controller import MainPageController
 from controllers.main_menu_controller import MainMenuPageController
 from controllers.login_page_controller import LoginPageController
+from controllers.user_manager_page_controller import UserManagerPageController
 
 from controllers.corrections_page_controller import CorrectionsPageController
 from controllers.probes_page_controller import ProbesPageController
@@ -30,6 +31,7 @@ import config
 
 sentry_sdk.init(
     dsn="https://63b5f6ab88514c9cb9ab336e34d42590@o640301.ingest.sentry.io/5756937",
+    environment=config.ENVIRONMENT,
     integrations=[FlaskIntegration()],
 
     # Set traces_sample_rate to 1.0 to capture 100%
@@ -194,14 +196,14 @@ def user_manager():
         
     """    
 
-    ipc = MainPageController()
+    page_controller = UserManagerPageController()
     mpc = MainMenuPageController()
 
     endpoint = request.endpoint
 
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=ipc.get_data())
+                               endpoint), _data=page_controller.get_users_list_view())
 
 
 @app.route('/main_page', methods=['GET', 'POST'])
@@ -214,14 +216,14 @@ def main_page():
         
     """    
 
-    ipc = MainPageController()
+    page_controller = MainPageController()
     mpc = MainMenuPageController()
 
     endpoint = request.endpoint
 
     return render_template('main_page.html', view="main_page", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=ipc.get_data())
+                               endpoint), _data=page_controller.get_data())
 
 
 @app.route('/corrections', methods=['GET', 'POST'])

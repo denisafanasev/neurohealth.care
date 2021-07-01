@@ -1,10 +1,10 @@
 import utils.ada as ada
-from services.settings_service import SettingsService
+from services.user_manager_service import UserManagerService
 
 
-class SettingsPageController():
+class UserManagerPageController():
     """
-    SettingsPageController - класс контроллера представления настроек приложения, реализующий логику взаимодейтвия приложения с пользователем
+    UserManagerPageController - класс контроллера представления управления списком пользователей системы
     Возвращает в слой отображения объекты в виде, пригодном для отображения в web странице и в соответсвующем форматировании
     Взаимодейтвует с классами слоя сервисов, передавая им данные и получая данные в объектах доменной модели
     """
@@ -17,6 +17,6 @@ class SettingsPageController():
 
         pass
 
-    def get_data(self):
-        page_service = SettingsService()
-        return page_service.get_data()
+    def get_users_list_view(self):
+        page_service = UserManagerService()
+        return page_service.get_users()
