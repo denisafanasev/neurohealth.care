@@ -48,7 +48,7 @@ class DataStore():
             _filter   - Optional  : срока с заданным фильтром (String)
         """
 
-        result = []
+        result = None
 
         if _id != '':
             result = self.data_store.get(doc_id=int(_id))
