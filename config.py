@@ -1,6 +1,6 @@
 VERSION = "0.0.5"
 APP_NAME = "Neuro Health"
-ENVIRONMENT = "development"
+ENVIRONMENT = "production"
 
 # system settings
 THREADING_ENABLE = True
