@@ -1,4 +1,4 @@
-VERSION = "0.0.4"
+VERSION = "0.0.5"
 APP_NAME = "Neuro Health"
 ENVIRONMENT = "development"
 
@@ -13,6 +13,7 @@ SUPERUSER_MENU = [
 ]
 
 MAIN_MENU = [
+
     {"module": "", "name": "Рабочий стол", "endpoint": "main_page", "icon": "sliders"},
     
     {"module": "Центр тестирование", "name": "Коррекция", "endpoint": "corrections", "icon": "trending-up"},

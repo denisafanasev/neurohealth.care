@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 
 {% block main_block %}
+
+<script src="{{ url_for('static' , filename="js/datatables.js")}}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Datatables with Buttons
+        var datatablesButtons = $("#datatables-buttons").DataTable({
+            responsive: true,
+            lengthChange: !1
+        });
+        datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
+    });
+</script>
+
+
 <div class="container-fluid p-0">
 
     <h1 class="h3 mb-3">Управление пользователями</h1>
@@ -10,124 +25,86 @@
             <div class="card">
                 <div class="card-body">
                     
-                    <div class="col-12">
-                        <div class="card">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th style="width:40%;">Имя</th>
-                                        <th style="width:25%">Phone Number</th>
-                                        <th class="d-none d-md-table-cell" style="width:25%">Date of Birth</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Vanessa Tucker</td>
-                                        <td>864-348-0485</td>
-                                        <td class="d-none d-md-table-cell">June 21, 1961</td>
-                                        <td class="table-action">
-                                            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" class="feather feather-edit-2 align-middle">
-                                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                                </svg></a>
-                                            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" class="feather feather-trash align-middle">
-                                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                                    <path
-                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                                    </path>
-                                                </svg></a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>William Harris</td>
-                                        <td>914-939-2458</td>
-                                        <td class="d-none d-md-table-cell">May 15, 1948</td>
-                                        <td class="table-action">
-                                            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" class="feather feather-edit-2 align-middle">
-                                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                                </svg></a>
-                                            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" class="feather feather-trash align-middle">
-                                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                                    <path
-                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                                    </path>
-                                                </svg></a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sharon Lessman</td>
-                                        <td>704-993-5435</td>
-                                        <td class="d-none d-md-table-cell">September 14, 1965</td>
-                                        <td class="table-action">
-                                            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" class="feather feather-edit-2 align-middle">
-                                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                                </svg></a>
-                                            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" class="feather feather-trash align-middle">
-                                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                                    <path
-                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                                    </path>
-                                                </svg></a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Christina Mason</td>
-                                        <td>765-382-8195</td>
-                                        <td class="d-none d-md-table-cell">April 2, 1971</td>
-                                        <td class="table-action">
-                                            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" class="feather feather-edit-2 align-middle">
-                                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                                </svg></a>
-                                            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" class="feather feather-trash align-middle">
-                                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                                    <path
-                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                                    </path>
-                                                </svg></a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Robin Schneiders</td>
-                                        <td>202-672-1407</td>
-                                        <td class="d-none d-md-table-cell">October 12, 1966</td>
-                                        <td class="table-action">
-                                            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" class="feather feather-edit-2 align-middle">
-                                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                                </svg></a>
-                                            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" class="feather feather-trash align-middle">
-                                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                                    <path
-                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                                    </path>
-                                                </svg></a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+
+                    <div id="datatables-buttons_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                    
+                        {% if _is_current_user_admin %}
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <div class="dt-buttons btn-group flex-wrap">
+
+                                    <form id="userForm" method="post" enctype="multipart/form-data">
+                                        <input name="action" value="add_user" hidden>
+                                    
+                                        <button class="btn btn-secondary buttons-copy buttons-html5"
+                                            tabindex="0" aria-controls="datatables-buttons" type="submit"><span>Добавить пользователя</span>
+                                        </button> 
+                                    </form>
+                                        
+                                </div>
+                            </div>
                         </div>
+                        {% endif %}
+                        
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%;"
+                                    role="grid" aria-describedby="datatables-buttons_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th style="width:5%;">#</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:10%;" aria-label="Position: activate to sort column ascending">Login</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:20%;" aria-label="Position: activate to sort column ascending">Имя пользователя</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:10%;" aria-label="Position: activate to sort column ascending">email</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:10%;" aria-label="Position: activate to sort column ascending">role</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Тестируемые</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:15%;" aria-label="Position: activate to sort column ascending">Дата создания</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:15%;" aria-label="Position: activate to sort column ascending">Срок доступа</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Статус</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                        
+                                        {% for item in _data %}
+                                        
+                                        <tr class="even">
+                                            
+                                            <td><img src="{{ url_for('static' , filename="img/avatars/avatar.jpg")}}" width="32" height="32"
+                                                    class="rounded-circle my-n1" alt="Avatar"></td>
+                                            
+                                            <td class="sorting_1 dtr-control">{{ item['login'] }}</td>
+                                            <td>{{ item['name'] }}</td>
+                                            <td>{{ item['email'] }}</td>
+                                            <td>{{ item['role'] }}</td>
+                                            <td>{{ item['probationers_number'] }}</td>
+                                            <td>{{ item['created_date'] }}</td>
+                                            <td>{{ item['expires_date'] }}</td>
+                                            
+                                            {% if item['is_active'] %}
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            {% else %}
+                                            <td><span class="badge bg-warning">Inactive</span></td>
+                                            {% endif %}
+
+                                        </tr>
+
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
                     </div>
-
-
                 </div>
             </div>
         </div>

@@ -18,5 +18,64 @@ class UserManagerPageController():
         pass
 
     def get_users_list_view(self):
-        page_service = UserManagerService()
-        return page_service.get_users()
+        """
+        Возвращает отформатированный список пользователей
+
+        Returns:
+            List: список пользователей, каждый из которых представлен структурой типа Dict
+        """ 
+
+        user_manager_service = UserManagerService()
+        users = user_manager_service.get_users()
+
+        users_list_view = []
+        for user in users:
+
+            user_view = {}
+
+            user_view['login'] = user.login
+            user_view['name'] = user.name
+            user_view['email'] = user.email
+            user_view['role'] = user.role
+
+            user_view['created_date'] = user.created_date.strftime("%d/%m/%Y")
+            user_view['expires_date'] = user.expires_date.strftime("%d/%m/%Y")
+
+            user_view['probationers_number'] = user.probationers_number
+
+            user_view['is_active'] = user.is_active
+
+            users_list_view.append(user_view)
+            
+        return users
+    
+    def is_current_user_admin(self):
+        """
+        Возвращает признак того что у текущего пользователя есть права администратора
+
+        Returns:
+            Boolean: True если есть права администратора и False если нет
+        """        
+
+        user_manager_service = UserManagerService()
+
+        result = user_manager_service.is_current_user_admin()
+
+        return result
+
+    def create_user(self, _login, _name, _password, _password2, _email):
+        """
+        Создает в системе пользователя
+
+        Args:
+            _login (String): логин пользователя
+            _name (String): имя пользователя
+            _password (String): пароль пользователя
+            _password2 (String): контрольный ввод пароля пользователя
+            _email (String): email пользователя
+
+        """        
+
+        # создаем суперпользователя
+        user_manager_service = UserManagerService()
+        user_manager_service.create_user(_login, _name, _password, _password2, _email)

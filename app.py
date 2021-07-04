@@ -199,11 +199,22 @@ def user_manager():
     page_controller = UserManagerPageController()
     mpc = MainMenuPageController()
 
+    # страница доступна только администратору
+    if not page_controller.is_current_user_admin():
+        return redirect("main_page")
+
     endpoint = request.endpoint
+
+    if request.method == 'POST':
+        action = request.form['action']
+        if action == 'add_user':
+            
+            #добавиим просто нового пользователя
+            page_controller.create_user("user", "user", "user", "user", "user@user.usr")
 
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=page_controller.get_users_list_view())
+                               endpoint), _data=page_controller.get_users_list_view(), _is_current_user_admin=page_controller.is_current_user_admin())
 
 
 @app.route('/main_page', methods=['GET', 'POST'])
