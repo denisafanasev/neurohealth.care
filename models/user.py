@@ -13,7 +13,7 @@ class User(UserMixin):
         UserMixin (UserMixin): хз что это, так в документации Flask написано делать
     """    
 
-    id = ""
+    user_id = ""
     login = ""
     name = ""
     role = ""
@@ -22,12 +22,12 @@ class User(UserMixin):
     expires_date = ""
     probationers_number = DEFAULT_PROBATIONS_NUMBER
 
-    def __init__(self, _id=None, _login="", _name="", _email="", _role="user", _created_date = "", _expires_date = "", _probationers_number = DEFAULT_PROBATIONS_NUMBER):
+    def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _created_date = "", _expires_date = "", _probationers_number = DEFAULT_PROBATIONS_NUMBER):
         """
         Конструктор класса
 
         Args:
-            _id (Int, optional): Id пользователя. Defaults to None
+            _user_id (Int, optional): Id пользователя. Defaults to None
             _login (str, optional): Логин пользователя. Defaults to ""
             _name (str, optional): Имя пользователя. Defaults to ""
             _email (str, optional): Email пользователя. Defaults to ""
@@ -37,7 +37,7 @@ class User(UserMixin):
             _probationers_number (int, optional): Количество тестируемых, доступное пользователю. Defaults to DEFAULT_PROBATIONS_NUMBER
         """        
 
-        self.id = _id
+        self.user_id = _user_id
         self.login = _login
         self.name = _name
         self.email = _email
@@ -58,7 +58,7 @@ class User(UserMixin):
 
         self.probationers_number = _probationers_number
     
-    def is_user_active(self):
+    def is_active(self):
         """
         Возвращает признак того, что учетная запись пользователя активна
 
@@ -72,3 +72,25 @@ class User(UserMixin):
             is_active = True
         
         return is_active
+    
+    def get_id(self):
+        """
+        Возвращает id пользователя
+
+        Returns:
+            Int: Id пользователя
+        """        
+        return self.user_id
+
+    def is_admin(self):
+        """
+        Возвращает признат того, что пользователь обладает правами администратора
+
+        Returns:
+            Boolean: True если у пользователя есть права администратора и False если нет
+        """        
+
+        if self.role =="superuser":
+            return True
+        else:
+            return False

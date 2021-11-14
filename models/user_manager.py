@@ -271,7 +271,7 @@ class UserManager():
         id = None
 
         if flask_login.current_user.is_authenticated:
-            id = flask_login.current_user.id
+            id = flask_login.current_user.user_id
         
         return id
     
@@ -291,18 +291,3 @@ class UserManager():
         user_role = user.role
 
         return user_role
-    
-    def is_current_user_admin(self):
-        """
-        Возвращает признак того что у текущего пользователя есть права администратора
-
-        Returns:
-            Boolean: True если есть права администратора и False если нет
-        """        
-
-        user_role = self.get_user_role(self.get_current_user_id())
-
-        if user_role == "superuser":
-            return True
-        else:
-            return False

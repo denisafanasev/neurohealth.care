@@ -1,5 +1,5 @@
-VERSION = "0.0.5"
-APP_NAME = "Neuro Health"
+VERSION = "0.0.6"
+APP_NAME = "CleverHEALTH"
 ENVIRONMENT = "production"
 
 # system settings

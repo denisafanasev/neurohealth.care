@@ -25,20 +25,6 @@ class UserManagerService():
 
         return users
     
-    def is_current_user_admin(self):
-        """
-        Возвращает признак того что у текущего пользователя есть права администратора
-
-        Returns:
-            Boolean: True если есть права администратора и False если нет
-        """        
-
-        user_manager = UserManager()
-
-        result = user_manager.is_current_user_admin()
-
-        return result
-    
     def create_user(self, _login, _name, _password, _password2, _email):
         """
         Создает в системе суперпользователя

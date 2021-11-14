@@ -1,16 +1,11 @@
-import sentry_sdk
-
-from flask import Flask, request, redirect, url_for, render_template, make_response, send_file, session
-from flask import g
-from flask_login import LoginManager, login_required, login_user, logout_user
-
-from sentry_sdk.integrations.flask import FlaskIntegration
-
-import os
-import time
-import datetime
 import logging
 from logging.handlers import RotatingFileHandler
+from flask import Flask, request, redirect, render_template
+from flask_login import LoginManager, login_required, login_user, logout_user
+import flask_login
+
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 # general page controllers
 from controllers.main_page_controller import MainPageController
@@ -23,10 +18,10 @@ from controllers.probes_page_controller import ProbesPageController
 from controllers.settings_page_controller import SettingsPageController
 from controllers.results_page_controller import ResultsPageController
 from controllers.probationers_page_controller import ProbationersPageController
+from controllers.user_profile_page_controller import UserProfilePageController
 
 from error import UserManagerException
 
-import utils.ada as ada
 import config
 
 sentry_sdk.init(
@@ -39,6 +34,7 @@ sentry_sdk.init(
     # We recommend adjusting this value in production.
     traces_sample_rate=1.0
 )
+
 class Config(object):
     DEBUG = config.DEBUG
     LOG_FILE = config.LOG_FILE
@@ -200,7 +196,7 @@ def user_manager():
     mpc = MainMenuPageController()
 
     # страница доступна только администратору
-    if not page_controller.is_current_user_admin():
+    if not flask_login.current_user.is_admin():
         return redirect("main_page")
 
     endpoint = request.endpoint
@@ -214,7 +210,46 @@ def user_manager():
 
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=page_controller.get_users_list_view(), _is_current_user_admin=page_controller.is_current_user_admin())
+                               endpoint), _data=page_controller.get_users_list_view(), _is_current_user_admin=flask_login.current_user.is_admin())
+
+
+@app.route('/user_profile', methods=['GET', 'POST'])
+@login_required
+def user_profile():
+    """
+    Страница просмотра и редактирования профиля пользователя        
+    """    
+
+    page_controller = UserProfilePageController()
+    mpc = MainMenuPageController()
+
+    endpoint = "user_manager"
+    user_id = request.args.get('user_id')
+
+    mode = "view"
+
+    if request.method == 'POST':
+        action = request.form['action']
+        if action == 'add_user':
+            
+            #добавиим просто нового пользователя
+            pass
+    
+    if user_id == '':
+        # если пользователь не задан, то открываем страницу в режиме создания нового пользователя
+        # страница доступна только администратору
+        if not flask_login.current_user.is_admin():
+            return redirect("main_page")
+        
+        mode = "new"
+    
+    else:
+        if not flask_login.current_user.is_admin():
+            mode = "edit"
+
+    return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _data=page_controller.get_users_profile_view(user_id), _is_current_user_admin=flask_login.current_user.is_admin(), _mode=mode)
 
 
 @app.route('/main_page', methods=['GET', 'POST'])

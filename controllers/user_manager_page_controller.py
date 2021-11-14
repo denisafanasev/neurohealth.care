@@ -33,13 +33,14 @@ class UserManagerPageController():
 
             user_view = {}
 
+            user_view['user_id'] = user.user_id
             user_view['login'] = user.login
             user_view['name'] = user.name
             user_view['email'] = user.email
             user_view['role'] = user.role
 
-            user_view['created_date'] = user.created_date.strftime("%d/%m/%Y")
-            user_view['expires_date'] = user.expires_date.strftime("%d/%m/%Y")
+            user_view['created_date'] = str(user.created_date.strftime("%d/%m/%Y"))
+            user_view['expires_date'] = str(user.expires_date.strftime("%d/%m/%Y"))
 
             user_view['probationers_number'] = user.probationers_number
 
@@ -48,20 +49,6 @@ class UserManagerPageController():
             users_list_view.append(user_view)
             
         return users
-    
-    def is_current_user_admin(self):
-        """
-        Возвращает признак того что у текущего пользователя есть права администратора
-
-        Returns:
-            Boolean: True если есть права администратора и False если нет
-        """        
-
-        user_manager_service = UserManagerService()
-
-        result = user_manager_service.is_current_user_admin()
-
-        return result
 
     def create_user(self, _login, _name, _password, _password2, _email):
         """

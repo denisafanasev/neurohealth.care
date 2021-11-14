@@ -3,6 +3,8 @@ https://www.daterangepicker.com
 
 conda env export --no-builds > environment.yml
 
+conda env update --file local.yml --prune
+
 # ------- update solution on the server
 git pull
 systemctl daemon-reload
