@@ -231,7 +231,7 @@ def user_profile():
     if request.method == 'POST':
         action = request.form['action']
         if action == 'add_user':
-            
+
             #добавиим просто нового пользователя
             pass
     

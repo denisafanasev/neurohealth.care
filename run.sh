@@ -1,9 +1,12 @@
 https://www.daterangepicker.com
 
 
+ssh -i "shaman_aws_key.pem" ubuntu@ec2-3-142-254-179.us-east-2.compute.amazonaws.com
+
+
 conda env export --no-builds > environment.yml
 
-conda env update --file local.yml --prune
+conda env update --file environment.yml --prune
 
 # ------- update solution on the server
 git pull
