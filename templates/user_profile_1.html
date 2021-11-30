@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block main_block %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Choices.js
+        new Choices(document.querySelector(".choices-single"));
+        new Choices(document.querySelector(".choices-multiple"));
+        // Flatpickr
+        flatpickr(".flatpickr-minimum");
+        flatpickr(".flatpickr-datetime", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+        });
+        flatpickr(".flatpickr-human", {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "Y-m-d",
+        });
+        flatpickr(".flatpickr-multiple", {
+            mode: "multiple",
+            dateFormat: "Y-m-d"
+        });
+        flatpickr(".flatpickr-range", {
+            mode: "range",
+            dateFormat: "Y-m-d"
+        });
+        flatpickr(".flatpickr-time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+        });
+    });
+</script>
+
+<div class="container-fluid p-0">
+
+    <div class="mb-3">
+        <h1 class="h3 d-inline align-middle">Карточка пользователя</h1>
+    </div>
+
+
+    <div class="row">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Учетные данные пользователя</h5>
+                    <div class="mb-2">
+                        <label class="form-label"><strong>Login</strong></label>
+                        <output>
+                            <p>
+                                {{ _data['login'] }}
+                            </p>
+                        </output>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label"><strong>Имя пользователя</strong></label>
+                        <output>
+                            <p>
+                                {{ _data['name'] }}
+                            </p>
+                        </output>
+
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label"><strong>Email</strong></label>
+                        <output>
+                            <p>
+                                {{ _data['email'] }}
+                            </p>
+                        </output>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Параметры доступа</h5>
+        
+                    <div class="mb-2">
+                        <label class="form-label"><strong>Роль пользователя</strong></label>
+                        <output>
+                            <p>
+                                {{ _data['role'] }}
+                            </p>
+                        </output>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
+                        <output>
+                            <p>
+                                {{ _data['probationers_number'] }}
+                            </p>
+                        </output>
+                    </div>
+        
+                    <div class="mb-2">
+                        <label class="form-label"><strong>Срок предоставления доступа</strong></label>
+                            <output>
+                            <p>
+                                {{ _data['access_time'] }}
+                            </p>
+                        </output>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}

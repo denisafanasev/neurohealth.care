@@ -20,4 +20,4 @@ class UserProfilePageController():
         """        
 
         user_profile_service = UserProfileService()
-        return user_profile_service.get_users_profile()
+        return user_profile_service.get_users_profile(_user_id)
