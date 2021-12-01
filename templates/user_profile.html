@@ -47,16 +47,16 @@
                     <h5 class="card-title">Учетные данные пользователя</h5>
                     <div class="mb-2">
                         <label class="form-label"><strong>Login</strong></label>
-                        <input type="text" class="form-control" placeholder="введите логин пользователя..">  
+                        <input type="text" class="form-control" {% if _mode=="view" %} readonly placeholder= "{{ _data['login'] }}" {% else %} placeholder="введите логин пользователя.." {% endif %}>
                     </div>
 
                     <div class="mb-2">
                         <label class="form-label"><strong>Имя пользователя</strong></label>
-                        <input type="text" class="form-control" placeholder="введите имя пользователя..">
+                        <input type="text" class="form-control"  {% if _mode=="view" %} readonly placeholder= "{{ _data['name'] }}" {% else %} placeholder="введите имя пользователя.." {% endif %}>
                     </div>
                     <div class="mb-2">
                         <label class="form-label"><strong>Email</strong></label>
-                        <input type="text" class="form-control" data-inputmask="'alias': 'email'" inputmode="email" placeholder="example@domain.com">
+                        <input type="text" class="form-control" {% if _mode=="view" %} readonly placeholder= "{{ _data['email'] }}" {% else %} placeholder="email" {% endif %}>
                     </div>
                 </div>
             </div>
@@ -69,30 +69,42 @@
         
                     <div class="mb-2">
                         <label class="form-label"><strong>Роль пользователя</strong></label>
-                        <select class="form-select" placeholder="выберите значение..">
+                        <select type="text" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите роль пользователя.." {% endif %}>
+                            {% if _mode!="view" %}
                             <option>user</option>
                             <option>superuser</option>
+                            {% else %}
+                            <option> {{ _data['role'] }} </option>
+                            {% endif %}
                         </select>
                     </div>
 
                     <div class="mb-2">
                         <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
-                        <select class="form-select" placeholder="выберите значение..">
-                            <option>5</option>
-                            <option>10</option>
-                            <option>15</option>
-                            <option>20</option>
-                            <option>25</option>
-                            <option>30</option>
+                        <select type="text" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
+                            {% if _mode!="view" %}
+                                <option>5</option>
+                                <option>10</option>
+                                <option>15</option>
+                                <option>20</option>
+                                <option>25</option>
+                                <option>30</option>
+                                {% else %}
+                                <option> {{ _data['probationers_number'] }} </option>
+                            {% endif %}
                         </select>
                     </div>
         
                     <div class="mb-2">
                         <label class="form-label"><strong>Срок предоставления доступа</strong></label>
-                        <select class="form-select" placeholder="выберите значение..">
+                        <select type="text" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
+                            {% if _mode!="view" %}
                             <option>6 месяцев</option>
                             <option>1 год</option>
                             <option>неограничено</option>
+                            {% else %}
+                            <option> {{ _data['access_time'] }} </option>
+                            {% endif %}
                         </select>
                     </div>
                 </div>

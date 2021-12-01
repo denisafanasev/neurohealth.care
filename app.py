@@ -243,16 +243,14 @@ def user_profile():
         
         mode = "new"
         user_id = ""
-        template = 'user_profile.html'
-    
+
     else:
         if not flask_login.current_user.is_admin():
             mode = "edit"
-        template = 'user_profile_1.html'
 
 
 
-    return render_template(template, view="user_profile", _menu=mpc.get_main_menu(),
+    return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=page_controller.get_users_profile_view(user_id), _is_current_user_admin=flask_login.current_user.is_admin(), _mode=mode)
 
