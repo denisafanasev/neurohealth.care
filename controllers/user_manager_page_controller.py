@@ -48,7 +48,6 @@ class UserManagerPageController():
 
             users_list_view.append(user_view)
             
-        # TODO: похоже тут не тот список возвращается
         return users_list_view
 
     def create_user(self, _login, _name, _password, _password2, _email):
