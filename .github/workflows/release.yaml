@@ -20,6 +20,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /home/ubuntu/prod/neurohealth.care
+            git stash
             git pull
 
       # env update
