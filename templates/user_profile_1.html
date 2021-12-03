@@ -40,6 +40,7 @@
         <h1 class="h3 d-inline align-middle">Карточка пользователя</h1>
     </div>
 
+
     <div class="row">
         <div class="col-8">
             <div class="card">
@@ -47,16 +48,29 @@
                     <h5 class="card-title">Учетные данные пользователя</h5>
                     <div class="mb-2">
                         <label class="form-label"><strong>Login</strong></label>
-                        <input type="text" class="form-control" {% if _mode=="view" %} readonly placeholder= "{{ _data['login'] }}" {% else %} placeholder="введите логин пользователя.." {% endif %}>
+                        <output>
+                            <p>
+                                {{ _data['login'] }}
+                            </p>
+                        </output>
                     </div>
 
                     <div class="mb-2">
                         <label class="form-label"><strong>Имя пользователя</strong></label>
-                        <input type="text" class="form-control"  {% if _mode=="view" %} readonly placeholder= "{{ _data['name'] }}" {% else %} placeholder="введите имя пользователя.." {% endif %}>
+                        <output>
+                            <p>
+                                {{ _data['name'] }}
+                            </p>
+                        </output>
+
                     </div>
                     <div class="mb-2">
                         <label class="form-label"><strong>Email</strong></label>
-                        <input type="text" class="form-control" {% if _mode=="view" %} readonly placeholder= "{{ _data['email'] }}" {% else %} placeholder="email" {% endif %}>
+                        <output>
+                            <p>
+                                {{ _data['email'] }}
+                            </p>
+                        </output>
                     </div>
                 </div>
             </div>
@@ -69,47 +83,35 @@
         
                     <div class="mb-2">
                         <label class="form-label"><strong>Роль пользователя</strong></label>
-                        <select type="text" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите роль пользователя.." {% endif %}>
-                            {% if _mode!="view" %}
-                                <option>user</option>
-                                <option>superuser</option>
-                            {% else %}
-                                <option> {{ _data['role'] }} </option>
-                            {% endif %}
-                        </select>
+                        <output>
+                            <p>
+                                {{ _data['role'] }}
+                            </p>
+                        </output>
                     </div>
 
                     <div class="mb-2">
                         <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
-                        <select type="text" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
-                            {% if _mode!="view" %}
-                                    <option>5</option>
-                                    <option>10</option>
-                                    <option>15</option>
-                                    <option>20</option>
-                                    <option>25</option>
-                                    <option>30</option>
-                                {% else %}
-                                    <option> {{ _data['probationers_number'] }} </option>
-                            {% endif %}
-                        </select>
+                        <output>
+                            <p>
+                                {{ _data['probationers_number'] }}
+                            </p>
+                        </output>
                     </div>
         
                     <div class="mb-2">
                         <label class="form-label"><strong>Срок предоставления доступа</strong></label>
-                        <select type="text" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
-                            {% if _mode!="view" %}
-                                <option>6 месяцев</option>
-                                <option>1 год</option>
-                                <option>неограничено</option>
-                            {% else %}
-                                <option> {{ _data['access_time'] }} </option>
-                            {% endif %}
+                            <output>
+                            <p>
+                                {{ _data['access_time'] }}
+                            </p>
+                        </output>
                         </select>
                     </div>
                 </div>
             </div>
         </div>
+
 
     </div>
 </div>

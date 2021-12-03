@@ -94,6 +94,9 @@ class UserManager():
         if _data_row.get('expires_date') is not None:
                 user.expires_date = datetime.strptime(_data_row['expires_date'], '%d/%m/%Y')
 
+        if _data_row.get('access_time') is not None:
+                user.access_time = _data_row['access_time']
+
         return user
 
     def get_user_by_id(self, _user_id):
@@ -212,7 +215,7 @@ class UserManager():
         
         return False
     
-    def create_user(self, _login, _name, _password, _password2, _email, _role):
+    def create_user(self, _login, _name, _password, _password2, _email, _role, _access_time):
         """
         Процедура создания нового пользователя в системе
 
@@ -223,6 +226,7 @@ class UserManager():
             _password2 (String): контрольный ввод пароля пользователя
             _email (String): email пользователя
             _role (String): роль пользователя [user/superuser]
+            _access_time (String): срок доступа
 
         Raises:
             UserManagerException: ошибка создания нового пользователя
@@ -256,7 +260,8 @@ class UserManager():
 
         user_data = {"login": user.login, "password": password, "email": user.email, 
                      "role": user.role, "name": user.name, "created_date": user.created_date.strftime("%d/%m/%Y"), 
-                     "expires_date": user.expires_date.strftime("%d/%m/%Y"), "probationers_number": user.probationers_number}
+                     "expires_date": user.expires_date.strftime("%d/%m/%Y"),
+                     "probationers_number": user.probationers_number, "access_time": user.access_time}
 
         data_store.add_row(user_data)
     
@@ -291,3 +296,4 @@ class UserManager():
         user_role = user.role
 
         return user_role
+

@@ -204,9 +204,9 @@ def user_manager():
     if request.method == 'POST':
         action = request.form['action']
         if action == 'add_user':
-            
+            pass
             #добавиим просто нового пользователя
-            page_controller.create_user("user", "user", "user", "user", "user@user.usr")
+    # page_controller.create_user("user", "user", "user", "user", "user@user.usr")
 
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
@@ -235,17 +235,19 @@ def user_profile():
             #добавиим просто нового пользователя
             pass
     
-    if user_id == '':
+    if user_id == None:
         # если пользователь не задан, то открываем страницу в режиме создания нового пользователя
         # страница доступна только администратору
         if not flask_login.current_user.is_admin():
             return redirect("main_page")
         
         mode = "new"
-    
+        user_id = ""
+
     else:
         if not flask_login.current_user.is_admin():
             mode = "edit"
+
 
     return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),

@@ -1,1 +1,1 @@
-{"_default": {"1": {"login": "admin", "password": "21232f297a57a5a743894a0e4a801fc3", "email": "", "role": "superuser", "name": "admin"}}}
+{"_default": {"1": {"login": "admin", "password": "21232f297a57a5a743894a0e4a801fc3", "email": "admin@admin.adm", "role": "superuser", "name": "admin", "access_time": "неограниченно"}, "2": {"login": "user", "password": "ee11cbb19052e40b07aac0ca060c23ee", "email": "user@user.usr", "role": "user", "name": "user", "created_date": "29/11/2021", "expires_date": "29/05/2022", "probationers_number": 5, "access_time": "6 месяцев"}}}
