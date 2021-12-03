@@ -249,7 +249,6 @@ def user_profile():
             mode = "edit"
 
 
-
     return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=page_controller.get_users_profile_view(user_id), _is_current_user_admin=flask_login.current_user.is_admin(), _mode=mode)

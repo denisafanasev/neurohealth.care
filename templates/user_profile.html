@@ -71,10 +71,10 @@
                         <label class="form-label"><strong>Роль пользователя</strong></label>
                         <select type="text" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите роль пользователя.." {% endif %}>
                             {% if _mode!="view" %}
-                            <option>user</option>
-                            <option>superuser</option>
+                                <option>user</option>
+                                <option>superuser</option>
                             {% else %}
-                            <option> {{ _data['role'] }} </option>
+                                <option> {{ _data['role'] }} </option>
                             {% endif %}
                         </select>
                     </div>
@@ -83,14 +83,14 @@
                         <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
                         <select type="text" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
                             {% if _mode!="view" %}
-                                <option>5</option>
-                                <option>10</option>
-                                <option>15</option>
-                                <option>20</option>
-                                <option>25</option>
-                                <option>30</option>
+                                    <option>5</option>
+                                    <option>10</option>
+                                    <option>15</option>
+                                    <option>20</option>
+                                    <option>25</option>
+                                    <option>30</option>
                                 {% else %}
-                                <option> {{ _data['probationers_number'] }} </option>
+                                    <option> {{ _data['probationers_number'] }} </option>
                             {% endif %}
                         </select>
                     </div>
@@ -99,11 +99,11 @@
                         <label class="form-label"><strong>Срок предоставления доступа</strong></label>
                         <select type="text" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
                             {% if _mode!="view" %}
-                            <option>6 месяцев</option>
-                            <option>1 год</option>
-                            <option>неограничено</option>
+                                <option>6 месяцев</option>
+                                <option>1 год</option>
+                                <option>неограничено</option>
                             {% else %}
-                            <option> {{ _data['access_time'] }} </option>
+                                <option> {{ _data['access_time'] }} </option>
                             {% endif %}
                         </select>
                     </div>
