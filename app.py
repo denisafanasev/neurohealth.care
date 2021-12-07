@@ -130,13 +130,13 @@ def create_superuser():
         try:
 
             login_page_controller.create_superuser(login, name, password, password_2, email)
-            return render_template('create_superuser.html', view="create_superuser", _superuser_created=True, _error_message=error_message)
+            return render_template('create_superuser.html', _superuser_created=True, _error_message=error_message)
 
         except UserManagerException as e:
 
             error_message = str(e)
 
-    return render_template('create_superuser.html', view="create_superuser", _superuser_created=False, _error_message=error_message)
+    return render_template('create_superuser.html', _superuser_created=False, _error_message=error_message)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -171,7 +171,7 @@ def login():
         else:
             login_error = True
 
-    return render_template('login.html', view="login", _login_error=login_error)
+    return render_template('login.html', _login_error=login_error)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -208,7 +208,7 @@ def user_manager():
             #добавиим просто нового пользователя
     # page_controller.create_user("user", "user", "user", "user", "user@user.usr")
 
-    return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
+    return render_template('user_manager.html', _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_users_list_view(), _is_current_user_admin=flask_login.current_user.is_admin())
 
@@ -249,7 +249,7 @@ def user_profile():
             mode = "edit"
 
 
-    return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
+    return render_template('user_profile.html', _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=page_controller.get_users_profile_view(user_id), _is_current_user_admin=flask_login.current_user.is_admin(), _mode=mode)
 
@@ -269,7 +269,7 @@ def main_page():
 
     endpoint = request.endpoint
 
-    return render_template('main_page.html', view="main_page", _menu=mpc.get_main_menu(),
+    return render_template('main_page.html', _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
@@ -289,7 +289,7 @@ def corrections():
 
     endpoint = request.endpoint
 
-    return render_template('corrections.html', view="corrections", _menu=mpc.get_main_menu(),
+    return render_template('corrections.html', _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
@@ -308,7 +308,7 @@ def probes():
 
     endpoint = request.endpoint
 
-    return render_template('probes.html', view="probes", _menu=mpc.get_main_menu(),
+    return render_template('probes.html', _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
@@ -327,7 +327,7 @@ def results():
 
     endpoint = request.endpoint
 
-    return render_template('results.html', view="results", _menu=mpc.get_main_menu(),
+    return render_template('results.html', _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
@@ -346,7 +346,7 @@ def probationers():
 
     endpoint = request.endpoint
 
-    return render_template('probationers.html', view="probationers", _menu=mpc.get_main_menu(),
+    return render_template('probationers.html', _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
@@ -365,7 +365,7 @@ def settings():
 
     endpoint = request.endpoint
 
-    return render_template('settings.html', view="settings", _menu=mpc.get_main_menu(),
+    return render_template('settings.html', _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
