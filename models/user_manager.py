@@ -40,7 +40,7 @@ class UserManager():
         """        
 
         if (len(_password) < 4) or (len(_password)>20):
-            raise UserManagerException("неверная длинная пароля, укажите минимум 5 и максимум 20 символов")
+            return "неверная длинная пароля, укажите минимум 5 и максимум 20 символов"
     
     def validate_role(self, _role):
         """
@@ -54,7 +54,7 @@ class UserManager():
         """        
 
         if _role != "superuser" and _role != "user":
-            raise UserManagerException("Роль пользователя задана не верно")
+            return "Роль пользователя задана не верно"
     
     def validate_login(self, _login):
         """
@@ -68,7 +68,7 @@ class UserManager():
         """        
 
         if (len(_login) < 3) or (len(_login)>10):
-            raise UserManagerException("неверная длинная логина пользователя, укажите минимум 4 символа и максимум 10")
+            return "неверная длинная логина пользователя, укажите минимум 4 символа и максимум 10"
 
     def user_row_to_user(self, _data_row):
         """
@@ -107,7 +107,12 @@ class UserManager():
             _user_id   - Required  : id пользователя (Int)
         """
 
-        user = None
+        user = {}
+        user["login"] = "введите логин пользователя.."
+        user["name"] = "введите имя пользователя.."
+        user["email"] = "введите email пользователя.."
+        user["password"] = "введите пароль.."
+        user["password2"] = "введите повторно пароль.."
 
         data_store = DataStore("users")
 
@@ -215,7 +220,7 @@ class UserManager():
         
         return False
     
-    def create_user(self, _login, _name, _password, _password2, _email, _role, _access_time):
+    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _access_time):
         """
         Процедура создания нового пользователя в системе
 
@@ -230,40 +235,47 @@ class UserManager():
 
         Raises:
             UserManagerException: ошибка создания нового пользователя
-        """             
 
-        self.validate_login(_login)
-        self.validate_password(_password)
-        self.validate_role(_role)
+        Returns:
+            _error (List): список ошибок при создании пользователя
+        """
+        # проверяем логин, пароль и роль пользователя
+        _error = [self.validate_login(_login), self.validate_password(_password), self.validate_role(_role)]
+        _error = [i for i in _error if i is not None]
 
         if _password != _password2:
-            raise UserManagerException("введенные пароли не совпадают")
+            _error.append("введенные пароли не совпадают")
 
-        password = self.hash_password(_password)
-        login = _login.lower()
-        email = _email.lower()
-        role = _role
-        name = _name
+        # если ошибок нет, то записываем его в БД
+        if len(_error) == 0:
+            password = self.hash_password(_password)
+            login = _login.lower()
+            email = _email.lower()
+            role = _role
+            name = _name
+            access_time = _access_time
 
-        # создаем новую запись
-        data_store = DataStore("users")
+            # создаем новую запись
+            data_store = DataStore("users")
 
-        # проверим, что тпользователя с таким логином не существует
+            # проверим, что у пользователя с таким логином не существует
 
-        user = self.get_user_by_login(login)
+            user = self.get_user_by_login(login)
 
-        if user is not None:
-            raise UserManagerException("Пользователь с таким логином уже существует")
-        
-        # создаем новую запись
-        user = User(_login=login, _name=name, _email=email, _role=role)
+            if user is not None:
+                _error.append("Пользователь с таким логином уже существует")
 
-        user_data = {"login": user.login, "password": password, "email": user.email, 
-                     "role": user.role, "name": user.name, "created_date": user.created_date.strftime("%d/%m/%Y"), 
-                     "expires_date": user.expires_date.strftime("%d/%m/%Y"),
-                     "probationers_number": user.probationers_number, "access_time": user.access_time}
+            # создаем новую запись
+            user = User(_login=login, _name=name, _email=email, _role=role, _access_time = access_time)
 
-        data_store.add_row(user_data)
+            user_data = {"login": user.login, "password": password, "email": user.email,
+                         "role": user.role, "name": user.name, "created_date": user.created_date.strftime("%d/%m/%Y"),
+                         "expires_date": user.expires_date.strftime("%d/%m/%Y"),
+                         "probationers_number": user.probationers_number, "access_time": user.access_time}
+
+            data_store.add_row(user_data)
+
+        return _error
     
     def get_current_user_id(self):
         """

@@ -50,7 +50,7 @@ class UserManagerPageController():
             
         return users_list_view
 
-    def create_user(self, _login, _name, _password, _password2, _email):
+    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _access_time):
         """
         Создает в системе пользователя
 
@@ -60,9 +60,15 @@ class UserManagerPageController():
             _password (String): пароль пользователя
             _password2 (String): контрольный ввод пароля пользователя
             _email (String): email пользователя
+            _role (String): роль пользователя [user/superuser]
+            _probationers_number (int): количество доступных тестируемых
+            _access_time (String): срок доступа
+
+        Returns:
+            List: список ошибок при создании пользователя
 
         """        
 
-        # создаем суперпользователя
+
         user_manager_service = UserManagerService()
-        user_manager_service.create_user(_login, _name, _password, _password2, _email)
+        return user_manager_service.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number, _access_time)

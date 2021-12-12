@@ -33,84 +33,108 @@
         });
     });
 </script>
-
 <div class="container-fluid p-0">
 
     <div class="mb-3">
         <h1 class="h3 d-inline align-middle">Карточка пользователя</h1>
     </div>
 
-    <div class="row">
-        <div class="col-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">Учетные данные пользователя</h5>
-                    <div class="mb-2">
-                        <label class="form-label"><strong>Login</strong></label>
-                        <input type="text" class="form-control" {% if _mode=="view" %} readonly placeholder= "{{ _data['login'] }}" {% else %} placeholder="введите логин пользователя.." {% endif %}>
-                    </div>
+    <form id="add_user" name="add_user" method="post" enctype="multipart/form-data">
+        <div class="row">
+                <div class="col-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Учетные данные пользователя</h5>
+                            {% if _error %}
+                                {% for i_error in _error %}
+                                    {% if i_error %}
+                                        <div class="alert alert-danger alert-dismissible" role="alert">
+                                            <div class="alert-message">
+                                                <strong>Ошибка</strong> {{ i_error }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Login</strong></label>
+                                <input type="text" name="login" class="form-control" {% if _mode=="view" %} readonly {% elif _attempt %} value="{{ _data['login'] }}" {% endif %} placeholder= "{{ _data['login'] }}">
+                            </div>
 
-                    <div class="mb-2">
-                        <label class="form-label"><strong>Имя пользователя</strong></label>
-                        <input type="text" class="form-control"  {% if _mode=="view" %} readonly placeholder= "{{ _data['name'] }}" {% else %} placeholder="введите имя пользователя.." {% endif %}>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label"><strong>Email</strong></label>
-                        <input type="text" class="form-control" {% if _mode=="view" %} readonly placeholder= "{{ _data['email'] }}" {% else %} placeholder="email" {% endif %}>
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Имя пользователя</strong></label>
+                                <input type="text" name="name_user" class="form-control"  {% if _mode=="view" %} readonly {% elif _attempt %} value="{{ _data['name'] }}" {% endif %} placeholder= "{{ _data['name'] }}">
+                            </div>
+                            {% if _mode!="view" %}
+                                <div class="mb-2">
+                                    <label class="form-label"><strong>Пароль</strong></label>
+                                    <input type="password" name="password" class="form-control" {% if _attempt %} value="{{ _data['password'] }}" {% else %} placeholder="{{ _data['password'] }}" {% endif %}>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label"><strong>Повтор пароля</strong></label>
+                                    <input type="password" name="password2" class="form-control" {% if _attempt %} value="{{ _data['password2'] }}" {% else %}  placeholder="{{ _data['password2'] }}" {% endif %}>
+                                </div>
+                            {% endif %}
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Email</strong></label>
+                                <input type="email" name="email" class="form-control" {% if _mode=="view" %} readonly {% elif _attempt %} value="{{ _data['email'] }}" {% endif %} placeholder= "{{ _data['email'] }}">
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="col-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">Параметры доступа</h5>
-        
-                    <div class="mb-2">
-                        <label class="form-label"><strong>Роль пользователя</strong></label>
-                        <select type="text" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите роль пользователя.." {% endif %}>
-                            {% if _mode!="view" %}
-                                <option>user</option>
-                                <option>superuser</option>
-                            {% else %}
-                                <option> {{ _data['role'] }} </option>
-                            {% endif %}
-                        </select>
-                    </div>
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Параметры доступа</h5>
 
-                    <div class="mb-2">
-                        <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
-                        <select type="text" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
-                            {% if _mode!="view" %}
-                                    <option>5</option>
-                                    <option>10</option>
-                                    <option>15</option>
-                                    <option>20</option>
-                                    <option>25</option>
-                                    <option>30</option>
-                                {% else %}
-                                    <option> {{ _data['probationers_number'] }} </option>
-                            {% endif %}
-                        </select>
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Роль пользователя</strong></label>
+                                <select type="text" name="role" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите роль пользователя.." {% endif %}>
+                                    {% if _mode!="view" %}
+                                        <option>user</option>
+                                        <option>superuser</option>
+                                    {% else %}
+                                        <option> {{ _data['role'] }} </option>
+                                    {% endif %}
+                                </select>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
+                                <select type="text" name="probationers_number" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
+                                    {% if _mode!="view" %}
+                                            <option>5</option>
+                                            <option>10</option>
+                                            <option>15</option>
+                                            <option>20</option>
+                                            <option>25</option>
+                                            <option>30</option>
+                                        {% else %}
+                                            <option> {{ _data['probationers_number'] }} </option>
+                                    {% endif %}
+                                </select>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Срок предоставления доступа</strong></label>
+                                <select type="text" name="access_time" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
+                                    {% if _mode!="view" %}
+                                        <option>6 месяцев</option>
+                                        <option>1 год</option>
+                                        <option>неограничено</option>
+                                    {% else %}
+                                        <option> {{ _data['access_time'] }} </option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
                     </div>
-        
-                    <div class="mb-2">
-                        <label class="form-label"><strong>Срок предоставления доступа</strong></label>
-                        <select type="text" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
-                            {% if _mode!="view" %}
-                                <option>6 месяцев</option>
-                                <option>1 год</option>
-                                <option>неограничено</option>
-                            {% else %}
-                                <option> {{ _data['access_time'] }} </option>
-                            {% endif %}
-                        </select>
+                    <div align="center">
+                        <button type="submit" class="btn btn-primary ">{% if _mode!="view" %}Добавить пользователя{% else %}Редактировать{% endif %}</button>
                     </div>
                 </div>
-            </div>
         </div>
-
-    </div>
+    </form>
 </div>
 {% endblock %}
