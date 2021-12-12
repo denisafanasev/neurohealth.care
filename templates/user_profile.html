@@ -90,7 +90,7 @@
                             <div class="mb-2">
                                 <label class="form-label"><strong>Роль пользователя</strong></label>
                                 <select type="text" name="role" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите роль пользователя.." {% endif %}>
-                                    {% if _mode=="new" %}
+                                    {% if _mode=="new" and not _attempt %}
                                         <option>user</option>
                                         <option>superuser</option>
                                     {% else %}
@@ -105,7 +105,7 @@
                             <div class="mb-2">
                                 <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
                                 <select type="text" name="probationers_number" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
-                                    {% if _mode!="view" %}
+                                    {% if _mode=="new" and not _attempt %}
                                             <option>5</option>
                                             <option>10</option>
                                             <option>15</option>
@@ -114,26 +114,45 @@
                                             <option>30</option>
                                         {% else %}
                                             <option> {{ _data['probationers_number'] }} </option>
+                                            {% for i in range(1, 7) %}
+                                                {% if i*5 != _data['probationers_number'] %}
+                                                    <option> {{ i*5 }} </option>
+                                                {% endif %}
+                                            {% endfor %}
                                     {% endif %}
                                 </select>
                             </div>
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Срок предоставления доступа</strong></label>
-                                <select type="text" name="access_time" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
-                                    {% if _mode!="view" %}
+                                <select type="text" name="access_time" class="form-control" {% if _mode=="view" %} disabled {% endif %}>
+                                    {% if _mode=="new" and not _attempt %}
                                         <option>6 месяцев</option>
                                         <option>1 год</option>
                                         <option>неограничено</option>
                                     {% else %}
                                         <option> {{ _data['access_time'] }} </option>
+                                        {% if _data['access_time']=='неограничено' %}
+                                            <option>6 месяцев</option>
+                                            <option>1 год</option>
+                                        {% elif _data['access_time']=='6 месяцев' %}
+                                            <option>1 год</option>
+                                            <option>неограничено</option>
+                                        {% else %}
+                                            <option>6 месяцев</option>
+                                            <option>неограничено</option>
+                                        {% endif %}
                                     {% endif %}
                                 </select>
                             </div>
                         </div>
                     </div>
                     <div align="center">
-                        <button type="submit" class="btn btn-primary ">{% if _mode!="view" %}Добавить пользователя{% else %}Редактировать{% endif %}</button>
+                        <button type="submit" class="btn btn-primary ">{% if _mode=="new" %}Добавить пользователя
+                                                                        {% elif _mode=="edit" %}Сохранить
+                                                                        {% else %}Редактировать
+                                                                        {% endif %}
+                        </button>
                     </div>
                 </div>
         </div>
