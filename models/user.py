@@ -22,7 +22,7 @@ class User(UserMixin):
     expires_date = ""
     probationers_number = DEFAULT_PROBATIONS_NUMBER
 
-    def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _created_date = "", _expires_date = "", _probationers_number = DEFAULT_PROBATIONS_NUMBER):
+    def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _created_date = "", _expires_date = "", _probationers_number = DEFAULT_PROBATIONS_NUMBER, _access_time = DEFAULT_EXPIRATION_MONTHS):
         """
         Конструктор класса
 
@@ -35,6 +35,7 @@ class User(UserMixin):
             _created_date (date, optional): Дата создания пользователя в системе. Defaults to ""
             _expires_date (date, optional): Дата до которой пользователь активен. Defaults to "".
             _probationers_number (int, optional): Количество тестируемых, доступное пользователю. Defaults to DEFAULT_PROBATIONS_NUMBER
+            _access_time (int, optional): Время доступа к системе. Defaults to DEFAULT_EXPIRATION_MONTHS
         """        
 
         self.user_id = _user_id
@@ -42,6 +43,8 @@ class User(UserMixin):
         self.name = _name
         self.email = _email
         self.role = _role
+        self.probationers_number = _probationers_number
+        self.access_time = _access_time
 
         # если дата создания не указана, то будем считать что пользователь создан сегодня
         if _created_date == "":

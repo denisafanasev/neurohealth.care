@@ -60,6 +60,8 @@ login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
 
+attempt = False
+
 
 @app.context_processor
 def inject_global_context():
@@ -227,20 +229,16 @@ def user_profile():
     user_id = request.args.get('user_id')
 
     mode = "view"
+    global attempt
 
-    if request.method == 'POST':
-        action = request.form['action']
-        if action == 'add_user':
+    error = []
 
-            #добавиим просто нового пользователя
-            pass
-    
     if user_id == None:
         # если пользователь не задан, то открываем страницу в режиме создания нового пользователя
         # страница доступна только администратору
         if not flask_login.current_user.is_admin():
             return redirect("main_page")
-        
+
         mode = "new"
         user_id = ""
 
@@ -248,10 +246,42 @@ def user_profile():
         if not flask_login.current_user.is_admin():
             mode = "edit"
 
+    data = page_controller.get_users_profile_view(user_id)
+
+    if request.method == 'POST':
+        if mode == "new":
+            # добавляем нового пользователя и получаем список с ошибками
+            # если их нет, то получаем пустой список
+            attempt = True
+            manager_page_controller = UserManagerPageController()
+            user = {}
+            user["login"] = request.form["login"]
+            user["name"] = request.form["name_user"]
+            user["password"] = request.form["password"]
+            user["password2"] = request.form["password2"]
+            user["email"] = request.form["email"]
+            user["role"] = request.form["role"]
+            user["probationers_number"] = int(request.form["probationers_number"])
+            user["access_time"] = request.form["access_time"]
+
+            error = manager_page_controller.create_user(user["login"], user["name"], user["password"], user["password2"], user["email"],
+                                                       user["role"], user["probationers_number"], user["access_time"])
+
+            if len(error) != 0:
+                mode = "edit"
+            else:
+                mode = "view"
+                attempt = False
+
+            data = user
+
+
+
 
     return render_template('user_profile.html', _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=page_controller.get_users_profile_view(user_id), _is_current_user_admin=flask_login.current_user.is_admin(), _mode=mode)
+                           _data=data, _is_current_user_admin=flask_login.current_user.is_admin(),
+                           _mode=mode, _error=error, _attempt=attempt)
 
 
 @app.route('/main_page', methods=['GET', 'POST'])

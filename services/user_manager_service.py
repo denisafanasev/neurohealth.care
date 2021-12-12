@@ -25,7 +25,7 @@ class UserManagerService():
 
         return users
     
-    def create_user(self, _login, _name, _password, _password2, _email):
+    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _access_time):
         """
         Создает в системе суперпользователя
 
@@ -35,9 +35,15 @@ class UserManagerService():
             _password (String): пароль пользователя
             _password2 (String): контрольный ввод пароля пользователя
             _email (String): email пользователя
+            _role (String): роль пользователя [user/superuser]
+            _probationers_number (int): количество доступных тестируемых
+            _access_time (String): срок доступа
+
+        Returns:
+            List: список ошибок при создании пользователя
 
         """
 
         user_manager = UserManager()
 
-        user_manager.create_user(_login, _name, _password, _password2, _email, "user")
+        return user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number, _access_time)
