@@ -57,7 +57,7 @@ class DataStore():
 
     def get_rows_count(self, _filter=""):
         """
-        Возвращается поличество записей, которые соответствуют заданному критерию из заданной таблицы
+        Возвращается количество записей, которые соответствуют заданному критерию из заданной таблицы
         @params:
             _filter   - Optional  : срока с заданным фильтром (String)
         """
@@ -82,3 +82,15 @@ class DataStore():
         result = self.data_store.insert(_data)
 
         return result
+
+    def change_row(self, _data):
+
+        """
+        Обновить запись в хранилище
+
+        Args:
+            _data (Dict): структура данных для записи
+        """
+
+        self.data_store.update_multiple([({"name":_data["name"], "email":_data["email"], "role":_data["role"],
+                                          "probationers_number":_data["probationers_number"], "access_time":_data["access_time"]}, where("login") == _data["login"])])

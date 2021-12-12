@@ -72,3 +72,22 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
         return user_manager_service.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number, _access_time)
+
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time):
+        """
+        Обновляет информацию о пользователе и возвращает ее
+
+        Args:
+            _login (String): логин пользователя
+            _name (String): имя пользователя
+            _email (String): email пользователя
+            _role (String): роль пользователя [user/superuser]
+            _access_time (String): срок доступа
+
+        Returns:
+            Dict: словарь с информацией о пользователе
+        """
+
+        user_manager_service = UserManagerService()
+
+        return user_manager_service.change_user(_login, _name, _email, _role, _probationers_number, _access_time)
