@@ -266,7 +266,7 @@ class UserManager():
                 _error.append("Пользователь с таким логином уже существует")
 
             # создаем новую запись
-            user = User(_login=login, _name=name, _email=email, _role=role, _access_time = access_time)
+            user = User(_login=login, _name=name, _email=email, _role=role, _access_time=access_time)
 
             user_data = {"login": user.login, "password": password, "email": user.email,
                          "role": user.role, "name": user.name, "created_date": user.created_date.strftime("%d/%m/%Y"),
@@ -308,4 +308,30 @@ class UserManager():
         user_role = user.role
 
         return user_role
+
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time):
+        """
+        Обновляет информацию о пользователе и возвращает ее
+
+        Args:
+            _login (String): логин пользователя
+            _name (String): имя пользователя
+            _email (String): email пользователя
+            _role (String): роль пользователя [user/superuser]
+            _access_time (String): срок доступа
+
+        Returns:
+            Dict: словарь с информацией о пользователе
+        """
+
+        data_store = DataStore("users")
+        user_data = {"login": _login, "email": _email, "role": _role, "name": _name,
+                     "probationers_number": _probationers_number, "access_time": _access_time}
+
+        data_store.change_row(user_data)
+
+        user = self.get_user_by_login(_login)
+
+        return user
+
 

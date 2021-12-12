@@ -58,14 +58,13 @@
                             {% endif %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Login</strong></label>
-                                <input type="text" name="login" class="form-control" {% if _mode=="view" %} readonly {% elif _attempt %} value="{{ _data['login'] }}" {% endif %} placeholder= "{{ _data['login'] }}">
+                                <input type="text" name="login" class="form-control" {% if _mode!="new" %} readonly {% endif %} {% if _attempt %} value="{{ _data['login'] }}" {% else %} placeholder= "{{ _data['login'] }}" {% endif %}>
                             </div>
-
                             <div class="mb-2">
                                 <label class="form-label"><strong>Имя пользователя</strong></label>
-                                <input type="text" name="name_user" class="form-control"  {% if _mode=="view" %} readonly {% elif _attempt %} value="{{ _data['name'] }}" {% endif %} placeholder= "{{ _data['name'] }}">
+                                <input type="text" name="name_user" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _attempt %} value="{{ _data['name'] }}" {% else %} placeholder= "{{ _data['name'] }}" {% endif %}>
                             </div>
-                            {% if _mode!="view" %}
+                            {% if _mode=="new" %}
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Пароль</strong></label>
                                     <input type="password" name="password" class="form-control" {% if _attempt %} value="{{ _data['password'] }}" {% else %} placeholder="{{ _data['password'] }}" {% endif %}>
@@ -77,7 +76,7 @@
                             {% endif %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Email</strong></label>
-                                <input type="email" name="email" class="form-control" {% if _mode=="view" %} readonly {% elif _attempt %} value="{{ _data['email'] }}" {% endif %} placeholder= "{{ _data['email'] }}">
+                                <input type="email" name="email" class="form-control" {% if _mode=="view" %} readonly {% endif %} {% if _attempt %} value="{{ _data['email'] }}" {% else %} placeholder= "{{ _data['email'] }}" {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -91,11 +90,14 @@
                             <div class="mb-2">
                                 <label class="form-label"><strong>Роль пользователя</strong></label>
                                 <select type="text" name="role" class="form-control" {% if _mode=="view" %} disabled {% else %} placeholder="выберите роль пользователя.." {% endif %}>
-                                    {% if _mode!="view" %}
+                                    {% if _mode=="new" %}
                                         <option>user</option>
                                         <option>superuser</option>
                                     {% else %}
                                         <option> {{ _data['role'] }} </option>
+                                        {% if _data['role'] == "user" %} <option>superuser</option>>
+                                        {% else %} <option>user</option>
+                                        {% endif %}
                                     {% endif %}
                                 </select>
                             </div>

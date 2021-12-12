@@ -228,8 +228,11 @@ def user_profile():
     endpoint = "user_manager"
     user_id = request.args.get('user_id')
 
-    mode = "view"
     global attempt
+    if not attempt:
+        mode = "view"
+    else:
+        mode = "edit"
 
     error = []
 
@@ -267,13 +270,31 @@ def user_profile():
             error = manager_page_controller.create_user(user["login"], user["name"], user["password"], user["password2"], user["email"],
                                                        user["role"], user["probationers_number"], user["access_time"])
 
-            if len(error) != 0:
-                mode = "edit"
-            else:
+            if len(error) == 0:
                 mode = "view"
                 attempt = False
 
             data = user
+
+        elif mode == "view":
+            attempt = True
+            mode = "edit"
+
+        elif mode == "edit":
+            manager_page_controller = UserManagerPageController()
+            user = {}
+            user["login"] = request.form["login"]
+            user["name"] = request.form["name_user"]
+            user["email"] = request.form["email"]
+            user["role"] = request.form["role"]
+            user["probationers_number"] = int(request.form["probationers_number"])
+            user["access_time"] = request.form["access_time"]
+
+            data = manager_page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
+                                                user["probationers_number"], user["access_time"])
+            mode = "view"
+            attempt = False
+
 
 
 
