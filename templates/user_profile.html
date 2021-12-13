@@ -45,38 +45,46 @@
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title">Учетные данные пользователя</h5>
-                            {% if _error %}
-                                {% for i_error in _error %}
-                                    {% if i_error %}
-                                        <div class="alert alert-danger alert-dismissible" role="alert">
-                                            <div class="alert-message">
-                                                <strong>Ошибка</strong> {{ i_error }}
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
+                            {% if _error=='Save' %}
+                                <div class="alert alert-success alert-dismissible" role="alert">
+                                    <div class="alert-message">
+                                        <strong>Успешно</strong> Изменения сохранены!
+                                    </div>
+                                </div>
+                            {% elif _error=='Successful' %}
+                                <div class="alert alert-success alert-dismissible" role="alert">
+                                    <div class="alert-message">
+                                        <strong>Успешно</strong> Пользователь сохранён!
+                                    </div>
+                                </div>
+                            {% elif _error %}
+                                <div class="alert alert-danger alert-dismissible" role="alert">
+                                    <div class="alert-message">
+                                        <strong>Ошибка</strong> {{ _error }}
+                                    </div>
+                                </div>
                             {% endif %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Login</strong></label>
-                                <input type="text" name="login" class="form-control" {% if _mode!="new" %} readonly {% endif %} {% if _attempt %} value="{{ _data['login'] }}" {% else %} placeholder= "{{ _data['login'] }}" {% endif %}>
+                                <input type="text" name="login" class="form-control" {% if _mode!="new"  %} readonly {% endif %} {% if _data['login']!='' and _attempt %} value="{{ _data['login'] }}" {% else %} placeholder= "{{ _data_begin['login'] }}" {% endif %}>
                             </div>
                             <div class="mb-2">
                                 <label class="form-label"><strong>Имя пользователя</strong></label>
-                                <input type="text" name="name_user" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _attempt %} value="{{ _data['name'] }}" {% else %} placeholder= "{{ _data['name'] }}" {% endif %}>
+                                <input type="text" name="name_user" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _data['name']!='' and _attempt %} value="{{ _data['name'] }}" {% else %} placeholder= "{{ _data_begin['name'] }}" {% endif %}>
                             </div>
                             {% if _mode=="new" %}
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Пароль</strong></label>
-                                    <input type="password" name="password" class="form-control" {% if _attempt %} value="{{ _data['password'] }}" {% else %} placeholder="{{ _data['password'] }}" {% endif %}>
+                                    <input type="password" name="password" class="form-control" {% if _data['password']!='' and _attempt %} value="{{ _data['password'] }}" {% else %} placeholder="{{ _data_begin['password'] }}" {% endif %}>
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Повтор пароля</strong></label>
-                                    <input type="password" name="password2" class="form-control" {% if _attempt %} value="{{ _data['password2'] }}" {% else %}  placeholder="{{ _data['password2'] }}" {% endif %}>
+                                    <input type="password" name="password2" class="form-control" {% if _data['password2']!='' and _attempt %} value="{{ _data['password2'] }}" {% else %}  placeholder="{{ _data_begin['password2'] }}" {% endif %}>
                                 </div>
                             {% endif %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Email</strong></label>
-                                <input type="email" name="email" class="form-control" {% if _mode=="view" %} readonly {% endif %} {% if _attempt %} value="{{ _data['email'] }}" {% else %} placeholder= "{{ _data['email'] }}" {% endif %}>
+                                <input type="email" name="email" class="form-control" {% if _mode=="view" %} readonly {% endif %} {% if _data['email']!='' and _attempt %} value="{{ _data['email'] }}" {% else %} placeholder= "{{ _data_begin['email'] }}" {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -147,8 +155,8 @@
                             </div>
                         </div>
                     </div>
-                    <div align="center">
-                        <button type="submit" class="btn btn-primary ">{% if _mode!="view" %}Добавить пользователя{% else %}Редактировать{% endif %}</button>
+                    <div align="left">
+                        <button type="submit" class="btn btn-primary ">{% if _mode=="new" %}Добавить пользователя{% elif _mode=="edit" %}Сохранить{% else %}Редактировать{% endif %}</button>
                     </div>
                 </div>
         </div>
