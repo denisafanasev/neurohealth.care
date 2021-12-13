@@ -229,7 +229,7 @@ def user_profile():
     user_id = request.args.get('user_id')
 
     global attempt
-    if not attempt:
+    if not (attempt and user_id is not None):
         mode = "view"
     else:
         mode = "edit"
@@ -273,7 +273,6 @@ def user_profile():
 
             if error is None:
                 mode = "view"
-                attempt = False
                 error = "Successful"
 
             data = user
@@ -297,7 +296,6 @@ def user_profile():
             mode = "view"
             attempt = False
             error = "Save"
-
 
 
 
