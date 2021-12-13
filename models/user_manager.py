@@ -332,7 +332,6 @@ class UserManager():
                      "probationers_number": _probationers_number, "access_time": _access_time}
 
         data_store.change_row(user_data)
-
         user = self.get_user_by_login(_login)
 
         return user

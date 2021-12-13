@@ -68,8 +68,7 @@ class UserManagerPageController():
         Returns:
             List: список ошибок при создании пользователя
 
-        """        
-
+        """
 
         user_manager_service = UserManagerService()
         try:

@@ -276,10 +276,6 @@ def user_profile():
                 attempt = False
                 error = "Successful"
 
-            # for i_keys, i_values in user.items():
-            #     if i_values == "":
-            #         user[i_keys] = data_begin[i_keys]
-
             data = user
 
         elif mode == "view":
