@@ -53,11 +53,14 @@ class User(UserMixin):
             self.created_date = _created_date
         
         # если дата экспирации не указана, то будем вычислять дату по умолчанию
-        if _expires_date == "":
+        if _access_time == "6 месяцев":
             self.expires_date = self.created_date + relativedelta(months=+DEFAULT_EXPIRATION_MONTHS)
 
+        elif _access_time == "1 год":
+            self.expires_date = self.created_date + relativedelta(years=+1)
+
         else:
-            self.expires_date = _expires_date
+            self.expires_date = "неограниченно"
 
         self.probationers_number = _probationers_number
     

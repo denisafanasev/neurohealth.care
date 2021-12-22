@@ -92,7 +92,10 @@ class UserManager():
                 user.created_date = datetime.strptime(_data_row['created_date'], '%d/%m/%Y')
 
         if _data_row.get('expires_date') is not None:
+            if not _data_row.get('expires_date') == 'неограниченно':
                 user.expires_date = datetime.strptime(_data_row['expires_date'], '%d/%m/%Y')
+            else:
+                user.expires_date = _data_row['expires_date']
 
         if _data_row.get('access_time') is not None:
                 user.access_time = _data_row['access_time']
@@ -270,11 +273,16 @@ class UserManager():
             raise UserManagerException("Пользователь с таким логином уже существует")
 
         # создаем новую запись
-        user = User(_login=login, _name=name, _email=email, _role=role, _access_time=access_time)
+        user = User(_login=login, _name=name, _email=email, _role=role, _access_time=access_time, _probationers_number=_probationers_number)
+
+        if not user.expires_date == "неограниченно":
+            expires_date = user.expires_date.strftime("%d/%m/%Y")
+        else:
+            expires_date = user.expires_date
 
         user_data = {"login": user.login, "password": password, "email": user.email,
                      "role": user.role, "name": user.name, "created_date": user.created_date.strftime("%d/%m/%Y"),
-                     "expires_date": user.expires_date.strftime("%d/%m/%Y"),
+                     "expires_date": expires_date,
                      "probationers_number": user.probationers_number, "access_time": user.access_time}
 
         data_store.add_row(user_data)
@@ -312,7 +320,7 @@ class UserManager():
 
         return user_role
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time):
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time, _created_date):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -327,9 +335,17 @@ class UserManager():
             Dict: словарь с информацией о пользователе
         """
 
+        user = User(_login=_login, _name=_name, _email=_email, _role=_role, _access_time=_access_time, _created_date=_created_date,
+                    _probationers_number=_probationers_number)
+
+        if not user.expires_date == "неограниченно":
+            expires_date = user.expires_date.strftime("%d/%m/%Y")
+        else:
+            expires_date = user.expires_date
+
         data_store = DataStore("users")
-        user_data = {"login": _login, "email": _email, "role": _role, "name": _name,
-                     "probationers_number": _probationers_number, "access_time": _access_time}
+        user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
+                     "probationers_number": user.probationers_number, "access_time": user.access_time, "expires_date": expires_date}
 
         data_store.change_row(user_data)
         user = self.get_user_by_login(_login)
@@ -337,3 +353,13 @@ class UserManager():
         return user
 
 
+    def discharge_password(self, _login, _password, _password2):
+        self.validate_password(_password)
+        if _password != _password2:
+            raise UserManagerException("введенные пароли не совпадают")
+
+        password = self.hash_password(_password)
+        data_store = DataStore("users")
+        user_data = {"login": _login, "password": password}
+
+        data_store.discharge_password(user_data)

@@ -193,7 +193,8 @@ def user_manager():
     Returns:
         
     """    
-
+    global attempt
+    attempt = False
     page_controller = UserManagerPageController()
     mpc = MainMenuPageController()
 
@@ -232,7 +233,10 @@ def user_profile():
     if not (attempt and user_id is not None):
         mode = "view"
     else:
-        mode = "edit"
+        if attempt and request.form["button"] == "discharge":
+            mode = "discharge"
+        else:
+            mode = "edit"
 
     error = None
 
@@ -253,51 +257,71 @@ def user_profile():
     data = {}
 
     if request.method == 'POST':
-        if mode == "new":
-            # добавляем нового пользователя и получаем список с ошибками
-            # если их нет, то получаем пустой список
-            attempt = True
-            manager_page_controller = UserManagerPageController()
-            user = {}
-            user["login"] = request.form["login"]
-            user["name"] = request.form["name_user"]
-            user["password"] = request.form["password"]
-            user["password2"] = request.form["password2"]
-            user["email"] = request.form["email"]
-            user["role"] = request.form["role"]
-            user["probationers_number"] = int(request.form["probationers_number"])
-            user["access_time"] = request.form["access_time"]
+        if request.form["button"] == "add_save_edit":
+            if mode == "new":
+                # добавляем нового пользователя и получаем список с ошибками
+                # если их нет, то получаем пустой список
+                attempt = True
+                manager_page_controller = UserManagerPageController()
+                user = {}
+                user["login"] = request.form["login"]
+                user["name"] = request.form["name_user"]
+                user["password"] = request.form["password"]
+                user["password2"] = request.form["password2"]
+                user["email"] = request.form["email"]
+                user["role"] = request.form["role"]
+                user["probationers_number"] = int(request.form["probationers_number"])
+                user["access_time"] = request.form["access_time"]
 
-            error = manager_page_controller.create_user(user["login"], user["name"], user["password"], user["password2"], user["email"],
-                                                       user["role"], user["probationers_number"], user["access_time"])
+                error = manager_page_controller.create_user(user["login"], user["name"], user["password"], user["password2"], user["email"],
+                                                           user["role"], user["probationers_number"], user["access_time"])
 
-            if error is None:
+                if error is None:
+                    mode = "view"
+                    error = "Successful"
+                    attempt = False
+
+                data = user
+
+            elif mode == "view":
+                attempt = True
+                mode = "edit"
+
+            elif mode == "edit":
+                manager_page_controller = UserManagerPageController()
+                user = {}
+                user["login"] = request.form["login"]
+                user["name"] = request.form["name_user"]
+                user["email"] = request.form["email"]
+                user["role"] = request.form["role"]
+                user["probationers_number"] = int(request.form["probationers_number"])
+                user["access_time"] = request.form["access_time"]
+                user["created_date"] = data_begin.created_date
+
+                data = manager_page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
+                                                    user["probationers_number"], user["access_time"], user["created_date"])
                 mode = "view"
-                error = "Successful"
+                attempt = False
+                error = "Save"
 
-            data = user
+        elif request.form["button"] == "discharge":
+            if mode == "discharge" and attempt:
+                manager_page_controller = UserManagerPageController()
+                user = {}
+                user["login"] = request.form["login"]
+                user["password"] = request.form["password"]
+                user["password2"] = request.form["password2"]
 
-        elif mode == "view":
-            attempt = True
-            mode = "edit"
+                error = manager_page_controller.discharge_password(user["login"], user["password"], user["password2"])
 
-        elif mode == "edit":
-            manager_page_controller = UserManagerPageController()
-            user = {}
-            user["login"] = request.form["login"]
-            user["name"] = request.form["name_user"]
-            user["email"] = request.form["email"]
-            user["role"] = request.form["role"]
-            user["probationers_number"] = int(request.form["probationers_number"])
-            user["access_time"] = request.form["access_time"]
+                if error is None:
+                    mode = "view"
+                    error = "Successful"
+                    attempt = False
 
-            data = manager_page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
-                                                user["probationers_number"], user["access_time"])
-            mode = "view"
-            attempt = False
-            error = "Save"
-
-
+            else:
+                attempt = True
+                mode = "discharge"
 
     if data == {}:
         data = data_begin
