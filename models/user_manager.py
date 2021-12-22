@@ -40,7 +40,7 @@ class UserManager():
         """        
 
         if (len(_password) < 4) or (len(_password)>20):
-            raise UserManagerException("неверная длинная пароля, укажите минимум 5 и максимум 20 символов")
+            return "неверная длинная пароля, укажите минимум 5 и максимум 20 символов"
     
     def validate_role(self, _role):
         """
@@ -54,7 +54,7 @@ class UserManager():
         """        
 
         if _role != "superuser" and _role != "user":
-            raise UserManagerException("Роль пользователя задана не верно")
+            return "Роль пользователя задана не верно"
     
     def validate_login(self, _login):
         """
@@ -68,7 +68,7 @@ class UserManager():
         """        
 
         if (len(_login) < 3) or (len(_login)>10):
-            raise UserManagerException("неверная длинная логина пользователя, укажите минимум 4 символа и максимум 10")
+            return "неверная длинная логина пользователя, укажите минимум 4 символа и максимум 10"
 
     def user_row_to_user(self, _data_row):
         """
@@ -113,9 +113,6 @@ class UserManager():
         user["email"] = "введите email пользователя.."
         user["password"] = "введите пароль.."
         user["password2"] = "введите повторно пароль.."
-        user["role"] = "user"
-        user["probationers_number"] = 5
-        user["access_time"] = "6 месяцев"
 
         data_store = DataStore("users")
 
@@ -243,42 +240,42 @@ class UserManager():
             _error (List): список ошибок при создании пользователя
         """
         # проверяем логин, пароль и роль пользователя
-        self.validate_login(_login)
-        self.validate_password(_password)
-        self.validate_role(_role)
+        _error = [self.validate_login(_login), self.validate_password(_password), self.validate_role(_role)]
+        _error = [i for i in _error if i is not None]
 
         if _password != _password2:
-            raise UserManagerException("введенные пароли не совпадают")
+            _error.append("введенные пароли не совпадают")
 
         # если ошибок нет, то записываем его в БД
+        if len(_error) == 0:
+            password = self.hash_password(_password)
+            login = _login.lower()
+            email = _email.lower()
+            role = _role
+            name = _name
+            access_time = _access_time
 
-        password = self.hash_password(_password)
-        login = _login.lower()
-        email = _email.lower()
-        role = _role
-        name = _name
-        access_time = _access_time
+            # создаем новую запись
+            data_store = DataStore("users")
 
-        # создаем новую запись
-        data_store = DataStore("users")
+            # проверим, что у пользователя с таким логином не существует
 
-        # проверим, что у пользователя с таким логином не существует
+            user = self.get_user_by_login(login)
 
-        user = self.get_user_by_login(login)
+            if user is not None:
+                _error.append("Пользователь с таким логином уже существует")
 
-        if user is not None:
-            raise UserManagerException("Пользователь с таким логином уже существует")
+            # создаем новую запись
+            user = User(_login=login, _name=name, _email=email, _role=role, _access_time=access_time)
 
-        # создаем новую запись
-        user = User(_login=login, _name=name, _email=email, _role=role, _access_time=access_time)
+            user_data = {"login": user.login, "password": password, "email": user.email,
+                         "role": user.role, "name": user.name, "created_date": user.created_date.strftime("%d/%m/%Y"),
+                         "expires_date": user.expires_date.strftime("%d/%m/%Y"),
+                         "probationers_number": user.probationers_number, "access_time": user.access_time}
 
-        user_data = {"login": user.login, "password": password, "email": user.email,
-                     "role": user.role, "name": user.name, "created_date": user.created_date.strftime("%d/%m/%Y"),
-                     "expires_date": user.expires_date.strftime("%d/%m/%Y"),
-                     "probationers_number": user.probationers_number, "access_time": user.access_time}
+            data_store.add_row(user_data)
 
-        data_store.add_row(user_data)
-
+        return _error
     
     def get_current_user_id(self):
         """
@@ -332,6 +329,7 @@ class UserManager():
                      "probationers_number": _probationers_number, "access_time": _access_time}
 
         data_store.change_row(user_data)
+
         user = self.get_user_by_login(_login)
 
         return user

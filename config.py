@@ -1,4 +1,4 @@
-VERSION = "0.0.7"
+VERSION = "0.0.6"
 APP_NAME = "CleverHEALTH"
 ENVIRONMENT = "production"
 
