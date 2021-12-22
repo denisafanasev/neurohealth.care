@@ -229,12 +229,12 @@ def user_profile():
     user_id = request.args.get('user_id')
 
     global attempt
-    if not (attempt and user_id is not None):
+    if not attempt:
         mode = "view"
     else:
         mode = "edit"
 
-    error = None
+    error = []
 
     if user_id == None:
         # если пользователь не задан, то открываем страницу в режиме создания нового пользователя
@@ -249,8 +249,7 @@ def user_profile():
         if not flask_login.current_user.is_admin():
             mode = "edit"
 
-    data_begin = page_controller.get_users_profile_view(user_id)
-    data = {}
+    data = page_controller.get_users_profile_view(user_id)
 
     if request.method == 'POST':
         if mode == "new":
@@ -271,9 +270,9 @@ def user_profile():
             error = manager_page_controller.create_user(user["login"], user["name"], user["password"], user["password2"], user["email"],
                                                        user["role"], user["probationers_number"], user["access_time"])
 
-            if error is None:
+            if len(error) == 0:
                 mode = "view"
-                error = "Successful"
+                attempt = False
 
             data = user
 
@@ -295,16 +294,14 @@ def user_profile():
                                                 user["probationers_number"], user["access_time"])
             mode = "view"
             attempt = False
-            error = "Save"
 
 
 
-    if data == {}:
-        data = data_begin
+
 
     return render_template('user_profile.html', _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=data, _data_begin=data_begin, _is_current_user_admin=flask_login.current_user.is_admin(),
+                           _data=data, _is_current_user_admin=flask_login.current_user.is_admin(),
                            _mode=mode, _error=error, _attempt=attempt)
 
 
