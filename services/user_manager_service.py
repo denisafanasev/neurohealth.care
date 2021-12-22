@@ -45,8 +45,7 @@ class UserManagerService():
         """
 
         user_manager = UserManager()
-
-        return user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number, _access_time)
+        user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number, _access_time)
 
     def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time):
         """

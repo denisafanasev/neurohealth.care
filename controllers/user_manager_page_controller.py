@@ -1,5 +1,6 @@
 import utils.ada as ada
 from services.user_manager_service import UserManagerService
+from error import UserManagerException
 
 
 class UserManagerPageController():
@@ -67,11 +68,13 @@ class UserManagerPageController():
         Returns:
             List: список ошибок при создании пользователя
 
-        """        
-
+        """
 
         user_manager_service = UserManagerService()
-        return user_manager_service.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number, _access_time)
+        try:
+            user_manager_service.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number, _access_time)
+        except UserManagerException as error:
+            return error
 
     def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time):
         """
