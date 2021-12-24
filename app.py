@@ -132,13 +132,13 @@ def create_superuser():
         try:
 
             login_page_controller.create_superuser(login, name, password, password_2, email)
-            return render_template('create_superuser.html', _superuser_created=True, _error_message=error_message)
+            return render_template('create_superuser.html', view="create_superuser", _superuser_created=True, _error_message=error_message)
 
         except UserManagerException as e:
 
             error_message = str(e)
 
-    return render_template('create_superuser.html', _superuser_created=False, _error_message=error_message)
+    return render_template('create_superuser.html', view="create_superuser", _superuser_created=False, _error_message=error_message)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -173,7 +173,7 @@ def login():
         else:
             login_error = True
 
-    return render_template('login.html', _login_error=login_error)
+    return render_template('login.html', view="login", _login_error=login_error)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -193,7 +193,8 @@ def user_manager():
     Returns:
         
     """    
-
+    global attempt
+    attempt = False
     page_controller = UserManagerPageController()
     mpc = MainMenuPageController()
 
@@ -210,7 +211,7 @@ def user_manager():
             #добавиим просто нового пользователя
     # page_controller.create_user("user", "user", "user", "user", "user@user.usr")
 
-    return render_template('user_manager.html', _menu=mpc.get_main_menu(),
+    return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_users_list_view(), _is_current_user_admin=flask_login.current_user.is_admin())
 
@@ -229,12 +230,15 @@ def user_profile():
     user_id = request.args.get('user_id')
 
     global attempt
-    if not attempt:
+    if not (attempt and user_id is not None):
         mode = "view"
     else:
-        mode = "edit"
+        if attempt and request.form["button"] == "discharge":
+            mode = "discharge"
+        else:
+            mode = "edit"
 
-    error = []
+    error = None
 
     if user_id == None:
         # если пользователь не задан, то открываем страницу в режиме создания нового пользователя
@@ -249,59 +253,82 @@ def user_profile():
         if not flask_login.current_user.is_admin():
             mode = "edit"
 
-    data = page_controller.get_users_profile_view(user_id)
+    data_begin = page_controller.get_users_profile_view(user_id)
+    data = {}
 
     if request.method == 'POST':
-        if mode == "new":
-            # добавляем нового пользователя и получаем список с ошибками
-            # если их нет, то получаем пустой список
-            attempt = True
-            manager_page_controller = UserManagerPageController()
-            user = {}
-            user["login"] = request.form["login"]
-            user["name"] = request.form["name_user"]
-            user["password"] = request.form["password"]
-            user["password2"] = request.form["password2"]
-            user["email"] = request.form["email"]
-            user["role"] = request.form["role"]
-            user["probationers_number"] = int(request.form["probationers_number"])
-            user["access_time"] = request.form["access_time"]
+        if request.form["button"] == "add_save_edit":
+            if mode == "new":
+                # добавляем нового пользователя и получаем список с ошибками
+                # если их нет, то получаем пустой список
+                attempt = True
+                manager_page_controller = UserManagerPageController()
+                user = {}
+                user["login"] = request.form["login"]
+                user["name"] = request.form["name_user"]
+                user["password"] = request.form["password"]
+                user["password2"] = request.form["password2"]
+                user["email"] = request.form["email"]
+                user["role"] = request.form["role"]
+                user["probationers_number"] = int(request.form["probationers_number"])
+                user["access_time"] = request.form["access_time"]
 
-            error = manager_page_controller.create_user(user["login"], user["name"], user["password"], user["password2"], user["email"],
-                                                       user["role"], user["probationers_number"], user["access_time"])
+                error = manager_page_controller.create_user(user["login"], user["name"], user["password"], user["password2"], user["email"],
+                                                           user["role"], user["probationers_number"], user["access_time"])
 
-            if len(error) == 0:
-                mode = "view"
-                attempt = False
+                if error is None:
+                    mode = "view"
+                    error = "Successful"
+                    attempt = False
 
-            data = user
+                data = user
 
-        elif mode == "view":
-            attempt = True
-            mode = "edit"
+            elif mode == "view":
+                attempt = True
+                mode = "edit"
 
-        elif mode == "edit":
-            manager_page_controller = UserManagerPageController()
-            user = {}
-            user["login"] = request.form["login"]
-            user["name"] = request.form["name_user"]
-            user["email"] = request.form["email"]
-            user["role"] = request.form["role"]
-            user["probationers_number"] = int(request.form["probationers_number"])
-            user["access_time"] = request.form["access_time"]
+            elif mode == "edit":
+                manager_page_controller = UserManagerPageController()
+                user = {}
+                user["login"] = request.form["login"]
+                user["name"] = request.form["name_user"]
+                user["email"] = request.form["email"]
+                user["role"] = request.form["role"]
+                user["probationers_number"] = int(request.form["probationers_number"])
+                user["access_time"] = request.form["access_time"]
+                user["created_date"] = data_begin.created_date
 
             data = manager_page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
                                                 user["probationers_number"], user["access_time"])
             mode = "view"
             attempt = False
+            error = "Save"
 
+        elif request.form["button"] == "discharge":
+            if mode == "discharge" and attempt:
+                manager_page_controller = UserManagerPageController()
+                user = {}
+                user["login"] = request.form["login"]
+                user["password"] = request.form["password"]
+                user["password2"] = request.form["password2"]
 
+                error = manager_page_controller.discharge_password(user["login"], user["password"], user["password2"])
 
+                if error is None:
+                    mode = "view"
+                    error = "Successful"
+                    attempt = False
 
+            else:
+                attempt = True
+                mode = "discharge"
 
-    return render_template('user_profile.html', _menu=mpc.get_main_menu(),
+    if data == {}:
+        data = data_begin
+
+    return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=data, _is_current_user_admin=flask_login.current_user.is_admin(),
+                           _data=data, _data_begin=data_begin, _is_current_user_admin=flask_login.current_user.is_admin(),
                            _mode=mode, _error=error, _attempt=attempt)
 
 
@@ -320,7 +347,7 @@ def main_page():
 
     endpoint = request.endpoint
 
-    return render_template('main_page.html', _menu=mpc.get_main_menu(),
+    return render_template('main_page.html', view="main_page", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
@@ -340,7 +367,7 @@ def corrections():
 
     endpoint = request.endpoint
 
-    return render_template('corrections.html', _menu=mpc.get_main_menu(),
+    return render_template('corrections.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
@@ -359,7 +386,7 @@ def probes():
 
     endpoint = request.endpoint
 
-    return render_template('probes.html', _menu=mpc.get_main_menu(),
+    return render_template('probes.html', view="probes", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
@@ -378,7 +405,7 @@ def results():
 
     endpoint = request.endpoint
 
-    return render_template('results.html', _menu=mpc.get_main_menu(),
+    return render_template('results.html', view="results", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
@@ -397,7 +424,7 @@ def probationers():
 
     endpoint = request.endpoint
 
-    return render_template('probationers.html', _menu=mpc.get_main_menu(),
+    return render_template('probationers.html', view="probationers", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
@@ -416,7 +443,7 @@ def settings():
 
     endpoint = request.endpoint
 
-    return render_template('settings.html', _menu=mpc.get_main_menu(),
+    return render_template('settings.html', view="settings", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
