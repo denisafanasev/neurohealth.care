@@ -330,6 +330,8 @@ class UserManager():
             _email (String): email пользователя
             _role (String): роль пользователя [user/superuser]
             _access_time (String): срок доступа
+            _probationers_number (Int): максимальное количество испытуемых у пользователя
+            _created_date (String): дата создания пользователя
 
         Returns:
             Dict: словарь с информацией о пользователе
@@ -363,3 +365,20 @@ class UserManager():
         user_data = {"login": _login, "password": password}
 
         data_store.discharge_password(user_data)
+
+    def get_patient(self):
+        patients = []
+
+        data_store = DataStore("patients")
+
+        patients_list_data = data_store.get_rows()
+
+        for patients_data in patients_list_data:
+
+            patient = self.user_row_to_user(patients_data)
+
+            if self.get_user_role(self.get_current_user_id()) == "user":
+                patients.append(patient)
+
+
+        return patients

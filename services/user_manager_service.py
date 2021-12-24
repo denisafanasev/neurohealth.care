@@ -74,3 +74,9 @@ class UserManagerService():
         user_manager = UserManager()
 
         return user_manager.discharge_password(_login, _password, _password2)
+
+    def get_patients(self):
+
+        user_manager = UserManager()
+
+        return user_manager.get_patient()

@@ -117,3 +117,32 @@ class UserManagerPageController():
             user_manager_service.discharge_password(_login, _password, _password2)
         except UserManagerException as error:
             return error
+
+    def get_patients_list_view(self):
+        """
+        Возвращает отформатированный список пользователей
+
+        Returns:
+            List: список пользователей, каждый из которых представлен структурой типа Dict
+        """
+
+        user_manager_service = UserManagerService()
+        patients = user_manager_service.get_patients()
+
+        patients_list_view = []
+        for patient in patients:
+
+            patients_view = {}
+
+            patients_view['user_id'] = patient.user_id
+            patients_view['date_of_birth'] = patient.date_of_birth
+            patients_view['name_patient'] = patient.name_patient
+            patients_view['contacts'] = patient.contacts
+            patients_view['name_parent'] = patient.name_parent
+            patients_view['date_tests'] = patient.date_tests
+
+
+
+            patients_list_view.append(patients_view)
+
+        return patients_list_view
