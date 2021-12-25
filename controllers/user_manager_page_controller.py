@@ -1,6 +1,6 @@
 import utils.ada as ada
 from services.user_manager_service import UserManagerService
-
+from error import UserManagerException
 
 class UserManagerPageController():
     """
@@ -47,7 +47,7 @@ class UserManagerPageController():
 
             user_view['probationers_number'] = user.probationers_number
 
-            user_view['is_active'] = user.is_active
+            user_view['is_active'] = user.active
 
             users_list_view.append(user_view)
             
@@ -74,9 +74,13 @@ class UserManagerPageController():
 
 
         user_manager_service = UserManagerService()
-        return user_manager_service.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number, _access_time)
+        try:
+            user_manager_service.create_user(_login, _name, _password, _password2, _email, _role,
+                                            _probationers_number, _access_time)
+        except UserManagerException as error:
+            return error
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time, _created_date):
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time, _created_date, _active):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -93,7 +97,8 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
 
-        return user_manager_service.change_user(_login, _name, _email, _role, _probationers_number, _access_time, _created_date)
+        return user_manager_service.change_user(_login, _name, _email, _role, _probationers_number, _access_time,
+                                                _created_date, _active)
 
     def discharge_password(self, _login, _password, _password2):
         """
@@ -114,3 +119,12 @@ class UserManagerPageController():
             user_manager_service.discharge_password(_login, _password, _password2)
         except UserManagerException as error:
             return error
+
+    def activation_deactivation(self, _login):
+        """
+
+        """
+
+        user_manager_service = UserManagerService()
+
+        return user_manager_service.activation_deactivation(_login)

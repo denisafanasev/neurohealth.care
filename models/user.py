@@ -22,7 +22,9 @@ class User(UserMixin):
     expires_date = ""
     probationers_number = DEFAULT_PROBATIONS_NUMBER
 
-    def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _created_date = "", _expires_date = "", _probationers_number = DEFAULT_PROBATIONS_NUMBER, _access_time = DEFAULT_EXPIRATION_MONTHS):
+    def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _created_date = "",
+                 _expires_date = "", _probationers_number = DEFAULT_PROBATIONS_NUMBER,
+                 _access_time = DEFAULT_EXPIRATION_MONTHS, _active=True):
         """
         Конструктор класса
 
@@ -45,6 +47,7 @@ class User(UserMixin):
         self.role = _role
         self.probationers_number = _probationers_number
         self.access_time = _access_time
+        self.active = _active
 
         # если дата создания не указана, то будем считать что пользователь создан сегодня
         if _created_date == "":
@@ -73,8 +76,10 @@ class User(UserMixin):
         """        
 
         is_active = False
-        
-        if self.expires_date >= date.today():
+
+        if self.active:
+            is_active = True
+        elif self.expires_date >= date.today():
             is_active = True
         
         return is_active
