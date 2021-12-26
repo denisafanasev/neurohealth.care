@@ -67,7 +67,7 @@ class UserManager():
             UserManagerException: ошибка корректности указанного логина пользователя
         """        
 
-        if (len(_login) < 3) or (len(_login)>10):
+        if (len(_login) < 4) or (len(_login)>10):
             raise UserManagerException("неверная длинная логина пользователя, укажите минимум 4 символа и максимум 10")
 
     def user_row_to_user(self, _data_row):
@@ -82,7 +82,7 @@ class UserManager():
         """        
 
         # создадим пользователя с указанием обязательных атрибутов
-        user = User(_data_row.doc_id, _data_row['login'], _data_row['name'], _data_row['email'], _data_row['role'])
+        user = User(_data_row.doc_id, _data_row['login'], _data_row['name'], _data_row['email'], _data_row['role'], _active=_data_row['active'])
 
         # проверим наличие в структуре хранения необязательных атрибутов
         if _data_row.get('probationers_number') is not None:
@@ -119,6 +119,7 @@ class UserManager():
         user["role"] = "user"
         user["probationers_number"] = 5
         user["access_time"] = "6 месяцев"
+        user["active"] = True
 
         data_store = DataStore("users")
 
@@ -152,7 +153,12 @@ class UserManager():
         
         if len(user_data) == 1:
             user = self.user_row_to_user(user_data[0])
-        
+            if not user.active:
+                raise UserManagerException("Данный пользователь заблокирован")
+
+        if len(user_data) == 0:
+            raise UserManagerException("Данный пользователь не найден")
+
         return user
     
     def get_user_by_login(self, _login):
@@ -273,7 +279,8 @@ class UserManager():
             raise UserManagerException("Пользователь с таким логином уже существует")
 
         # создаем новую запись
-        user = User(_login=login, _name=name, _email=email, _role=role, _access_time=access_time, _probationers_number=_probationers_number)
+        user = User(_login=login, _name=name, _email=email, _role=role, _access_time=access_time,
+                    _probationers_number=_probationers_number)
 
         if not user.expires_date == "неограниченно":
             expires_date = user.expires_date.strftime("%d/%m/%Y")
@@ -282,8 +289,8 @@ class UserManager():
 
         user_data = {"login": user.login, "password": password, "email": user.email,
                      "role": user.role, "name": user.name, "created_date": user.created_date.strftime("%d/%m/%Y"),
-                     "expires_date": expires_date,
-                     "probationers_number": user.probationers_number, "access_time": user.access_time}
+                     "expires_date": expires_date, "probationers_number": user.probationers_number,
+                     "access_time": user.access_time, "active": user.active}
 
         data_store.add_row(user_data)
 
@@ -320,7 +327,7 @@ class UserManager():
 
         return user_role
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time, _created_date):
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time, _created_date, _active):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -347,7 +354,8 @@ class UserManager():
 
         data_store = DataStore("users")
         user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
-                     "probationers_number": user.probationers_number, "access_time": user.access_time, "expires_date": expires_date}
+                     "probationers_number": user.probationers_number, "access_time": user.access_time,
+                     "expires_date": expires_date, "active": user.active}
 
         data_store.change_row(user_data)
         user = self.get_user_by_login(_login)
@@ -382,3 +390,28 @@ class UserManager():
 
 
         return patients
+
+
+    def activation_deactivation(self, _login):
+        data_store = DataStore("users")
+        user = self.get_user_by_login(_login)
+
+        if user.active:
+            user.active = False
+        else:
+            user.active = True
+        user = User(_login=user.login, _name=user.name, _email=user.email, _role=user.role, _access_time=user.access_time,
+                    _created_date=user.created_date,
+                    _probationers_number=user.probationers_number, _active=user.active)
+
+        if not user.expires_date == "неограниченно":
+            expires_date = user.expires_date.strftime("%d/%m/%Y")
+        else:
+            expires_date = user.expires_date
+
+        user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
+                     "probationers_number": user.probationers_number, "access_time": user.access_time,
+                     "expires_date": expires_date, "active": user.active}
+        data_store.change_row(user_data)
+
+        return user.active

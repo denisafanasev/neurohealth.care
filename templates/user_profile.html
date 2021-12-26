@@ -40,21 +40,15 @@
     </div>
 
     <form id="add_user" name="add_user" method="post" enctype="multipart/form-data">
-        <div class="row">
-                <div class="col-8">
-                    <div class="card">
+        <div class="row d-flex align-items-stretch bd-highlight">
+                <div class="col-8 p-2 bd-highlight">
+                    <div class="card d-flex align-self-baseline">
                         <div class="card-header">
                             <h5 class="card-title">Учетные данные пользователя</h5>
-                            {% if _error=='Save' %}
+                            {% if _error_type=='Successful' %}
                                 <div class="alert alert-success alert-dismissible" role="alert">
                                     <div class="alert-message">
-                                        <strong>Успешно</strong> Изменения сохранены!
-                                    </div>
-                                </div>
-                            {% elif _error=='Successful' %}
-                                <div class="alert alert-success alert-dismissible" role="alert">
-                                    <div class="alert-message">
-                                        <strong>Успешно</strong> Пользователь сохранён!
+                                        <strong>Успешно</strong>  {{ _error }}
                                     </div>
                                 </div>
                             {% elif _error %}
@@ -66,11 +60,11 @@
                             {% endif %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Login</strong></label>
-                                <input required type="text" name="login" class="form-control" {% if _mode!="new" or _mode=="discharge" %} readonly {% endif %} {% if _data['login']!='' and _attempt %} value="{{ _data['login'] }}" {% else %} placeholder= "{{ _data_begin['login'] }}" {% endif %}>
+                                <input required type="text" name="login" class="form-control" {% if (_mode!="new")%} readonly {% endif %} {% if _data['login']!=_data_begin['login'] %} value="{{ _data['login'] }}" {% else %} placeholder= "{{ _data_begin['login'] }}" {% endif %}>
                             </div>
                             <div class="mb-2">
                                 <label class="form-label"><strong>Имя пользователя</strong></label>
-                                <input required type="text" name="name_user" class="form-control"  {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['name']!='' and _attempt %} value="{{ _data['name'] }}" {% else %} placeholder= "{{ _data_begin['name'] }}" {% endif %}>
+                                <input required type="text" name="name_user" class="form-control"  {% if (_mode=="view" or _mode=="discharge")%} readonly {% endif %} {% if _data['name']!=_data_begin['name'] %} value="{{ _data['name'] }}" {% else %} placeholder= "{{ _data_begin['name'] }}" {% endif %}>
                             </div>
                             {% if _mode=="new" or _mode=="discharge" %}
                                 <div class="mb-2">
@@ -84,14 +78,35 @@
                             {% endif %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Email</strong></label>
-                                <input required type="email" name="email" class="form-control" {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['email']!='' and _attempt %} value="{{ _data['email'] }}" {% else %} placeholder= "{{ _data_begin['email'] }}" {% endif %}>
+                                <input required type="email" name="email" class="form-control" {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['email']!=_data_begin['email'] %} value="{{ _data['email'] }}" {% else %} placeholder= "{{ _data_begin['email'] }}" {% endif %}>
                             </div>
                         </div>
                     </div>
+                    <div align="right">
+                        {% if _mode =="view" %}
+                            <button type="submit" name="button" value="is_active" class="btn btn-primary ">{% if _active==True %}Заблокировать
+                                                                                                                {% else %}Разблокировать
+                                                                                                                {% endif %}
+                            </button>
+                        {% endif %}
+                        {% if _mode !="discharge" %}
+                            <button type="submit" name="button" value="add_save_edit" class="btn btn-primary ">{% if _mode=="new" %}Добавить пользователя
+                                                                            {% elif _mode=="edit" %}Сохранить
+                                                                            {% else %}Редактировать
+                                                                            {% endif %}
+                            </button>
+                        {% endif %}
+                        {% if _mode == "discharge" or _mode == "view"%}
+                            <button type="submit" name="button" value="discharge" class="btn btn-primary ">{% if _mode=="view" %}Сброс пароля
+                                                                            {% elif _mode=="discharge" %}Сохранить
+                                                                            {% endif %}
+                            </button>
+                        {% endif %}
+                    </div>
                 </div>
 
-                <div class="col-4">
-                    <div class="card">
+                <div class="col-4 p-2 bd-highlight">
+                    <div class="card d-flex align-self-baseline">
                         <div class="card-header">
                             <h5 class="card-title">Параметры доступа</h5>
 
@@ -154,21 +169,6 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
-                    <div align="left">
-                        {% if _mode !="discharge" %}
-                            <button type="submit" name="button" value="add_save_edit" class="btn btn-primary ">{% if _mode=="new" %}Добавить пользователя
-                                                                            {% elif _mode=="edit" %}Сохранить
-                                                                            {% else %}Редактировать
-                                                                            {% endif %}
-                            </button>
-                        {% endif %}
-                        {% if _mode != "new"%}
-                            <button type="submit" name="button" value="discharge" class="btn btn-primary ">{% if _mode=="view" %}Сброс пароля
-                                                                            {% elif _mode=="discharge" %}Сохранить
-                                                                            {% endif %}
-                            </button>
-                        {% endif %}
                     </div>
                 </div>
         </div>

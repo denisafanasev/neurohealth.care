@@ -1,6 +1,6 @@
 import utils.ada as ada
 from services.login_service import LoginService
-
+from error import UserManagerException
 
 class LoginPageController():
     """
@@ -30,7 +30,10 @@ class LoginPageController():
         """        
 
         login_service = LoginService()
-        user = login_service.get_user(_login, _password)
+        try:
+            user = login_service.get_user(_login, _password)
+        except UserManagerException as error:
+            return error
 
         return user 
     

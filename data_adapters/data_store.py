@@ -92,8 +92,10 @@ class DataStore():
             _data (Dict): структура данных для записи
         """
 
-        self.data_store.update_multiple([({"name":_data["name"], "email":_data["email"], "role":_data["role"],
-                                          "probationers_number":_data["probationers_number"], "expires_date":_data["expires_date"], "access_time":_data["access_time"]}, where("login") == _data["login"])])
+        self.data_store.update_multiple([({"name": _data["name"], "email":_data["email"], "role":_data["role"],
+                                           "probationers_number":_data["probationers_number"],
+                                           "expires_date":_data["expires_date"], "access_time":_data["access_time"],
+                                           "active":_data["active"]}, where("login") == _data["login"])])
 
     def discharge_password(self, _data):
         """
