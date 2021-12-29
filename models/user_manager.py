@@ -186,7 +186,7 @@ class UserManager():
     
     def get_users(self):
         """
-        Возвращает список пользователей в системе, в соответсвии с ролью пользователя, который запрашивает список
+        Возвращает список пользователей в системе, в соответствии с ролью пользователя, который запрашивает список
 
         Args:
             None
@@ -364,6 +364,15 @@ class UserManager():
 
 
     def discharge_password(self, _login, _password, _password2):
+        """
+        Сброс пароля пользователя
+
+        Args:
+            _login (String): логин пользователя
+            _password (String): пароль пользователя
+            _password2 (String): контрольный ввод пароля пользователя
+        """
+
         self.validate_password(_password)
         if _password != _password2:
             raise UserManagerException("введенные пароли не совпадают")
@@ -374,25 +383,16 @@ class UserManager():
 
         data_store.discharge_password(user_data)
 
-    def get_patient(self):
-        patients = []
-
-        data_store = DataStore("patients")
-
-        patients_list_data = data_store.get_rows()
-
-        for patients_data in patients_list_data:
-
-            patient = self.user_row_to_user(patients_data)
-
-            if self.get_user_role(self.get_current_user_id()) == "user":
-                patients.append(patient)
-
-
-        return patients
-
-
     def activation_deactivation(self, _login):
+        """
+        Блокировка/разблокировка пользователя
+
+        Args:
+            _login(String): логин пользователя
+
+        Returns:
+            _active (bool): Активирован/заблокирован пользователь
+        """
         data_store = DataStore("users")
         user = self.get_user_by_login(_login)
 

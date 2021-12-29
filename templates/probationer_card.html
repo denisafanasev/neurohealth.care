@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block main_block %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Choices.js
+        new Choices(document.querySelector(".choices-single"));
+        new Choices(document.querySelector(".choices-multiple"));
+        // Flatpickr
+        flatpickr(".flatpickr-minimum");
+        flatpickr(".flatpickr-datetime", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+        });
+        flatpickr(".flatpickr-human", {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "Y-m-d",
+        });
+        flatpickr(".flatpickr-multiple", {
+            mode: "multiple",
+            dateFormat: "Y-m-d"
+        });
+        flatpickr(".flatpickr-range", {
+            mode: "range",
+            dateFormat: "Y-m-d"
+        });
+        flatpickr(".flatpickr-time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+        });
+    });
+</script>
+<div class="container-fluid p-0">
+
+    <div class="mb-3">
+        <h1 class="h3 d-inline align-middle">Карточка испытуемого</h1>
+    </div>
+
+    <form id="add_probationer" name="add_probationer" method="post" enctype="multipart/form-data">
+        <div class="row d-flex align-items-stretch bd-highlight">
+                <div class="col-8 p-2 bd-highlight">
+                    <div class="card d-flex align-self-baseline">
+                        <div class="card-header">
+                            <h5 class="card-title">Данные испытуемого</h5>
+                            {% if _error_type=='Successful' %}
+                                <div class="alert alert-success alert-dismissible" role="alert">
+                                    <div class="alert-message">
+                                        <strong>Успешно</strong>  {{ _error }}
+                                    </div>
+                                </div>
+                            {% elif _error %}
+                                <div class="alert alert-danger alert-dismissible" role="alert">
+                                    <div class="alert-message">
+                                        <strong>Ошибка</strong> {{ _error }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if _is_current_user_admin and _mode=="view" %}
+                                <div class="mb-2">
+                                    <label class="form-label"><strong>Login</strong></label>
+                                    <input required type="text" name="user_login" class="form-control" readonly value="{{ _data['user_login'] }}">
+                                </div>
+                            {% endif %}
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Имя испытуемого</strong></label>
+                                <input required type="text" name="name_probationer" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _data['name_probationer']!=_data_begin['name_probationer'] %} value="{{ _data['name_probationer'] }}" {% else %} placeholder= "{{ _data_begin['name_probationer'] }}" {% endif %}>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Сопутствующие диагнозы</strong></label>
+                                <textarea required name="diagnoses" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _data['diagnoses']!=_data_begin['diagnoses'] %} value="{{ _data['diagnoses'] }}" {% else %} placeholder= "{{ _data_begin['diagnoses'] }}" {% endif %}></textarea>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Причины обращения</strong></label>
+                                <textarea required name="reasons_for_contact" class="form-control"  {% if _mode=="view"%} readonly {% endif %} {% if _data['reasons_for_contact']!=_data_begin['reasons_for_contact'] %} value="{{ _data['reasons_for_contact'] }}" {% else %} placeholder= "{{ _data_begin['reasons_for_contact'] }}" {% endif %}></textarea>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div align="right">
+                        <button type="submit" name="button" value="add_save_edit" class="btn btn-primary ">{% if _mode=="new" %}Добавить испытуемого
+                                                                        {% elif _mode=="edit" %}Сохранить
+                                                                        {% else %}Редактировать
+                                                                        {% endif %}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-4 p-2 bd-highlight">
+                    <div class="card d-flex align-self-baseline">
+                        <div class="card-header">
+{#                            <h5 class="card-title">Параметры доступа</h5>#}
+
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Дата Рождения</strong></label>
+                                <input required type="date" name="date_of_birth" class="form-control" {% if _mode == "view" %} readonly value="{{ _data['date_of_birth'] }}" {% endif %}>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label"><strong>ФИО родителя</strong></label>
+                                <input required type="text" name="name_parent" class="form-control" {% if _mode == "view" %} readonly {% endif %} {% if _data['name_parent']!=_data_begin['name_parent'] %} value="{{ _data['name_parent'] }}" {% else %}  placeholder="{{ _data_begin['name_parent'] }}" {% endif %}>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Учебное заведение</strong></label>
+                                <input required type="text" name="educational_institution" class="form-control" {% if _mode=="view"%} readonly {% endif %} {% if _data['educational_institution']!=_data_begin['educational_institution'] %} value="{{ _data['educational_institution'] }}" {% else %} placeholder= "{{ _data_begin['educational_institution'] }}" {% endif %}>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Контакты</strong></label>
+                                <input required type="text" name="contacts" class="form-control" {% if _mode=="view" %} readonly {% endif %} {% if _data['contacts']!=_data_begin['contacts'] %} value="{{ _data['contacts'] }}" {% else %} placeholder= "{{ _data_begin['contacts'] }}" {% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

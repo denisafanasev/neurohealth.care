@@ -3,7 +3,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 DEFAULT_PROBATIONS_NUMBER = 5   # значение доступных тестируемых по умолчанию
-DEFAULT_EXPIRATION_MONTHS = 6   # сколько месяцев автивна запись пользвоателя если не указана дата экспирации
+DEFAULT_EXPIRATION_MONTHS = 6   # сколько месяцев активна запись пользователя если не указана дата экспирации
 
 class User(UserMixin):
     """
@@ -22,9 +22,9 @@ class User(UserMixin):
     expires_date = ""
     probationers_number = DEFAULT_PROBATIONS_NUMBER
 
-    def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _created_date = "",
-                 _expires_date = "", _probationers_number = DEFAULT_PROBATIONS_NUMBER,
-                 _access_time = DEFAULT_EXPIRATION_MONTHS, _active=True):
+    def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _created_date="",
+                 _expires_date="", _probationers_number=DEFAULT_PROBATIONS_NUMBER,
+                 _access_time=DEFAULT_EXPIRATION_MONTHS, _active=True):
         """
         Конструктор класса
 
@@ -38,6 +38,7 @@ class User(UserMixin):
             _expires_date (date, optional): Дата до которой пользователь активен. Defaults to "".
             _probationers_number (int, optional): Количество тестируемых, доступное пользователю. Defaults to DEFAULT_PROBATIONS_NUMBER
             _access_time (int, optional): Время доступа к системе. Defaults to DEFAULT_EXPIRATION_MONTHS
+            _active (bool): Активирован/заблокирован пользователь
         """        
 
         self.user_id = _user_id
@@ -95,7 +96,7 @@ class User(UserMixin):
 
     def is_admin(self):
         """
-        Возвращает признат того, что пользователь обладает правами администратора
+        Возвращает признак того, что пользователь обладает правами администратора
 
         Returns:
             Boolean: True если у пользователя есть права администратора и False если нет

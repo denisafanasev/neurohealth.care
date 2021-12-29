@@ -1,3 +1,4 @@
+from models.probationer_manager import ProbationerManager
 
 class ProbationersService():
     """
@@ -11,3 +12,12 @@ class ProbationersService():
 
     def get_data(self):
         return "Data"
+
+    def get_probationers_list_view(self):
+
+         probationers = []
+         probationer_manager = ProbationerManager()
+
+         probationers = probationer_manager.get_probationers()
+
+         return probationers

@@ -99,7 +99,10 @@ class DataStore():
 
     def discharge_password(self, _data):
         """
+        Сброс пароля
 
+        Args:
+            _data (Dict): структура данных для записи
         """
 
         self.data_store.update({"password": _data["password"]}, where("login") == _data["login"])

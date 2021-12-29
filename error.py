@@ -3,3 +3,6 @@ class NeuroHealthAppException(Exception):
 
 class UserManagerException(NeuroHealthAppException):
     pass
+
+class ProbationerManagerException(NeuroHealthAppException):
+    pass
