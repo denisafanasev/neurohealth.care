@@ -41,7 +41,10 @@ class UserManagerPageController():
             user_view['role'] = user.role
 
             user_view['created_date'] = str(user.created_date.strftime("%d/%m/%Y"))
-            user_view['expires_date'] = str(user.expires_date.strftime("%d/%m/%Y"))
+            if not user.expires_date == "неограниченно":
+                user_view['expires_date'] = str(user.expires_date.strftime("%d/%m/%Y"))
+            else:
+                user_view['expires_date'] = user.expires_date
 
             user_view['probationers_number'] = user.probationers_number
 
@@ -66,7 +69,7 @@ class UserManagerPageController():
             _access_time (String): срок доступа
 
         Returns:
-            List: список ошибок при создании пользователя
+            String: ошибка при создании пользователя
 
         """
 
@@ -76,7 +79,7 @@ class UserManagerPageController():
         except UserManagerException as error:
             return error
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time):
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time, _created_date):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -93,4 +96,24 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
 
-        return user_manager_service.change_user(_login, _name, _email, _role, _probationers_number, _access_time)
+        return user_manager_service.change_user(_login, _name, _email, _role, _probationers_number, _access_time, _created_date)
+
+    def discharge_password(self, _login, _password, _password2):
+        """
+        Обновляет в системе пароль пользователя
+
+        Args:
+            _login (String): логин пользователя
+            _password (String): пароль пользователя
+            _password2 (String): контрольный ввод пароля пользователя
+
+        Returns:
+            String: ошибка при обновлении пароля пользователя
+
+        """
+
+        user_manager_service = UserManagerService()
+        try:
+            user_manager_service.discharge_password(_login, _password, _password2)
+        except UserManagerException as error:
+            return error
