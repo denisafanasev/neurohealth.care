@@ -282,6 +282,7 @@ class UserManager():
         user = User(_login=login, _name=name, _email=email, _role=role, _access_time=access_time,
                     _probationers_number=_probationers_number)
 
+
         if not user.expires_date == "неограниченно":
             expires_date = user.expires_date.strftime("%d/%m/%Y")
         else:
@@ -291,6 +292,7 @@ class UserManager():
                      "role": user.role, "name": user.name, "created_date": user.created_date.strftime("%d/%m/%Y"),
                      "expires_date": expires_date, "probationers_number": user.probationers_number,
                      "access_time": user.access_time, "active": user.active}
+
 
         data_store.add_row(user_data)
 

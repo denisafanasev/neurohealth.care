@@ -118,6 +118,7 @@ class UserManagerPageController():
         try:
             user_manager_service.discharge_password(_login, _password, _password2)
         except UserManagerException as error:
+
             return error
 
     def activation_deactivation(self, _login):

@@ -60,6 +60,7 @@
                             {% endif %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Login</strong></label>
+                              
                                 <input required type="text" name="login" class="form-control" {% if (_mode!="new")%} readonly {% endif %} {% if _data['login']!=_data_begin['login'] %} value="{{ _data['login'] }}" {% else %} placeholder= "{{ _data_begin['login'] }}" {% endif %}>
                             </div>
                             <div class="mb-2">
@@ -78,7 +79,9 @@
                             {% endif %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Email</strong></label>
+
                                 <input required type="email" name="email" class="form-control" {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['email']!=_data_begin['email'] %} value="{{ _data['email'] }}" {% else %} placeholder= "{{ _data_begin['email'] }}" {% endif %}>
+
                             </div>
                         </div>
                     </div>

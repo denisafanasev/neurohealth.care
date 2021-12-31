@@ -277,6 +277,7 @@ def user_profile():
                 user["role"] = request.form["role"]
                 user["probationers_number"] = int(request.form["probationers_number"])
                 user["access_time"] = request.form["access_time"]
+                
                 active = True
 
                 error = manager_page_controller.create_user(user["login"], user["name"], user["password"], user["password2"], user["email"],
@@ -284,8 +285,10 @@ def user_profile():
 
                 if error is None:
                     mode = "view"
+
                     error = "Пользователь сохранён!"
                     error_type = "Successful"
+    
                     attempt = False
 
                 data = user
@@ -326,14 +329,15 @@ def user_profile():
 
                 if error is None:
                     mode = "view"
+
                     error = "Пароль успешно изменен!"
                     error_type = "Successful"
+
                     attempt = False
 
             else:
                 attempt = True
                 mode = "discharge"
-
 
         elif request.form["button"] == "is_active":
             manager_page_controller = UserManagerPageController()
@@ -344,7 +348,6 @@ def user_profile():
                 error = "Пользователь успешно разблокирован!"
             else:
                 error = "Пользователь успешно заблокирован!"
-
 
     if data == {}:
         data = data_begin
