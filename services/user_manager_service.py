@@ -45,9 +45,10 @@ class UserManagerService():
         """
 
         user_manager = UserManager()
-        user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number, _access_time)
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time, _created_date):
+        return user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number, _access_time)
+
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time, _created_date, _active):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -64,7 +65,8 @@ class UserManagerService():
 
         user_manager = UserManager()
 
-        return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _access_time, _created_date)
+        return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _access_time,
+                                        _created_date, _active)
 
     def discharge_password(self, _login, _password, _password2):
         """
@@ -74,3 +76,12 @@ class UserManagerService():
         user_manager = UserManager()
 
         return user_manager.discharge_password(_login, _password, _password2)
+
+    def activation_deactivation(self, _login):
+        """
+
+        """
+
+        user_manager = UserManager()
+
+        return user_manager.activation_deactivation(_login)
