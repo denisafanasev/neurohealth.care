@@ -158,7 +158,7 @@ class UserManager():
 
         if len(user_data) == 0:
             raise UserManagerException("Данный пользователь не найден")
-        
+
         return user
     
     def get_user_by_login(self, _login):
@@ -186,7 +186,7 @@ class UserManager():
     
     def get_users(self):
         """
-        Возвращает список пользователей в системе, в соответсвии с ролью пользователя, который запрашивает список
+        Возвращает список пользователей в системе, в соответствии с ролью пользователя, который запрашивает список
 
         Args:
             None
@@ -339,6 +339,8 @@ class UserManager():
             _email (String): email пользователя
             _role (String): роль пользователя [user/superuser]
             _access_time (String): срок доступа
+            _probationers_number (Int): максимальное количество испытуемых у пользователя
+            _created_date (String): дата создания пользователя
 
         Returns:
             Dict: словарь с информацией о пользователе
@@ -364,6 +366,15 @@ class UserManager():
 
 
     def discharge_password(self, _login, _password, _password2):
+        """
+        Сброс пароля пользователя
+
+        Args:
+            _login (String): логин пользователя
+            _password (String): пароль пользователя
+            _password2 (String): контрольный ввод пароля пользователя
+        """
+
         self.validate_password(_password)
         if _password != _password2:
             raise UserManagerException("введенные пароли не совпадают")
@@ -375,6 +386,15 @@ class UserManager():
         data_store.discharge_password(user_data)
 
     def activation_deactivation(self, _login):
+        """
+        Блокировка/разблокировка пользователя
+
+        Args:
+            _login(String): логин пользователя
+
+        Returns:
+            _active (bool): Активирован/заблокирован пользователь
+        """
         data_store = DataStore("users")
         user = self.get_user_by_login(_login)
 
@@ -390,7 +410,7 @@ class UserManager():
             expires_date = user.expires_date.strftime("%d/%m/%Y")
         else:
             expires_date = user.expires_date
-            
+
         user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
                      "probationers_number": user.probationers_number, "access_time": user.access_time,
                      "expires_date": expires_date, "active": user.active}

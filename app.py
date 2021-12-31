@@ -19,6 +19,7 @@ from controllers.settings_page_controller import SettingsPageController
 from controllers.results_page_controller import ResultsPageController
 from controllers.probationers_page_controller import ProbationersPageController
 from controllers.user_profile_page_controller import UserProfilePageController
+from controllers.probationer_card_page_controller import ProbationerCardPageController
 
 from error import UserManagerException
 
@@ -205,10 +206,10 @@ def user_manager():
 
     endpoint = request.endpoint
 
-    if request.method == 'POST':
-        action = request.form['action']
-        if action == 'add_user':
-            pass
+    # if request.method == 'POST':
+    #     action = request.form['action']
+    #     if action == 'add_user':
+    #         pass
             #добавиим просто нового пользователя
     # page_controller.create_user("user", "user", "user", "user", "user@user.usr")
 
@@ -439,7 +440,7 @@ def results():
 @login_required
 def probationers():
     """
-    Просмотр и редактирование списка испытуемых
+    Просмотр списка испытуемых
 
     Returns:
         
@@ -448,12 +449,79 @@ def probationers():
     page_controller = ProbationersPageController()
     mpc = MainMenuPageController()
 
+    global attempt
+    attempt = False
+
     endpoint = request.endpoint
 
     return render_template('probationers.html', view="probationers", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=page_controller.get_data())
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _data=page_controller.get_probationers_list_view(),
+                           _is_current_user_admin=flask_login.current_user.is_admin())
 
+@app.route('/probationer_card', methods=['GET', 'POST'])
+@login_required
+def probationer_card():
+    """
+        Страница просмотра, редактирования и добавления карточки испытуемого
+    """
+
+    page_controller = ProbationerCardPageController()
+    mpc = MainMenuPageController()
+    endpoint = "probationers"
+
+    probationer_id = request.args.get('probationer_id')
+    global attempt
+    error = None
+    error_type = None
+
+    if probationer_id is not None:
+        mode = "view"
+    else:
+        mode = "new"
+        probationer_id = ""
+
+    user_id = flask_login.current_user.user_id
+    user_login = UserProfilePageController().get_users_profile_view(user_id).login
+
+    data_begin = page_controller.get_probationer_card_view(probationer_id)
+    data = {}
+
+    if request.method == 'POST':
+        if request.form["button"] == "add_save_edit":
+            if mode == "new":
+                # добавляем нового пользователя и получаем список с ошибками
+                # если их нет, то получаем пустой список
+                attempt = True
+                probationer = {}
+                probationer["name_probationer"] = request.form["name_probationer"]
+                probationer["date_of_birth"] = request.form["date_of_birth"]
+                probationer["name_parent"] = request.form["name_parent"]
+                probationer["educational_institution"] = request.form["educational_institution"]
+                probationer["contacts"] = request.form["contacts"]
+                probationer["diagnoses"] = request.form["diagnoses"]
+                probationer["reasons_for_contact"] = request.form["reasons_for_contact"]
+
+                error = page_controller.create_probationers(user_login, probationer["name_probationer"],
+                                                            probationer["date_of_birth"], probationer["name_parent"],
+                                                            probationer["educational_institution"],
+                                                            probationer["contacts"], probationer["diagnoses"],
+                                                            probationer["reasons_for_contact"])
+
+                if error is None:
+                    mode = "view"
+                    error = "Испытуемый сохранён!"
+                    error_type = "Successful"
+                    attempt = False
+
+                data = probationer
+
+    if data == {}:
+        data = data_begin
+
+    return render_template('probationer_card.html', view="probationer_card", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
+                           _mode=mode, _data_begin=data_begin, _error=error, _error_type=error_type, _attempt=attempt)
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():

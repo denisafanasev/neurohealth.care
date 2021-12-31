@@ -2,6 +2,7 @@ import utils.ada as ada
 from services.user_manager_service import UserManagerService
 from error import UserManagerException
 
+
 class UserManagerPageController():
     """
     UserManagerPageController - класс контроллера представления управления списком пользователей системы
@@ -70,8 +71,7 @@ class UserManagerPageController():
         Returns:
             String: ошибка при создании пользователя
 
-        """        
-
+        """
 
         user_manager_service = UserManagerService()
         try:
@@ -111,7 +111,6 @@ class UserManagerPageController():
 
         Returns:
             String: ошибка при обновлении пароля пользователя
-
         """
 
         user_manager_service = UserManagerService()
@@ -123,7 +122,13 @@ class UserManagerPageController():
 
     def activation_deactivation(self, _login):
         """
+        Блокировка/разблокировка пользователя
 
+        Args:
+            _login(String): логин пользователя
+
+        Returns:
+            _active (bool): Активирован/заблокирован пользователь
         """
 
         user_manager_service = UserManagerService()

@@ -41,7 +41,6 @@ class UserManagerService():
 
         Returns:
             List: список ошибок при создании пользователя
-
         """
 
         user_manager = UserManager()
@@ -70,7 +69,15 @@ class UserManagerService():
 
     def discharge_password(self, _login, _password, _password2):
         """
+        Обновляет в системе пароль пользователя
 
+        Args:
+            _login (String): логин пользователя
+            _password (String): пароль пользователя
+            _password2 (String): контрольный ввод пароля пользователя
+
+        Returns:
+            String: ошибка при обновлении пароля пользователя
         """
 
         user_manager = UserManager()
@@ -79,7 +86,13 @@ class UserManagerService():
 
     def activation_deactivation(self, _login):
         """
+        Блокировка/разблокировка пользователя
 
+        Args:
+            _login(String): логин пользователя
+
+        Returns:
+            _active (bool): Активирован/заблокирован пользователь
         """
 
         user_manager = UserManager()
