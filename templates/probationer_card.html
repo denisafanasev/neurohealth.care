@@ -105,7 +105,12 @@
                             </div>
                             <div class="mb-2">
                                 <label class="form-label"><strong>Учебное заведение</strong></label>
-                                <input required type="text" name="educational_institution" class="form-control" {% if _mode=="view"%} readonly {% endif %} {% if _data['educational_institution']!=_data_begin['educational_institution'] %} value="{{ _data['educational_institution'] }}" {% else %} placeholder= "{{ _data_begin['educational_institution'] }}" {% endif %}>
+                                <select required type="text" name="educational_institution" class="form-control" {% if _mode=="view"%} disabled {% endif %}>
+                                        <option>Гимназия</option>
+                                        <option>Массовая школа</option>
+                                        <option>Коррекционная школа</option>
+                                        <option>Домашнее обучение</option>
+                                </select>
                             </div>
                             <div class="mb-2">
                                 <label class="form-label"><strong>Контакты</strong></label>
