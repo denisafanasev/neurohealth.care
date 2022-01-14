@@ -82,7 +82,8 @@ class UserManager():
         """        
 
         # создадим пользователя с указанием обязательных атрибутов
-        user = User(_data_row.doc_id, _data_row['login'], _data_row['name'], _data_row['email'], _data_row['role'], _active=_data_row['active'])
+        user = User(_data_row.doc_id, _data_row['login'], _data_row['name'], _data_row['email'], _data_row['role'],
+                    _data_row['active'])
 
         # проверим наличие в структуре хранения необязательных атрибутов
         if _data_row.get('probationers_number') is not None:
@@ -252,12 +253,12 @@ class UserManager():
             _error (List): список ошибок при создании пользователя
         """
         # проверяем логин, пароль и роль пользователя
-        self.validate_login(_login)
-        self.validate_password(_password)
-        self.validate_role(_role)
+        # self.validate_login(_login)
+        # self.validate_password(_password)
+        # self.validate_role(_role)
 
-        if _password != _password2:
-            raise UserManagerException("введенные пароли не совпадают")
+        # if _password != _password2:
+        #     raise UserManagerException("введенные пароли не совпадают")
 
         # если ошибок нет, то записываем его в БД
 

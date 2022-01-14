@@ -1,7 +1,67 @@
 {% extends 'base.html' %}
 
 {% block main_block %}
-
+{#<style>#}
+{#/* Style all input fields */#}
+{#input {#}
+{#    width: 100%;#}
+{#    padding: 12px;#}
+{#    border: 1px solid #ccc;#}
+{#    border-radius: 4px;#}
+{#    box-sizing: border-box;#}
+{#    margin-top: 6px;#}
+{#    margin-bottom: 16px;#}
+{#}#}
+{##}
+{#/* Style the submit button */#}
+{#input[type=submit] {#}
+{#    background-color: #4CAF50;#}
+{#    color: white;#}
+{#}#}
+{##}
+{#/* Style the container for inputs */#}
+{#.container {#}
+{#    background-color: #f1f1f1;#}
+{#    padding: 20px;#}
+{#}#}
+{##}
+{#/* The message box is shown when the user clicks on the password field */#}
+{##message {#}
+{#    display:none;#}
+{#    background: #f1f1f1;#}
+{#    color: #000;#}
+{#    position: relative;#}
+{#    padding: 20px;#}
+{#    margin-top: 10px;#}
+{#}#}
+{##}
+{##message p {#}
+{#    padding: 10px 35px;#}
+{#    font-size: 18px;#}
+{#}#}
+{##}
+{#/* Add a green text color and a checkmark when the requirements are right */#}
+{#.valid {#}
+{#    color: green;#}
+{#}#}
+{##}
+{#.valid:before {#}
+{#    position: relative;#}
+{#    left: -35px;#}
+{#    content: "✔";#}
+{#}#}
+{##}
+{#/* Add a red text color and an "x" when the requirements are wrong */#}
+{#.invalid {#}
+{#    color: red;#}
+{#}#}
+{##}
+{#.invalid:before {#}
+{#    position: relative;#}
+{#    left: -35px;#}
+{#    content: "✖";#}
+{#}#}
+{#</style>#}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Choices.js
@@ -33,13 +93,81 @@
         });
     });
 </script>
+
+{#<script>#}
+{#    var length = document.getElementById("length");#}
+{#    var myInput = document.getElementsByName("password");#}
+{##}
+{#    myInput.onfocus = function() {#}
+{#        document.getElementById("message").style.display = "block";#}
+{#    }#}
+{##}
+{#    myInput.onblur = function() {#}
+{#        document.getElementById("message").style.display = "none";#}
+{#    }#}
+{##}
+{#    myInput.onkeyup = function() {#}
+{##}
+{#      if(myInput.value.length >= 5 && myInput.value.length <= 21) {#}
+{#        length.classList.remove("invalid");#}
+{#        length.classList.add("valid");#}
+{#      } else {#}
+{#        length.classList.remove("valid");#}
+{#        length.classList.add("invalid");#}
+{#      }#}
+{#    }#}
+{#</script>#}
+
+<script type="text/javascript">
+  function checkPassword(form) {
+    var password = form.password.value;
+    var password2 = form.password2.value;
+    var text = "Ошибка: неверная длинная пароля, укажите минимум 5 и максимум 20 символов"
+    var text2 = "Ошибка: введенные пароли не совпадают"
+
+    if (password.length < 5 || password.length > 20){
+        alert(text);
+        return false;
+    }
+    if (password !== password2){
+        alert(text);
+        return false;
+    }else {
+        return checkLogin(form);
+    }
+  }
+
+  function checkLogin(form) {
+    var login = form.login.value;
+    var text = "Ошибка: ошибка корректности указанного логина пользователя"
+
+    if (login.length < 3 || login.length > 11) {
+      alert(text);
+      return false;
+    }else{
+        return checkRole(form);
+    }
+  }
+
+  function checkRole(form) {
+    var role = form.role.value;
+    var text = "Ошибка: ошибка корректности указанного значения роли"
+
+    if (role !== "user" && role !== "superuser"){
+        alert(text);
+        return false;
+    }else{
+        return true;
+    }
+  }
+</script>
 <div class="container-fluid p-0">
 
     <div class="mb-3">
         <h1 class="h3 d-inline align-middle">Карточка пользователя</h1>
     </div>
 
-    <form id="add_user" name="add_user" method="post" enctype="multipart/form-data">
+    <form id="add_user" name="add_user" method="post" enctype="multipart/form-data" onsubmit="return checkPassword(this);">
         <div class="row d-flex align-items-stretch bd-highlight">
                 <div class="col-8 p-2 bd-highlight">
                     <div class="card d-flex align-self-baseline">
@@ -60,7 +188,6 @@
                             {% endif %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Login</strong></label>
-                              
                                 <input required type="text" name="login" class="form-control" {% if (_mode!="new")%} readonly {% endif %} {% if _data['login']!=_data_begin['login'] %} value="{{ _data['login'] }}" {% else %} placeholder= "{{ _data_begin['login'] }}" {% endif %}>
                             </div>
                             <div class="mb-2">
@@ -71,6 +198,12 @@
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Пароль</strong></label>
                                     <input required type="password" name="password" class="form-control" {% if _data['password']!='' and _attempt %} value="{{ _data['password'] }}" {% else %} placeholder="{{ _data_begin['password'] }}" {% endif %}>
+{#                                    <div id="message">#}
+{#                                      <h>Критерии к паролю</h>#}
+{#                                      <p id="length" class="invalid">От <b>5 символов</b> до <b>20 символов</b></p>#}
+{#                                    </div>#}
+
+
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Повтор пароля</strong></label>

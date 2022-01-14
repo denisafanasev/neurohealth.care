@@ -22,9 +22,9 @@ class User(UserMixin):
     expires_date = ""
     probationers_number = DEFAULT_PROBATIONS_NUMBER
 
-    def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _created_date="",
+    def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _active=True, _created_date="",
                  _expires_date="", _probationers_number=DEFAULT_PROBATIONS_NUMBER,
-                 _access_time=DEFAULT_EXPIRATION_MONTHS, _active=True):
+                 _access_time=DEFAULT_EXPIRATION_MONTHS):
         """
         Конструктор класса
 
