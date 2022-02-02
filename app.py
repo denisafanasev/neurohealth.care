@@ -8,6 +8,8 @@ import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 # general page controllers
+from werkzeug import exceptions
+
 from controllers.main_page_controller import MainPageController
 from controllers.main_menu_controller import MainMenuPageController
 from controllers.login_page_controller import LoginPageController
@@ -112,6 +114,7 @@ def create_superuser():
     """    
 
     login_page_controller = LoginPageController()
+
 
     # если в системе есть созданный список пользователей, то выполняем процедуру авторизации, если нет, то создаем первого суперпользователя
     if login_page_controller.is_there_users():
@@ -235,10 +238,13 @@ def user_profile():
     if not (attempt and user_id is not None):
         mode = "view"
     else:
-        if attempt and request.form["button"] == "discharge":
-            mode = "discharge"
-        else:
-            mode = "edit"
+        try:
+            if attempt and request.form["button"] == "discharge":
+                mode = "discharge"
+            else:
+                mode = "edit"
+        except exceptions.BadRequestKeyError:
+            mode = "view"
 
     error = None
 
@@ -262,93 +268,95 @@ def user_profile():
         active = data_begin.active
     error_type = False
 
-    if request.method == 'POST':
-        if request.form["button"] == "add_save_edit":
-            if mode == "new":
-                # добавляем нового пользователя и получаем список с ошибками
-                # если их нет, то получаем пустой список
-                attempt = True
-                manager_page_controller = UserManagerPageController()
-                user = {}
-                user["login"] = request.form["login"]
-                user["name"] = request.form["name_user"]
-                user["password"] = request.form["password"]
-                user["password2"] = request.form["password2"]
-                user["email"] = request.form["email"]
-                user["role"] = request.form["role"]
-                user["probationers_number"] = int(request.form["probationers_number"])
-                user["access_time"] = request.form["access_time"]
-                
-                active = True
+    try:
+        if request.method == 'POST':
+            if request.form["button"] == "add_save_edit":
+                if mode == "new":
+                    # добавляем нового пользователя и получаем список с ошибками
+                    # если их нет, то получаем пустой список
+                    attempt = True
+                    user = {}
+                    user["login"] = request.form["login"]
+                    user["name"] = request.form["name_user"]
+                    user["password"] = request.form["password"]
+                    user["password2"] = request.form["password2"]
+                    user["email"] = request.form["email"]
+                    user["role"] = request.form["role"]
+                    user["probationers_number"] = int(request.form["probationers_number"])
+                    user["access_time"] = request.form["access_time"]
 
-                error = manager_page_controller.create_user(user["login"], user["name"], user["password"], user["password2"], user["email"],
-                                                           user["role"], user["probationers_number"], user["access_time"])
+                    active = True
 
-                if error is None:
+                    error = page_controller.create_user(user["login"], user["name"], user["password"],
+                                                                user["password2"], user["email"], user["role"],
+                                                                user["probationers_number"], user["access_time"])
+
+                    if error is None:
+                        mode = "view"
+
+                        error = "Пользователь сохранён!"
+                        error_type = "Successful"
+
+                        attempt = False
+
+                    data = user
+
+                elif mode == "view":
+                    attempt = True
+                    mode = "edit"
+
+                elif mode == "edit":
+                    user = {}
+                    user["login"] = request.form["login"]
+                    user["name"] = request.form["name_user"]
+                    user["email"] = request.form["email"]
+                    user["role"] = request.form["role"]
+                    user["probationers_number"] = int(request.form["probationers_number"])
+                    user["access_time"] = request.form["access_time"]
+                    user["created_date"] = data_begin.created_date
+
+                    page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
+                                                        user["probationers_number"], user["access_time"],
+                                                        user["created_date"], user["active"])
+
+                    data = user
                     mode = "view"
-
-                    error = "Пользователь сохранён!"
-                    error_type = "Successful"
-    
                     attempt = False
+                    error = "Изменения сохранены!"
+                    error_type = "Successful"
 
-                data = user
+            elif request.form["button"] == "discharge":
+                if mode == "discharge" and attempt:
+                    user = {}
+                    user["login"] = request.form["login"]
+                    user["password"] = request.form["password"]
+                    user["password2"] = request.form["password2"]
 
-            elif mode == "view":
-                attempt = True
-                mode = "edit"
+                    error = page_controller.discharge_password(user["login"], user["password"], user["password2"])
 
-            elif mode == "edit":
-                manager_page_controller = UserManagerPageController()
-                user = {}
-                user["login"] = request.form["login"]
-                user["name"] = request.form["name_user"]
-                user["email"] = request.form["email"]
-                user["role"] = request.form["role"]
-                user["probationers_number"] = int(request.form["probationers_number"])
-                user["access_time"] = request.form["access_time"]
-                user["created_date"] = data_begin.created_date
+                    if error is None:
+                        mode = "view"
 
-                manager_page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
-                                                    user["probationers_number"], user["access_time"], user["created_date"], user["active"])
+                        error = "Пароль успешно изменен!"
+                        error_type = "Successful"
 
-                data = user
-                mode = "view"
-                attempt = False
-                error = "Изменения сохранены!"
+                        attempt = False
+
+                else:
+                    attempt = True
+                    mode = "discharge"
+
+            elif request.form["button"] == "is_active":
+                active = page_controller.activation_deactivation(data_begin.login)
                 error_type = "Successful"
 
-        elif request.form["button"] == "discharge":
-            if mode == "discharge" and attempt:
-                manager_page_controller = UserManagerPageController()
-                user = {}
-                user["login"] = request.form["login"]
-                user["password"] = request.form["password"]
-                user["password2"] = request.form["password2"]
-
-                error = manager_page_controller.discharge_password(user["login"], user["password"], user["password2"])
-
-                if error is None:
-                    mode = "view"
-
-                    error = "Пароль успешно изменен!"
-                    error_type = "Successful"
-
-                    attempt = False
-
-            else:
-                attempt = True
-                mode = "discharge"
-
-        elif request.form["button"] == "is_active":
-            manager_page_controller = UserManagerPageController()
-            active = manager_page_controller.activation_deactivation(data_begin.login)
-            error_type = "Successful"
-
-            if active:
-                error = "Пользователь успешно разблокирован!"
-            else:
-                error = "Пользователь успешно заблокирован!"
+                if active:
+                    error = "Пользователь успешно разблокирован!"
+                else:
+                    error = "Пользователь успешно заблокирован!"
+    except exceptions.BadRequestKeyError:
+        mode = "view"
+        attempt = False
 
     if data == {}:
         data = data_begin
