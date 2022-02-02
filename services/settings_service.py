@@ -1,3 +1,4 @@
+from models.setting_manager import SettingManager
 
 class SettingsService():
     """
@@ -9,5 +10,8 @@ class SettingsService():
     def init(self):
         pass
 
-    def get_data(self):
-        return "Data"
+    def get_assessments(self):
+
+        setting_manager = SettingManager()
+
+        return setting_manager.get_assessments()
