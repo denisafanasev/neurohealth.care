@@ -17,6 +17,17 @@ class SettingsPageController():
 
         pass
 
-    def get_data(self):
+    def get_assessments(self):
         page_service = SettingsService()
-        return page_service.get_data()
+        assessments = page_service.get_assessments()
+        assessments_list_view = []
+
+        for assessment in assessments:
+            assessments_view = {}
+
+            assessments_view["assessment_parameters"] = assessment.assessment_parameters
+            assessments_view["tests"] = assessment.tests
+
+            assessments_list_view.append(assessments_view)
+
+        return assessments_list_view

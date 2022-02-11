@@ -547,7 +547,7 @@ def settings():
 
     return render_template('settings.html', view="settings", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=page_controller.get_data())
+                               endpoint), _data=page_controller.get_assessments())
 
 @app.errorhandler(404)
 @login_required

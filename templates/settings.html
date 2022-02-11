@@ -1,21 +1,129 @@
 {% extends 'base.html' %}
 
 {% block main_block %}
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Choices.js
+        new Choices(document.querySelector(".choices-single"));
+        new Choices(document.querySelector(".choices-multiple"));
+    });
+    </script>
     <div class="container-fluid p-0">
     
         <h1 class="h3 mb-3">Настройки</h1>
     
         <div class="row">
-            <div class="col-12">
+            <div class="col-2">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">{{ _data }}</h5>
+                        <h5 class="card-title mb-0">Настройки</h5>
+
+                        <div class="list-group list-group-flush" role="tablist">
+                            <a class="list-group-item list-group-item-action active" data-bs-toggle="list" href="#structure" role="tab">
+                                Структура протокола
+                            </a>
+                            <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#directory" role="tab">
+                                Справочник оценочных значений
+                            </a>
+                        </div>
                     </div>
-                    <div class="card-body">
+                </div>
+            </div>
+            <div class="col-10">
+                <div class="tab-content">
+                    <div class="tab-pane fade active show" id="structure" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Структура протокола</h5>
+
+                                <form>
+                                    {% for i_data in _data %}
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <table id="datatables-buttons" class="table table-bordered" style="width: 100%;"
+                                                    role="grid" aria-describedby="datatables-reponsive_info">
+                                                <tbody>
+                                                    <tr>
+                                                        <th align="center" colspan="4"><u>{{ i_data["assessment_parameters"] }}</u></th>
+                                                    </tr>
+                                                    {% for i_test in i_data["tests"] %}
+                                                        <tr>
+                                                            <tr>
+                                                                <th align="rigth" colspan="3" class="align-self-lg-start col-1">Тест: {{ i_test["name_test"] }}</th>
+                                                            </tr>
+                                                            {% for i_parameter, i_grade in i_test['parameters'].items() %}
+                                                                    {% if not i_grade is mapping %}
+                                                                        <tr class="align-self-lg-end">
+                                                                            <td style="width:25%;" class="align-self-lg-start col-1">    </td>
+                                                                            <td style="width:25%;" align="center" class="col-1">{{ i_parameter }}</td>
+                                                                            <td style="width:25%;" align="center" class="align-self-lg-start col-1">{{ i_grade }}</td>
+                                                                        </tr>
+                                                                    {% else %}
+                                                                        <th colspan="3" class="align-self-lg-start col-1" >{{ i_parameter }}</th>
+                                                                        {% for key, value in i_grade.items() %}
+
+                                                                            {% if not value is mapping %}
+                                                                                <tr style="width:25%;" class="align-items-md-end">
+                                                                                    <td style="width:25%;" class="align-self-lg-start col-1">    </td>
+                                                                                    <td style="width:25%;" align="center" class="col-1">{{ key }}</td>
+                                                                                    <td style="width:25%;" align="center" class="col-1">{{ value }}</td>
+                                                                                </tr>
+                                                                            {% else %}
+                                                                                <tr>
+                                                                                    <td rowspan="{{ value|count + 2}}" class="align-self-lg-start col-1" >      </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td rowspan="{{ value|count + 1}}" class="align-self-lg-start col-1" >{{ key }}</td>
+                                                                                </tr>
+                                                                                {% for i_key, i_value in value.items() %}
+                                                                                    <tr class="align-items-md-end">
+                                                                                        <td style="width:25%;" align="center" class="col-1">{{ i_key }}</td>
+                                                                                        <td style="width:25%;" align="center" class="col-1">{{ i_value }}</td>
+                                                                                    </tr>
+                                                                                {% endfor %}
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    {% endif %}
+                                                            {% endfor %}
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="directory" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Справочник оценочных значений</h5>
+
+                                <form>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="inputPasswordCurrent">Current password</label>
+                                        <input type="password" class="form-control" id="inputPasswordCurrent">
+                                        <small><a href="#">Forgot your password?</a></small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="inputPasswordNew">New password</label>
+                                        <input type="password" class="form-control" id="inputPasswordNew">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="inputPasswordNew2">Verify password</label>
+                                        <input type="password" class="form-control" id="inputPasswordNew2">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </form>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    
     </div>
 {% endblock %}

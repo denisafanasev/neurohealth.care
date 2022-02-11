@@ -13,15 +13,16 @@ class DataStore():
 
     data_store = None
 
-    def __init__(self, _type):
+    def __init__(self, _type, _table="_default"):
         """
         Возвращается объект хранилища данных по указанному типу данных
         @params:
             _type    - Required  : тип данных (String)
         """
-        
         self.data_store = TinyDB("data/" + _type + ".json")
 
+        if _table != "_default":
+            self.data_store = self.data_store.table(_table)
 
     def get_rows(self, _filter=None):
         """
