@@ -1,4 +1,5 @@
 from tinydb import TinyDB, Query, where
+import json
 
 class DataStore():
     """
@@ -107,3 +108,7 @@ class DataStore():
         """
 
         self.data_store.update({"password": _data["password"]}, where("login") == _data["login"])
+
+    def update_row(self, _criteria:dict):
+
+        self.data_store.update(_criteria, where("id") == _criteria["id"])
