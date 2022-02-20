@@ -1,0 +1,31 @@
+{% extends "settings.html" %}
+
+{% block age_range_list %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Справочник диапазонов возрастов</h5>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="datatables-buttons" class="table table-bordered" style="width: 100%;"
+                        role="grid" aria-describedby="datatables-reponsive_info">
+
+                        <thead>
+                        <th>Список диапазонов возрастов</th>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                            {% for i_range in _ranges_age %}
+                                <tr>
+                                    <td>{{ i_range }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

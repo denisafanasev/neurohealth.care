@@ -31,38 +31,13 @@
             dateFormat: "H:i",
         });
     });
-</script>
     </script>
     <style>
-        .select{
-            position: absolute;
-            right: -161px;
-            top: 82px;
-            z-index: 1;
-        }
-        .table{
-            position: relative;
-            z-index: 0;
-        }
-        select {
-          -webkit-appearance: none;
-          -moz-appearance: none;
-          appearance: none;
-            background-color: #fff;
-        }
-        .criteria{
-            border: 1px solid #ced4da;
-            background-clip: padding-box;
-            width: min-content;
-            padding: 0.1rem 0.85rem;
-        }
-        .about{
-            display: inline-block;
-        }
-        .btn{
-            top: 10px;
-        }
+    .btn{
+        margin-bottom: 1em;
+    }
     </style>
+
 
     <div class="container-fluid p-0">
     
@@ -74,13 +49,13 @@
                     <div class="card-header">
                         <h5 class="card-title mb-0">Настройки</h5>
 
-                        <div class="list-group list-group-flush" role="tablist">
+                        <div>
                             {% if _is_current_user_admin %}
-                                <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#structure" role="tab">
+                                <a class="btn {% if _endpoint == "estimated_values" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("estimated_values") }}" role="tab">
                                     Справочник оценочных значений
                                 </a>
                             {% endif %}
-                            <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#directory" role="tab">
+                            <a class="btn {% if _endpoint == "age_range_list" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for("age_range_list") }}" role="tab">
                                 Справочник диапазонов возрастов
                             </a>
                         </div>
@@ -89,116 +64,16 @@
             </div>
             <div class="col-10">
                 <div class="tab-content">
-                    <div class="tab-pane fade show active" id="structure" role="tabpanel">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Справочник оценочных значений</h5>
-
-                                <form method="post" enctype="multipart/form-data" >
-                                    <div class="select row">
-                                        <div class="about">
-                                            <label><strong>Диапазон возрастов</strong></label>
-                                        </div>
-                                        <div class="about">
-                                            <select type="text" name="file_name" class="criteria form-control">
-                                                <option>{{ _file_name }}</option>
-                                                {% for i_rage in _ranges_age %}
-                                                    {% if i_rage != _file_name %}
-                                                        <option>{{ i_rage }}</option>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <button type="submit" name="button" class="btn btn-primary btn-sm" value="loading">Загрузка</button>
-                                        </div>
-                                    </div>
-{#                                </form>#}
-
-{#                                <form  method="post" enctype="multipart/form-data">#}
-                                    <div id="assessment">
-                                        <div>
-                                            <button type="submit" name="button" value="save" class="btn btn-primary">Сохранить</button>
-                                        </div>
-                                        {% for i_data in _data %}
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <table id="datatables-buttons" class="table table-bordered" style="width: 100%;"
-                                                        role="grid" aria-describedby="datatables-reponsive_info">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td></td>
-                                                            <th id="assessment_parameters" class="align-content-center" rowspan="2" colspan="4" style="text-align: center; font-size: 19px"><u>{{ i_data["assessment_parameters"] }}</u></th>
-                                                            <td></td>
-                                                        </tr>
-                                                        {% for i_test in i_data["tests"] %}
-                                                            <tr>
-                                                                <tr>
-                                                                    <th id="name_test" align="rigth" colspan="6" style="text-align: -webkit-center">Тест: {{ i_test["name_test"] }}</th>
-                                                                </tr>
-                                                                {% for i_parameter in i_test['parameters'] %}
-                                                                    {% if i_parameter['name_parameters'] != "" %}
-                                                                        <td style="width:25%;" class="align-self-lg-start col-1">  {{ i_parameter['name_parameters'] }}  </td>
-                                                                    {% endif %}
-                                                                    {% for i_criteria in i_parameter['criteria'] %}
-                                                                        <tr class="align-self-lg-end">
-                                                                            {% for i_key, i_value in i_criteria.items() %}
-                                                                                {% if i_key != "id" %}
-                                                                                    <td style="width:25%;" align="center" class="col-1"></td>
-                                                                                    <td style="width:25%;" align="center" class="col-1">
-                                                                                        <input disabled name="{{ i_criteria["id"] }}_name" value="{{ i_key }}">
-                                                                                    </td>
-                                                                                    <td  style="width:25%;" align="center" class="align-self-lg-start col-1">
-                                                                                        <input required name="{{ i_criteria["id"] }}_grade" value="{{ i_value }}">
-                                                                                    </td>
-                                                                                {% endif %}
-                                                                            {% endfor %}
-                                                                        </tr>
-                                                                    {% endfor %}
-                                                                {% endfor %}
-                                                            </tr>
-                                                        {% endfor %}
-                                                    </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                    <div class="tab-pane fade {% if _endpoint == "estimated_values" %} show active {% endif %}" id="{{ url_for("estimated_values") }}" role="tabpanel">
+                        {% block estimated_values %}
+                        {% endblock %}
                     </div>
-                    <div class="tab-pane fade" id="directory" role="tabpanel">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Справочник диапазонов возрастов</h5>
 
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <table id="datatables-buttons" class="table table-bordered" style="width: 100%;"
-                                            role="grid" aria-describedby="datatables-reponsive_info">
-
-                                            <thead>
-                                            <th>Список диапазонов возрастов</th>
-                                            </thead>
-
-                                            <tbody>
-                                                <tr>
-                                                {% for i_range in _ranges_age %}
-                                                    <tr>
-                                                        <td>{{ i_range }}</td>
-                                                    </tr>
-                                                {% endfor %}
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                            </div>
-                        </div>
+                    <div class="tab-pane fade {% if _endpoint == "age_range_list" %} show active {% endif %}" id="{{ url_for("age_range_list") }}" role="tabpanel">
+                        {% block age_range_list %}
+                        {% endblock %}
                     </div>
                 </div>
-            </div>
-        </div>
-
             </div>
         </div>
     </div>
