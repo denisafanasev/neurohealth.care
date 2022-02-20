@@ -17,7 +17,8 @@ from controllers.user_manager_page_controller import UserManagerPageController
 
 from controllers.corrections_page_controller import CorrectionsPageController
 from controllers.probes_page_controller import ProbesPageController
-from controllers.settings_page_controller import SettingsPageController
+from controllers.estimated_values_page_controller import EstimatedValuesPageController
+from controllers.age_range_list_page_controller import AgeRangeListPageController
 from controllers.results_page_controller import ResultsPageController
 from controllers.probationers_page_controller import ProbationersPageController
 from controllers.user_profile_page_controller import UserProfilePageController
@@ -483,11 +484,14 @@ def probationer_card():
     error = None
     error_type = None
 
-    if probationer_id is not None:
+    if not (attempt and probationer_id is not None):
         mode = "view"
     else:
-        mode = "new"
-        probationer_id = ""
+        if probationer_id is None:
+            mode = "new"
+            probationer_id = ""
+        else:
+            mode = "edit"
 
     user_id = flask_login.current_user.user_id
     user_login = UserProfilePageController().get_users_profile_view(user_id).login
@@ -495,34 +499,62 @@ def probationer_card():
     data_begin = page_controller.get_probationer_card_view(probationer_id)
     data = {}
 
-    if request.method == 'POST':
-        if request.form["button"] == "add_save_edit":
-            if mode == "new":
-                # добавляем нового пользователя и получаем список с ошибками
-                # если их нет, то получаем пустой список
-                attempt = True
-                probationer = {}
-                probationer["name_probationer"] = request.form["name_probationer"]
-                probationer["date_of_birth"] = request.form["date_of_birth"]
-                probationer["name_parent"] = request.form["name_parent"]
-                probationer["educational_institution"] = request.form["educational_institution"]
-                probationer["contacts"] = request.form["contacts"]
-                probationer["diagnoses"] = request.form["diagnoses"]
-                probationer["reasons_for_contact"] = request.form["reasons_for_contact"]
+    try:
+        if request.method == 'POST':
+            if request.form["button"] == "add_save_edit":
+                if mode == "new":
+                    # добавляем нового пользователя и получаем список с ошибками
+                    # если их нет, то получаем пустой список
+                    attempt = True
+                    probationer = {}
+                    probationer["name_probationer"] = request.form["name_probationer"]
+                    probationer["date_of_birth"] = request.form["date_of_birth"]
+                    probationer["name_parent"] = request.form["name_parent"]
+                    probationer["educational_institution"] = request.form["educational_institution"]
+                    probationer["contacts"] = request.form["contacts"]
+                    probationer["diagnoses"] = request.form["diagnoses"]
+                    probationer["reasons_for_contact"] = request.form["reasons_for_contact"]
 
-                error = page_controller.create_probationers(user_login, probationer["name_probationer"],
-                                                            probationer["date_of_birth"], probationer["name_parent"],
-                                                            probationer["educational_institution"],
-                                                            probationer["contacts"], probationer["diagnoses"],
-                                                            probationer["reasons_for_contact"])
+                    error = page_controller.create_probationers(user_login, probationer["name_probationer"],
+                                                                probationer["date_of_birth"], probationer["name_parent"],
+                                                                probationer["educational_institution"],
+                                                                probationer["contacts"], probationer["diagnoses"],
+                                                                probationer["reasons_for_contact"])
 
-                if error is None:
+                    if error is None:
+                        mode = "view"
+                        error = "Испытуемый сохранён!"
+                        error_type = "Successful"
+                        attempt = False
+
+                    data = probationer
+
+                elif mode == "view":
+
+                    mode = "edit"
+                    attempt = True
+
+                elif mode == "edit":
+
+                    probationer = {}
+                    probationer["name_probationer"] = request.form["name_probationer"]
+                    probationer["date_of_birth"] = request.form["date_of_birth"]
+                    probationer["name_parent"] = request.form["name_parent"]
+                    probationer["educational_institution"] = request.form["educational_institution"]
+                    probationer["contacts"] = request.form["contacts"]
+                    probationer["diagnoses"] = request.form["diagnoses"]
+                    probationer["reasons_for_contact"] = request.form["reasons_for_contact"]
+
+                    data = probationer
                     mode = "view"
-                    error = "Испытуемый сохранён!"
-                    error_type = "Successful"
                     attempt = False
+                    error = "Изменения сохранены!"
+                    error_type = "Successful"
 
-                data = probationer
+    except exceptions.BadRequestKeyError:
+
+        mode = "view"
+        attempt = False
 
     if data == {}:
         data = data_begin
@@ -541,46 +573,77 @@ def settings():
         
     """    
 
-    page_controller = SettingsPageController()
+    page_controller = ()
     mpc = MainMenuPageController()
 
     endpoint = request.endpoint
-    file_name = "structure"
+    file_name = ""
 
 
-    if request.method == "POST":
-        if request.form["button"] == "save":
-            data = page_controller.get_assessments(file_name)
-            criteria = {}
-            name_criteria = []
-            for i_data in data:
-                for i_test in i_data["tests"]:
-                    for i_parameters in i_test["parameters"]:
-                        for i_criteria in i_parameters["criteria"]:
-                            for i_key in i_criteria.keys():
-                                if not i_key == "id":
-                                    name_criteria.append(i_key)
 
-            for i in range(1, 214):
-                criteria[i] = {name_criteria[i - 1]: request.form["{}_grade".format(i)]}
-
-            page_controller.overwrite(request.form["file_name"], criteria)
-            data = page_controller.get_assessments(request.form["file_name"])
-
-        elif request.form["button"] == "loading":
-            file_name = request.form["file_name"]
-
-            if file_name == "базовые значение":
-                data = page_controller.get_assessments("structure")
-            else:
-                data = page_controller.get_assessments(file_name)
-    else:
-        data = page_controller.get_assessments(file_name)
 
     return render_template('settings.html', view="settings", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=data, _ranges_age=page_controller.get_age_ranges(),_file_name=file_name,
-                           _is_current_user_admin=flask_login.current_user.is_admin())
+                           _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
+
+@app.route('/settings/age_range_list', methods=['GET', 'POST'])
+@login_required
+def age_range_list():
+    """
+    Генерация страницы просмотра списка диапазонов возрастов
+
+    Returns:
+
+    """
+
+    page_controller = AgeRangeListPageController()
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+    file_name = ""
+
+    return render_template('age_range_list.html', view="age_range_list", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _ranges_age=page_controller.get_age_ranges(),
+                           _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
+
+@app.route('/settings/estimated_values', methods=['GET', 'POST'])
+@login_required
+def estimated_values():
+    """
+    Генерация страницы редактирования оценочных значений
+
+    Returns:
+
+    """
+    page_controller = EstimatedValuesPageController()
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+    file_name = ""
+
+    if request.method == "POST":
+        file_name = request.form["action"]
+
+        if request.form.get("save") is not None:
+            file_name = request.form["action"]
+            criteria = []
+
+            for i in range(1, 214):
+                criteria.append(request.form["{}_grade".format(i)])
+
+            page_controller.overwrite(file_name, criteria)
+            data = page_controller.get_assessments(file_name)
+
+        else:
+            data = page_controller.get_assessments(file_name)
+    else:
+        data = page_controller.get_assessments()
+
+    return render_template('estimated_values.html', view="estimated_values", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _data=data, _ranges_age=page_controller.get_age_ranges(), _file_name=file_name,
+                           _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
 
 @app.errorhandler(404)
 @login_required

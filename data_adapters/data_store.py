@@ -1,5 +1,6 @@
 from tinydb import TinyDB, Query, where
 import json
+from tinydb.operations import delete, increment
 
 class DataStore():
     """
@@ -109,6 +110,19 @@ class DataStore():
 
         self.data_store.update({"password": _data["password"]}, where("login") == _data["login"])
 
-    def update_row(self, _criteria:dict):
+    def update_row(self, _data, _where):
 
-        self.data_store.update(_criteria, where("id") == _criteria["id"])
+        self.data_store.update(_data, where(_where) == _data[_where])
+
+    def change_probationer(self, _data):
+
+        self.data_store.update_multiple([({"name_probationer": _data["name_probationer"],
+                                           "date_of_birth": _data["date_of_birth"], "name_parent": _data["name_parent"],
+                                           "educational_institution": _data["educational_institution"],
+                                           "contacts": _data["contacts"],"diagnoses": _data["diagnoses"],
+                                           "reasons_for_contact": _data["reasons_for_contact"]},
+                                           where("probationer_id") == _data["probationer_id"])])
+
+    # def increment_key_row(self, _key, _where):
+    #
+    #     self.data_store.update(increment(_key))

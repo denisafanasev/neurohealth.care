@@ -1,6 +1,6 @@
 
 
-class Assessment():
+class Estimated_Values():
 
     def __init__(self, _id, _assessment_parameters, _tests):
 

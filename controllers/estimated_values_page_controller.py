@@ -1,8 +1,8 @@
 import utils.ada as ada
-from services.settings_service import SettingsService
+from services.estimated_values_service import EstimatedValuesService
 
 
-class SettingsPageController():
+class EstimatedValuesPageController():
     """
     SettingsPageController - класс контроллера представления настроек приложения, реализующий логику взаимодейтвия приложения с пользователем
     Возвращает в слой отображения объекты в виде, пригодном для отображения в web странице и в соответсвующем форматировании
@@ -17,9 +17,9 @@ class SettingsPageController():
 
         pass
 
-    def get_assessments(self, _file_name):
+    def get_assessments(self, _file_name="базовые значение"):
 
-        page_service = SettingsService()
+        page_service = EstimatedValuesService()
         assessments = page_service.get_assessments(_file_name)
 
         assessments_list_view = []
@@ -35,12 +35,12 @@ class SettingsPageController():
 
     def get_age_ranges(self):
 
-        page_service = SettingsService()
+        page_service = EstimatedValuesService()
 
         return page_service.get_age_ranges()
 
     def overwrite(self, _file_name, _criteria):
 
-        page_service = SettingsService()
+        page_service = EstimatedValuesService()
 
         return page_service.overwrite(_file_name, _criteria)

@@ -1,6 +1,6 @@
-from models.setting_manager import SettingManager
+from models.estimated_values_manager import EstimatedValuesManager
 
-class SettingsService():
+class EstimatedValuesService():
     """
     SettingsService - класс бизнес-логики сервиса управления настройками приложения
     Возвращает в слой отображения объекты в доменной модели
@@ -13,18 +13,22 @@ class SettingsService():
       
     def get_assessments(self, _file_name):
 
-        setting_manager = SettingManager()
+        estimated_values_manager = EstimatedValuesManager()
 
-        return setting_manager.get_assessments(_file_name)
+        return estimated_values_manager.get_assessments(_file_name)
 
     def get_age_ranges(self):
 
-        setting_manager = SettingManager()
+        estimated_values_manager = EstimatedValuesManager()
 
-        return setting_manager.get_age_ranges()
+        return estimated_values_manager.get_age_ranges()
 
     def overwrite(self, _file_name, _criteria):
 
-        setting_manager = SettingManager()
+        estimated_values_manager = EstimatedValuesManager()
 
+<<<<<<< HEAD:services/settings_service.py
         return setting_manager.overwrite(_file_name, _criteria)
+=======
+        return estimated_values_manager.overwrite(_file_name, _criteria)
+>>>>>>> d92eb50 (Исправлена страница настроек):services/estimated_values_service.py
