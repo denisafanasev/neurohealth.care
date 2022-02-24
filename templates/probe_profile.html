@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block main_block %}
+    <div class="container-fluid p-0">
+
+        <div class="mb-3">
+            <h1 class="h3 d-inline align-middle">Карточка пользователя</h1>
+        </div>
+
+        <form id="add_user" name="add_user" method="post" enctype="multipart/form-data">
+            <div class="row d-flex align-items-stretch bd-highlight">
+                <div class="col-8 p-2 bd-highlight">
+                    <div class="card d-flex align-self-baseline">
+                        <div class="card-header">
+                            <h5 class="card-title">Учетные данные пользователя</h5>
+                            {% if _error_type=='Successful' %}
+                                <div class="alert alert-success alert-dismissible" role="alert">
+                                    <div class="alert-message">
+                                        <strong>Успешно</strong>  {{ _error }}
+                                    </div>
+                                </div>
+                            {% elif _error %}
+                                <div class="alert alert-danger alert-dismissible" role="alert">
+                                    <div class="alert-message">
+                                        <strong>Ошибка</strong> {{ _error }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Испытуемый</strong></label>
+                                <select class="form-select" name="probationer">
+                                    {% for i_probationer in _probationers_list %}
+                                        <option>{{ i_probationer }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div align="right">
+                            <button type="submit" name="button" value="draft" class="btn btn-primary ">Сохранить как черновик
+                            </button>
+
+                            <button type="submit" name="button" value="add" class="btn btn-primary ">Сохранить как окончательный
+                            </button>
+                    </div>
+                </div>
+
+                <div class="col-4 p-2 bd-highlight">
+                    <div class="card d-flex align-self-baseline">
+                        <div class="card-header">
+                            <h5 class="card-title"></h5>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

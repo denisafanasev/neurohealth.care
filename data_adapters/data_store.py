@@ -122,7 +122,3 @@ class DataStore():
                                            "contacts": _data["contacts"],"diagnoses": _data["diagnoses"],
                                            "reasons_for_contact": _data["reasons_for_contact"]},
                                            where("probationer_id") == _data["probationer_id"])])
-
-    # def increment_key_row(self, _key, _where):
-    #
-    #     self.data_store.update(increment(_key))

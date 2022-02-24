@@ -3,6 +3,7 @@ from models.probationer import Probationer
 from datetime import datetime
 from error import ProbationerManagerException
 from models.user_manager import UserManager
+from models.action_manager import ActionManager
 
 
 class ProbationerManager():
@@ -119,10 +120,31 @@ class ProbationerManager():
 
 
 
-        probationer_data = {"probationer_id":probationer.probationer_id, "user_login":probationer.user_login,
-                            "name_probationer":probationer.name_probationer, "date_of_birth":probationer.date_of_birth,
-                            "name_parent":probationer.name_parent,
-                            "educational_institution":probationer.educational_institution, "contacts":probationer.contacts,
-                            "diagnoses":probationer.diagnoses, "reasons_for_contact":probationer.reasons_for_contact}
+        probationer_data = {"probationer_id": probationer.probationer_id, "user_login":probationer.user_login,
+                            "name_probationer": probationer.name_probationer, "date_of_birth": probationer.date_of_birth,
+                            "name_parent": probationer.name_parent,
+                            "educational_institution": probationer.educational_institution, "contacts": probationer.contacts,
+                            "diagnoses": probationer.diagnoses, "reasons_for_contact": probationer.reasons_for_contact}
 
         data_store.add_row(probationer_data)
+
+        ActionManager().add_notifications(probationer.name_probationer, "add", "probationer_manager")
+
+    def change_probationer(self, _probationer_id, _name_probationer, _date_of_birth, _name_parent, _educational_institution,
+                           _contacts, _diagnoses, _reasons_for_contact):
+
+        probationer = Probationer(_probationer_id, _name_probationer, _date_of_birth, _name_parent, _educational_institution,
+                                  _contacts, _diagnoses, _reasons_for_contact)
+
+        probationer_data = {"probationer_id": probationer.probationer_id, "name_probationer": probationer.name_probationer,
+                            "date_of_birth": probationer.date_of_birth, "name_parent": probationer.name_parent,
+                            "educational_institution": probationer.educational_institution,
+                            "contacts": probationer.contacts, "diagnoses": probationer.diagnoses,
+                            "reasons_for_contact": probationer.reasons_for_contact}
+
+        data = DataStore("probationer")
+
+        data.change_probationer(probationer_data)
+
+        ActionManager().add_notifications(probationer.name_probationer, "overwrite", "probationer_manager")
+

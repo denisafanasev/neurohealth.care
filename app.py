@@ -17,6 +17,7 @@ from controllers.user_manager_page_controller import UserManagerPageController
 
 from controllers.corrections_page_controller import CorrectionsPageController
 from controllers.probes_page_controller import ProbesPageController
+from controllers.probe_profile_page_controller import ProbeProfileController
 from controllers.estimated_values_page_controller import EstimatedValuesPageController
 from controllers.age_range_list_page_controller import AgeRangeListPageController
 from controllers.results_page_controller import ResultsPageController
@@ -422,9 +423,35 @@ def probes():
 
     endpoint = request.endpoint
 
+
+
     return render_template('probes.html', view="probes", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
+
+@app.route('/probe_profile', methods=['GET', 'POST'])
+@login_required
+def probe_profile():
+
+    page_controller = ProbeProfileController()
+    mpc = MainMenuPageController()
+
+    endpoint = "probes"
+    probationers = page_controller.get_probationers()
+    probationers_list = [i["name_probationer"] for i in probationers]
+
+    if request.method == "POST":
+
+        name_probationer = request.form["probationer"]
+        probationer = [i for i in probationers if i["name_probationer"] == name_probationer][0]
+
+        page_controller.add_probe(probationer, request.form["button"])
+
+
+    return render_template('probe_profile.html', view="probe_profile", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _probationers_list=probationers_list)
+
 
 @app.route('/results', methods=['GET', 'POST'])
 @login_required
