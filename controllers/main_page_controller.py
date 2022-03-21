@@ -1,5 +1,5 @@
 import utils.ada as ada
-from services.main_page_service import MainPageService
+from services.action_service import ActionService
 
 
 class MainPageController():
@@ -17,6 +17,44 @@ class MainPageController():
 
         pass
 
-    def get_data(self):
-        index_service = MainPageService()
-        return index_service.get_data()
+    def get_actions(self):
+
+        index_service = ActionService()
+        actions_list = index_service.get_actions()
+        actions = []
+
+        for i_action in actions_list:
+            action = {}
+
+            action["login"] = i_action.user_login
+            action["action"] = i_action.action
+
+            actions.append(action)
+
+
+        return actions
+
+    def get_current_user(self):
+
+        index_service = ActionService()
+
+        user = index_service.get_current_user()
+        user_view = {}
+
+        user_view['user_id'] = user.user_id
+        user_view['login'] = user.login
+        user_view['name'] = user.name
+        user_view['email'] = user.email
+        user_view['role'] = user.role
+
+        user_view['created_date'] = str(user.created_date.strftime("%d/%m/%Y"))
+        if not user.expires_date == "неограниченно":
+            user_view['expires_date'] = str(user.expires_date.strftime("%d/%m/%Y"))
+        else:
+            user_view['expires_date'] = user.expires_date
+
+        user_view['probationers_number'] = user.probationers_number
+
+        user_view['is_active'] = user.active
+
+        return user_view

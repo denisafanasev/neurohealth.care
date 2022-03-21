@@ -71,12 +71,12 @@
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Сопутствующие диагнозы</strong></label>
-                                <textarea required name="diagnoses" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _data['diagnoses']!=_data_begin['diagnoses'] %} value="{{ _data['diagnoses'] }}" {% else %} placeholder= "{{ _data_begin['diagnoses'] }}" {% endif %}></textarea>
+                                <textarea required name="diagnoses" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _data['diagnoses']!=_data_begin['diagnoses'] %} placeholder="{{ _data['diagnoses'] }}" {% else %} placeholder= "{{ _data_begin['diagnoses'] }}" {% endif %}></textarea>
                             </div>
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Причины обращения</strong></label>
-                                <textarea required name="reasons_for_contact" class="form-control"  {% if _mode=="view"%} readonly {% endif %} {% if _data['reasons_for_contact']!=_data_begin['reasons_for_contact'] %} value="{{ _data['reasons_for_contact'] }}" {% else %} placeholder= "{{ _data_begin['reasons_for_contact'] }}" {% endif %}></textarea>
+                                <textarea required name="reasons_for_contact" class="form-control"  {% if _mode=="view"%} readonly {% endif %} {% if _data['reasons_for_contact']!=_data_begin['reasons_for_contact'] %} placeholder="{{ _data['reasons_for_contact'] }}" {% else %} placeholder= "{{ _data_begin['reasons_for_contact'] }}" {% endif %}></textarea>
                             </div>
 
                         </div>
@@ -95,7 +95,7 @@
                         <div class="card-header">
                             <div class="mb-2">
                                 <label class="form-label"><strong>Дата Рождения</strong></label>
-                                <input required type="date" name="date_of_birth" class="form-control" {% if _mode == "view" %} readonly value="{{ _data['date_of_birth'] }}" {% endif %}>
+                                <input required type="date" name="date_of_birth" class="form-control" {% if _mode == "view" %} readonly {% endif %} value="{{ _data['date_of_birth'] }}" >
                             </div>
                             <div class="mb-2">
                                 <label class="form-label"><strong>ФИО родителя</strong></label>
@@ -104,10 +104,31 @@
                             <div class="mb-2">
                                 <label class="form-label"><strong>Учебное заведение</strong></label>
                                 <select required type="text" name="educational_institution" class="form-control" {% if _mode=="view"%} disabled {% endif %}>
+                                    {% if _mode == "new" and not _attempt %}
                                         <option>Гимназия</option>
                                         <option>Массовая школа</option>
                                         <option>Коррекционная школа</option>
                                         <option>Домашнее обучение</option>
+                                    {% else %}
+                                        <option>{{ _data["educational_institution"] }}</option>
+                                        {% if _data["educational_institution"] == "Гимназия" %}
+                                            <option>Массовая школа</option>
+                                            <option>Коррекционная школа</option>
+                                            <option>Домашнее обучение</option>
+                                        {% elif _data["educational_institution"] == "Массовая школа" %}
+                                            <option>Гимназия</option>
+                                            <option>Коррекционная школа</option>
+                                            <option>Домашнее обучение</option>
+                                        {% elif _data["educational_institution"] == "Коррекционная школа" %}
+                                            <option>Гимназия</option>
+                                            <option>Массовая школа</option>
+                                            <option>Домашнее обучение</option>
+                                        {% elif _data["educational_institution"] == "Домашнее обучение" %}
+                                            <option>Гимназия</option>
+                                            <option>Коррекционная школа</option>
+                                            <option>Массовая школа</option>
+                                        {% endif %}
+                                    {% endif %}
                                 </select>
                             </div>
                             <div class="mb-2">

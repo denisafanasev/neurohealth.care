@@ -4,7 +4,7 @@ from datetime import datetime
 
 from models.user import User
 from data_adapters.data_store import DataStore
-from models.action_manager import ActionManager
+from services.action_service import ActionService
 
 from error import UserManagerException
 
@@ -296,7 +296,7 @@ class UserManager():
 
 
         data_store.add_row(user_data)
-        ActionManager().add_notifications(user.name, "add", "user_manager")
+        ActionService().add_notifications(user.name, "add", "user_manager")
     
     def get_current_user_id(self):
         """
@@ -363,7 +363,7 @@ class UserManager():
         data_store.change_row(user_data)
         user = self.get_user_by_login(_login)
 
-        ActionManager().add_notifications(user.name, "overwrite", "user_manager")
+        ActionService().add_notifications(user.name, "overwrite", "user_manager")
 
         return user
 
@@ -390,7 +390,7 @@ class UserManager():
 
         user = self.get_user_by_login(_login)
 
-        ActionManager().add_notifications(user.name, "overwrite", "user_manager")
+        ActionService().add_notifications(user.name, "overwrite", "user_manager")
 
     def activation_deactivation(self, _login):
         """
@@ -423,6 +423,6 @@ class UserManager():
                      "expires_date": expires_date, "active": user.active}
         data_store.change_row(user_data)
 
-        ActionManager().add_notifications(user.name, "overwrite", "user_manager")
+        ActionService().add_notifications(user.name, "overwrite", "user_manager")
 
         return user.active

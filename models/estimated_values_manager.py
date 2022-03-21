@@ -1,6 +1,6 @@
 from data_adapters.data_store import DataStore
 from models.estimated_values import Estimated_Values
-from models.action_manager import ActionManager
+from services.action_service import ActionService
 
 class EstimatedValuesManager():
 
@@ -89,7 +89,7 @@ class EstimatedValuesManager():
                     criteria[i] = _criteria[i_id - 1]
                     age_range_file.update_row(criteria, "id")
 
-        ActionManager().add_notifications(_file_name, "overwrite", "estimated_values")
+        ActionService().add_notifications(_file_name, "overwrite", "estimated_values")
 
 
 

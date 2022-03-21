@@ -6,10 +6,11 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Datatables with Buttons
+        // DataTables with Buttons
         var datatablesButtons = $("#datatables-buttons").DataTable({
             responsive: true,
-            lengthChange: !1
+            lengthChange: !1,
+
         });
         datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
     });

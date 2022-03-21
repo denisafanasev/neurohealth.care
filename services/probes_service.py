@@ -11,5 +11,8 @@ class ProbesService():
     def init(self):
         pass
 
-    def get_data(self):
-        return "Data"
+    def get_probes(self):
+
+        probes_manager = ProbesManager()
+
+        return probes_manager.get_probes()

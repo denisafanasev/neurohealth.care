@@ -24,6 +24,7 @@ from controllers.results_page_controller import ResultsPageController
 from controllers.probationers_page_controller import ProbationersPageController
 from controllers.user_profile_page_controller import UserProfilePageController
 from controllers.probationer_card_page_controller import ProbationerCardPageController
+from controllers.test_page_controller import TestPageController
 
 from error import UserManagerException
 
@@ -211,16 +212,10 @@ def user_manager():
 
     endpoint = request.endpoint
 
-    # if request.method == 'POST':
-    #     action = request.form['action']
-    #     if action == 'add_user':
-    #         pass
-            #добавиим просто нового пользователя
-    # page_controller.create_user("user", "user", "user", "user", "user@user.usr")
-
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=page_controller.get_users_list_view(), _is_current_user_admin=flask_login.current_user.is_admin())
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _data=page_controller.get_users_list_view(),
+                           _is_current_user_admin=flask_login.current_user.is_admin())
 
 
 @app.route('/user_profile', methods=['GET', 'POST'])
@@ -316,6 +311,7 @@ def user_profile():
                     user["probationers_number"] = int(request.form["probationers_number"])
                     user["access_time"] = request.form["access_time"]
                     user["created_date"] = data_begin.created_date
+                    user["active"] = data_begin.active
 
                     page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
                                                         user["probationers_number"], user["access_time"],
@@ -386,7 +382,7 @@ def main_page():
 
     return render_template('main_page.html', view="main_page", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=page_controller.get_data())
+                               endpoint), _data=page_controller.get_actions(), _user=page_controller.get_current_user())
 
 
 @app.route('/corrections', methods=['GET', 'POST'])
@@ -425,9 +421,9 @@ def probes():
 
 
 
-    return render_template('probes.html', view="probes", _menu=mpc.get_main_menu(),
+    return render_template('protocols.html', view="probes", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=page_controller.get_data())
+                               endpoint), _data=page_controller.get_probes())
 
 @app.route('/probe_profile', methods=['GET', 'POST'])
 @login_required
@@ -437,21 +433,80 @@ def probe_profile():
     mpc = MainMenuPageController()
 
     endpoint = "probes"
-    probationers = page_controller.get_probationers()
-    probationers_list = [i["name_probationer"] for i in probationers]
+    probationer_id = request.args.get('probationer_id')
+
+    data = {}
+    probationer = []
+    test_list = []
+    probationers = []
+    probe_id = request.args.get("probe_id")
+    protocol = ""
+
+    if probationer_id is None:
+        probationers.append({"name_probationer": "Выберите тестируемого"})
+        probationers.extend(page_controller.get_probationers())
+        mode = "selection_probationer"
+    else:
+        test_id = int(request.args.get("test_id"))
+        data = page_controller.get_protocol(test_id, int(probe_id))
+        protocol = data["protocol_status"]
+        mode = "add_value_tests"
+        test_list = page_controller.get_tests_list()
 
     if request.method == "POST":
+        if mode == "selection_probationer":
+            name_probationer = request.form["probationer"]
+            probationer = [i for i in probationers if i["name_probationer"] == name_probationer][0]
+            probationer_id = probationer["probationer_id"]
+            date_of_birth = probationer["date_of_birth"]
+            # protocol_status = request.form["action"]
 
-        name_probationer = request.form["probationer"]
-        probationer = [i for i in probationers if i["name_probationer"] == name_probationer][0]
+            probe_id = page_controller.add_probe(name_probationer, probationer_id, date_of_birth)
+            return redirect("probe_profile?probationer_id={probationer_id}&probe_id={probe_id}&test_id=1".format(
+                probationer_id=probationer_id,
+                probe_id=probe_id
+            ))
 
-        page_controller.add_probe(probationer, request.form["button"])
+        elif mode == "add_value_tests":
+            probe_id = request.args.get("probe_id")
+            x = request.form
+            grades = [{"id": key, "grade": value} for key, value in request.form.items() if key.isdigit() or ("_" in key)]
+            page_controller.add_grades_in_probe(grades, int(probe_id))
 
+            if request.form.get("button") == "draft" or request.form.get("button") == "end":
+                protocol_status = request.form["button"]
+                page_controller.add_grades_in_probe(grades, int(probe_id), protocol_status)
+
+                return redirect("probes")
+
+            elif request.form["action"]:
+                page_controller.add_grades_in_probe(grades, int(probe_id))
+                next_test_id = int(request.form["action"])
+
+                return redirect("probe_profile?probationer_id={probationer_id}&probe_id={probe_id}&test_id={test_id}".format(
+                    probationer_id=probationer_id,
+                    probe_id=probe_id,
+                    test_id=next_test_id
+                ))
 
     return render_template('probe_profile.html', view="probe_profile", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _probationers_list=probationers_list)
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _probationers_list=probationers, _data=data,
+                           _mode=mode, _probes=test_list, _protocol=protocol)
 
+# @app.route('/probe_profile/test', methods=['GET', 'POST'])
+# @login_required
+# def test():
+#     page_controller = TestPageController()
+#     mpc = MainMenuPageController()
+#
+#     endpoint = "probes"
+#     data = page_controller.get_protocol()
+#
+#
+#     return render_template('probe_profile.html', view="test", _menu=mpc.get_main_menu(),
+#                            _active_main_menu_item=mpc.get_active_menu_item_number(
+#                                endpoint), _data=data)
 
 @app.route('/results', methods=['GET', 'POST'])
 @login_required
@@ -514,11 +569,11 @@ def probationer_card():
     if not (attempt and probationer_id is not None):
         mode = "view"
     else:
-        if probationer_id is None:
-            mode = "new"
-            probationer_id = ""
-        else:
-            mode = "edit"
+        mode = "edit"
+
+    if probationer_id is None:
+        mode = "new"
+        probationer_id = ""
 
     user_id = flask_login.current_user.user_id
     user_login = UserProfilePageController().get_users_profile_view(user_id).login
@@ -564,6 +619,7 @@ def probationer_card():
                 elif mode == "edit":
 
                     probationer = {}
+
                     probationer["name_probationer"] = request.form["name_probationer"]
                     probationer["date_of_birth"] = request.form["date_of_birth"]
                     probationer["name_parent"] = request.form["name_parent"]
@@ -571,6 +627,12 @@ def probationer_card():
                     probationer["contacts"] = request.form["contacts"]
                     probationer["diagnoses"] = request.form["diagnoses"]
                     probationer["reasons_for_contact"] = request.form["reasons_for_contact"]
+
+                    page_controller.change_probationer(probationer_id, probationer["name_probationer"],
+                                                        probationer["date_of_birth"], probationer["name_parent"],
+                                                        probationer["educational_institution"],
+                                                        probationer["contacts"],
+                                                       probationer["diagnoses"], probationer["reasons_for_contact"])
 
                     data = probationer
                     mode = "view"
@@ -605,9 +667,6 @@ def settings():
 
     endpoint = request.endpoint
     file_name = ""
-
-
-
 
     return render_template('settings.html', view="settings", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),

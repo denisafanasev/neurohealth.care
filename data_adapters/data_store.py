@@ -1,6 +1,6 @@
 from tinydb import TinyDB, Query, where
 import json
-from tinydb.operations import delete, increment
+from tinydb.operations import delete, increment, add
 
 class DataStore():
     """
@@ -111,14 +111,48 @@ class DataStore():
         self.data_store.update({"password": _data["password"]}, where("login") == _data["login"])
 
     def update_row(self, _data, _where):
+        """
+        Обновление данных
+
+        Args:
+            _data(Dict): структура данных для записи
+            _where(Dict): переменная для поиска нужно записи
+        """
 
         self.data_store.update(_data, where(_where) == _data[_where])
 
     def change_probationer(self, _data):
+        """
+        Обновление данных тестируемого
+
+        Args:
+            _data(Dict): структура данных для записи
+        """
 
         self.data_store.update_multiple([({"name_probationer": _data["name_probationer"],
                                            "date_of_birth": _data["date_of_birth"], "name_parent": _data["name_parent"],
                                            "educational_institution": _data["educational_institution"],
                                            "contacts": _data["contacts"],"diagnoses": _data["diagnoses"],
                                            "reasons_for_contact": _data["reasons_for_contact"]},
-                                           where("probationer_id") == _data["probationer_id"])])
+                                           where("probationer_id") == int(_data["probationer_id"]))])
+
+    def update_action(self, _action, _login):
+        """
+        Обновление записей действий пользователей
+        Args:
+            _action(Dict): структура данных для записи
+            _login(Dict): переменная для поиска нужно записи
+        """
+
+        self.data_store.update(add("action", [_action]), where("login") == _login)
+
+    def upsert_row(self, _data, _where):
+        """
+        Обновление данных
+
+        Args:
+            _data(Dict): структура данных для записи
+            _where(Dict): переменная для поиска нужно записи
+        """
+
+        self.data_store.upsert(_data, where(_where) == _data[_where])

@@ -18,8 +18,26 @@ class ProbeProfileService():
 
         return probationer_manager.get_probationers()
 
-    def add_probe(self, _probationer, _protocol_status):
+    def add_probe(self, _name_probationer, _probationer_id, _date_of_birth, _protocol_status):
 
         probes_manager = ProbesManager()
 
-        return probes_manager.add_probe(_probationer, _protocol_status)
+        return probes_manager.add_probe(_name_probationer, _probationer_id, _date_of_birth, _protocol_status)
+
+    def get_protocol(self, _id_test, _probe_id):
+
+        probes_manager = ProbesManager()
+
+        return probes_manager.get_protocol(_id_test, _probe_id)
+
+    def get_tests_list(self):
+
+        probes_manager = ProbesManager()
+
+        return probes_manager.get_tests_list()
+
+    def add_grades_in_probe(self, _grades, _probe_id, _protocol_status):
+
+        probes_manager = ProbesManager()
+
+        return probes_manager.add_grades_in_probe(_grades, _probe_id, _protocol_status)
