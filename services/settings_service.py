@@ -10,6 +10,7 @@ class SettingsService():
     def init(self):
         pass
 
+      
     def get_assessments(self, _file_name):
 
         setting_manager = SettingManager()

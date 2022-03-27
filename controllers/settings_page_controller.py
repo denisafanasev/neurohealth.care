@@ -21,15 +21,14 @@ class SettingsPageController():
 
         page_service = SettingsService()
         assessments = page_service.get_assessments(_file_name)
+
         assessments_list_view = []
 
         for assessment in assessments:
             assessments_view = {}
-
             assessments_view["id"] = assessment.id
             assessments_view["assessment_parameters"] = assessment.assessment_parameters
             assessments_view["tests"] = assessment.tests
-
             assessments_list_view.append(assessments_view)
 
         return assessments_list_view
