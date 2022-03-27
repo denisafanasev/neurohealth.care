@@ -6,8 +6,65 @@
         // Choices.js
         new Choices(document.querySelector(".choices-single"));
         new Choices(document.querySelector(".choices-multiple"));
+      
+        // Flatpickr
+        flatpickr(".flatpickr-minimum");
+        flatpickr(".flatpickr-datetime", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+        });
+        flatpickr(".flatpickr-human", {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "Y-m-d",
+        });
+        flatpickr(".flatpickr-multiple", {
+            mode: "multiple",
+            dateFormat: "Y-m-d"
+        });
+        flatpickr(".flatpickr-range", {
+            mode: "range",
+            dateFormat: "Y-m-d"
+        });
+        flatpickr(".flatpickr-time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+        });
     });
+</script>
     </script>
+    <style>
+        .select{
+            position: absolute;
+            right: -161px;
+            top: 82px;
+            z-index: 1;
+        }
+        .table{
+            position: relative;
+            z-index: 0;
+        }
+        select {
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          appearance: none;
+            background-color: #fff;
+        }
+        .criteria{
+            border: 1px solid #ced4da;
+            background-clip: padding-box;
+            width: min-content;
+            padding: 0.1rem 0.85rem;
+        }
+        .about{
+            display: inline-block;
+        }
+        .btn{
+            top: 10px;
+        }
+    </style>
+
     <div class="container-fluid p-0">
     
         <h1 class="h3 mb-3">Настройки</h1>
@@ -19,11 +76,13 @@
                         <h5 class="card-title mb-0">Настройки</h5>
 
                         <div class="list-group list-group-flush" role="tablist">
-                            <a class="list-group-item list-group-item-action active" data-bs-toggle="list" href="#structure" role="tab">
-                                Структура протокола
-                            </a>
+                            {% if _is_current_user_admin %}
+                                <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#structure" role="tab">
+                                    Справочник оценочных значений
+                                </a>
+                            {% endif %}
                             <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#directory" role="tab">
-                                Справочник оценочных значений
+                                Справочник диапазонов возрастов
                             </a>
                         </div>
                     </div>
@@ -31,98 +90,115 @@
             </div>
             <div class="col-10">
                 <div class="tab-content">
-                    <div class="tab-pane fade active show" id="structure" role="tabpanel">
+                    <div class="tab-pane fade show active" id="structure" role="tabpanel">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Структура протокола</h5>
+                                <h5 class="card-title">Справочник оценочных значений</h5>
 
-                                <form>
-                                    {% for i_data in _data %}
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <table id="datatables-buttons" class="table table-bordered" style="width: 100%;"
-                                                    role="grid" aria-describedby="datatables-reponsive_info">
-                                                <tbody>
-                                                    <tr>
-                                                        <th align="center" colspan="4"><u>{{ i_data["assessment_parameters"] }}</u></th>
-                                                    </tr>
-                                                    {% for i_test in i_data["tests"] %}
-                                                        <tr>
-                                                            <tr>
-                                                                <th align="rigth" colspan="3" class="align-self-lg-start col-1">Тест: {{ i_test["name_test"] }}</th>
-                                                            </tr>
-                                                            {% for i_parameter, i_grade in i_test['parameters'].items() %}
-                                                                    {% if not i_grade is mapping %}
-                                                                        <tr class="align-self-lg-end">
-                                                                            <td style="width:25%;" class="align-self-lg-start col-1">    </td>
-                                                                            <td style="width:25%;" align="center" class="col-1">{{ i_parameter }}</td>
-                                                                            <td style="width:25%;" align="center" class="align-self-lg-start col-1">{{ i_grade }}</td>
-                                                                        </tr>
-                                                                    {% else %}
-                                                                        <th colspan="3" class="align-self-lg-start col-1" >{{ i_parameter }}</th>
-                                                                        {% for key, value in i_grade.items() %}
-
-                                                                            {% if not value is mapping %}
-                                                                                <tr style="width:25%;" class="align-items-md-end">
-                                                                                    <td style="width:25%;" class="align-self-lg-start col-1">    </td>
-                                                                                    <td style="width:25%;" align="center" class="col-1">{{ key }}</td>
-                                                                                    <td style="width:25%;" align="center" class="col-1">{{ value }}</td>
-                                                                                </tr>
-                                                                            {% else %}
-                                                                                <tr>
-                                                                                    <td rowspan="{{ value|count + 2}}" class="align-self-lg-start col-1" >      </td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td rowspan="{{ value|count + 1}}" class="align-self-lg-start col-1" >{{ key }}</td>
-                                                                                </tr>
-                                                                                {% for i_key, i_value in value.items() %}
-                                                                                    <tr class="align-items-md-end">
-                                                                                        <td style="width:25%;" align="center" class="col-1">{{ i_key }}</td>
-                                                                                        <td style="width:25%;" align="center" class="col-1">{{ i_value }}</td>
-                                                                                    </tr>
-                                                                                {% endfor %}
-                                                                            {% endif %}
-                                                                        {% endfor %}
-                                                                    {% endif %}
-                                                            {% endfor %}
-                                                        </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                                </table>
-                                            </div>
+                                <form method="post" enctype="multipart/form-data" >
+                                    <div class="select row">
+                                        <div class="about">
+                                            <label><strong>Диапазон возрастов</strong></label>
                                         </div>
-                                    {% endfor %}
-                                </form>
+                                        <div class="about">
+                                            <select type="text" name="file_name" class="criteria form-control">
+                                                <option>{{ _file_name }}</option>
+                                                {% for i_rage in _ranges_age %}
+                                                    {% if i_rage != _file_name %}
+                                                        <option>{{ i_rage }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <button type="submit" name="button" class="btn btn-primary btn-sm" value="loading">Загрузка</button>
+                                        </div>
+                                    </div>
+{#                                </form>#}
 
+{#                                <form  method="post" enctype="multipart/form-data">#}
+                                    <div id="assessment">
+                                        <div>
+                                            <button type="submit" name="button" value="save" class="btn btn-primary">Сохранить</button>
+                                        </div>
+                                        {% for i_data in _data %}
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <table id="datatables-buttons" class="table table-bordered" style="width: 100%;"
+                                                        role="grid" aria-describedby="datatables-reponsive_info">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td></td>
+                                                            <th id="assessment_parameters" class="align-content-center" rowspan="2" colspan="4" style="text-align: center; font-size: 19px"><u>{{ i_data["assessment_parameters"] }}</u></th>
+                                                            <td></td>
+                                                        </tr>
+                                                        {% for i_test in i_data["tests"] %}
+                                                            <tr>
+                                                                <tr>
+                                                                    <th id="name_test" align="rigth" colspan="6" style="text-align: -webkit-center">Тест: {{ i_test["name_test"] }}</th>
+                                                                </tr>
+                                                                {% for i_parameter in i_test['parameters'] %}
+                                                                    {% if i_parameter['name_parameters'] != "" %}
+                                                                        <td style="width:25%;" class="align-self-lg-start col-1">  {{ i_parameter['name_parameters'] }}  </td>
+                                                                    {% endif %}
+                                                                    {% for i_criteria in i_parameter['criteria'] %}
+                                                                        <tr class="align-self-lg-end">
+                                                                            {% for i_key, i_value in i_criteria.items() %}
+                                                                                {% if i_key != "id" %}
+                                                                                    <td style="width:25%;" align="center" class="col-1"></td>
+                                                                                    <td style="width:25%;" align="center" class="col-1">
+                                                                                        <input disabled name="{{ i_criteria["id"] }}_name" value="{{ i_key }}">
+                                                                                    </td>
+                                                                                    <td  style="width:25%;" align="center" class="align-self-lg-start col-1">
+                                                                                        <input required name="{{ i_criteria["id"] }}_grade" value="{{ i_value }}">
+                                                                                    </td>
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                {% endfor %}
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="directory" role="tabpanel">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Справочник оценочных значений</h5>
+                                <h5 class="card-title">Справочник диапазонов возрастов</h5>
 
-                                <form>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="inputPasswordCurrent">Current password</label>
-                                        <input type="password" class="form-control" id="inputPasswordCurrent">
-                                        <small><a href="#">Forgot your password?</a></small>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="inputPasswordNew">New password</label>
-                                        <input type="password" class="form-control" id="inputPasswordNew">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="inputPasswordNew2">Verify password</label>
-                                        <input type="password" class="form-control" id="inputPasswordNew2">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                </form>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <table id="datatables-buttons" class="table table-bordered" style="width: 100%;"
+                                            role="grid" aria-describedby="datatables-reponsive_info">
 
+                                            <thead>
+                                            <th>Список диапазонов возрастов</th>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr>
+                                                {% for i_range in _ranges_age %}
+                                                    <tr>
+                                                        <td>{{ i_range }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tr>
+                                            </tbody>
+                                        </table>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
             </div>
         </div>
     </div>

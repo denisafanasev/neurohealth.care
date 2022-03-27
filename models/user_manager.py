@@ -39,8 +39,8 @@ class UserManager():
             UserManagerException: ошибка корректности значения пароля
         """        
 
-        if (len(_password) < 4) or (len(_password)>20):
-            raise UserManagerException("неверная длинная пароля, укажите минимум 5 и максимум 20 символов")
+        if (len(_password) < 3) or (len(_password)>20):
+            raise UserManagerException("неверная длинная пароля, укажите минимум 4 и максимум 20 символов")
     
     def validate_role(self, _role):
         """

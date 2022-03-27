@@ -530,6 +530,7 @@ def probationer_card():
     return render_template('probationer_card.html', view="probationer_card", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
                            _mode=mode, _data_begin=data_begin, _error=error, _error_type=error_type, _attempt=attempt)
+
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
@@ -544,10 +545,42 @@ def settings():
     mpc = MainMenuPageController()
 
     endpoint = request.endpoint
+    file_name = "structure"
+
+
+    if request.method == "POST":
+        if request.form["button"] == "save":
+            data = page_controller.get_assessments(file_name)
+            criteria = {}
+            name_criteria = []
+            for i_data in data:
+                for i_test in i_data["tests"]:
+                    for i_parameters in i_test["parameters"]:
+                        for i_criteria in i_parameters["criteria"]:
+                            for i_key in i_criteria.keys():
+                                if not i_key == "id":
+                                    name_criteria.append(i_key)
+
+            for i in range(1, 214):
+                criteria[i] = {name_criteria[i - 1]: request.form["{}_grade".format(i)]}
+
+            page_controller.overwrite(request.form["file_name"], criteria)
+            data = page_controller.get_assessments(request.form["file_name"])
+
+        elif request.form["button"] == "loading":
+            file_name = request.form["file_name"]
+
+            if file_name == "базовые значение":
+                data = page_controller.get_assessments("structure")
+            else:
+                data = page_controller.get_assessments(file_name)
+    else:
+        data = page_controller.get_assessments(file_name)
 
     return render_template('settings.html', view="settings", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=page_controller.get_assessments())
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _data=data, _ranges_age=page_controller.get_age_ranges(),_file_name=file_name,
+                           _is_current_user_admin=flask_login.current_user.is_admin())
 
 @app.errorhandler(404)
 @login_required
