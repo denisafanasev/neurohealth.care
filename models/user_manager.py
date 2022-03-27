@@ -2,9 +2,9 @@ import hashlib
 import flask_login
 from datetime import datetime
 
-
 from models.user import User
 from data_adapters.data_store import DataStore
+from services.action_service import ActionService
 
 from error import UserManagerException
 
@@ -299,7 +299,7 @@ class UserManager():
 
 
         data_store.add_row(user_data)
-
+        ActionService().add_notifications(user.name, "add", "user_manager")
     
     def get_current_user_id(self):
         """
@@ -366,6 +366,8 @@ class UserManager():
         data_store.change_row(user_data)
         user = self.get_user_by_login(_login)
 
+        ActionService().add_notifications(user.name, "overwrite", "user_manager")
+
         return user
 
 
@@ -388,6 +390,10 @@ class UserManager():
         user_data = {"login": _login, "password": password}
 
         data_store.discharge_password(user_data)
+
+        user = self.get_user_by_login(_login)
+
+        ActionService().add_notifications(user.name, "overwrite", "user_manager")
 
     def activation_deactivation(self, _login):
         """
@@ -419,5 +425,7 @@ class UserManager():
                      "probationers_number": user.probationers_number, "access_time": user.access_time,
                      "expires_date": expires_date, "active": user.active}
         data_store.change_row(user_data)
+
+        ActionService().add_notifications(user.name, "overwrite", "user_manager")
 
         return user.active

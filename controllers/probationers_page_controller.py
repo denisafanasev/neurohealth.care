@@ -37,7 +37,7 @@ class ProbationersPageController():
             probationer_view['user_login'] = probationer.user_login
             probationer_view['name_probationer'] = probationer.name_probationer
             probationer_view['name_parent'] = probationer.name_parent
-            probationer_view['date_of_birth'] = str(probationer.date_of_birth.strftime("%d/%m/%Y"))
+            probationer_view['date_of_birth'] = str(probationer.date_of_birth)
             probationer_view['contacts'] = probationer.contacts
             probationer_view['educational_institution'] = probationer.educational_institution
 
