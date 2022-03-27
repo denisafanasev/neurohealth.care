@@ -10,6 +10,7 @@ class EstimatedValuesService():
     def init(self):
         pass
 
+
     def get_assessments(self, _file_name):
 
         estimated_values_manager = EstimatedValuesManager()
