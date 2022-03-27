@@ -18,9 +18,9 @@ MAIN_MENU = [
     {"module": "", "name": "Рабочий стол", "endpoint": "main_page", "icon": "sliders"},
     
     {"module": "Центр тестирование", "name": "Коррекция", "endpoint": "corrections", "icon": "trending-up"},
-    {"module": "Центр тестирование", "name": "Пробы", "endpoint": "probes", "icon": "list"},
+    {"module": "Центр тестирование", "name": "Протоколы", "endpoint": "probes", "icon": "list"},
     {"module": "Центр тестирование", "name": "Результаты", "endpoint": "results", "icon": "activity"},
-    {"module": "Центр тестирование", "name": "Испытуемые", "endpoint": "probationers", "icon": "users"},
+    {"module": "Центр тестирование", "name": "Тестируемые", "endpoint": "probationers", "icon": "users"},
     
 ]
 

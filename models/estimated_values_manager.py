@@ -1,8 +1,6 @@
 from data_adapters.data_store import DataStore
 from models.estimated_values import Estimated_Values
-import flask_login
-from models.user_manager import UserManager
-
+from services.action_service import ActionService
 
 class EstimatedValuesManager():
 
@@ -91,14 +89,7 @@ class EstimatedValuesManager():
                     criteria[i] = _criteria[i_id - 1]
                     age_range_file.update_row(criteria, "id")
 
-        self.add_notifications(_file_name, "overwrite")
+        ActionService().add_notifications(_file_name, "overwrite", "estimated_values")
 
-    def add_notifications(self, _age_range, _what):
 
-        data = DataStore("action")
-        user_login = UserManager().get_user_by_id(flask_login.current_user.user_id).login
 
-        if data.get_rows({"user": user_login}) is not None:
-            if _what == "overwrite":
-                data.add_row({"action": "Пользователь {user} изменил данные в файле {file}".format(
-                    user=user_login, file=_age_range)})

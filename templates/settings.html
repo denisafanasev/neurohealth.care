@@ -33,6 +33,11 @@
         });
     });
     </script>
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js">
+        {#$(document).ready(function() {#}
+        {#    $('#example').DataTable();} );#}
+    </script>
     <style>
     .btn{
         margin-bottom: 1em;
@@ -65,7 +70,7 @@
             </div>
             <div class="col-10">
                 <div class="tab-content">
-                    <div class="tab-pane fade {% if _endpoint == "estimated_values" %} show active {% endif %}" id="{{ url_for("estimated_values") }}" role="tabpanel">
+                    <div id="example" class="tab-pane fade {% if _endpoint == "estimated_values" %} show active {% endif %}" id="{{ url_for("estimated_values") }}" role="tabpanel">
                         {% block estimated_values %}
                         {% endblock %}
                     </div>
