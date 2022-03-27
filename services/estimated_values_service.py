@@ -10,7 +10,7 @@ class EstimatedValuesService():
     def init(self):
         pass
 
-      
+
     def get_assessments(self, _file_name):
 
         estimated_values_manager = EstimatedValuesManager()
@@ -27,8 +27,4 @@ class EstimatedValuesService():
 
         estimated_values_manager = EstimatedValuesManager()
 
-<<<<<<< HEAD:services/settings_service.py
-        return setting_manager.overwrite(_file_name, _criteria)
-=======
         return estimated_values_manager.overwrite(_file_name, _criteria)
->>>>>>> d92eb50 (Исправлена страница настроек):services/estimated_values_service.py
