@@ -2,6 +2,7 @@ from flask_login import UserMixin
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
+# TODO: все константы надо выносить в файл конфигурации
 DEFAULT_PROBATIONS_NUMBER = 5   # значение доступных тестируемых по умолчанию
 DEFAULT_EXPIRATION_MONTHS = 6   # сколько месяцев активна запись пользователя если не указана дата экспирации
 

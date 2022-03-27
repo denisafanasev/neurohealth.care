@@ -82,8 +82,11 @@ class UserManager():
         """        
 
         # создадим пользователя с указанием обязательных атрибутов
-        user = User(_data_row.doc_id, _data_row['login'], _data_row['name'], _data_row['email'], _data_row['role'],
+        try:
+            user = User(_data_row.doc_id, _data_row['login'], _data_row['name'], _data_row['email'], _data_row['role'],
                     _data_row['active'])
+        except KeyError as error:
+            raise UserManagerException("DB structure error: no attribute " + error.args[0])
 
         # проверим наличие в структуре хранения необязательных атрибутов
         if _data_row.get('probationers_number') is not None:
