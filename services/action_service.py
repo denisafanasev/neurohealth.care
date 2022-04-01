@@ -25,4 +25,4 @@ class ActionService():
 
         user = self.get_current_user().login
 
-        return action_manager.add_notifications(user, _place, _action, _name_place)
+        return action_manager.add_notifications(user, _name_place, _action, _place)

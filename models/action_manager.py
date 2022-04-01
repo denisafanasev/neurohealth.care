@@ -41,6 +41,8 @@ class ActionManager():
             _name_place = "испытуемого"
         elif _name_place == "user_manager":
             _name_place = "пользователя"
+        elif _name_place == "probes_manager":
+            _name_place = ""
 
         action = "{user} {action} данные {place} {name_place}".format(
             user=_user,

@@ -25,11 +25,11 @@ class ProbationerManager():
         for patients_data in patients_list_data:
 
             patient = self.probationer_row_to_probationer(patients_data["probationer_id"], patients_data["name_probationer"],
-                                                        patients_data["date_of_birth"], patients_data["name_parent"],
+                                                        patients_data["name_parent"],
                                                         patients_data["educational_institution"],
                                                         patients_data["contacts"],
                                                        patients_data["diagnoses"], patients_data["reasons_for_contact"],
-                                                          patients_data["user_login"])
+                                                          patients_data["user_login"], patients_data["date_of_birth"])
 
             patient.date_of_birth = datetime.strptime(patients_data["date_of_birth"], "%d/%m/%Y").strftime("%d/%m/%Y")
 
@@ -63,19 +63,18 @@ class ProbationerManager():
 
         if patients_data is not None:
             patient = self.probationer_row_to_probationer(patients_data["probationer_id"], patients_data["name_probationer"],
-                                                        patients_data["date_of_birth"], patients_data["name_parent"],
-                                                        patients_data["educational_institution"],
+                                                        patients_data["name_parent"], patients_data["educational_institution"],
                                                         patients_data["contacts"],
-                                                       patients_data["diagnoses"], patients_data["reasons_for_contact"],
-                                                          patients_data["user_login"])
+                                                        patients_data["diagnoses"], patients_data["reasons_for_contact"],
+                                                          patients_data["user_login"], patients_data["date_of_birth"])
 
             patient.date_of_birth = datetime.strptime(patients_data["date_of_birth"], "%d/%m/%Y").strftime("%Y-%m-%d")
 
         return patient
 
-    def probationer_row_to_probationer(self, _probationer_id, _name_probationer, _date_of_birth, _name_parent,
+    def probationer_row_to_probationer(self, _probationer_id, _name_probationer, _name_parent,
                                        _educational_institution, _contacts,
-                                       _diagnoses, _reasons_for_contact, _user_login=""):
+                                       _diagnoses, _reasons_for_contact, _user_login="", _date_of_birth=""):
         """
         Преобразует структуру данных, в которой хранится информация о испытуемом в структуру Probationer
 
@@ -136,12 +135,11 @@ class ProbationerManager():
 
         # создаем новую запись
         probationer = self.probationer_row_to_probationer(_probationer_id=probationer_id, _user_login=user_login,
-                                                          _name_probationer=name_probationer,
-                                  _date_of_birth=date_of_birth, _name_parent=name_parent,
+                                                          _name_probationer=name_probationer, _name_parent=name_parent,
                                   _educational_institution=educational_institution, _contacts=contacts,
                                   _diagnoses=diagnoses, _reasons_for_contact=reasons_for_contact)
 
-        probationer.date_of_birth = datetime.strptime(_date_of_birth, "%Y-%m-%d").strftime("%d/%m/%Y")
+        probationer.date_of_birth = datetime.strptime(date_of_birth, "%Y-%m-%d").strftime("%d/%m/%Y")
 
         probationer_data = {"probationer_id": probationer.probationer_id, "user_login":probationer.user_login,
                             "name_probationer": probationer.name_probationer, "date_of_birth": probationer.date_of_birth,
@@ -151,7 +149,7 @@ class ProbationerManager():
 
         data_store.add_row(probationer_data)
 
-        ActionService().add_notifications(probationer.name_probationer, "add", "probationer_manager")
+        return probationer.name_probationer
 
     def change_probationer(self, _probationer_id, _name_probationer, _date_of_birth, _name_parent, _educational_institution,
                            _contacts, _diagnoses, _reasons_for_contact):
@@ -185,5 +183,5 @@ class ProbationerManager():
 
         data.change_probationer(probationer_data)
 
-        ActionService().add_notifications(probationer.name_probationer, "overwrite", "probationer_manager")
+        return probationer.name_probationer
 

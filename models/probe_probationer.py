@@ -39,4 +39,4 @@ class Probe():
         elif _protocol_status == "окончательный":
             self.protocol_status = "end"
         else:
-            self.protocol_status = _protocol_status
+            self.protocol_status = "черновик"

@@ -24,7 +24,6 @@ from controllers.results_page_controller import ResultsPageController
 from controllers.probationers_page_controller import ProbationersPageController
 from controllers.user_profile_page_controller import UserProfilePageController
 from controllers.probationer_card_page_controller import ProbationerCardPageController
-from controllers.test_page_controller import TestPageController
 
 from error import UserManagerException
 
@@ -459,7 +458,6 @@ def probe_profile():
             probationer = [i for i in probationers if i["name_probationer"] == name_probationer][0]
             probationer_id = probationer["probationer_id"]
             date_of_birth = probationer["date_of_birth"]
-            # protocol_status = request.form["action"]
 
             probe_id = page_controller.add_probe(name_probationer, probationer_id, date_of_birth)
             return redirect("probe_profile?probationer_id={probationer_id}&probe_id={probe_id}&test_id=1".format(
@@ -493,20 +491,6 @@ def probe_profile():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _probationers_list=probationers, _data=data,
                            _mode=mode, _probes=test_list, _protocol=protocol)
-
-# @app.route('/probe_profile/test', methods=['GET', 'POST'])
-# @login_required
-# def test():
-#     page_controller = TestPageController()
-#     mpc = MainMenuPageController()
-#
-#     endpoint = "probes"
-#     data = page_controller.get_protocol()
-#
-#
-#     return render_template('probe_profile.html', view="test", _menu=mpc.get_main_menu(),
-#                            _active_main_menu_item=mpc.get_active_menu_item_number(
-#                                endpoint), _data=data)
 
 @app.route('/results', methods=['GET', 'POST'])
 @login_required

@@ -1,4 +1,5 @@
 from models.user_manager import UserManager
+from services.action_service import ActionService
 
 
 class UserProfileService():
@@ -37,6 +38,8 @@ class UserProfileService():
 
         user_manager = UserManager()
 
+        ActionService().add_notifications(_login, "add", "user_manager")
+
         return user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number, _access_time)
 
     def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time, _created_date, _active):
@@ -56,6 +59,8 @@ class UserProfileService():
 
         user_manager = UserManager()
 
+        ActionService().add_notifications(_login, "overwrite", "user_manager")
+
         return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _access_time,
                                         _created_date, _active)
 
@@ -74,7 +79,9 @@ class UserProfileService():
 
         user_manager = UserManager()
 
-        return user_manager.discharge_password(_login, _password, _password2)
+        user_manager.discharge_password(_login, _password, _password2)
+
+        ActionService().add_notifications(_login, "overwrite", "user_manager")
 
     def activation_deactivation(self, _login):
         """
@@ -88,5 +95,7 @@ class UserProfileService():
         """
 
         user_manager = UserManager()
+
+        ActionService().add_notifications(_login, "overwrite", "user_manager")
 
         return user_manager.activation_deactivation(_login)

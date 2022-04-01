@@ -1,4 +1,5 @@
 from models.probationer_manager import ProbationerManager
+from services.action_service import ActionService
 
 class ProbationerCardService():
 
@@ -22,9 +23,11 @@ class ProbationerCardService():
         """
 
         probationer_manager = ProbationerManager()
-        probationer_manager.create_probationer( _user_login, _name_probationer, _date_of_birth,
+        name_probationer = probationer_manager.create_probationer( _user_login, _name_probationer, _date_of_birth,
                                                _name_parent, _educational_institution, _contacts, _diagnoses,
                                                _reasons_for_contact)
+
+        ActionService().add_notifications(name_probationer, "add", "probationer_manager")
 
     def get_probationer_card_view(self, probationer_id):
         """
@@ -44,6 +47,8 @@ class ProbationerCardService():
 
         probationer_manager = ProbationerManager()
 
-        return probationer_manager.change_probationer(_probationer_id, _name_probationer, _date_of_birth, _name_parent,
+        name_probationer = probationer_manager.change_probationer(_probationer_id, _name_probationer, _date_of_birth, _name_parent,
                            _educational_institution,
                            _contacts, _diagnoses, _reasons_for_contact)
+
+        ActionService().add_notifications(name_probationer, "overwrite", "probationer_manager")

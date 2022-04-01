@@ -30,6 +30,8 @@ class EstimatedValuesManager():
             _file_name = _file_name.split()[0]
             _file_name = f"{_file_name.split('-')[0]}_{_file_name.split('-')[1]}_age"
             data_criteria = DataStore(_file_name)
+            if data_criteria.get_rows() == []:
+                data_criteria = DataStore("base_criteria")
         else:
             data_criteria = DataStore("base_criteria")
 
@@ -89,7 +91,4 @@ class EstimatedValuesManager():
                     criteria[i] = _criteria[i_id - 1]
                     age_range_file.update_row(criteria, "id")
 
-        ActionService().add_notifications(_file_name, "overwrite", "estimated_values")
-
-
-
+        return _file_name

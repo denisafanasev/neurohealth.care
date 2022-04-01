@@ -1,5 +1,6 @@
 from models.probes_manager import ProbesManager
 from models.probationer_manager import ProbationerManager
+from services.action_service import ActionService
 
 
 class ProbeProfileService():
@@ -22,6 +23,7 @@ class ProbeProfileService():
 
         probes_manager = ProbesManager()
 
+        ActionService().add_notifications(f"пробы испытуемого № {_probationer_id}", "add", "probes_manager")
         return probes_manager.add_probe(_name_probationer, _probationer_id, _date_of_birth, _protocol_status)
 
     def get_protocol(self, _id_test, _probe_id):

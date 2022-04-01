@@ -26,7 +26,7 @@ class Probationer():
         self.user_login = _user_login
         self.name_probationer = _name_probationer
         if _date_of_birth != "":
-            self.date_of_birth = datetime.strptime(_date_of_birth, "%Y-%m-%d").strftime("%d/%m/%Y")
+            self.date_of_birth = datetime.strptime(_date_of_birth, "%d/%m/%Y").strftime("%d/%m/%Y")
         self.name_parent = _name_parent
         self.educational_institution = _educational_institution
         self.contacts = _contacts

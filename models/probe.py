@@ -7,6 +7,7 @@ class Probe():
         self.name_probationer = _name_probationer
         self.probationer_id = _probationer_id
         self.age_probationer = (datetime.now() - _date_of_birth).year
+
         if _protocol_status == "add":
             self.protocol_status = "окончательный"
         elif _protocol_status == "draft":
