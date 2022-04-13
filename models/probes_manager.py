@@ -26,7 +26,7 @@ class ProbesManager():
 
         return probe
 
-    def add_probe(self, _name_probationer, _probationer_id, _date_of_birth, _protocol_status):
+    def add_probe(self, _name_probationer, _probationer_id, _date_of_birth, _protocol_status="черновик"):
 
         data_store = DataStore("probes")
 

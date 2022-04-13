@@ -50,7 +50,11 @@
                                                 <td class="sorting_1 dtr-control"><a href="{{ url_for('probe_profile')}}?probationer_id={{ item["probationer_id"] }}&probe_id={{ item["probe_id"] }}&test_id=1">{{ item['name_probationer'] }}"</a></td>
                                                 <td>{{ item['date_test'] }}</td>
                                                 <td>{{ item['date_protocol'] }}</td>
-                                                <td>{{ item['protocol_status'] }}</td>
+                                                {% if item['protocol_status']=="draft" %}
+                                                    <td>черновик</td>
+                                                {% elif item['protocol_status']=="end" %}
+                                                    <td>окончательный</td>
+                                                {% endif %}
 
                                             </tr>
 
@@ -62,11 +66,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                    </div>
                 </div>
             </div>
         </div>
-    
     </div>
 {% endblock %}

@@ -39,7 +39,7 @@
                         "width": "50%!important;"
                     }]
             });
-            datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
+            {#datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");#}
         });
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/base.min.css">
@@ -48,8 +48,7 @@
     <script type="text/javascript">
     $(document).ready (function () {
         const  selections  =  new  Choices ( $ ( '.id_probe' ) [ 0 ] ) ;
-    }
-    );
+    });
 
     </script>
 
@@ -57,10 +56,6 @@
     body{
         color: black;
     }
-
-    {##datatables-buttons .sorting{#}
-    {#    width: ;#}
-    {#}#}
     </style>
 
     <div class="container-fluid p-0">
@@ -99,119 +94,118 @@
                                 </div>
                             </div>
                         </div>
-
-                    {% elif _mode == "add_value_tests" %}
-                        <div class="row d-flex align-items-stretch bd-highlight">
-                            <div class="p-2 bd-highlight">
-                                <div class="card d-flex align-self-baseline">
-                                    <div class="card-header">
-                                        <div class="card-body">
-                                            <div class="mb-3">
-                                                <select id="id_probe" name="action" class="id_probe" onchange="this.form.submit();">
-                                                        <option></option>
-                                                    {% for i_probe in _probes %}
-                                                        <option style="background: black" value="{{ i_probe["id"] }}">{{ i_probe["name_probe"] }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <h1>{{ _data["name_probe"] }}</h1>
-                                        <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline cell-border"
-                                               role="grid" aria-describedby="datatables-buttons_info">
-                                            <thead>
-                                                <tr role="row">
-                                                    <td class="sorting" style="" tabindex="0" aria-controls="datatables-buttons"
-                                                        aria-label="Position: activate to sort column ascending">Параметр</td>
-                                                    <td class="sorting" style="width:50%!important;" tabindex="0" aria-controls="datatables-buttons"
-                                                        aria-label="Position: activate to sort column ascending">Критерии</td>
-                                                    <td class="sorting" style="width:50%!important;; text-align:center" tabindex="0" aria-controls="datatables-buttons"
-                                                        aria-label="Position: activate to sort column ascending">Оценка</td>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-                                                {% for i_parameter in _data["parameters"] %}
-                                                    {% for i_grade in i_parameter["grades"] %}
-                                                        <tr class="even">
-                                                            <td style="width:0%">{{ i_parameter["name_parameter"] }}</td>
-                                                            <td class="text-wrap" style="width:50%!important; ">{{ i_grade["name_grade"] }}</td>
-
-                                                                {% if i_grade['radio_value'] %}
-                                                                    <td role="row" style="width:50%!important;">
-                                                                        <div>
-                                                                            {% for i_value in i_grade['radio_value']%}
-                                                                                {% if i_value["value"] is number %}
-                                                                                    <div class="input-group" >
-                                                                                        <div class="input-group-text">
-                                                                                            <input {% if _protocol == "end" %} disabled {% endif %} type="radio" class="text-wrap" style="padding-right: 10px" name="{{ i_grade["id"] }}" value="{{ i_value['value'] }}">
-                                                                                            <span class="input-group text-wrap">  ({{ i_value['text'] }})</span>
-
-                                                                                        </div>
-                                                                                    </div>
-                                                                                {% else %}
-                                                                                    <div class="input-group" style="width:50%!important;">
-                                                                                        <div class="input-group-text" style="width:50%!important;">
-                                                                                            <input {% if _protocol == "end" %} disabled {% endif %} type="radio" name="{{ i_grade["id"] }}">
-                                                                                        </div>
-                                                                                        <span class="input-group-text">{{ i_value['value'] }}</span>
-                                                                                        <input {% if _protocol == "end" %} disabled {% endif %} type="text">
-                                                                                    </div>
-                                                                                {% endif %}
-                                                                            {% endfor %}
-                                                                        {% if i_grade["grade"] != "" %}
-                                                                            <div>
-                                                                                <span>Отвечено: {{ i_grade['grade'] }}</span>
-                                                                            </div>
-                                                                        {% endif %}
-                                                                        </div>
-                                                                    </td>
-                                                                {% else %}
-                                                                    {% if i_grade['grade'] is mapping %}
-                                                                        <td name="{{ i_grade["id"] }}"  style="width:50%!important;">
-                                                                            {% for key, value in i_grade['grade'].items() %}
-                                                                                <div class="input-group" style="width:50%!important;">
-                                                                                    <span class="input-group-text">({{ key }})</span>
-                                                                                    {% if key == "Отсроч." %}
-                                                                                        <input {% if _protocol == "end" %} disabled {% endif %} name="{{ i_grade["id"] }}_4" value="{{ value }}">
-                                                                                    {% else %}
-                                                                                        <input {% if _protocol == "end" %} disabled {% endif %} name="{{ i_grade["id"] }}_{{ key }}" value="{{ value }}">
-                                                                                    {% endif %}
-                                                                                </div>
-                                                                            {% endfor %}
-                                                                        </td>
-                                                                    {% else %}
-                                                                        <td style="width:50%!important;">
-                                                                            <input {% if _protocol == "end" %} disabled {% endif %} name="{{ i_grade["id"] }}" value="{{ i_grade["grade"] }}">
-                                                                        </td>
-                                                                    {% endif %}
-                                                                {% endif %}
-                                                        </tr>
-                                                    {% endfor %}
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                        <div align="right">
-                            <button type="submit" name="button" value="draft" class="btn btn-primary ">{% if _mode == "selection_probationer" %}Продолжить
-                                                                                                        {% else %} Сохранить как черновик
-                                                                                                        {% endif %}
-                            </button>
-
-                            {% if _mode == "selection_probationer" %}
-                                <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('probes')}}">
-                                    <span>Отмена</span>
-                                </a>
-                            {% else %}
-                                <button type="submit" name="button" value="end" class="btn btn-primary ">Сохранить окончательно</button>
-                            {% endif %}
-                        </div>
                     </div>
                 </div>
 
+            {% elif _mode == "add_value_tests" %}
+                <div class="row d-flex align-items-stretch bd-highlight">
+                    <div class="p-2 bd-highlight">
+                        <div class="card d-flex align-self-baseline">
+                            <div class="card-header">
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <select id="id_probe" name="action" class="id_probe" onchange="this.form.submit();">
+                                                <option>Выберите пробу</option>
+                                            {% for i_probe in _probes %}
+                                                <option style="background: black" value="{{ i_probe["id"] }}">{{ i_probe["name_probe"] }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <h1>{{ _data["name_probe"] }}</h1>
+                                <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline cell-border"
+                                       role="grid" aria-describedby="datatables-buttons_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <td class="sorting" style="" tabindex="0" aria-controls="datatables-buttons"
+                                                aria-label="Position: activate to sort column ascending">Параметр</td>
+                                            <td class="sorting" style="width:50%!important;" tabindex="0" aria-controls="datatables-buttons"
+                                                aria-label="Position: activate to sort column ascending">Критерии</td>
+                                            <td class="sorting" style="width:50%!important;; text-align:center" tabindex="0" aria-controls="datatables-buttons"
+                                                aria-label="Position: activate to sort column ascending">Оценка</td>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for i_parameter in _data["parameters"] %}
+                                            {% for i_grade in i_parameter["grades"] %}
+                                                <tr class="even">
+                                                    <td >{{ i_parameter["name_parameter"] }}</td>
+                                                    <td class="text-wrap" style="width:50%!important; ">{{ i_grade["name_grade"] }}</td>
+
+                                                        {% if i_grade['radio_value'] %}
+                                                            <td role="row" style="width:50%!important;">
+                                                                <div>
+                                                                    {% for i_value in i_grade['radio_value']%}
+                                                                        {% if i_value["value"] is number %}
+                                                                            <div class="input-group" >
+                                                                                <div class="input-group-text">
+                                                                                    <input {% if _protocol == "end" %} disabled {% endif %} type="radio" class="text-wrap" style="padding-right: 10px" name="{{ i_grade["id"] }}" value="{{ i_value['value'] }}">
+                                                                                    <span class="input-group text-wrap">  ({{ i_value['text'] }})</span>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        {% else %}
+                                                                            <div class="input-group" style="width:50%!important;">
+                                                                                <div class="input-group-text" style="width:50%!important;">
+                                                                                    <input {% if _protocol == "end" %} disabled {% endif %} type="radio" name="{{ i_grade["id"] }}">
+                                                                                </div>
+                                                                                <span class="input-group-text">{{ i_value['value'] }}</span>
+                                                                                <input {% if _protocol == "end" %} disabled {% endif %} type="text">
+                                                                            </div>
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                {% if i_grade["grade"] != "" %}
+                                                                    <div>
+                                                                        <span>Отвечено: {{ i_grade['grade'] }}</span>
+                                                                    </div>
+                                                                {% endif %}
+                                                                </div>
+                                                            </td>
+                                                        {% else %}
+                                                            {% if i_grade['grade'] is mapping %}
+                                                                <td name="{{ i_grade["id"] }}"  style="width:50%!important;">
+                                                                    {% for key, value in i_grade['grade'].items() %}
+                                                                        <div class="input-group" style="width:50%!important;">
+                                                                            <span class="input-group-text">({{ key }})</span>
+                                                                            {% if key == "Отсроч." %}
+                                                                                <input {% if _protocol == "end" %} disabled {% endif %} name="{{ i_grade["id"] }}_4" value="{{ value }}">
+                                                                            {% else %}
+                                                                                <input {% if _protocol == "end" %} disabled {% endif %} name="{{ i_grade["id"] }}_{{ key }}" value="{{ value }}">
+                                                                            {% endif %}
+                                                                        </div>
+                                                                    {% endfor %}
+                                                                </td>
+                                                            {% else %}
+                                                                <td style="width:50%!important;">
+                                                                    <input {% if _protocol == "end" %} disabled {% endif %} name="{{ i_grade["id"] }}" value="{{ i_grade["grade"] }}">
+                                                                </td>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                </tr>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <div align="right">
+                <button type="submit" name="button" value="draft" class="btn btn-primary ">{% if _mode == "selection_probationer" %}Продолжить
+                                                                                            {% else %} Сохранить как черновик
+                                                                                            {% endif %}
+                </button>
+
+                {% if _mode == "selection_probationer" %}
+                    <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('probes')}}">
+                        <span>Отмена</span>
+                    </a>
+                {% else %}
+                    <button type="submit" name="button" value="end" class="btn btn-primary ">Сохранить окончательно</button>
+                {% endif %}
+            </div>
         </form>
     </div>
 {% endblock %}
