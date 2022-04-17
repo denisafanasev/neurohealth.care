@@ -1,139 +1,148 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="author" content="Denis Afanasev">
+    <head>
 
-    <link rel="shortcut icon" href="{{ url_for('static' , filename="img/icons/icon-48x48.png")}}" />
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="author" content="Denis Afanasev">
 
-    <title>{{ app_name }}</title>
-    <link href="{{ url_for('static' , filename="css/light.css")}}" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-</head>
+        <link rel="shortcut icon" href="{{ url_for('static' , filename="img/icons/icon-48x48.png")}}" />
 
-<body data-theme="default" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="default">
-    <div class="wrapper">
-        <nav id="sidebar" class="sidebar js-sidebar">
-            <div class="sidebar-content js-simplebar">
-                <a class="sidebar-brand" href="{{ url_for('index')}}">
-                    <span class="align-middle">{{ app_name }}</span>
-                </a>
+        <title>{{ app_name }}</title>
+        <link href="{{ url_for('static' , filename="css/light.css")}}" rel="stylesheet">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
-                <div class="sidebar-user">
-					<div class="d-flex justify-content-center">
-						<div class="flex-shrink-0">
-							<img src={{ url_for('static' , filename="img/avatars/149071.jpg")}} class="avatar img-fluid rounded me-1" alt="{{ current_user.name }}">
-						</div>
-						<div class="flex-grow-1 ps-2">
-							<a class="sidebar-user-title dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                {{ current_user.name }}
-							</a>
-                            <div class="sidebar-user-subtitle">{{ current_user.role }}</div>
-							<div class="dropdown-menu dropdown-menu-start">
-								<a class="dropdown-item" href="/logout">Log out</a>
-							</div>
-						</div>
-					</div>
-				</div>
+    </head>
 
-                <ul class="sidebar-nav">
-                    {% for module in _menu %}
-                        {% if module[0] != '' %}
-                        <li class="sidebar-header">
-                            {{ module[0] }}
-                        </li>
-                        {% endif %}
-                        {% for item in module[1] %}
-                            <li class="sidebar-item" value={{ item['value'] }}>
-                                <a class="sidebar-link" href="{{ url_for(item['endpoint'])}}">
-                                    <i class="align-middle" data-feather={{ item['icon'] }}></i> <span
-                                        class="align-middle">{{ item['name'] }}</span>
-                                </a>
+    <body data-theme="default" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="default">
+
+        <div class="wrapper">
+
+            <nav id="sidebar" class="sidebar js-sidebar">
+                <div class="sidebar-content js-simplebar">
+                    <a class="sidebar-brand" href="{{ url_for('index')}}">
+                        <img src="{{ url_for('static' , filename="img/logo/nhc_logo_transparent_white.png")}}" width="100%"></img>
+                    </a>
+
+                    <ul class="sidebar-nav">
+                        {% for module in _menu %}
+                            {% if module[0] != '' %}
+                            <li class="sidebar-header">
+                                {{ module[0] }}
                             </li>
+                            {% endif %}
+                            {% for item in module[1] %}
+                                <li class="sidebar-item" value={{ item['value'] }}>
+                                    <a class="sidebar-link" href="{{ url_for(item['endpoint'])}}">
+                                        <i class="align-middle" data-feather={{ item['icon'] }}></i> <span
+                                            class="align-middle">{{ item['name'] }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
                         {% endfor %}
-                    {% endfor %}
-                </ul>
-                <div class="sidebar-cta">
-                    <div class="sidebar-cta-content">
-                        <div class="mb-0 text-sm text-center">
-                            Version {{ app_version }}
+                    </ul>
+                    <div class="sidebar-cta">
+                        <div class="sidebar-cta-content">
+                            <div class="mb-0 text-sm text-center">
+                                Version {{ app_version }}
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </nav>
-
-        <script>
-            $(document).ready(function () { $("body").click(loadPage()) });
-        </script>
-
-        <script>
-            function loadPage() {
-
-                var listItems = $(".sidebar-item");
-
-                page_number = {{ _active_main_menu_item}};
-
-                for (let i = 0; i < listItems.length; i++) {
-                    listItems[i].classList.remove("active");
-                    if (page_number == listItems[i].value) {
-                        listItems[i].classList.add("active");
-                    }
-                }
-            }
-        </script>
-
-        <div class="main">
-            <nav class="navbar navbar-expand navbar-light navbar-bg">
-                
-                <a class="sidebar-toggle js-sidebar-toggle">
-                    <i class="hamburger align-self-center"></i>
-                </a>
-
-                <div class="navbar-collapse collapse">
-                    <ul class="navbar-nav navbar-align">
-                        
-                        <li class="nav-item dropdown">
-        
-                            <a class="nav-link pe-md-0 d-none d-sm-inline-block dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="text-dark">{{ current_user.name }}</span>
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="{{ url_for('logout') }}">Log out</a>
-                            </div>
-                        </li>
-                    </ul>
                 </div>
             </nav>
 
-            <main class="content">
-                {% block main_block %}
-                {% endblock %}
-            </main>
+            <script>
+                $(document).ready(function () { $("body").click(loadPage()) });
+            </script>
 
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row text-muted">
-                        <div class="col-6 text-left">
-                            <p class="mb-0">
-                                <a href="http://cleverleaf.tech" class="text-muted"><strong>CleverLEAF Technology</strong></a> &copy;
-                            </p>
+            <script>
+                function loadPage() {
+
+                    var listItems = $(".sidebar-item");
+
+                    page_number = {{ _active_main_menu_item}};
+
+                    for (let i = 0; i < listItems.length; i++) {
+                        listItems[i].classList.remove("active");
+                        if (page_number == listItems[i].value) {
+                            listItems[i].classList.add("active");
+                        }
+                    }
+                }
+            </script>
+
+            <div class="main">
+                <nav class="navbar navbar-expand navbar-light navbar-bg">
+                    
+                    <a class="sidebar-toggle js-sidebar-toggle">
+                        <i class="hamburger align-self-center"></i>
+                    </a>
+
+                    <div class="navbar-collapse collapse" style="justify-content: flex-end">
+                    
+                        <div>
+                            <span class="text-dark"><b>Имя пользователя:</b> {{ current_user.name }} <b>роль:</b> {{ current_user.role }}</span>
                         </div>
-                        <div class="col-6 text-right">
-                            
+
+                        <div class="btn-group">
+                            <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button" data-bs-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Действия
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-lg-end">
+                                <li><a class="dropdown-item" href="https://adminkit.io/docs/" target="_blank"><svg xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-book-open align-middle me-1">
+                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                                    </svg>
+                                    Инструкция пользователя</a></li>
+                                <li><a class="dropdown-item" href="https://adminkit.io/docs/getting-started/changelog/" target="_blank">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit align-middle me-1">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg> Журнал изменений</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        class="feather feather-log-out align-middle me-2">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                        <polyline points="16 17 21 12 16 7"></polyline>
+                                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                                    </svg>
+                                    Выход из системы
+                                </a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </nav>
+
+                <main class="content">
+                    {% block main_block %}
+                    {% endblock %}
+                </main>
+
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row text-muted">
+                            <div class="col-6 text-left">
+                                <p class="mb-0">
+                                    <a href="http://10xt.tech" class="text-muted" target="_blank"><strong>10xTechnology Ltd.</strong></a> &copy;
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </footer>
+                </footer>
+
+            </div>
         </div>
-    </div>
 
-    <script src="{{ url_for('static' , filename="js/app.js")}}"></script>
+        <script src="{{ url_for('static' , filename="js/app.js")}}"></script>
 
-</body>
-
+    </body>
 </html>

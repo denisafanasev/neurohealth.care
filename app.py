@@ -384,6 +384,86 @@ def main_page():
                                endpoint), _data=page_controller.get_actions(), _user=page_controller.get_current_user())
 
 
+@app.route('/empty_function', methods=['GET', 'POST'])
+@login_required
+def empty_function():
+    """
+    Пустая функция-заглушка
+
+    Returns:
+        
+    """
+
+    page_controller = None
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+
+    return render_template('index.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _data="")
+
+
+@app.route('/education_introduction_course', methods=['GET', 'POST'])
+@login_required
+def education_introduction_course():
+    """
+    Пустая функция-заглушка
+
+    Returns:
+        
+    """
+
+    page_controller = None
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+
+    return render_template('index.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _data="")
+
+
+@app.route('/education_main_courses', methods=['GET', 'POST'])
+@login_required
+def education_main_courses():
+    """
+    Пустая функция-заглушка
+
+    Returns:
+        
+    """
+
+    page_controller = None
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+
+    return render_template('index.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _data="")
+
+
+@app.route('/education_home_tasks', methods=['GET', 'POST'])
+@login_required
+def education_home_tasks():
+    """
+    Пустая функция-заглушка
+
+    Returns:
+        
+    """
+
+    page_controller = None
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+
+    return render_template('index.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _data="")
+
+
 @app.route('/corrections', methods=['GET', 'POST'])
 @login_required
 def corrections():

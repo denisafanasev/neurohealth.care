@@ -19,7 +19,7 @@ class MainMenuService():
 
         user_manager = UserManager()
 
-        menu = config.MAIN_MENU
+        menu = config.MAIN_MENU + config.EDUCATION_MENU
 
         curent_user_role = user_manager.get_user_role(user_manager.get_current_user_id())
 

@@ -6,6 +6,7 @@ ssh -i "shaman_aws_key.pem" ubuntu@ec2-3-142-254-179.us-east-2.compute.amazonaws
 
 conda env export --no-builds > environment.yml
 
+# update and install packeges from the environment file
 conda env update --file environment.yml --prune
 
 # ------- update solution on the server
