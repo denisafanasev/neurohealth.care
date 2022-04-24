@@ -30,7 +30,7 @@ from error import UserManagerException
 import config
 
 sentry_sdk.init(
-    dsn="https://63b5f6ab88514c9cb9ab336e34d42590@o640301.ingest.sentry.io/5756937",
+    dsn="https://216657f6678b4b1bb5136f6ff1a0d8ee@o1211898.ingest.sentry.io/6359936",
     environment=config.ENVIRONMENT,
     integrations=[FlaskIntegration()],
 

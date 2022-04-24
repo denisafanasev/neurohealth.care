@@ -84,8 +84,8 @@
 
     <form id="add_user" name="add_user" method="post" enctype="multipart/form-data" onsubmit="return checkPassword(this);">
         <div class="row d-flex align-items-stretch bd-highlight">
-                <div class="col-8 p-2 bd-highlight">
-                    <div class="card d-flex align-self-baseline">
+                <div class="col-6 p-2 bd-highlight">
+                    <div class="card d-flex align-self-baseline" style="height: 100%;">
                         <div class="card-header">
                             <h5 class="card-title">Учетные данные пользователя</h5>
                             {% if _error_type=='Successful' %}
@@ -133,37 +133,16 @@
                             </div>
                         </div>
                     </div>
-                    <div align="right">
-                        {% if _mode =="view" %}
-                            <button type="submit" name="button" value="is_active" class="btn btn-primary ">{% if _active==True %}Заблокировать
-                                                                                                                {% else %}Разблокировать
-                                                                                                                {% endif %}
-                            </button>
-                        {% endif %}
-                        {% if _mode !="discharge" %}
-                            <button type="submit" name="button" value="add_save_edit" class="btn btn-primary ">{% if _mode=="new" %}Добавить пользователя
-                                                                            {% elif _mode=="edit" %}Сохранить
-                                                                            {% else %}Редактировать
-                                                                            {% endif %}
-                            </button>
-                        {% endif %}
-                        {% if _mode == "discharge" or _mode == "view"%}
-                            <button type="submit" name="button" value="discharge" class="btn btn-primary ">{% if _mode=="view" %}Сброс пароля
-                                                                            {% elif _mode=="discharge" %}Сохранить
-                                                                            {% endif %}
-                            </button>
-                        {% endif %}
-                    </div>
                 </div>
 
-                <div class="col-4 p-2 bd-highlight">
-                    <div class="card d-flex align-self-baseline">
+                <div class="col-6 p-2 bd-highlight">
+                    <div class="card d-flex align-self-baseline" style="height: 100%;">
                         <div class="card-header">
                             <h5 class="card-title">Параметры доступа</h5>
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Роль пользователя</strong></label>
-                                <select type="text" name="role" class="form-control" {% if _mode=="view" or _mode=="discharge" %} disabled {% else %} placeholder="выберите роль пользователя.." {% endif %}>
+                                <select type="text" name="role" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% else %} placeholder="выберите роль пользователя.." {% endif %}>
                                     {% if _mode=="new" and not _attempt %}
                                         <option>user</option>
                                         <option>superuser</option>
@@ -178,7 +157,7 @@
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
-                                <select type="text" name="probationers_number" class="form-control" {% if _mode=="view" or _mode=="discharge" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
+                                <select type="text" name="probationers_number" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
                                     {% if _mode=="new" and not _attempt %}
                                             <option>5</option>
                                             <option>10</option>
@@ -199,7 +178,7 @@
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Срок предоставления доступа</strong></label>
-                                <select type="text" name="access_time" class="form-control" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
+                                <select type="text" name="access_time" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
                                     {% if _mode=="new" and not _attempt %}
                                         <option>6 месяцев</option>
                                         <option>1 год</option>
@@ -219,9 +198,38 @@
                                     {% endif %}
                                 </select>
                             </div>
+
                         </div>
                     </div>
                 </div>
+        </div>
+        <div align="right">
+
+            <button type="submit" name="button" value="discharge" class="btn btn-primary ">
+                Отмена
+            </button>
+
+
+            {% if _mode =="view" %}
+            <button type="submit" name="button" value="is_active" class="btn btn-primary ">{% if _active==True %}Заблокировать
+                {% else %}Разблокировать
+                {% endif %}
+            </button>
+            {% endif %}
+            {% if _mode !="discharge" %}
+            <button type="submit" name="button" value="add_save_edit" class="btn btn-primary ">{% if _mode=="new" %}Добавить
+                пользователя
+                {% elif _mode=="edit" %}Сохранить
+                {% else %}Редактировать
+                {% endif %}
+            </button>
+            {% endif %}
+            {% if _mode == "discharge" or _mode == "view"%}
+            <button type="submit" name="button" value="discharge" class="btn btn-primary ">{% if _mode=="view" %}Сброс пароля
+                {% elif _mode=="discharge" %}Сохранить
+                {% endif %}
+            </button>
+            {% endif %}
         </div>
     </form>
 </div>
