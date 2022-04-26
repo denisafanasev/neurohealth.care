@@ -204,32 +204,35 @@
                 </div>
         </div>
         <div align="right">
-
-            <button type="submit" name="button" value="discharge" class="btn btn-primary ">
-                Отмена
-            </button>
-
-
-            {% if _mode =="view" %}
-            <button type="submit" name="button" value="is_active" class="btn btn-primary ">{% if _active==True %}Заблокировать
-                {% else %}Разблокировать
-                {% endif %}
-            </button>
-            {% endif %}
-            {% if _mode !="discharge" %}
-            <button type="submit" name="button" value="add_save_edit" class="btn btn-primary ">{% if _mode=="new" %}Добавить
-                пользователя
-                {% elif _mode=="edit" %}Сохранить
-                {% else %}Редактировать
-                {% endif %}
-            </button>
-            {% endif %}
-            {% if _mode == "discharge" or _mode == "view"%}
-            <button type="submit" name="button" value="discharge" class="btn btn-primary ">{% if _mode=="view" %}Сброс пароля
-                {% elif _mode=="discharge" %}Сохранить
-                {% endif %}
-            </button>
-            {% endif %}
+            <div class="col-12 p-2 bd-highlight">
+                <div class="card d-flex align-self-baseline">
+                    <div class="card-header">
+                        <button type="submit" name="button" value="cancel" class="btn btn-primary ">
+                            Отмена
+                        </button>
+                        {% if _mode =="view" %}
+                        <button type="submit" name="button" value="is_active" class="btn btn-primary ">{% if _active==True %}Заблокировать
+                            {% else %}Разблокировать
+                            {% endif %}
+                        </button>
+                        {% endif %}
+                        {% if _mode !="discharge" %}
+                        <button type="submit" name="button" value="add_save_edit" class="btn btn-primary ">
+                            {% if _mode=="new" %}Добавить пользователя
+                            {% elif _mode=="edit" %}Сохранить
+                            {% else %}Редактировать
+                            {% endif %}
+                        </button>
+                        {% endif %}
+                        {% if _mode == "discharge" or _mode == "view"%}
+                        <button type="submit" name="button" value="discharge" class="btn btn-primary ">{% if _mode=="view" %}Сброс пароля
+                            {% elif _mode=="discharge" %}Сохранить
+                            {% endif %}
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
     </form>
 </div>

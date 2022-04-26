@@ -244,7 +244,7 @@ def user_profile():
 
     error = None
 
-    if user_id == None:
+    if user_id is None:
         # если пользователь не задан, то открываем страницу в режиме создания нового пользователя
         # страница доступна только администратору
         if not flask_login.current_user.is_admin():
@@ -351,6 +351,10 @@ def user_profile():
                     error = "Пользователь успешно разблокирован!"
                 else:
                     error = "Пользователь успешно заблокирован!"
+            
+            else:
+                return redirect("user_manager")
+
     except exceptions.BadRequestKeyError:
         mode = "view"
         attempt = False

@@ -86,3 +86,6 @@ scp -r -i dafanasevdatalab.pem cs598_capstone_v1.2.zip ubuntu@54.201.50.127:/hom
 
 # copy from remote
 scp dafanasev@dmc-stage-ph1:/home/dafanasev/cd_lab/data/cst_datasets/hotlog.cookie-sync-events.1592784001807.avro.zip .
+
+# setup cert to nginx
+https://marcosantonocito.medium.com/steps-to-install-a-go-daddy-ssl-certificate-on-nginx-on-ubuntu-14-04-ff942b9fd7ff
