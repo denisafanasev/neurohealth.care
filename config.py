@@ -1,6 +1,16 @@
+"""
+app configuration
+"""
+
+import pathlib
+
 VERSION = "0.0.9.0"
 APP_NAME = "NeuroHealth"
-ENVIRONMENT = "production"
+
+if str(pathlib.Path().resolve()).find("prod")!=-1:
+    ENVIRONMENT = "prod"
+else:
+    ENVIRONMENT = "dev"
 
 # system settings
 THREADING_ENABLE = True
