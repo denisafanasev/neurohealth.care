@@ -82,126 +82,122 @@
         <h1 class="h3 d-inline align-middle">Карточка пользователя</h1>
     </div>
 
+    {% if _error_type=='Successful' %}
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <div class="alert-message">
+                <strong>Успешно</strong>  {{ _error }}
+            </div>
+        </div>
+    {% elif _error %}
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <div class="alert-message">
+                <strong>Ошибка</strong> {{ _error }}
+            </div>
+        </div>
+    {% endif %}
+
     <form id="add_user" name="add_user" method="post" enctype="multipart/form-data" onsubmit="return checkPassword(this);">
         <div class="row d-flex align-items-stretch bd-highlight">
-                <div class="col-6 p-2 bd-highlight">
-                    <div class="card d-flex align-self-baseline" style="height: 100%;">
-                        <div class="card-header">
-                            <h5 class="card-title">Учетные данные пользователя</h5>
-                            {% if _error_type=='Successful' %}
-                                <div class="alert alert-success alert-dismissible" role="alert">
-                                    <div class="alert-message">
-                                        <strong>Успешно</strong>  {{ _error }}
-                                    </div>
-                                </div>
-                            {% elif _error %}
-                                <div class="alert alert-danger alert-dismissible" role="alert">
-                                    <div class="alert-message">
-                                        <strong>Ошибка</strong> {{ _error }}
-                                    </div>
-                                </div>
-                            {% endif %}
-                            <div class="mb-2">
-                                <label class="form-label"><strong>Login</strong></label>
-                                <input required type="text" name="login" class="form-control" {% if (_mode!="new")%} readonly {% endif %} {% if _data['login']!=_data_begin['login'] or _mode=="discharge" %} value="{{ _data['login'] }}" {% else %} placeholder= "{{ _data_begin['login'] }}" {% endif %}>
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label"><strong>Имя пользователя</strong></label>
-                                <input required type="text" name="name_user" class="form-control"  {% if (_mode=="view" or _mode=="discharge")%} readonly {% endif %} {% if _data['name']!=_data_begin['name'] %} value="{{ _data['name'] }}" {% else %} placeholder= "{{ _data_begin['name'] }}" {% endif %}>
-                            </div>
-                            {% if _mode=="new" or _mode=="discharge" %}
-                                <div class="mb-2">
-                                    <label class="form-label"><strong>Пароль</strong></label>
-                                    <input required type="password" name="password" class="form-control" {% if _data['password']!='' and _attempt %} value="{{ _data['password'] }}" {% else %} placeholder="{{ _data_begin['password'] }}" {% endif %}>
-{#                                    <div id="message">#}
-{#                                      <h>Критерии к паролю</h>#}
-{#                                      <p id="length" class="invalid">От <b>5 символов</b> до <b>20 символов</b></p>#}
-{#                                    </div>#}
+            <div class="col-6 p-2 bd-highlight">
+                <div class="card d-flex align-self-baseline" style="height: 100%;">
+                    <div class="card-header">
+                        <h5 class="card-title">Учетные данные пользователя</h5>
 
-
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label"><strong>Повтор пароля</strong></label>
-                                    <input required type="password" name="password2" class="form-control" {% if _data['password2']!='' and _attempt %} value="{{ _data['password2'] }}" {% else %}  placeholder="{{ _data_begin['password2'] }}" {% endif %}>
-                                </div>
-                            {% endif %}
-                            <div class="mb-2">
-                                <label class="form-label"><strong>Email</strong></label>
-
-                                <input required type="email" name="email" class="form-control" {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['email']!=_data_begin['email'] %} value="{{ _data['email'] }}" {% else %} placeholder= "{{ _data_begin['email'] }}" {% endif %}>
-
-                            </div>
+                        <div class="mb-2">
+                            <label class="form-label"><strong>Login</strong></label>
+                            <input required type="text" name="login" class="form-control" {% if _mode!="new" %} readonly {% endif %} {% if _data['login'] != _data_begin['login'] or _mode != "new" %} value="{{ _data['login'] }}" {% else %} placeholder="Введите логин пользователя" {% endif %}>
                         </div>
-                    </div>
-                </div>
-
-                <div class="col-6 p-2 bd-highlight">
-                    <div class="card d-flex align-self-baseline" style="height: 100%;">
-                        <div class="card-header">
-                            <h5 class="card-title">Параметры доступа</h5>
-
+                        <div class="mb-2">
+                            <label class="form-label"><strong>Имя пользователя</strong></label>
+                            <input required type="text" name="name_user" class="form-control"  {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['name'] != _data_begin['name'] or _mode != "new"%} value="{{ _data['name'] }}" {% else %} placeholder="Введите имя пользователя" {% endif %}>
+                        </div>
+                        {% if _mode=="new" or _mode=="discharge" %}
                             <div class="mb-2">
-                                <label class="form-label"><strong>Роль пользователя</strong></label>
-                                <select type="text" name="role" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% else %} placeholder="выберите роль пользователя.." {% endif %}>
-                                    {% if _mode=="new" and not _attempt %}
-                                        <option>user</option>
-                                        <option>superuser</option>
-                                    {% else %}
-                                        <option> {{ _data['role'] }} </option>
-                                        {% if _data['role'] == "user" %} <option>superuser</option>>
-                                        {% else %} <option>user</option>
-                                        {% endif %}
-                                    {% endif %}
-                                </select>
-                            </div>
+                                <label class="form-label"><strong>Пароль</strong></label>
+                                <input required type="password" name="password" class="form-control" {% if _data['password']!= _data_begin['password']%} value="{{ _data['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
 
-                            <div class="mb-2">
-                                <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
-                                <select type="text" name="probationers_number" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% else %} placeholder="выберите значение.." {% endif %}>
-                                    {% if _mode=="new" and not _attempt %}
-                                            <option>5</option>
-                                            <option>10</option>
-                                            <option>15</option>
-                                            <option>20</option>
-                                            <option>25</option>
-                                            <option>30</option>
-                                        {% else %}
-                                            <option> {{ _data['probationers_number'] }} </option>
-                                            {% for i in range(1, 7) %}
-                                                {% if i*5 != _data['probationers_number'] %}
-                                                    <option> {{ i*5 }} </option>
-                                                {% endif %}
-                                            {% endfor %}
-                                    {% endif %}
-                                </select>
                             </div>
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Повтор пароля</strong></label>
+                                <input required type="password" name="password2" class="form-control" {% if _data['password2']!= _data_begin['password2'] %} value="{{ _data['password2'] }}" {% else %} placeholder="Повторно введите пароль" {% endif %}>
+                            </div>
+                        {% endif %}
+                        <div class="mb-2">
+                            <label class="form-label"><strong>Email</strong></label>
 
-                            <div class="mb-2">
-                                <label class="form-label"><strong>Срок предоставления доступа</strong></label>
-                                <select type="text" name="access_time" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
-                                    {% if _mode=="new" and not _attempt %}
-                                        <option>6 месяцев</option>
-                                        <option>1 год</option>
-                                        <option>неограниченно</option>
-                                    {% else %}
-                                        <option> {{ _data['access_time'] }} </option>
-                                        {% if _data['access_time']=='неограниченно' %}
-                                            <option>6 месяцев</option>
-                                            <option>1 год</option>
-                                        {% elif _data['access_time']=='6 месяцев' %}
-                                            <option>1 год</option>
-                                            <option>неограниченно</option>
-                                        {% else %}
-                                            <option>6 месяцев</option>
-                                            <option>неограниченно</option>
-                                        {% endif %}
-                                    {% endif %}
-                                </select>
-                            </div>
+                            <input required type="email" name="email" class="form-control" {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['email'] != _data_begin['email'] or _mode != "new"%} value="{{ _data['email'] }}" {% else %} placeholder="Введите email пользователя" {% endif %}>
 
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="col-6 p-2 bd-highlight">
+                <div class="card d-flex align-self-baseline" style="height: 100%;">
+                    <div class="card-header">
+                        <h5 class="card-title">Параметры доступа</h5>
+
+                        <div class="mb-2">
+                            <label class="form-label"><strong>Роль пользователя</strong></label>
+                            <select type="text" name="role" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
+                                {% for i in ['user', 'superuser'] %}
+                                    <option {% if i == _data['role'] %} selected {% endif %}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
+                            <select type="text" name="probationers_number" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
+                                {% for i in range(1, 7) %}
+                                        <option {% if _data['probationers_number'] == i*5 %} selected {% endif %}> {{ i*5 }} </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label"><strong>Срок предоставления доступа</strong></label>
+                            <select type="text" name="access_time" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
+                                {% for i in ["6 месяцев","1 год", "неограниченно"] %}
+                                    <option {% if i == _data['access_time'] %} selected {% endif %}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div align="right">
+            <div class="col-12 p-2 bd-highlight">
+                <div class="card d-flex align-self-baseline">
+                    <div class="card-header">
+                        <button type="submit" name="button" value="cancel" class="btn btn-primary ">
+                            Отмена
+                        </button>
+                        {% if _mode =="view" %}
+                        <button type="submit" name="button" value="is_active" class="btn btn-primary ">{% if _active==True %}Заблокировать
+                            {% else %}Разблокировать
+                            {% endif %}
+                        </button>
+                        {% endif %}
+                        {% if _mode !="discharge" %}
+                        <button type="submit" name="button" value="add_save_edit" class="btn btn-primary ">
+                            {% if _mode=="new" %}Добавить пользователя
+                            {% elif _mode=="edit" %}Сохранить
+                            {% else %}Редактировать
+                            {% endif %}
+                        </button>
+                        {% endif %}
+                        {% if _mode == "discharge" or _mode == "view"%}
+                        <button type="submit" name="button" value="discharge" class="btn btn-primary ">{% if _mode=="view" %}Сброс пароля
+                            {% elif _mode=="discharge" %}Сохранить
+                            {% endif %}
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
         </div>
         <div align="right">
             <div class="col-12 p-2 bd-highlight">
@@ -237,3 +233,4 @@
     </form>
 </div>
 {% endblock %}
+
