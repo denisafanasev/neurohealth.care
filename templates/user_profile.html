@@ -105,27 +105,31 @@
 
                         <div class="mb-2">
                             <label class="form-label"><strong>Login</strong></label>
-                            <input required type="text" name="login" class="form-control" {% if _mode!="new" %} readonly {% endif %} {% if _data['login'] != _data_begin['login'] or _mode != "new" %} value="{{ _data['login'] }}" {% else %} placeholder="Введите логин пользователя" {% endif %}>
+                            <input required oninvalid="this.setCustomValidity('Поле, обязательное для заполнения')" type="text" name="login" class="form-control" {% if _mode!="new" %} readonly {% endif %} {% if _data['login'] != _data_begin['login'] or _mode != "new" %} value="{{ _data['login'] }}" {% else %} placeholder="Введите логин пользователя" {% endif %}>
                         </div>
+
                         <div class="mb-2">
                             <label class="form-label"><strong>Имя пользователя</strong></label>
-                            <input required type="text" name="name_user" class="form-control"  {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['name'] != _data_begin['name'] or _mode != "new"%} value="{{ _data['name'] }}" {% else %} placeholder="Введите имя пользователя" {% endif %}>
+                            <input required oninvalid="this.setCustomValidity('Поле, обязательное для заполнения')" type="text" name="name_user" class="form-control"  {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['name'] != _data_begin['name'] or _mode != "new"%} value="{{ _data['name'] }}" {% else %} placeholder="Введите имя пользователя" {% endif %}>
                         </div>
+
                         {% if _mode=="new" or _mode=="discharge" %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Пароль</strong></label>
-                                <input required type="password" name="password" class="form-control" {% if _data['password']!= _data_begin['password']%} value="{{ _data['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
+                                <input required oninvalid="this.setCustomValidity('Поле, обязательное для заполнения')" type="password" name="password" class="form-control" {% if _data['password']!= _data_begin['password']%} value="{{ _data['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
 
                             </div>
+
                             <div class="mb-2">
                                 <label class="form-label"><strong>Повтор пароля</strong></label>
-                                <input required type="password" name="password2" class="form-control" {% if _data['password2']!= _data_begin['password2'] %} value="{{ _data['password2'] }}" {% else %} placeholder="Повторно введите пароль" {% endif %}>
+                                <input required oninvalid="this.setCustomValidity('Поле, обязательное для заполнения')" type="password" name="password2" class="form-control" {% if _data['password2']!= _data_begin['password2'] %} value="{{ _data['password2'] }}" {% else %} placeholder="Повторно введите пароль" {% endif %}>
                             </div>
                         {% endif %}
+
                         <div class="mb-2">
                             <label class="form-label"><strong>Email</strong></label>
 
-                            <input required type="email" name="email" class="form-control" {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['email'] != _data_begin['email'] or _mode != "new"%} value="{{ _data['email'] }}" {% else %} placeholder="Введите email пользователя" {% endif %}>
+                            <input required oninvalid="this.setCustomValidity('Поле, обязательное для заполнения')" type="email" name="email" class="form-control" {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['email'] != _data_begin['email'] or _mode != "new"%} value="{{ _data['email'] }}" {% else %} placeholder="Введите email пользователя" {% endif %}>
 
                         </div>
                     </div>
@@ -136,7 +140,6 @@
                 <div class="card d-flex align-self-baseline" style="height: 100%;">
                     <div class="card-header">
                         <h5 class="card-title">Параметры доступа</h5>
-
                         <div class="mb-2">
                             <label class="form-label"><strong>Роль пользователя</strong></label>
                             <select type="text" name="role" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
@@ -171,9 +174,9 @@
             <div class="col-12 p-2 bd-highlight">
                 <div class="card d-flex align-self-baseline">
                     <div class="card-header">
-                        <button type="submit" name="button" value="cancel" class="btn btn-primary ">
+                        <a type="submit" name="button" href="{{ url_for('user_manager') }}" class="btn btn-primary ">
                             Отмена
-                        </button>
+                        </a>
                         {% if _mode =="view" %}
                         <button type="submit" name="button" value="is_active" class="btn btn-primary ">{% if _active==True %}Заблокировать
                             {% else %}Разблокировать
@@ -197,7 +200,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </form>
 </div>
