@@ -24,6 +24,8 @@ from controllers.results_page_controller import ResultsPageController
 from controllers.probationers_page_controller import ProbationersPageController
 from controllers.user_profile_page_controller import UserProfilePageController
 from controllers.probationer_card_page_controller import ProbationerCardPageController
+from controllers.education_introduction_course_page_controller import EducationIntroductionCoursePageController
+from controllers.education_introduction_course_lesson_page_controller import EducationIntroductionCourseLessonPageController
 
 from error import UserManagerException
 
@@ -418,14 +420,34 @@ def education_introduction_course():
         
     """
 
-    page_controller = None
+    page_controller = EducationIntroductionCoursePageController()
     mpc = MainMenuPageController()
+
+    data = page_controller.get_courses()
 
     endpoint = request.endpoint
 
     return render_template('index.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data="")
+                               endpoint), _data=data)
+
+
+@app.route('/education_introduction_course_lesson', methods=['GET', 'POST'])
+@login_required
+def education_introduction_course_lesson():
+
+    page_controller = EducationIntroductionCourseLessonPageController()
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+
+    id_course = request.args.get("id_course")
+
+    data = page_controller.get_lesson(id_course)
+
+    return render_template('index.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _data=data)
 
 
 @app.route('/education_main_courses', methods=['GET', 'POST'])
