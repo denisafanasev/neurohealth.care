@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block main_block %}
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+    <script src="{{ url_for('static' , filename="js/datatables.js")}}"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.1.4/css/rowGroup.dataTables.min.css">
+    <script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.1.4/js/dataTables.rowGroup.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/4.0.2/css/fixedColumns.dataTables.min.css">
+    <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/4.0.2/js/dataTables.fixedColumns.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.4/css/select.dataTables.min.css">
+
+    {% for i_module in _data %}
+    <script>
+   document.addEventListener("DOMContentLoaded", function () {
+            // DataTables with Buttons
+            var lessonslist = $("#module_{{ i_module["id"] }}").DataTable({
+                "bLengthChange" : false,
+                dom: 't'
+
+            });
+            $(".selectAll_{{ i_module["id"] }}").on( "click", function(e) {
+                if ($(this).is( ":checked" )) {
+                    DT1.rows(".lesson").select();
+                } else {
+                    DT1.rows(".lesson").deselectAll();
+                }
+            });
+   });
+
+    </script>
+    {% endfor %}
+
+    <script>
+    $(".selectAll").on( "click", function(e) {
+        if ($(this).is( ":checked" )) {
+            DT1.rows( ).select();
+        } else {
+            DT1.rows().deselect();
+        }
+    });
+    </script>
+
+        <h1 class="h3 mb-3">Основные модули</h1>
+            {% for i_module in _data %}
+                <div class="card border border-dark">
+                    <div class="card-header border border-dark">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <h4>{{ i_module["name"] }}</h4>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <h4>Дата окончания</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body border border-dark">
+                        <div class="row">
+
+                            <div class="card">
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <p>Здесь будет описание модуля(наверное)</p>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <table id="module_{{ i_module["id"] }}" class="table table-striped table-bordered dataTable no-footer dtr-inline cell-border"
+                                                role="grid" aria-describedby="datatables-buttons_info">
+                                                <thead>
+                                                    <tr class="text-center">
+                                                        <th>
+                                                            <input type="checkbox" class="selectAll_{{ i_module['id'] }}">
+                                                        </th>
+                                                        <th>Урок</th>
+                                                        <th>Задание</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                {% for i_lesson in i_module['lessons'] %}
+                                                    <tr class="text-center">
+                                                        <td>
+                                                            <input type="checkbox" class="lesson">
+                                                        </td>
+                                                        <td >{{ i_lesson['name'] }}</td>
+                                                        <td>
+                                                            <a href="/education_main_course/lesson?id_lesson={{ i_lesson['id'] }}">Ссылка</a>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        </div>
+                    </div>
+
+            {% endfor %}
+
+
+
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block main_block %}
+    <link href="https://cdn.quilljs.com/1.1.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.1.6/quill.js"></script>
+
+    <script>
+    $( document ).ready(function() {
+        var quill = new Quill('#editor', {
+        theme: 'snow'
+        });
+        });
+    </script>
+
+    <style>
+    .card{
+        border: #0a0a0a;
+    }
+    </style>
+    <div class="container-fluid p-0">
+    
+        <h1 class="h3 mb-3">Основные модули</h1>
+    
+        <div class="row">
+            <div class="col-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Список модулей</h3>
+                    </div>
+                    <div class="card-body">
+                        <nav class="nav flex-column .nav-tabs">
+                            {% for i in _data %}
+                                <a class="nav-link" aria-current="page" href="/education_main_courses?module_id={{ i["id"] }}">{{ i["name"] }}</a>
+                            {% endfor %}
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <div class="col-10">
+                {% if _data_module %}
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>{{ _data_module["name_module"] }}</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row row-cols-1 row-cols-md-2">
+                                <div class="col-mb-4">
+                                    <p>{{ _data_module["description"] }}</p>
+                                </div>
+                                <div class="col-mb-4">
+            {#                      <iframe width="560" height="315" src="{{ _data_module['video_module'] }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>#}
+{#                                    <video controls>#}
+{#                                        <source src="{{ _data_module['video_module'] }}" type="video/mp4">#}
+{#                                    </video>#}
+                                    <iframe src="https://player.vimeo.com/video/702701090?h=0b7cccca2c" width="440" height="315" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                                </div>
+                                <div class="col-mb-4">
+                                    <div class="card border border-dark">
+                                        <div class="card-header text-center">
+                                            <h4>Задание</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>{{ _data_module["description"] }}</p>
+                                            <div id="editor"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-mb-4">
+                                    <div class="card border border-dark">
+                                        <div class="card-header text-center">
+                                            <h4>Материалы</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <a href="user_manager.html" download="">user_manager.html</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    
+    </div>
+{% endblock %}
