@@ -19,6 +19,8 @@
             // DataTables with Buttons
             var lessonslist = $("#module_{{ i_module["id"] }}").DataTable({
                 "bLengthChange" : false,
+                "paging": false,
+                ordering: false,
                 dom: 't'
 
             });
@@ -60,9 +62,7 @@
                     </div>
                     <div class="card-body border border-dark">
                         <div class="row">
-
                             <div class="card">
-
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-sm-4">

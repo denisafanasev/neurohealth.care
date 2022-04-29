@@ -9,78 +9,87 @@
         var quill = new Quill('#editor', {
         theme: 'snow'
         });
-        });
+    });
     </script>
 
     <style>
     .card{
         border: #0a0a0a;
     }
+    .responsive-iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+    }
     </style>
     <div class="container-fluid p-0">
     
-        <h1 class="h3 mb-3">Основные модули</h1>
-    
-        <div class="row">
-            <div class="col-2">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Список модулей</h3>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('education_main_courses') }}">Основной курс</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('education_main_courses') }}">{{ _data['name'] }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ _data['lesson']['name'] }}</li>
+          </ol>
+        </nav>
+
+
+        <div class="card-group">
+            <div class="col-sm" style="margin-right: 10px">
+
+                    <div class="card border border-dark" style="height: 266px">
+                        <div class="card-body">
+                            <iframe class="responsive-iframe" src="{% if _data['lesson']['link'] %}{{ _data['lesson']['link'] }}{% else %}https://player.vimeo.com/video/702701090?h=0b7cccca2c{% endif %}"
+                                    allow="autoplay; fullscreen" allowfullscreen></iframe>
+                        </div>
                     </div>
+
+                    <div class="card border border-dark">
+                        <div class="card-body">
+                            <p>{{ _data['lesson']['text'] }}</p>
+                        </div>
+                    </div>
+
+            </div>
+
+            <div class="col-sm">
+                <div class="card border border-dark ">
+                    <div class="card-header">
+                        <h4>Материалы</h4>
+                    </div>
+
                     <div class="card-body">
-                        <nav class="nav flex-column .nav-tabs">
-                            {% for i in _data %}
-                                <a class="nav-link" aria-current="page" href="/education_main_courses?module_id={{ i["id"] }}">{{ i["name"] }}</a>
-                            {% endfor %}
-                        </nav>
+                        <a download="" href="{% if _data['lesson']['materials'] %} {{ _data['lesson']['materials'] }} {% else %} user_manager.html {% endif %} ">Файл</a>
                     </div>
                 </div>
-            </div>
-            <div class="col-10">
-                {% if _data_module %}
-                    <div class="card">
+
+                {% if _data['lesson']['task'] %}
+                    <div class="card border border-dark">
                         <div class="card-header">
-                            <h2>{{ _data_module["name_module"] }}</h2>
-                        </div>
-                        <div class="card-body">
-                            <div class="row row-cols-1 row-cols-md-2">
-                                <div class="col-mb-4">
-                                    <p>{{ _data_module["description"] }}</p>
+                            <div class="row">
+                                <div class="col-sm-9">
+                                    <h4>Задание</h4>
                                 </div>
-                                <div class="col-mb-4">
-            {#                      <iframe width="560" height="315" src="{{ _data_module['video_module'] }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>#}
-{#                                    <video controls>#}
-{#                                        <source src="{{ _data_module['video_module'] }}" type="video/mp4">#}
-{#                                    </video>#}
-                                    <iframe src="https://player.vimeo.com/video/702701090?h=0b7cccca2c" width="440" height="315" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-                                </div>
-                                <div class="col-mb-4">
-                                    <div class="card border border-dark">
-                                        <div class="card-header text-center">
-                                            <h4>Задание</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <p>{{ _data_module["description"] }}</p>
-                                            <div id="editor"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-mb-4">
-                                    <div class="card border border-dark">
-                                        <div class="card-header text-center">
-                                            <h4>Материалы</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <a href="user_manager.html" download="">user_manager.html</a>
-                                        </div>
-                                    </div>
+
+                                <div class="col-sm-3">
+                                    <label>
+                                        <h4>Выполнено</h4>
+                                        <input type="checkbox">
+                                    </label>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="card-body">
+                            <p>{{ _data['lesson']['task'] }}</p>
+                            <div id="editor"></div>
                         </div>
                     </div>
                 {% endif %}
             </div>
         </div>
-    
     </div>
 {% endblock %}

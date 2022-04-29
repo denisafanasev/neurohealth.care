@@ -441,7 +441,7 @@ def education_main_course_lesson():
 
     endpoint = request.endpoint
 
-    id_course = request.args.get("id_lesson")
+    id_course = int(request.args.get("id_lesson"))
 
     data = page_controller.get_lesson(id_course)
 
