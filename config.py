@@ -20,16 +20,16 @@ LOG_FILE = "neuro_health.log"
 
 SUPERUSER_MENU = [
     {"module": "Центр управления", "name": "Пользователи", "endpoint": "user_manager", "icon": "users"},
-    {"module": "Центр управления", "name": "Настройки", "endpoint": "settings", "icon": "settings"}
+    {"module": "Центр управления", "name": "Настройки", "endpoint": "settings", "icon": "settings"},
+        {"module": "Центр управления", "name": "Домашние задания",
+        "endpoint": "education_home_tasks", "icon": "edit"},
 ]
 
 EDUCATION_MENU = [
-    {"module": "Центр обучения", "name": "Вводный модуль",
+    {"module": "Школа нейропсихологии", "name": "Вводный модуль",
         "endpoint": "education_introduction_course", "icon": "monitor"},
-    {"module": "Центр обучения", "name": "Основные модули",
+    {"module": "Школа нейропсихологии", "name": "Основные модули",
         "endpoint": "education_main_courses", "icon": "video"},
-    {"module": "Центр обучения", "name": "Домашние задания",
-        "endpoint": "education_home_tasks", "icon": "edit"},
 ]
 
 MAIN_MENU = [

@@ -46,66 +46,44 @@
     });
     </script>
 
-        <h1 class="h3 mb-3">Основные модули</h1>
-            {% for i_module in _data %}
-                <div class="card border border-dark">
-                    <div class="card-header border border-dark">
-                        <div class="row">
-                            <div class="col-sm-9">
-                                <h4>{{ i_module["name"] }}</h4>
-                            </div>
+    <h1 class="h3 mb-2">Школа нейропсихологии</h1>
 
-                            <div class="col-sm-3">
-                                <h4>Дата окончания</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body border border-dark">
-                        <div class="row">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <p>Здесь будет описание модуля(наверное)</p>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <table id="module_{{ i_module["id"] }}" class="table table-striped table-bordered dataTable no-footer dtr-inline cell-border"
-                                                role="grid" aria-describedby="datatables-buttons_info">
-                                                <thead>
-                                                    <tr class="text-center">
-                                                        <th>
-                                                            <input type="checkbox" class="selectAll_{{ i_module['id'] }}">
-                                                        </th>
-                                                        <th>Урок</th>
-                                                        <th>Задание</th>
-                                                    </tr>
-                                                </thead>
-
-                                                <tbody>
-                                                {% for i_lesson in i_module['lessons'] %}
-                                                    <tr class="text-center">
-                                                        <td>
-                                                            <input type="checkbox" class="lesson">
-                                                        </td>
-                                                        <td >{{ i_lesson['name'] }}</td>
-                                                        <td>
-                                                            <a href="/education_main_course/lesson?id_lesson={{ i_lesson['id'] }}">Ссылка</a>
-                                                        </td>
-                                                    </tr>
-                                                {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        </div>
-                    </div>
-
-            {% endfor %}
-
-
+    {% for i_module in _data %}
+        <div class="card boarder">
+            <div class="card-header">
+                <h4>{{ i_module["name"] }}</h4>
+                <h6 class="card-subtitle text-muted">Описание модуля
+                </h6>
+            </div>
+            
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Статус</th>
+                        <th style="width:60%;">Наименование урока</th>
+                        <th style="width:15%">Ссылка</th>
+                        <th class="d-none d-md-table-cell" style="width:15%">Срок выполнения</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i_lesson in i_module['lessons'] %}
+                    <tr>
+                        <td class="table-action">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-check-square align-middle me-2">
+                                <polyline points="9 11 12 14 22 4"></polyline>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                        </td>
+                        <td>{{ i_lesson['name'] }}</td>
+                        <td><a href="/education_main_course/lesson?id_lesson={{ i_lesson['id'] }}">Выполнить</a></td>
+                        <td class="d-none d-md-table-cell">Июнь 21, 1961</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
 
 {% endblock %}
