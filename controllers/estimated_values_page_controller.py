@@ -17,10 +17,10 @@ class EstimatedValuesPageController():
 
         pass
 
-    def get_assessments(self, _file_name="базовые значение"):
+    def get_assessments(self, _id_file_name=1):
 
         page_service = EstimatedValuesService()
-        assessments = page_service.get_assessments(_file_name)
+        assessments = page_service.get_assessments(_id_file_name)
         assessments_list_view = []
 
         for assessment in assessments:
@@ -37,7 +37,6 @@ class EstimatedValuesPageController():
     def get_age_ranges(self):
 
         page_service = EstimatedValuesService()
-
         return page_service.get_age_ranges()
 
     def overwrite(self, _file_name, _criteria):

@@ -20,7 +20,7 @@ LOG_FILE = "neuro_health.log"
 
 SUPERUSER_MENU = [
     {"module": "Центр управления", "name": "Пользователи", "endpoint": "user_manager", "icon": "users"},
-    {"module": "Центр управления", "name": "Настройки", "endpoint": "settings", "icon": "settings"},
+    {"module": "Центр управления", "name": "Настройки", "endpoint": "age_range_list", "icon": "settings"},
         {"module": "Центр управления", "name": "Домашние задания",
         "endpoint": "education_home_tasks", "icon": "edit"},
 ]

@@ -742,26 +742,6 @@ def probationer_card():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
                            _mode=mode, _data_begin=data_begin, _error=error, _error_type=error_type, _attempt=attempt)
 
-@app.route('/settings', methods=['GET', 'POST'])
-@login_required
-def settings():
-    """
-    Генерация страницы просмотра и редактирования настроек системы
-
-    Returns:
-        
-    """    
-
-    page_controller = ()
-    mpc = MainMenuPageController()
-
-    endpoint = request.endpoint
-    file_name = ""
-
-    return render_template('settings.html', view="settings", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
-
 @app.route('/settings/age_range_list', methods=['GET', 'POST'])
 @login_required
 def age_range_list():
@@ -776,7 +756,6 @@ def age_range_list():
     mpc = MainMenuPageController()
 
     endpoint = request.endpoint
-    file_name = ""
 
     return render_template('age_range_list.html', view="age_range_list", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
@@ -796,29 +775,30 @@ def estimated_values():
     mpc = MainMenuPageController()
 
     endpoint = request.endpoint
-    file_name = ""
+    id_file_name = request.args.get("id")
+
+    if id_file_name is not None:
+        data = page_controller.get_assessments(int(id_file_name))
+    else:
+        return redirect("/settings/estimated_values?id=1")
 
     if request.method == "POST":
-        file_name = request.form["action"]
+        id_file_name = int(request.form["action"])
 
         if request.form.get("save") is not None:
-            file_name = request.form["action"]
             criteria = []
 
             for i in range(1, 214):
                 criteria.append(request.form["{}_grade".format(i)])
 
-            page_controller.overwrite(file_name, criteria)
-            data = page_controller.get_assessments(file_name)
-
+            page_controller.overwrite(id_file_name, criteria)
+            data = page_controller.get_assessments(id_file_name)
         else:
-            data = page_controller.get_assessments(file_name)
-    else:
-        data = page_controller.get_assessments()
+            return redirect("/settings/estimated_values?id={id}".format(id=id_file_name))
 
     return render_template('estimated_values.html', view="estimated_values", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=data, _ranges_age=page_controller.get_age_ranges(), _file_name=file_name,
+                           _data=data, _ranges_age=page_controller.get_age_ranges(), _id_file_name=int(id_file_name),
                            _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
 
 @app.errorhandler(404)
