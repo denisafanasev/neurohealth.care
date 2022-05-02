@@ -14,7 +14,9 @@
                             <tr>
                             {% for i_range in _ranges_age %}
                                 <tr>
-                                    <td>{{ i_range }}</td>
+                                    <td>
+                                        <a href="/settings/estimated_values?id={{ i_range['id'] }}">{{ i_range['range'] }}</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tr>

@@ -36,13 +36,8 @@
                     </div>
                     <div class="about">
                         <select type="text" name="action" onchange="this.form.submit();" class="criteria form-select">
-                            {% if _file_name != "" %}
-                                <option>{{ _file_name }}</option>
-                            {% endif %}
                             {% for i_rage in _ranges_age %}
-                                {% if i_rage != _file_name %}
-                                    <option>{{ i_rage }}   </option>
-                                {% endif %}
+                                <option {% if i_rage['id'] == _id_file_name %} selected {% endif %} value="{{ i_rage['id'] }}">{{ i_rage['range'] }}   </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -79,7 +74,7 @@
                                                             {% if i_key != "id" %}
                                                                 <td style="width:25%;" align="center" class="col-1"></td>
                                                                 <td style="width:25%;" align="center" class="col-1">
-                                                                    <input disabled name="{{ i_criteria["id"] }}_name" value="{{ i_key }}">
+                                                                    <p disabled id="{{ i_criteria["id"] }}_name">{{ i_key }}</p>
                                                                 </td>
                                                                 <td style="width:25%;" align="center" class="align-self-lg-start col-1">
                                                                     <input required name="{{ i_criteria["id"] }}_grade" value="{{ i_value }}">
