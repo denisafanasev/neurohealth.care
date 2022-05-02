@@ -26,70 +26,135 @@
       height: 100%;
     }
     </style>
+
+    <h1 class="h3 mb-2">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('education_main_courses') }}">Школа нейропсихологии</a></li>
+                <li class="breadcrumb-item">{{ _data['name'] }}</li>
+                <li class="breadcrumb-item active" aria-current="page">{{ _data['lesson']['name'] }}</li>
+            </ol>
+        </nav>
+    </h1>
+
     <div class="container-fluid p-0">
     
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ url_for('education_main_courses') }}">Основной курс</a></li>
-            <li class="breadcrumb-item"><a href="{{ url_for('education_main_courses') }}">{{ _data['name'] }}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ _data['lesson']['name'] }}</li>
-          </ol>
-        </nav>
-
-
-        <div class="card-group">
-            <div class="col-sm" style="margin-right: 10px">
-
-                    <div class="card border border-dark" style="height: 266px">
-                        <div class="card-body">
-                            <iframe class="responsive-iframe" src="{% if _data['lesson']['link'] %}{{ _data['lesson']['link'] }}{% else %}https://player.vimeo.com/video/702701090?h=0b7cccca2c{% endif %}"
-                                    allow="autoplay; fullscreen" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <div class="card border border-dark">
-                        <div class="card-body">
-                            <p>{{ _data['lesson']['text'] }}</p>
-                        </div>
-                    </div>
-
+        <div class="card border">
+            <div class="card-header">
+                <h4>
+                    Материалы урока
+                </h4>
             </div>
-
-            <div class="col-sm">
-                <div class="card border border-dark ">
-                    <div class="card-header">
-                        <h4>Материалы</h4>
-                    </div>
-
-                    <div class="card-body">
-                        <a download="" href="{% if _data['lesson']['materials'] %} {{ _data['lesson']['materials'] }} {% else %} user_manager.html {% endif %} ">Файл</a>
-                    </div>
-                </div>
-
-                {% if _data['lesson']['task'] %}
-                    <div class="card border border-dark">
-                        <div class="card-header">
-                            <div class="row">
-                                <div class="col-sm-9">
-                                    <h4>Задание</h4>
-                                </div>
-
-                                <div class="col-sm-3">
-                                    <label>
-                                        <h4>Выполнено</h4>
-                                        <input type="checkbox">
-                                    </label>
-                                </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-7 text-left">
+                        <div class="card py-1 py-md-1 border">
+                            <div class="card-body">
+                                <iframe src="https://player.vimeo.com/video/702701090?h=0b7cccca2c" width="740" height="364" frameborder="0"
+                                    allow="autoplay; fullscreen" allowfullscreen></iframe>
                             </div>
                         </div>
 
-                        <div class="card-body">
-                            <p>{{ _data['lesson']['task'] }}</p>
-                            <div id="editor"></div>
+                        <div class="card py-1 py-md-1 border">
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:5%;"></th>
+                                            <th style="width:70%;">Статус обучения</th>
+                                            <th style="width:25%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="table-action">
+                                                <i class="align-middle me-2 fas fa-fw fa-calendar-alt"></i>
+                                            </td>
+                                            <td>Срок выполнения</td>
+                                            <td class="d-none d-md-table-cell">Июнь 21, 1961</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table-action">
+                                                <i class="align-middle me-2 fas fa-fw fa-couch"></i>
+                                            </td>
+                                            <td>Домашнее задание</td>
+                                            <td class="d-none d-md-table-cell">Выполнено</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card py-1 py-md-1 border">
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:5%;"></th>
+                                            <th style="width:70%;">Дополнительные материалы</th>
+                                            <th style="width:25%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="table-action">
+                                                <i class="align-middle me-2 fas fa-fw fa-file"></i>
+                                            </td>
+                                            <td>Имя файла</td>
+                                            <td><a download=""
+                                                    href="{% if _data['lesson']['materials'] %} {{ _data['lesson']['materials'] }} {% else %} user_manager.html {% endif %} ">Файл</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                {% endif %}
+                    
+                    <div class="col-md-5 text-left">
+                        <div class="card py-1 py-md-1 border">
+                            <div class="card-body">
+                                <p>{{ _data['lesson']['text'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
         </div>
+
+                    
+        {% if _data['lesson']['task'] %}
+            <div class="card border">
+                <div class="card-header">
+                    <h4>
+                        Домашнее задание
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 text-left">
+                            <div class="card py-1 py-md-1 border">
+                                <div class="card-body">
+                                    <p>{{ _data['lesson']['task'] }}</p>
+                                    <div id="editor"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row d-flex align-items-stretch bd-highlight" align="right">
+                            <div class="col-12 p-2 bd-highlight">
+                                <div class="card d-flex align-self-baseline">
+                                    <div class="card-header">
+                                        <a type="submit" name="button" href="{{ url_for('user_manager') }}" class="btn btn-primary ">
+                                            Сохранить
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

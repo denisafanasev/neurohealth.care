@@ -13,38 +13,6 @@
     <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.4/css/select.dataTables.min.css">
 
-    {% for i_module in _data %}
-    <script>
-   document.addEventListener("DOMContentLoaded", function () {
-            // DataTables with Buttons
-            var lessonslist = $("#module_{{ i_module["id"] }}").DataTable({
-                "bLengthChange" : false,
-                "paging": false,
-                ordering: false,
-                dom: 't'
-
-            });
-            $(".selectAll_{{ i_module["id"] }}").on( "click", function(e) {
-                if ($(this).is( ":checked" )) {
-                    DT1.rows(".lesson").select();
-                } else {
-                    DT1.rows(".lesson").deselectAll();
-                }
-            });
-   });
-
-    </script>
-    {% endfor %}
-
-    <script>
-    $(".selectAll").on( "click", function(e) {
-        if ($(this).is( ":checked" )) {
-            DT1.rows( ).select();
-        } else {
-            DT1.rows().deselect();
-        }
-    });
-    </script>
 
     <h1 class="h3 mb-2">Школа нейропсихологии</h1>
 
@@ -52,8 +20,6 @@
         <div class="card boarder">
             <div class="card-header">
                 <h4>{{ i_module["name"] }}</h4>
-                <h6 class="card-subtitle text-muted">Описание модуля
-                </h6>
             </div>
             
             <table class="table">
