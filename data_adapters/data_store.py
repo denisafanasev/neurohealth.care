@@ -21,7 +21,7 @@ class DataStore():
         @params:
             _type    - Required  : тип данных (String)
         """
-        self.data_store = TinyDB("data/" + _type + ".json")
+        self.data_store = TinyDB("data/" + _type + ".json", encoding='utf-8', ensure_ascii=False)
 
         if _table != "_default":
             self.data_store = self.data_store.table(_table)
