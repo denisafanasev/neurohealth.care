@@ -13,9 +13,6 @@
     </script>
 
     <style>
-    .card{
-        border: #0a0a0a;
-    }
     .responsive-iframe {
       position: absolute;
       top: 0;
@@ -50,8 +47,10 @@
                     <div class="col-md-7 text-left">
                         <div class="card py-1 py-md-1 border">
                             <div class="card-body">
-                                <iframe src="https://player.vimeo.com/video/702701090?h=0b7cccca2c" width="740" height="364" frameborder="0"
-                                    allow="autoplay; fullscreen" allowfullscreen></iframe>
+                                <div style="width: 740px; height: 364px">
+                                    <iframe class="responsive-iframe" src="https://player.vimeo.com/video/702701090?h=0b7cccca2c" frameborder="0"
+                                        allow="autoplay; fullscreen" allowfullscreen></iframe>
+                                </div>
                             </div>
                         </div>
 
@@ -114,7 +113,9 @@
                     <div class="col-md-5 text-left">
                         <div class="card py-1 py-md-1 border">
                             <div class="card-body">
-                                <p>{{ _data['lesson']['text'] }}</p>
+                                <p style="white-space: pre-line; margin-top: -4em; margin-bottom: -4em; font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif; font-size: 14px; color: #0a0a0a;">
+                                    {{ _data['lesson']['text'] }}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -136,7 +137,9 @@
                         <div class="col-md-12 text-left">
                             <div class="card py-1 py-md-1 border">
                                 <div class="card-body">
-                                    <p>{{ _data['lesson']['task'] }}</p>
+                                    <p style="margin-top: -4em; margin-bottom: -2em;white-space: pre-line; font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif; font-size: 14px; color: #0a0a0a">
+                                    {{ _data['lesson']['task'] }}
+                                </p>
                                     <div id="editor"></div>
                                 </div>
                             </div>

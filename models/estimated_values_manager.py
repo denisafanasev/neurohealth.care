@@ -29,7 +29,11 @@ class EstimatedValuesManager():
         data_criteria = DataStore(self.get_age_range(_id_file_name))
 
         if data_criteria.get_rows() == []:
-            data_criteria = DataStore(self.get_age_range(1))
+            data_criteria_base = DataStore(self.get_age_range(1))
+            data_base = data_criteria_base.get_rows()
+
+            for i in data_base:
+                data_criteria.add_row(i)
 
         estimated_values_list_data = data_default.get_rows()
 
