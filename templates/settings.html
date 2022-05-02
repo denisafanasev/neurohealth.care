@@ -56,13 +56,11 @@
                         <h5 class="card-title mb-0">Настройки</h5>
 
                         <div>
-                            {% if _is_current_user_admin %}
-                                <a class="btn {% if _endpoint == "estimated_values" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("estimated_values") }}" role="tab">
-                                    Справочник оценочных значений
-                                </a>
-                            {% endif %}
                             <a class="btn {% if _endpoint == "age_range_list" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for("age_range_list") }}" role="tab">
                                 Справочник диапазонов возрастов
+                            </a>
+                            <a class="btn {% if _endpoint == "estimated_values" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("estimated_values") }}" role="tab">
+                                Справочник оценочных значений
                             </a>
                         </div>
                     </div>

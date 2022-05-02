@@ -20,20 +20,16 @@ class EstimatedValuesManager():
 
         return estimated_values
 
-    def get_assessments(self, _file_name):
+    def get_assessments(self, _id_file_name):
 
         estimated_values = []
         data_default = DataStore("structure")
         data_tests = DataStore("structure", "tests")
 
-        if _file_name != "базовые значение":
-            _file_name = _file_name.split()[0]
-            _file_name = f"{_file_name.split('-')[0]}_{_file_name.split('-')[1]}_age"
-            data_criteria = DataStore(_file_name)
-            if data_criteria.get_rows() == []:
-                data_criteria = DataStore("base_criteria")
-        else:
-            data_criteria = DataStore("base_criteria")
+        data_criteria = DataStore(self.get_age_range(_id_file_name))
+
+        if data_criteria.get_rows() == []:
+            data_criteria = DataStore(self.get_age_range(1))
 
         estimated_values_list_data = data_default.get_rows()
 
@@ -61,27 +57,29 @@ class EstimatedValuesManager():
 
         data = DataStore("age_range")
 
-        age_range_list = data.get_rows()
+        age_ranges = data.get_rows()
+        age_range_list = []
 
-        age_range = age_range_list[0]["range"]
+        for i_age_range in age_ranges:
+            age_range = {
+                "id": i_age_range["id"],
+                "range": i_age_range["range"]
+            }
 
-        return age_range
+            age_range_list.append(age_range)
 
-    def get_age_range(self, _age_range):
+        return age_range_list
+
+    def get_age_range(self, _id_file_name):
 
         data = DataStore("age_range")
 
-        age_range = data.get_rows(_age_range)
+        age_range = data.get_rows({"id": _id_file_name})[0]["name_file"]
         return age_range
 
-    def overwrite(self, _file_name, _criteria):
+    def overwrite(self, _id_file_name, _criteria):
 
-        if _file_name == "базовые значение":
-            age_range_file = DataStore("base_criteria")
-        else:
-            _file_name = _file_name.split()[0]
-            _file_name = f"{_file_name.split('-')[0]}_{_file_name.split('-')[1]}_age"
-            age_range_file = DataStore(_file_name)
+        age_range_file = DataStore(self.get_age_range(_id_file_name))
 
         for i_id in range(1, 214):
             criteria = age_range_file.get_rows({"id": i_id})[0]
@@ -91,4 +89,4 @@ class EstimatedValuesManager():
                     criteria[i] = _criteria[i_id - 1]
                     age_range_file.update_row(criteria, "id")
 
-        return _file_name
+        return _id_file_name
