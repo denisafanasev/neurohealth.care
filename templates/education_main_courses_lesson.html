@@ -22,6 +22,12 @@
       width: 100%;
       height: 100%;
     }
+    .word {
+        width: 35px;
+    }
+    .pdf {
+        width: 30px;
+    }
     </style>
 
     <h1 class="h3 mb-2">
@@ -84,41 +90,50 @@
                             </div>
                         </div>
 
-                        <div class="card py-1 py-md-1 border">
-                            <div class="card-body">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th style="width:5%;"></th>
-                                            <th style="width:70%;">Дополнительные материалы</th>
-                                            <th style="width:25%"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="table-action">
-                                                <i class="align-middle me-2 fas fa-fw fa-file"></i>
-                                            </td>
-                                            <td>Имя файла</td>
-                                            <td><a download=""
-                                                    href="{% if _data['lesson']['materials'] %} {{ _data['lesson']['materials'] }} {% else %} user_manager.html {% endif %} ">Файл</a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        {% if _data['lesson']['materials'] %}
+                            <div class="card py-1 py-md-1 border">
+                                <div class="card-body">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:5%;"></th>
+                                                <th style="width:70%;">Дополнительные материалы</th>
+                                                <th style="width:25%"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i_materials in _data['lesson']['materials'] %}
+                                            {% set type = i_materials.split('.')[-1] %}
+                                            {% set name_file = i_materials.split('/')[-1].split('.')[0] %}
+                                            <tr>
+                                                <td class="table-action">
+                                                    <img class="{% if type == 'pdf' %}pdf{% else %}word{% endif %}"
+                                                         src="{% if type == 'pdf' %}/static/img/icons/icon_pdf.png{% else %}/static/img/icons/icon_word.png{% endif %}">
+                                                </td>
+                                                <td>{{ name_file }}</td>
+                                                <td><a download=""
+                                                        href="{{ i_materials }} ">Файл</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
                     </div>
-                    
-                    <div class="col-md-5 text-left">
-                        <div class="card py-1 py-md-1 border">
-                            <div class="card-body">
-                                <p style="white-space: pre-line; margin-top: -4em; margin-bottom: -4em; font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif; font-size: 14px; color: #0a0a0a;">
-                                    {{ _data['lesson']['text'] }}
-                                </p>
+
+                        {% if _data['lesson']['text'] %}
+                            <div class="col-md-5 text-left">
+                                <div class="card py-1 py-md-1 border">
+                                    <div class="card-body">
+                                        <p style="white-space: pre-line; margin-top: -4em; margin-bottom: 0em; font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif; font-size: 14px; color: #0a0a0a;">
+                                            {{ _data['lesson']['text'] }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        {% endif %}
                 </div>
                 
             </div>
@@ -137,7 +152,7 @@
                         <div class="col-md-12 text-left">
                             <div class="card py-1 py-md-1 border">
                                 <div class="card-body">
-                                    <p style="margin-top: -4em; margin-bottom: -2em;white-space: pre-line; font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif; font-size: 14px; color: #0a0a0a">
+                                    <p style="margin-top: -4em; margin-bottom: 0em;white-space: pre-line; font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif; font-size: 14px; color: #0a0a0a">
                                     {{ _data['lesson']['task'] }}
                                 </p>
                                     <div id="editor"></div>
