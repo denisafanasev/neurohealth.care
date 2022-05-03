@@ -28,19 +28,19 @@
                                 В системе нет ни одного пользователя. Создайте учетную запись администратора:
                             </p>
                             {% if _superuser_created %}
-                                <div class="alert alert-success alert-dismissible" role="alert">
-                                    <div class="alert-message">
-                                        <strong>Пользователь создан</strong>
-                                    </div>
+                            <div class="alert alert-success alert-dismissible" role="alert">
+                                <div class="alert-message">
+                                    <strong>Пользователь создан</strong>
                                 </div>
+                            </div>
                             {% else %}
-                                {% if _error_message != "" %}
-                                <div class="alert alert-danger alert-dismissible" role="alert">
-                                    <div class="alert-message">
-                                        <strong>Ошибка:</strong> {{_error_message}}
-                                    </div>
+                            {% if _error_message != "" %}
+                            <div class="alert alert-danger alert-dismissible" role="alert">
+                                <div class="alert-message">
+                                    <strong>Ошибка:</strong> {{_error_message}}
                                 </div>
-                                {% endif %}
+                            </div>
+                            {% endif %}
                             {% endif %}
                         </div>
 
@@ -51,49 +51,53 @@
                                     <form id="loginForm" method="post" enctype="multipart/form-data">
                                         <div class="form-group">
                                             <strong><label>Login</label></strong>
-                                            <input class="form-control form-control-lg" type="login" name="superuser_login"
-                                                placeholder="введите login" />
+                                            <input class="form-control form-control-lg" type="login"
+                                                name="superuser_login" placeholder="введите login" />
                                         </div>
                                         <div class="form-group">
                                             <strong><label>Имя пользователя</label></strong>
-                                            <input class="form-control form-control-lg" type="login" name="superuser_name" placeholder="введите имя пользователя" />
+                                            <input class="form-control form-control-lg" type="login"
+                                                name="superuser_name" placeholder="введите имя пользователя" />
                                         </div>
                                         <div class="form-group">
                                             <strong><label>Пароль</label></strong>
-                                            <input class="form-control form-control-lg" type="password" name="superuser_password"
-                                                placeholder="введите пароль" />
+                                            <input class="form-control form-control-lg" type="password"
+                                                name="superuser_password" placeholder="введите пароль" />
                                         </div>
                                         <div class="form-group">
                                             <strong><label>Пароль еще раз</label></strong>
-                                            <input class="form-control form-control-lg" type="password" name="superuser_password_2" placeholder="введите пароль" />
+                                            <input class="form-control form-control-lg" type="password"
+                                                name="superuser_password_2" placeholder="введите пароль" />
                                         </div>
                                         <div class="form-group">
                                             <strong><label>Email</label></strong>
-                                            <input class="form-control form-control-lg" type="email" name="superuser_email" placeholder="введите email пользователя" />
+                                            <input class="form-control form-control-lg" type="email"
+                                                name="superuser_email" placeholder="введите email пользователя" />
                                         </div>
                                         <div class="text-center mt-3">
-                                            <button type="submit" class="btn btn-lg btn-primary">Создать пользователя</button>
+                                            <button type="submit" class="btn btn-lg btn-primary">Создать
+                                                пользователя</button>
                                         </div>
                                     </form>
                                     {% else %}
-                                        <div class="text-center mt-3">
-                                            <a href={{ url_for('login') }}>
-                                                <button type="submit" class="btn btn-lg btn-primary">Войти</button>
-                                            </a>
-                                        </div>
+                                    <div class="text-center mt-3">
+                                        <a href={{ url_for('login') }}>
+                                            <button type="submit" class="btn btn-lg btn-primary">Войти</button>
+                                        </a>
+                                    </div>
                                     {% endif %}
                                 </div>
                             </div>
                         </div>
-    
+
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <script src="{{ url_for('static' , filename="js/app.js")}}"></script>
-    <script src="{{ url_for('static' , filename="js/vendor.js")}}"></script>
+    <script src="{{ url_for('static' , filename=" js/app.js")}}"></script>
+    <script src="{{ url_for('static' , filename=" js/vendor.js")}}"></script>
 
 </body>
 
