@@ -14,15 +14,24 @@
                             <div class="row">
                                 <div class="col-sm-12 col-md-6">
                                     <div class="dt-buttons btn-group flex-wrap">
-                                        <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('probe_profile')}}">
-                                            <span>Добавить протокол</span>
-                                        </a>
+                                        {% if _is_probationer %}
+                                            <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('probe_profile')}}">
+                                                <span>Добавить пробу</span>
+                                            </a>
+                                        {% else %}
+                                            <div>
+                                                <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('probationer_card')}}">
+                                                    <span>Добавить тестируемого</span>
+                                                </a>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
 
                              <div class="row">
                                 <div class="col-sm-12">
+                                {% if _is_probationer %}
                                     <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%;"
                                         role="grid" aria-describedby="datatables-buttons_info">
                                         <thead>
@@ -47,7 +56,7 @@
                                                 <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg")}}" width="32" height="32"
                                                         class="rounded-circle my-n1" alt="Avatar"></td>
 
-                                                <td class="sorting_1 dtr-control"><a href="{{ url_for('probe_profile')}}?probationer_id={{ item["probationer_id"] }}&probe_id={{ item["probe_id"] }}&test_id=1">{{ item['name_probationer'] }}"</a></td>
+                                                <td class="sorting_1 dtr-control"><a href="{{ url_for('probe_profile')}}?probationer_id={{ item["probationer_id"] }}&probe_id={{ item["probe_id"] }}&test_id=1">{{ item['name_probationer'] }}</a></td>
                                                 <td>{{ item['date_test'] }}</td>
                                                 <td>{{ item['date_protocol'] }}</td>
                                                 {% if item['protocol_status']=="draft" %}
@@ -62,6 +71,12 @@
 
                                         </tbody>
                                     </table>
+                                {% else %}
+                                    <div class="text-center">
+                                        <h2>У вас нет тестируемых.</h2>
+                                        <h2>Перед тем, как создать протокол, создайте тестируемого.</h2>
+                                    </div>
+                                {% endif %}
                                 </div>
                             </div>
                         </div>

@@ -233,16 +233,17 @@ def user_profile():
     user_id = request.args.get('user_id')
 
     global attempt
-    if not (attempt and user_id is not None):
+    if user_id is not None and not request.form.get("button"):
         mode = "view"
     else:
         try:
-            if attempt and request.form["button"] == "discharge":
+            if request.form["button"] == "save_discharge":
                 mode = "discharge"
             else:
                 mode = "edit"
         except exceptions.BadRequestKeyError:
             mode = "view"
+        pass
 
     error = None
 
@@ -268,7 +269,7 @@ def user_profile():
 
     try:
         if request.method == 'POST':
-            if request.form["button"] == "add_save_edit":
+            if request.form["button"] == "add":
                 if mode == "new":
                     # добавляем нового пользователя и получаем список с ошибками
                     # если их нет, то получаем пустой список
@@ -298,12 +299,12 @@ def user_profile():
                         attempt = False
 
                     data = user
-
-                elif mode == "view":
+            elif request.form["button"] == "edit":
+                if mode == "view":
                     attempt = True
                     mode = "edit"
-
-                elif mode == "edit":
+            elif request.form["button"] == "save":
+                if mode == "edit":
                     user = {}
                     user["login"] = request.form["login"]
                     user["name"] = request.form["name_user"]
@@ -320,12 +321,12 @@ def user_profile():
 
                     data = user
                     mode = "view"
-                    attempt = False
+                    # attempt = False
                     error = "Изменения сохранены!"
                     error_type = "Successful"
 
-            elif request.form["button"] == "discharge":
-                if mode == "discharge" and attempt:
+            elif request.form["button"] == "discharge" or request.form["button"] == "save_discharge":
+                if mode == "discharge":
                     user = {}
                     user["login"] = request.form["login"]
                     user["password"] = request.form["password"]
@@ -526,11 +527,9 @@ def probes():
 
     endpoint = request.endpoint
 
-
-
     return render_template('protocols.html', view="probes", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=page_controller.get_probes())
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _data=page_controller.get_probes(), _is_probationer=page_controller.is_probationers())
 
 @app.route('/probe_profile', methods=['GET', 'POST'])
 @login_required
@@ -543,7 +542,6 @@ def probe_profile():
     probationer_id = request.args.get('probationer_id')
 
     data = {}
-    probationer = []
     test_list = []
     probationers = []
     probe_id = request.args.get("probe_id")
@@ -556,7 +554,10 @@ def probe_profile():
     else:
         test_id = int(request.args.get("test_id"))
         data = page_controller.get_protocol(test_id, int(probe_id))
-        protocol = data["protocol_status"]
+        if data is not None:
+            protocol = data["protocol_status"]
+        else:
+            protocol = None
         mode = "add_value_tests"
         test_list = page_controller.get_tests_list()
 
