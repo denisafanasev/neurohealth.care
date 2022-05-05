@@ -74,4 +74,5 @@ class LoginService():
 
         user_manager = UserManager()
 
-        user_manager.create_user(_login, _name, _password, _password2, _email, "superuser", _access_time = "бессрочно")
+        user_manager.create_user(_login, _name, _password, _password2, _email, "superuser", _access_time = "бессрочно",
+                                 _probationers_number=5)

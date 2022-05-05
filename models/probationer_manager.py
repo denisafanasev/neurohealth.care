@@ -185,3 +185,12 @@ class ProbationerManager():
 
         return probationer.name_probationer
 
+    def is_probationers(self):
+
+        data_store = DataStore("probationers")
+
+        if data_store.get_rows() != []:
+            return True
+        else:
+            return False
+

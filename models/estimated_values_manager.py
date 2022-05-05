@@ -26,6 +26,9 @@ class EstimatedValuesManager():
         data_default = DataStore("structure")
         data_tests = DataStore("structure", "tests")
 
+        if data_default.get_rows() == []:
+            return None
+
         data_criteria = DataStore(self.get_age_range(_id_file_name))
 
         if data_criteria.get_rows() == []:

@@ -129,7 +129,9 @@ class UserManager():
 
         user_data = data_store.get_row_by_id(_user_id)
 
-        if user_data is not None:
+        if data_store.get_rows() == []:
+            return None
+        elif user_data is not None:
             user = self.user_row_to_user(user_data)
 
         return user

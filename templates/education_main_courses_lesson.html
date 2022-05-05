@@ -114,8 +114,8 @@
                                                          src="{% if type == 'pdf' %}/static/img/icons/icon_pdf.png{% else %}/static/img/icons/icon_word.png{% endif %}">
                                                 </td>
                                                 <td>{{ name_file }}</td>
-                                                <td><a download=""
-                                                        href="{{ i_materials }} ">Файл</a>
+                                                <td><a download="inline"
+                                                        href="{{ i_materials }}">Файл</a>
                                                 </td>
                                             </tr>
                                         {% endfor %}
