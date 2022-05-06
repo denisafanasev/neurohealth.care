@@ -26,6 +26,9 @@ from controllers.user_profile_page_controller import UserProfilePageController
 from controllers.probationer_card_page_controller import ProbationerCardPageController
 from controllers.education_main_course_page_controller import EducationMainCoursePageController
 from controllers.education_main_course_lesson_page_controller import EducationMainCourseLessonPageController
+from controllers.education_list_courses_page_controller import EducationListCoursesPageController
+from controllers.education_course_page_controller import EducationCoursePageController
+from controllers.education_course_lesson_page_controller import EducationCourseLessonPageController
 
 from error import UserManagerException
 
@@ -66,8 +69,6 @@ app.config.from_object(Config())
 login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
-
-attempt = False
 
 
 @app.context_processor
@@ -201,9 +202,7 @@ def user_manager():
 
     Returns:
         
-    """    
-    global attempt
-    attempt = False
+    """
     page_controller = UserManagerPageController()
     mpc = MainMenuPageController()
 
@@ -232,7 +231,6 @@ def user_profile():
     endpoint = "user_manager"
     user_id = request.args.get('user_id')
 
-    global attempt
     if user_id is not None and not request.form.get("button"):
         mode = "view"
     else:
@@ -273,7 +271,6 @@ def user_profile():
                 if mode == "new":
                     # добавляем нового пользователя и получаем список с ошибками
                     # если их нет, то получаем пустой список
-                    attempt = True
                     user = {}
                     user["login"] = request.form["login"]
                     user["name"] = request.form["name_user"]
@@ -283,7 +280,6 @@ def user_profile():
                     user["role"] = request.form["role"]
                     user["probationers_number"] = int(request.form["probationers_number"])
                     user["access_time"] = request.form["access_time"]
-
                     active = True
 
                     error = page_controller.create_user(user["login"], user["name"], user["password"],
@@ -292,17 +288,15 @@ def user_profile():
 
                     if error is None:
                         mode = "view"
-
                         error = "Пользователь сохранён!"
                         error_type = "Successful"
 
-                        attempt = False
-
                     data = user
+
             elif request.form["button"] == "edit":
                 if mode == "view":
-                    attempt = True
                     mode = "edit"
+
             elif request.form["button"] == "save":
                 if mode == "edit":
                     user = {}
@@ -321,7 +315,6 @@ def user_profile():
 
                     data = user
                     mode = "view"
-                    # attempt = False
                     error = "Изменения сохранены!"
                     error_type = "Successful"
 
@@ -340,10 +333,7 @@ def user_profile():
                         error = "Пароль успешно изменен!"
                         error_type = "Successful"
 
-                        attempt = False
-
                 else:
-                    attempt = True
                     mode = "discharge"
 
             elif request.form["button"] == "is_active":
@@ -354,13 +344,14 @@ def user_profile():
                     error = "Пользователь успешно разблокирован!"
                 else:
                     error = "Пользователь успешно заблокирован!"
+
+                mode = "view"
             
             else:
                 return redirect("user_manager")
 
     except exceptions.BadRequestKeyError:
         mode = "view"
-        attempt = False
 
     if data == {}:
         data = data_begin
@@ -368,7 +359,7 @@ def user_profile():
     return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=data, _data_begin=data_begin, _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _mode=mode, _error=error, _attempt=attempt, _active=active, _error_type=error_type)
+                           _mode=mode, _error=error, _active=active, _error_type=error_type)
 
 
 @app.route('/main_page', methods=['GET', 'POST'])
@@ -442,13 +433,13 @@ def education_main_course_lesson():
 
     endpoint = request.endpoint
 
-    id_course = int(request.args.get("id_lesson"))
+    id_lesson = int(request.args.get("id_lesson"))
 
-    data = page_controller.get_lesson(id_course)
+    data = page_controller.get_lesson(id_lesson)
 
 
 
-    return render_template('education_main_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
+    return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=data)
 
@@ -466,12 +457,63 @@ def education_main_courses():
     page_controller = EducationMainCoursePageController()
     mpc = MainMenuPageController()
 
+    data = page_controller.get_course(1)
+
+    endpoint = request.endpoint
+
+    return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
+
+@app.route('/education_list_courses', methods=['GET', 'POST'])
+@login_required
+def education_list_courses():
+
+    page_controller = EducationListCoursesPageController()
+    mpc = MainMenuPageController()
+
     data = page_controller.get_courses()
 
     endpoint = request.endpoint
 
-    return render_template('education_main_course.html', view="corrections", _menu=mpc.get_main_menu(),
+    return render_template('education_list_courses.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
+
+@app.route('/education_course', methods=['GET', 'POST'])
+@login_required
+def education_course():
+
+    page_controller = EducationCoursePageController()
+    mpc = MainMenuPageController()
+
+    id_module = request.args.get("id_course")
+    if id_module is not None:
+        data = page_controller.get_course(id_module)
+    else:
+        data = None
+
+    endpoint = request.endpoint
+
+    return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
+
+@app.route('/education_course/lesson', methods=['GET', 'POST'])
+@login_required
+def education_course_lesson():
+
+    page_controller = EducationCourseLessonPageController()
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+
+    id_course = request.args.get("id_course")
+    id_lesson = int(request.args.get("id_lesson"))
+
+    data = page_controller.get_lesson(id_lesson, int(id_course))
+
+    return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _data=data)
+
 
 @app.route('/education_home_tasks', methods=['GET', 'POST'])
 @login_required

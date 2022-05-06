@@ -1,6 +1,6 @@
 from services.course_service import CourseService
 
-class EducationMainCoursePageController():
+class EducationCoursePageController():
 
     def get_course(self, _id):
 
@@ -27,4 +27,3 @@ class EducationMainCoursePageController():
             courses_list.append(course)
 
         return courses_list
-
