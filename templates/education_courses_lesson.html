@@ -119,8 +119,8 @@
                                             {% set name_file = i_materials.split('/')[-1].split('.')[0] %}
                                             <tr>
                                                 <td class="table-action">
-                                                    <img class="{% if type == 'pdf' %}pdf{% else %}word{% endif %}"
-                                                         src="{% if type == 'pdf' %}/static/img/icons/icon_pdf.png{% else %}/static/img/icons/icon_word.png{% endif %}">
+                                                    <img class="{% if type == 'doc' or type == "docx" %}word{% else %}pdf{% endif %}"
+                                                         src="{% if type == 'doc' or type == "docx" %}/static/img/icons/icon_word.png{% else %}/static/img/icons/icon_pdf.png{% endif %}">
                                                 </td>
                                                 <td>{{ name_file }}</td>
                                                 <td><a download="inline"
