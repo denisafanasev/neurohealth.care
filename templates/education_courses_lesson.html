@@ -31,6 +31,14 @@
     .pdf {
         width: 30px;
     }
+    .card-text{
+        margin-top: -4em;
+        margin-bottom: 0em;
+        white-space: pre-line;
+        font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+        font-size: 14px;
+        color: #0a0a0a
+    }
     </style>
 
     <h1 class="h3 mb-2">
@@ -51,6 +59,7 @@
                     Материалы урока
                 </h4>
             </div>
+
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-7 text-left">
@@ -126,56 +135,57 @@
                         {% endif %}
                     </div>
 
-                        {% if _data['lesson']['text'] %}
-                            <div class="col-md-5 text-left">
-                                <div class="card py-1 py-md-1 border">
-                                    <div class="card-body">
-                                        <p style="white-space: pre-line; margin-top: -4em; margin-bottom: 0em; font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif; font-size: 14px; color: #0a0a0a;">
-                                            {{ _data['lesson']['text'] }}
-                                        </p>
-                                    </div>
+                    {% if _data['lesson']['text'] %}
+                        <div class="col-md-5 text-left">
+                            <div class="card py-1 py-md-1 border">
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        {{ _data['lesson']['text'] }}
+                                    </p>
                                 </div>
                             </div>
-                        {% endif %}
+                        </div>
+                    {% endif %}
                 </div>
-                
             </div>
         </div>
 
                     
         {% if _data['lesson']['task'] %}
-            <div class="card border">
-                <div class="card-header">
-                    <h4>
-                        Домашнее задание
-                    </h4>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12 text-left">
-                            <div class="card py-1 py-md-1 border">
-                                <div class="card-body">
-                                    <p style="margin-top: -4em; margin-bottom: 0em;white-space: pre-line; font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif; font-size: 14px; color: #0a0a0a">
-                                    {{ _data['lesson']['task'] }}
-                                </p>
-                                    <div id="editor"></div>
+            <form method="post">
+                <div class="card border">
+                    <div class="card-header">
+                        <h4>
+                            Домашнее задание
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12 text-left">
+                                <div class="card py-1 py-md-1 border">
+                                    <div class="card-body">
+                                        <p class="card-text">
+                                        {{ _data['lesson']['task'] }}
+                                    </p>
+                                        <div id="editor"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row d-flex align-items-stretch bd-highlight" align="right">
-                            <div class="col-12 p-2 bd-highlight">
-                                <div class="card d-flex align-self-baseline">
-                                    <div class="card-header">
-                                        <a type="submit" name="button" href="{{ url_for('user_manager') }}" class="btn btn-primary ">
-                                            Сохранить
-                                        </a>
+                            <div class="row d-flex align-items-stretch bd-highlight" align="right">
+                                <div class="col-12 p-2 bd-highlight">
+                                    <div class="card d-flex align-self-baseline">
+                                        <div class="card-header">
+                                            <a type="submit" name="button" href="{{ url_for('user_manager') }}" class="btn btn-primary ">
+                                                Сохранить
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
         {% endif %}
     </div>
 {% endblock %}
