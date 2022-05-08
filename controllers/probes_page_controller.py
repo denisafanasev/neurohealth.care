@@ -1,5 +1,6 @@
 import utils.ada as ada
 from services.probes_service import ProbesService
+from services.probationers_service import ProbationersService
 
 
 class ProbesPageController():
@@ -43,3 +44,9 @@ class ProbesPageController():
             probes.append(probe)
 
         return probes
+
+    def is_probationers(self):
+
+        probationer_service = ProbationersService()
+
+        return probationer_service.is_probationers()

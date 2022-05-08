@@ -24,6 +24,7 @@ class ProbeProfileController():
         probationers = probe_profile_service.get_probationers()
 
         users_list_view = []
+
         for probationer in probationers:
             probationer_view = {}
 
@@ -60,14 +61,17 @@ class ProbeProfileController():
 
         probe_profile_service = ProbeProfileService()
 
-        protocol = probe_profile_service.get_protocol(_id_test, _probe_id)
-        probe = {}
+        try:
+            protocol = probe_profile_service.get_protocol(_id_test, _probe_id)
+            probe = {}
 
-        probe["id"] = protocol.test.id
-        probe["name_probe"] = protocol.test.name_probe
-        probe["parameters"] = protocol.test.parameters
-        probe["name_probationer"] = protocol.name_probationer
-        probe["protocol_status"] = protocol.protocol_status
+            probe["id"] = protocol.test.id
+            probe["name_probe"] = protocol.test.name_probe
+            probe["parameters"] = protocol.test.parameters
+            probe["name_probationer"] = protocol.name_probationer
+            probe["protocol_status"] = protocol.protocol_status
+        except AttributeError:
+            return None
 
         return probe
 

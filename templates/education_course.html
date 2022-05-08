@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block main_block %}
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+    <script src="{{ url_for('static' , filename="js/datatables.js")}}"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.1.4/css/rowGroup.dataTables.min.css">
+    <script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.1.4/js/dataTables.rowGroup.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/4.0.2/css/fixedColumns.dataTables.min.css">
+    <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/4.0.2/js/dataTables.fixedColumns.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.4/css/select.dataTables.min.css">
+
+
+    <h1 class="h3 mb-2">Школа нейропсихологии</h1>
+    {% if _data %}
+        {% for i_module in _data %}
+            <div class="card boarder">
+                <div class="card-header">
+                    <h4>{{ i_module["name"] }}</h4>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Статус</th>
+                            <th style="width:60%;">Наименование урока</th>
+                            <th style="width:15%">Ссылка</th>
+                            <th class="d-none d-md-table-cell" style="width:15%">Срок выполнения</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i_lesson in i_module['lessons'] %}
+                        <tr>
+                            <td class="table-action">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    class="feather feather-check-square align-middle me-2">
+                                    <polyline points="9 11 12 14 22 4"></polyline>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                </svg>
+                            </td>
+                            <td>{{ i_lesson['name'] }}</td>
+                            <td><a href="/education_main_course/lesson?id_lesson={{ i_lesson['id'] }}">Выполнить</a></td>
+                            <td class="d-none d-md-table-cell">Июнь 21, 1961</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center">
+            <h2>Данная страница недоступна из-за отсутсвия нужного файла.</h2>
+            <h2>Приносим свои извинения.</h2>
+        </div>
+    {% endif %}
+
+{% endblock %}

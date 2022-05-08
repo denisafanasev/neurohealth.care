@@ -10,9 +10,6 @@ class ProbationersService():
     def init(self):
         pass
 
-    def get_data(self):
-        return "Data"
-
     def get_probationers_list_view(self):
 
          probationers = []
@@ -21,3 +18,9 @@ class ProbationersService():
          probationers = probationer_manager.get_probationers()
 
          return probationers
+
+    def is_probationers(self):
+
+        probationer_manager = ProbationerManager()
+
+        return probationer_manager.is_probationers()

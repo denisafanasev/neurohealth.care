@@ -120,16 +120,18 @@ class UserManager():
         user["email"] = "введите email пользователя.."
         user["password"] = "введите пароль.."
         user["password2"] = "введите повторно пароль.."
-        user["role"] = "user"
-        user["probationers_number"] = 5
-        user["access_time"] = "6 месяцев"
+        user["role"] = "Выберите роль пользователя"
+        user["probationers_number"] = "Выберите количество доступных тестируемых"
+        user["access_time"] = "Выберите срок предоставления доступа"
         user["active"] = True
 
         data_store = DataStore("users")
 
         user_data = data_store.get_row_by_id(_user_id)
 
-        if user_data is not None:
+        if data_store.get_rows() == []:
+            return None
+        elif user_data is not None:
             user = self.user_row_to_user(user_data)
 
         return user
