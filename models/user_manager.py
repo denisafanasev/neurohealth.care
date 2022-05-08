@@ -120,9 +120,9 @@ class UserManager():
         user["email"] = "введите email пользователя.."
         user["password"] = "введите пароль.."
         user["password2"] = "введите повторно пароль.."
-        user["role"] = "user"
-        user["probationers_number"] = 5
-        user["access_time"] = "6 месяцев"
+        user["role"] = "Выберите роль пользователя"
+        user["probationers_number"] = "Выберите количество доступных тестируемых"
+        user["access_time"] = "Выберите срок предоставления доступа"
         user["active"] = True
 
         data_store = DataStore("users")
