@@ -64,7 +64,7 @@ class LoginPageController():
         login_service = LoginService()
         return login_service.is_there_users()
     
-    def create_superuser(self, _login, _name, _password, _password2, _email):
+    def create_user(self, _login, _name, _password, _password2, _email, _create_superuser):
         """
         Создает в системе суперпользователя
 
@@ -74,9 +74,10 @@ class LoginPageController():
             _password (String): пароль пользователя
             _password2 (String): контрольный ввод пароля пользователя
             _email (String): email пользователя
+            _create_superuser (Boolean): признак создания суперпользователя
 
         """        
 
         # создаем суперпользователя
         login_service = LoginService()
-        login_service.create_superuser(_login, _name, _password, _password2, _email)
+        login_service.create_user(_login, _name, _password, _password2, _email, _create_superuser)

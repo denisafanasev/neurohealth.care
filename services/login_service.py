@@ -59,7 +59,7 @@ class LoginService():
         
         return False
     
-    def create_superuser(self, _login, _name, _password, _password2, _email):
+    def create_user(self, _login, _name, _password, _password2, _email, _create_superuser):
         """
         Создает в системе суперпользователя
 
@@ -69,10 +69,14 @@ class LoginService():
             _password (String): пароль пользователя
             _password2 (String): контрольный ввод пароля пользователя
             _email (String): email пользователя
+            _create_superuser (Boolean): признак создания суперпользователя
 
         """
 
         user_manager = UserManager()
 
-        user_manager.create_user(_login, _name, _password, _password2, _email, "superuser", _access_time = "бессрочно",
-                                 _probationers_number=5)
+        _role = "user"
+        if _create_superuser:
+            _role = "superuser"
+
+        user_manager.create_user(_login, _name, _password, _password2, _email, _role, _access_time = "бессрочно")

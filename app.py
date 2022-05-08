@@ -109,6 +109,43 @@ def logout():
     logout_user()
     return redirect('main_page')
 
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    """регистрация нового пользователя
+
+    Returns:
+        none
+    """
+
+    login_page_controller = LoginPageController()
+    error_message = ""
+
+    create_superuser = False
+    if not login_page_controller.is_there_users():
+        # пользователей есть, отправляемся на авторизацию
+        create_superuser = True
+
+
+    if request.method == 'POST':
+
+        login = request.form['user_login']
+        name = request.form['user_name']
+        password = request.form['user_password']
+        password_2 = request.form['user_password_2']
+        email = request.form['user_email']
+
+        try:
+
+            login_page_controller.create_user(login, name, password, password_2, email, create_superuser)
+            return render_template('registration.html', view="registration", _superuser_created=True, _error_message=error_message, _create_superuser=create_superuser)
+
+        except UserManagerException as e:
+
+            error_message = str(e)
+
+    return render_template('registration.html', view="registration", _user_created=False, _error_message=error_message, _create_superuser=create_superuser)
+
+'''
 @app.route('/create_superuser', methods=['GET', 'POST'])
 def create_superuser():
     """
@@ -148,6 +185,7 @@ def create_superuser():
             error_message = str(e)
 
     return render_template('create_superuser.html', view="create_superuser", _superuser_created=False, _error_message=error_message)
+'''
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -164,17 +202,17 @@ def login():
     if not login_page_controller.is_there_users():
 
         # пользователей нет, надо создать первого суперпользователя
-        return redirect('create_superuser')
+        return redirect('registration')
 
     # пользователи есть, проходим процедуру идентификации
     login_error = False
 
     if request.method == 'POST':
 
-        login = request.form['login']
-        password = request.form['password']
+        _login = request.form['login']
+        _password = request.form['password']
 
-        user = login_page_controller.get_user(login, password)
+        user = login_page_controller.get_user(_login, _password)
 
         if user is not None:
             if isinstance(user, Exception):
@@ -273,7 +311,7 @@ def user_profile():
                     # если их нет, то получаем пустой список
                     user = {}
                     user["login"] = request.form["login"]
-                    user["name"] = request.form["name_user"]
+                    user["name"] = request.form["user_name"]
                     user["password"] = request.form["password"]
                     user["password2"] = request.form["password2"]
                     user["email"] = request.form["email"]
@@ -301,7 +339,7 @@ def user_profile():
                 if mode == "edit":
                     user = {}
                     user["login"] = request.form["login"]
-                    user["name"] = request.form["name_user"]
+                    user["name"] = request.form["user_name"]
                     user["email"] = request.form["email"]
                     user["role"] = request.form["role"]
                     user["probationers_number"] = int(request.form["probationers_number"])

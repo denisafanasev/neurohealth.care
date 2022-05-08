@@ -13,31 +13,7 @@
     <link href="{{ url_for('static' , filename="css/light.css")}}" rel="stylesheet">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
-    <script type="text/javascript">
-      function checkPassword(form) {
-        var password = form.password.value;
-        var text = "Ошибка: неверная длина пароля"
-
-        if (password.length < 3 || password.length > 20){
-            alert(text);
-            return false;
-        }else {
-            return checkLogin(form);
-        }
-      }
-
-      function checkLogin(form) {
-        var login = form.login.value;
-        var text = "Ошибка: неверная длина логина"
-
-        if (login.length < 3 || login.length > 11) {
-            alert(text);
-            return false;
-        }else {
-            return true;
-        }
-      }
-    </script>
+    <script src="{{ url_for('static' , filename="js/nhc_util.js")}}" type="text/javascript"></script>
 
 </head>
 
@@ -75,7 +51,10 @@
                                                 placeholder="Enter your password" />
                                         </div>
                                         <div class="text-center mt-3">
-                                            <button type="submit" class="btn btn-lg btn-primary">Sign in</button>
+                                            <button type="submit" class="btn btn-primary">Войти</button>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <a href="{{ url_for('registration')}}">Регистрация</a> | <a>Вспомнить пароль</a>
                                         </div>
                                     </form>
                                 </div>
@@ -89,7 +68,6 @@
     </main>
 
     <script src="{{ url_for('static' , filename="js/app.js")}}"></script>
-
 
 </body>
 
