@@ -46,10 +46,21 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script type="text/javascript">
-    $(document).ready (function () {
-        const  selections  =  new  Choices ( $ ( '.id_probe' ) [ 0 ] ) ;
-    });
+        $(document).ready (function () {
+            const  selections  =  new  Choices ( $ ( '.id_probe' ) [ 0 ] ) ;
+        });
+    </script>
 
+    <script type="text/javascript">
+          function checkprobationer(form) {
+            var probationer = form.probationer.value;
+            var text = "Ошибка: выберите тестируемого!"
+
+            if (probationer === "Выберите тестируемого"){
+                alert(text);
+                return false;
+            }
+          }
     </script>
 
     <style>
@@ -61,47 +72,42 @@
     <div class="container-fluid p-0">
 
         <div class="mb-3">
-            <h1 class="h3 d-inline align-middle">Протокол тестирования{% if _mode == "add_value_tests" %}(Тестируемый: {{ _data["name_probationer"] }}) {% endif %}</h1>
+            <h1 class="h3 d-inline align-middle">Протокол тестирования{% if _mode == "add_value_tests" and _data%}(Тестируемый: {{ _data["name_probationer"] }}) {% endif %}</h1>
         </div>
 
-        <form id="probes" name="probes" method="post" enctype="multipart/form-data">
+        <form id="probes" name="probes" method="post" enctype="multipart/form-data" onsubmit="return checkprobationer(this);">
             {% if _mode == "selection_probationer" %}
                 <div class="row d-flex align-items-stretch bd-highlight">
                     <div class="col-8 p-2 bd-highlight">
                         <div class="card d-flex align-self-baseline">
                             <div class="card-header">
                                 <h5 class="card-title">Выбор тестируемого</h5>
-                                {% if _error_type=='Successful' %}
-                                    <div class="alert alert-success alert-dismissible" role="alert">
-                                        <div class="alert-message">
-                                            <strong>Успешно</strong>  {{ _error }}
-                                        </div>
-                                    </div>
-                                {% elif _error %}
-                                    <div class="alert alert-danger alert-dismissible" role="alert">
-                                        <div class="alert-message">
-                                            <strong>Ошибка</strong> {{ _error }}
-                                        </div>
-                                    </div>
-                                {% endif %}
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Тестируемый</strong></label>
                                     <select class="form-select" name="probationer">
                                         {% for i_probationer in _probationers_list %}
-                                            <option>{{ i_probationer["name_probationer"] }}</option>
+                                            <option {% if i_probationer["name_probationer"] == 'Выберите тестируемого' %}selected disabled {% endif %}>{{ i_probationer["name_probationer"] }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
                         </div>
+                        <div style="text-align: right">
+                            <button type="submit" name="button" value="draft" class="btn btn-primary ">Продолжить</button>
+
+                            <a type="submit" name="button" href="{{ url_for('probes') }}" class="btn btn-secondary ">Отмена</a>
+                        </div>
                     </div>
                 </div>
+
+
 
             {% elif _mode == "add_value_tests" %}
                 <div class="row d-flex align-items-stretch bd-highlight">
                     <div class="p-2 bd-highlight">
                         <div class="card d-flex align-self-baseline">
                             <div class="card-header">
+                                {% if _data %}
                                 <div class="card-body">
                                     <div class="mb-3">
                                         <select id="id_probe" name="action" class="id_probe" onchange="this.form.submit();">
@@ -187,25 +193,24 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
+                                {% else %}
+                                    <div class="text-center">
+                                        <h2>Данная страница недоступна из-за отсутсвия нужного файла.</h2>
+                                        <h2>Приносим свои извинения.</h2>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
             {% endif %}
-            <div align="right">
-                <button type="submit" name="button" value="draft" class="btn btn-primary ">{% if _mode == "selection_probationer" %}Продолжить
-                                                                                            {% else %} Сохранить как черновик
-                                                                                            {% endif %}
-                </button>
+            {% if _data %}
+                <div align="right">
+                    <button type="submit" name="button" value="draft" class="btn btn-primary ">Сохранить как черновик</button>
 
-                {% if _mode == "selection_probationer" %}
-                    <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('probes')}}">
-                        <span>Отмена</span>
-                    </a>
-                {% else %}
                     <button type="submit" name="button" value="end" class="btn btn-primary ">Сохранить окончательно</button>
-                {% endif %}
-            </div>
+                </div>
+            {% endif %}
         </form>
     </div>
 {% endblock %}

@@ -35,8 +35,8 @@ class ProbesManager():
         probe = self.probe_row_to_probe(_name_probationer, _probationer_id, _date_of_birth, _protocol_status, probe_id, test)
 
         for i_range in EstimatedValuesManager().get_age_ranges():
-            if i_range != 'базовые значение':
-                age_range = i_range.split()[0]
+            if i_range['range'] != 'базовые значение':
+                age_range = i_range['range'].split(" ")[0]
                 age_range = age_range.split("-")
 
                 if int(age_range[0]) <= probe.age_probationer and int(age_range[1]) >= probe.age_probationer:
@@ -63,45 +63,49 @@ class ProbesManager():
         data_store_radio = DataStore("parameters_criteria", "radio_value")
         data_store_probe = DataStore("probes")
 
-        test = data_store_probes.get_rows({"id": _id_test})[0]
-        probe = data_store_probe.get_rows({"probe_id": _probe_id})[0]
-        probe = self.probe_row_to_probe(probe["name_probationer"], probe["probationer_id"],
-                                        _protocol_status=probe["protocol_status"], _probe_id=probe["probe_id"],
-                                        _test=probe["test"])
+        try:
+            test = data_store_probes.get_rows({"id": _id_test})[0]
+            probe = data_store_probe.get_rows({"probe_id": _probe_id})[0]
+            probe = self.probe_row_to_probe(probe["name_probationer"], probe["probationer_id"],
+                                            _protocol_status=probe["protocol_status"], _probe_id=probe["probe_id"],
+                                            _test=probe["test"])
 
-        data_store_grade_probationer = DataStore("probes", probe.test)
-        grades_probationer = data_store_grade_probationer.get_rows()
+            data_store_grade_probationer = DataStore("probes", probe.test)
+            grades_probationer = data_store_grade_probationer.get_rows()
 
-        parameters = data_store_parameters.get_rows({"id_test": test["id"]})
-        parameter_list = []
+            parameters = data_store_parameters.get_rows({"id_test": test["id"]})
+            parameter_list = []
 
-        for i_parameter in parameters:
-            grades = data_store_grade.get_rows({"id_parameters": i_parameter["id"]})
-            grades_list = []
+            for i_parameter in parameters:
+                grades = data_store_grade.get_rows({"id_parameters": i_parameter["id"]})
+                grades_list = []
 
-            for i_grade in grades:
+                for i_grade in grades:
 
-                if grades_probationer != []:
-                    grade = data_store_grade_probationer.get_rows({"id": i_grade["id"]})
-                    if grade != []:
-                        i_grade["grade"] = grade[0]["grade"]
+                    if grades_probationer != []:
+                        grade = data_store_grade_probationer.get_rows({"id": i_grade["id"]})
+                        if grade != []:
+                            i_grade["grade"] = grade[0]["grade"]
 
-                if i_grade["radio_value"]:
-                    radio_values = []
+                    if i_grade["radio_value"]:
+                        radio_values = []
 
-                    for i_radio_value in i_grade["radio_value"]:
-                        radio_values.append(data_store_radio.get_rows({"id": i_radio_value})[0])
+                        for i_radio_value in i_grade["radio_value"]:
+                            radio_values.append(data_store_radio.get_rows({"id": i_radio_value})[0])
 
-                    i_grade["radio_value"] = radio_values
+                        i_grade["radio_value"] = radio_values
 
-                grades_list.append(i_grade)
+                    grades_list.append(i_grade)
 
-            i_parameter["grades"] = grades_list
-            parameter_list.append(i_parameter)
+                i_parameter["grades"] = grades_list
+                parameter_list.append(i_parameter)
 
-        test["parameters"] = parameter_list
+            test["parameters"] = parameter_list
 
-        probe.test = self.test_row_to_test(test["id"], test["name_probe"], test["parameters"])
+            probe.test = self.test_row_to_test(test["id"], test["name_probe"], test["parameters"])
+
+        except IndexError:
+            return None
         return probe
 
     def get_tests_list(self):

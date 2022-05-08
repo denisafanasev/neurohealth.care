@@ -40,12 +40,7 @@
     </div>
 
     <form id="add_probationer" name="add_probationer" method="post" enctype="multipart/form-data">
-        <div class="row d-flex align-items-stretch bd-highlight">
-                <div class="col-8 p-2 bd-highlight">
-                    <div class="card d-flex align-self-baseline">
-                        <div class="card-header">
-                            <h5 class="card-title">Данные испытуемого</h5>
-                            {% if _error_type=='Successful' %}
+    {% if _error_type=='Successful' %}
                                 <div class="alert alert-success alert-dismissible" role="alert">
                                     <div class="alert-message">
                                         <strong>Успешно</strong>  {{ _error }}
@@ -58,6 +53,12 @@
                                     </div>
                                 </div>
                             {% endif %}
+        <div class="row d-flex align-items-stretch bd-highlight">
+                <div class="col-8 p-2 bd-highlight">
+                    <div class="card d-flex align-self-baseline">
+                        <div class="card-header">
+                            <h5 class="card-title">Данные испытуемого</h5>
+
                             {% if _is_current_user_admin and _mode=="view" %}
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Login</strong></label>
