@@ -119,10 +119,10 @@ def registration():
     login_page_controller = LoginPageController()
     error_message = ""
 
-    creation_mode = "user"
+    create_superuser = False
     if not login_page_controller.is_there_users():
         # пользователей есть, отправляемся на авторизацию
-        creation_mode = "superuser"
+        create_superuser = True
 
 
     if request.method == 'POST':
@@ -135,14 +135,14 @@ def registration():
 
         try:
 
-            login_page_controller.create_user(login, name, password, password_2, email)
-            return render_template('registration.html', view="registration", _superuser_created=True, _error_message=error_message)
+            login_page_controller.create_user(login, name, password, password_2, email, create_superuser)
+            return render_template('registration.html', view="registration", _superuser_created=True, _error_message=error_message, _create_superuser=create_superuser)
 
         except UserManagerException as e:
 
             error_message = str(e)
 
-    return render_template('registration.html', view="registration", _user_created=False, _error_message=error_message)
+    return render_template('registration.html', view="registration", _user_created=False, _error_message=error_message, _create_superuser=create_superuser)
 
 '''
 @app.route('/create_superuser', methods=['GET', 'POST'])
@@ -313,7 +313,7 @@ def user_profile():
                     attempt = True
                     user = {}
                     user["login"] = request.form["login"]
-                    user["name"] = request.form["name_user"]
+                    user["name"] = request.form["user_name"]
                     user["password"] = request.form["password"]
                     user["password2"] = request.form["password2"]
                     user["email"] = request.form["email"]
@@ -344,7 +344,7 @@ def user_profile():
                 elif mode == "edit":
                     user = {}
                     user["login"] = request.form["login"]
-                    user["name"] = request.form["name_user"]
+                    user["name"] = request.form["user_name"]
                     user["email"] = request.form["email"]
                     user["role"] = request.form["role"]
                     user["probationers_number"] = int(request.form["probationers_number"])
