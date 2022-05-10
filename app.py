@@ -71,7 +71,6 @@ login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
 
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
@@ -215,7 +214,6 @@ def user_manager():
     Страница управления списков пользователей системы
 
     Returns:
-
     """
 
     page_controller = UserManagerPageController()
@@ -258,6 +256,7 @@ def user_profile():
                 mode = "edit"
         except exceptions.BadRequestKeyError:
             mode = "view"
+        pass
 
     error = None
 
@@ -453,8 +452,6 @@ def education_main_course_lesson():
     id_lesson = int(request.args.get("id_lesson"))
 
     data = page_controller.get_lesson(id_lesson)
-
-
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(

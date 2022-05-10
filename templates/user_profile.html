@@ -107,6 +107,9 @@
                                     <option {% if i == _data['role'] %} selected {% endif %} value="{{ i }}">{{ i }}</option>
                                 {% endfor %}
                             </select>
+                            <div class="invalid-feedback">
+                                Поле, обязательное для заполнения!
+                            </div>
                         </div>
 
                         <div class="mb-2">
@@ -117,6 +120,9 @@
                                         <option {% if _data['probationers_number'] == i*5 %} selected {% endif %}value="{{ i*5 }}"> {{ i*5 }} </option>
                                 {% endfor %}
                             </select>
+                            <div class="invalid-feedback">
+                                Поле, обязательное для заполнения!
+                            </div>
                         </div>
 
                         <div class="mb-2">
@@ -127,6 +133,9 @@
                                     <option {% if i == _data['access_time'] %} selected {% endif %}value="{{ i }}">{{ i }}</option>
                                 {% endfor %}
                             </select>
+                            <div class="invalid-feedback">
+                                Поле, обязательное для заполнения!
+                            </div>
                         </div>
                     </div>
                 </div>
