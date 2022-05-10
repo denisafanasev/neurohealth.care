@@ -33,13 +33,13 @@
     });
 </script>
 
-<script src="{{ url_for('static' , filename="js/nhc_util.js")}}" type="text/javascript"></script>
+<script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>
 
 <div class="container-fluid p-0">
 
     <div class="mb-3">
         <h1 class="h3 d-inline align-middle">{% if _mode == "view" %}Просмотр {% elif _mode == "new" %}Создание
-            {% else %}Редактирование {% endif %}карточки пользователя</h1>
+            {% else %}Редактирование {% endif %} пользователя</h1>
     </div>
 
     {% if _error_type=='Successful' %}
@@ -66,43 +66,28 @@
                         <div class="mb-2">
                             <label class="form-label"><strong>Login</strong></label>
                             <input required type="text" name="login" class="form-control" {% if _mode!="new" %} readonly {% endif %} {% if _data['login'] != _data_begin['login'] or _mode != "new" %} value="{{ _data['login'] }}" {% else %} placeholder="Введите логин пользователя" {% endif %}>
-                            <div class="invalid-feedback">
-                                Поле, обязательное для заполнения!
-                            </div>
                         </div>
 
                         <div class="mb-2">
                             <label class="form-label"><strong>Имя пользователя</strong></label>
-                            <input required type="text" name="name_user" class="form-control"  {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['name'] != _data_begin['name'] or _mode != "new"%} value="{{ _data['name'] }}" {% else %} placeholder="Введите имя пользователя" {% endif %}>
-                            <div class="invalid-feedback">
-                                Поле, обязательное для заполнения!
-                            </div>
+                            <input required type="text" name="user_name" class="form-control"  {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['name'] != _data_begin['name'] or _mode != "new"%} value="{{ _data['name'] }}" {% else %} placeholder="Введите имя пользователя" {% endif %}>
                         </div>
 
                         {% if _mode=="new" or _mode=="discharge" %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Пароль</strong></label>
                                 <input required type="password" name="password" class="form-control" {% if _data['password']!= _data_begin['password']%} value="{{ _data['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
-                                <div class="invalid-feedback">
-                                    Поле, обязательное для заполнения!
-                                </div>
                             </div>
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Повтор пароля</strong></label>
                                 <input required type="password" name="password2" class="form-control" {% if _data['password2']!= _data_begin['password2'] %} value="{{ _data['password2'] }}" {% else %} placeholder="Повторно введите пароль" {% endif %}>
-                                <div class="invalid-feedback">
-                                    Поле, обязательное для заполнения!
-                                </div>
                             </div>
                         {% endif %}
 
                         <div class="mb-2">
                             <label class="form-label"><strong>Email</strong></label>
                             <input required type="email" name="email" class="form-control" {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['email'] != _data_begin['email'] or _mode != "new"%} value="{{ _data['email'] }}" {% else %} placeholder="Введите email пользователя" {% endif %}>
-                            <div class="invalid-feedback">
-                                Поле, обязательное для заполнения!
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -122,9 +107,6 @@
                                     <option {% if i == _data['role'] %} selected {% endif %} value="{{ i }}">{{ i }}</option>
                                 {% endfor %}
                             </select>
-                            <div class="invalid-feedback">
-                                Поле, обязательное для заполнения!
-                            </div>
                         </div>
 
                         <div class="mb-2">
@@ -135,9 +117,6 @@
                                         <option {% if _data['probationers_number'] == i*5 %} selected {% endif %}value="{{ i*5 }}"> {{ i*5 }} </option>
                                 {% endfor %}
                             </select>
-                            <div class="invalid-feedback">
-                                Поле, обязательное для заполнения!
-                            </div>
                         </div>
 
                         <div class="mb-2">
@@ -148,9 +127,6 @@
                                     <option {% if i == _data['access_time'] %} selected {% endif %}value="{{ i }}">{{ i }}</option>
                                 {% endfor %}
                             </select>
-                            <div class="invalid-feedback">
-                                Поле, обязательное для заполнения!
-                            </div>
                         </div>
                     </div>
                 </div>

@@ -13,6 +13,7 @@ from werkzeug import exceptions
 from controllers.main_page_controller import MainPageController
 from controllers.main_menu_controller import MainMenuPageController
 from controllers.login_page_controller import LoginPageController
+from controllers.registration_page_controller import RegistrationPageController
 from controllers.user_manager_page_controller import UserManagerPageController
 
 from controllers.corrections_page_controller import CorrectionsPageController
@@ -71,8 +72,26 @@ login_manager.login_view = "login"
 login_manager.init_app(app)
 
 
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
+@login_required
+def index():
+    """ функция заглушка
+
+    Returns:
+        None
+    """
+
+    return redirect("main_page")
+
 @app.context_processor
 def inject_global_context():
+    """инициализация глобальных переменных
+
+    Returns:
+        None
+    """
+
     return dict(app_version=config.VERSION, app_name=config.APP_NAME)
 
 
@@ -94,6 +113,9 @@ def load_user(user_id):
 
 @app.route('/debug-sentry')
 def trigger_error():
+    """служебная процедура для sentry
+    """
+
     division_by_zero = 1 / 0
 
 @app.route("/logout")
@@ -103,8 +125,8 @@ def logout():
     Страница выхода пользователя из системы
 
     Returns:
-        
-    """    
+
+    """
 
     logout_user()
     return redirect('main_page')
@@ -117,75 +139,37 @@ def registration():
         none
     """
 
-    login_page_controller = LoginPageController()
+    login_page_controller = RegistrationPageController()
     error_message = ""
 
-    create_superuser = False
+    # определяем надо ли создать суперпользователя
+    is_create_superuser = False
     if not login_page_controller.is_there_users():
-        # пользователей есть, отправляемся на авторизацию
-        create_superuser = True
+        is_create_superuser = True
 
 
     if request.method == 'POST':
 
-        login = request.form['user_login']
-        name = request.form['user_name']
-        password = request.form['user_password']
-        password_2 = request.form['user_password_2']
-        email = request.form['user_email']
+        user_login = request.form['login']
+        user_name = request.form['user_name']
+        user_password = request.form['password']
+        user_password2 = request.form['password2']
+        user_email = request.form['email']
 
         try:
 
-            login_page_controller.create_user(login, name, password, password_2, email, create_superuser)
-            return render_template('registration.html', view="registration", _superuser_created=True, _error_message=error_message, _create_superuser=create_superuser)
+            login_page_controller.create_user(
+                user_login, user_name, user_password, user_password2, user_email, is_create_superuser)
+            return render_template('registration.html', view="registration", _user_created=True,
+                                    _error_message="", _create_superuser=False)
 
         except UserManagerException as e:
 
             error_message = str(e)
 
-    return render_template('registration.html', view="registration", _user_created=False, _error_message=error_message, _create_superuser=create_superuser)
+    return render_template('registration.html', view="registration", _user_created=False,
+                            _error_message=error_message, _create_superuser=is_create_superuser)
 
-'''
-@app.route('/create_superuser', methods=['GET', 'POST'])
-def create_superuser():
-    """
-    форма создания суперпользоватля при первой запуске системы без сформировного списка пользователей
-
-    Returns:
-        
-    """    
-
-    login_page_controller = LoginPageController()
-
-
-    # если в системе есть созданный список пользователей, то выполняем процедуру авторизации, если нет, то создаем первого суперпользователя
-    if login_page_controller.is_there_users():
-
-        # пользователей есть, отправляемся на авторизацию
-        return redirect('login')
-    
-    # пользователей нет, будем создавать нового администратора
-    error_message = ""
-
-    if request.method == 'POST':
-
-        login = request.form['superuser_login']
-        name = request.form['superuser_name']
-        password = request.form['superuser_password']
-        password_2 = request.form['superuser_password_2']
-        email = request.form['superuser_email']
-
-        try:
-
-            login_page_controller.create_superuser(login, name, password, password_2, email)
-            return render_template('create_superuser.html', view="create_superuser", _superuser_created=True, _error_message=error_message)
-
-        except UserManagerException as e:
-
-            error_message = str(e)
-
-    return render_template('create_superuser.html', view="create_superuser", _superuser_created=False, _error_message=error_message)
-'''
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -193,14 +177,14 @@ def login():
     Форма входа пользователя в систему (ввод логина и пароля)
 
     Returns:
-        
-    """    
+
+    """
 
     login_page_controller = LoginPageController()
 
-    # если в системе есть созданный список пользователей, то выполняем процедуру авторизации, если нет, то создаем первого суперпользователя
+    # если в системе есть созданный список пользователей, то выполняем процедуру авторизации,
+    # если нет, то создаем первого суперпользователя
     if not login_page_controller.is_there_users():
-
         # пользователей нет, надо создать первого суперпользователя
         return redirect('registration')
 
@@ -209,10 +193,10 @@ def login():
 
     if request.method == 'POST':
 
-        _login = request.form['login']
-        _password = request.form['password']
+        user_login = request.form['login']
+        user_password = request.form['password']
 
-        user = login_page_controller.get_user(_login, _password)
+        user = login_page_controller.get_user(user_login, user_password)
 
         if user is not None:
             if isinstance(user, Exception):
@@ -224,14 +208,6 @@ def login():
     return render_template('login.html', view="login", _login_error=login_error)
 
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
-@login_required
-def index():
-
-    return redirect("main_page")
-
-
 @app.route('/user_manager', methods=['GET', 'POST'])
 @login_required
 def user_manager():
@@ -239,10 +215,13 @@ def user_manager():
     Страница управления списков пользователей системы
 
     Returns:
-        
+
     """
+
     page_controller = UserManagerPageController()
     mpc = MainMenuPageController()
+
+    endpoint = "user_manager"
 
     # страница доступна только администратору
     if not flask_login.current_user.is_admin():
@@ -260,8 +239,8 @@ def user_manager():
 @login_required
 def user_profile():
     """
-    Страница просмотра и редактирования профиля пользователя        
-    """    
+    Страница просмотра и редактирования профиля пользователя
+    """
 
     page_controller = UserProfilePageController()
     mpc = MainMenuPageController()
@@ -279,7 +258,6 @@ def user_profile():
                 mode = "edit"
         except exceptions.BadRequestKeyError:
             mode = "view"
-        pass
 
     error = None
 
@@ -321,8 +299,8 @@ def user_profile():
                     active = True
 
                     error = page_controller.create_user(user["login"], user["name"], user["password"],
-                                                                user["password2"], user["email"], user["role"],
-                                                                user["probationers_number"], user["access_time"])
+                                                        user["password2"], user["email"], user["role"],
+                                                        user["probationers_number"], user["access_time"])
 
                     if error is None:
                         mode = "view"
@@ -396,7 +374,8 @@ def user_profile():
 
     return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=data, _data_begin=data_begin, _is_current_user_admin=flask_login.current_user.is_admin(),
+                           _data=data, _data_begin=data_begin,
+                           _is_current_user_admin=flask_login.current_user.is_admin(),
                            _mode=mode, _error=error, _active=active, _error_type=error_type)
 
 
