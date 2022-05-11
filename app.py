@@ -259,6 +259,7 @@ def user_profile():
         pass
 
     error = None
+    settings_user = None
 
     if user_id is None:
         # если пользователь не задан, то открываем страницу в режиме создания нового пользователя
@@ -268,6 +269,7 @@ def user_profile():
 
         mode = "new"
         user_id = ""
+        settings_user = page_controller.get_settings_user()
     else:
         if not flask_login.current_user.is_admin():
             mode = "edit"
@@ -373,7 +375,7 @@ def user_profile():
 
     return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=data, _data_begin=data_begin,
+                           _data=data, _data_begin=data_begin, _settings=settings_user,
                            _is_current_user_admin=flask_login.current_user.is_admin(),
                            _mode=mode, _error=error, _active=active, _error_type=error_type)
 
