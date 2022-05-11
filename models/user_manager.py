@@ -422,3 +422,20 @@ class UserManager():
         data_store.change_row(user_data)
 
         return user.active
+
+    def get_settings_user(self):
+
+        """
+        Возвращает возможные настройки пользователя
+
+        Returns:
+            settings_user (Dict): словарь с настройками
+        """
+
+        data_store = DataStore("settings_user")
+
+        settings_user = data_store.get_rows()[0]
+
+        return settings_user
+
+

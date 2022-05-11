@@ -102,3 +102,15 @@ class UserProfilePageController():
         user_profile_service = UserProfileService()
 
         return user_profile_service.activation_deactivation(_login)
+
+    def get_settings_user(self):
+        """
+        Возвращает возможные настройки пользователя
+
+        Returns:
+            settings_user (Dict): словарь с настройками
+        """
+
+        user_profile_service = UserProfileService()
+
+        return user_profile_service.get_settings_user()

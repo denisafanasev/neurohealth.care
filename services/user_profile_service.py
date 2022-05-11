@@ -99,3 +99,15 @@ class UserProfileService():
         ActionService().add_notifications(_login, "overwrite", "user_manager")
 
         return user_manager.activation_deactivation(_login)
+
+    def get_settings_user(self):
+        """
+        Возвращает возможные настройки пользователя
+
+        Returns:
+            settings_user (Dict): словарь с настройками
+        """
+
+        user_manager = UserManager()
+
+        return user_manager.get_settings_user()
