@@ -88,7 +88,7 @@ class CourseManager():
 
         return modules_list
 
-    def get_lesson(self, _id, _id_course=1):
+    def get_lesson(self, _id, _id_course=1, _id_video=1):
 
         data_store_lessons = DataStore(f"course_{_id_course}/lessons")
         data_store_modules = DataStore(f"course_{_id_course}/modules")
@@ -99,6 +99,15 @@ class CourseManager():
 
         if not lesson.get("text"):
             lesson["text"] = None
+
+        link_list = []
+        for i_video in lesson['link']:
+            if i_video['id'] == _id_video:
+                link_list.append(i_video)
+            else:
+                link_list.append({"id": i_video['id']})
+
+        lesson["link"] = link_list
 
         module = data_store_modules.get_rows({"id": lesson["id_module"]})[0]
         module["lessons"] = self.lesson_row_to_lesson(lesson)

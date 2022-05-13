@@ -451,9 +451,12 @@ def education_main_course_lesson():
 
     endpoint = request.endpoint
 
-    id_lesson = int(request.args.get("id_lesson"))
+    id_lesson = request.args.get("id_lesson")
+    id_video = request.args.get("id_video")
+    if id_video is None:
+        id_video = 1
 
-    data = page_controller.get_lesson(id_lesson)
+    data = page_controller.get_lesson(int(id_lesson), int(id_video))
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
