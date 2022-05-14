@@ -101,11 +101,14 @@ class CourseManager():
             lesson["text"] = None
 
         link_list = []
-        for i_video in lesson['link']:
-            if i_video['id'] == _id_video:
-                link_list.append(i_video)
-            else:
-                link_list.append({"id": i_video['id']})
+        if not lesson['link'] == "":
+            for i_video in lesson['link']:
+                if i_video['id'] == _id_video:
+                    link_list.append(i_video)
+                else:
+                    link_list.append({"id": i_video['id']})
+        else:
+            link_list = None
 
         lesson["link"] = link_list
 
