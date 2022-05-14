@@ -8,11 +8,11 @@ class CourseService():
 
         return course_manager.get_course(_id)
 
-    def get_lesson(self, _id, _id_course):
+    def get_lesson(self, _id, _id_course, _id_video):
 
         course_manager = CourseManager()
 
-        return course_manager.get_lesson(_id, _id_course)
+        return course_manager.get_lesson(_id, _id_course, _id_video)
 
     def get_courses(self):
 
