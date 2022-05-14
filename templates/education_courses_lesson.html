@@ -83,24 +83,24 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-7 text-left">
-                        <div class="card py-1 py-md-1 border">
-                            <div class="card-body">
-                                 {% for i_video in _data['lesson']['link'] %}
-                                     {% if i_video['video'] %}
-                                        <div style="padding:56.25% 0 0 0;position:relative;">
-                                            <iframe src="{{ i_video['video'] }}&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
-                                                    allow="autoplay; fullscreen; picture-in-picture" allowfullscreen
-                                                    style="position:absolute;top:0;left:0;width:100%;height:100%;" webkitallowfullscreen mozallowfullscreen class="border"
-                                                    title="Модуль 4 / Урок 1 / Функция переработки зрительно-пространственной инфор">
-                                            </iframe>
-                                        </div>
+                        {% if _data['lesson']['link'] %}
+                            <div class="card py-1 py-md-1 border">
+                                <div class="card-body">
+                                     {% for i_video in _data['lesson']['link'] %}
+                                         {% if i_video['video'] %}
+                                            <div style="padding:56.25% 0 0 0;position:relative;">
+                                                <iframe src="{{ i_video['video'] }}&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
+                                                        allow="autoplay; fullscreen; picture-in-picture" allowfullscreen
+                                                        style="position:absolute;top:0;left:0;width:100%;height:100%;" webkitallowfullscreen mozallowfullscreen class="border"
+                                                        title="Модуль 4 / Урок 1 / Функция переработки зрительно-пространственной инфор">
+                                                </iframe>
+                                            </div>
 
-                                     {% endif %}
-                                {% endfor %}
-                            </div>
-                            <div class="card-footer">
-                                <div style="">
-                                    <div class="pagination" >
+                                         {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="card-footer">
+                                    <div class="pagination">
 
                                             <a class="border" style="margin-right: auto"
                                                     href="{% if request.args.get('id_video')|int >= 2 %}/education_main_course/lesson?id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int - 1 }}{% endif %}">
@@ -122,7 +122,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        {% endif %}
 
                         <div class="card py-1 py-md-1 border">
                             <div class="card-body">
