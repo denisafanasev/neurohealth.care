@@ -6,12 +6,31 @@
     <script src="https://player.vimeo.com/api/player.js"></script>
 
     <script>
-    $( document ).ready(function() {
+    document.addEventListener("DOMContentLoaded", function () {
         var quill = new Quill('#editor', {
-        theme: 'snow'
+            modules: {
+                toolbar: [
+                  ['bold', 'italic'],
+                  ['link', 'blockquote', 'code-block'],
+                  [{ list: 'ordered' }, { list: 'bullet' }]
+                ]
+              },
+            theme: 'snow',
+
         });
+        var form = document.querySelector('form');
+        form.onsubmit = function () {
+            // Populate hidden form on submit
+            var about = document.querySelector('input[name=about]');
+            about.value = quill.root.innerHTML;
+            if (about.value === "<p><br></p>") {
+                alert("Ошибка: не заполнено поле для отправки домашнего задания!")
+                return false;
+            }
+        };
     });
     </script>
+
 
     <style>
     .card{
@@ -85,6 +104,7 @@
                     <div class="col-md-7 text-left">
                         <div class="card py-1 py-md-1 border">
                             <div class="card-body">
+                                {% set id_course = request.args['id_course'] %}
                                  {% for i_video in _data['lesson']['link'] %}
                                      {% if i_video['video'] %}
                                         <div style="padding:56.25% 0 0 0;position:relative;">
@@ -103,19 +123,19 @@
                                     <div class="pagination" >
 
                                             <a class="border" style="margin-right: auto"
-                                                    href="{% if request.args.get('id_video')|int >= 2 %}/education_main_course/lesson?id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int - 1 }}{% endif %}">
+                                                    href="{% if request.args.get('id_video')|int >= 2 %}/education_course/lesson?id_course={{ id_course }}&id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int - 1 }}{% endif %}">
                                                 <<
                                             </a>
 
                                         {% for i_video in _data['lesson']['link'] %}
                                             <a class="{% if i_video['video'] %}active{% endif %} border" style="margin: auto"
-                                                    href="/education_main_course/lesson?id_lesson={{ _data['lesson']['id'] }}&id_video={{ i_video['id'] }}">
+                                                    href="/education_course/lesson?id_course={{ id_course }}&id_lesson={{ _data['lesson']['id'] }}&id_video={{ i_video['id'] }}">
                                                 {{ i_video['id'] }}
                                             </a>
                                         {% endfor %}
 
                                             <a class="border" style="margin-left: auto"
-                                                    href="{% if request.args.get('id_video')|int <= _data['lesson']['link']|count - 1 %}/education_main_course/lesson?id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int + 1 }}{% endif %}  ">
+                                                    href="{% if request.args.get('id_video')|int <= _data['lesson']['link']|count - 1 %}/education_course/lesson?id_course={{ id_course }}&id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int + 1 }}{% endif %}">
                                                 >>
                                             </a>
 
@@ -202,9 +222,8 @@
             </div>
         </div>
 
-                    
         {% if _data['lesson']['task'] %}
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 <div class="card border">
                     <div class="card-header">
                         <h4>
@@ -213,25 +232,29 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
+
                             <div class="col-md-12 text-left">
                                 <div class="card py-1 py-md-1 border">
                                     <div class="card-body">
                                         <p class="card-text">
-                                        {{ _data['lesson']['task'] }}
-                                    </p>
-                                        <div id="editor"></div>
+                                            {{ _data['lesson']['task'] }}
+                                        </p>
+                                        <div id="editor" style="z-index: 0"></div>
+                                        <input type="hidden" id="hiddenInput" name="about">
+                                        <div>
+                                            <input type="file" multiple name="files" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="card d-flex align-self-baseline" style="margin-left: auto">
+                                        <div class="card-header">
+                                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="row d-flex align-items-stretch bd-highlight" align="right">
                                 <div class="col-12 p-2 bd-highlight">
-                                    <div class="card d-flex align-self-baseline">
-                                        <div class="card-header">
-                                            <a type="submit" name="button" href="{{ url_for('user_manager') }}" class="btn btn-primary ">
-                                                Сохранить
-                                            </a>
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>

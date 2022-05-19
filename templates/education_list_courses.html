@@ -45,9 +45,9 @@
                             </div>
                             <div class="card-body">
                                 <p class="card-text">{{ i_course['description'] }}</p>
-                                <a href="{% if i_course['id'] == 0 %}/education_introduction_course
-                                {% elif i_course['id'] == 1 %}/education_main_courses
-                                {% else %}/education_course?id_course={{ i_course['id'] }}{% endif %}" class="btn btn-secondary">Смотреть</a>
+                                <a href="/education_course?id_course={{ i_course['id'] }}" class="btn btn-secondary">
+                                    Смотреть
+                                </a>
                             </div>
                         </div>
                     </div>
