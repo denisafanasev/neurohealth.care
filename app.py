@@ -430,16 +430,7 @@ def education_introduction_course():
         
     """
 
-    page_controller = None
-    mpc = MainMenuPageController()
-
-    data = ""
-
-    endpoint = request.endpoint
-
-    return render_template('index.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=data)
+    return redirect("/education_course?id_course=0")
 
 
 @app.route('/education_main_course/lesson', methods=['GET', 'POST'])
@@ -473,15 +464,7 @@ def education_main_courses():
         
     """
 
-    page_controller = EducationMainCoursePageController()
-    mpc = MainMenuPageController()
-
-    data = page_controller.get_course(1)
-
-    endpoint = request.endpoint
-
-    return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
+    return redirect("/education_course?id_course=1")
 
 @app.route('/education_list_courses', methods=['GET', 'POST'])
 @login_required
@@ -504,13 +487,15 @@ def education_course():
     page_controller = EducationCoursePageController()
     mpc = MainMenuPageController()
 
-    id_module = request.args.get("id_course")
-    if id_module is not None:
-        data = page_controller.get_course(id_module)
+    id_course = request.args.get("id_course")
+
+    if id_course is not None:
+        data = page_controller.get_course(id_course)
     else:
         data = None
 
     endpoint = request.endpoint
+
 
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
@@ -526,13 +511,15 @@ def education_course_lesson():
 
     id_course = request.args.get("id_course")
     id_lesson = int(request.args.get("id_lesson"))
+    id_video = request.args.get("id_video")
+    if id_video is None:
+        id_video = 1
 
-    data = page_controller.get_lesson(id_lesson, int(id_course))
+    data = page_controller.get_lesson(id_lesson, int(id_course), int(id_video))
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=data)
-
 
 @app.route('/education_home_tasks', methods=['GET', 'POST'])
 @login_required
@@ -552,7 +539,6 @@ def education_home_tasks():
     return render_template('index.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data="")
-
 
 @app.route('/corrections', methods=['GET', 'POST'])
 @login_required
@@ -637,7 +623,6 @@ def probe_profile():
 
         elif mode == "add_value_tests":
             probe_id = request.args.get("probe_id")
-            x = request.form
             grades = [{"id": key, "grade": value} for key, value in request.form.items() if key.isdigit() or ("_" in key)]
             page_controller.add_grades_in_probe(grades, int(probe_id))
 

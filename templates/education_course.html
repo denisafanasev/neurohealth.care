@@ -16,10 +16,10 @@
 
     <h1 class="h3 mb-2">Школа нейропсихологии</h1>
     {% if _data %}
-        {% for i_module in _data %}
+        {% for i_course in _data %}
             <div class="card boarder">
                 <div class="card-header">
-                    <h4>{{ i_module["name"] }}</h4>
+                    <h4>{{ i_course["name"] }}</h4>
                 </div>
 
                 <table class="table">
@@ -32,7 +32,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for i_lesson in i_module['lessons'] %}
+                        {% set id_course = request.args['id_course'] %}
+                        {% for i_lesson in i_course['lessons'] %}
                         <tr>
                             <td class="table-action">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -43,7 +44,7 @@
                                 </svg>
                             </td>
                             <td>{{ i_lesson['name'] }}</td>
-                            <td><a href="/education_main_course/lesson?id_lesson={{ i_lesson['id'] }}&id_video=1">Выполнить</a></td>
+                            <td><a href="/education_course/lesson?id_course={{ id_course }}&id_lesson={{ i_lesson['id'] }}&id_video=1">Выполнить</a></td>
                             <td class="d-none d-md-table-cell">Июнь 21, 1961</td>
                         </tr>
                         {% endfor %}
