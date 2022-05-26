@@ -153,6 +153,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-7 text-left">
+                    {% if _data['lesson']["link"] != [] %}
                         <div class="card py-1 py-md-1 border">
                             <div class="card-body">
                                 {% set id_course = request.args['id_course'] %}
@@ -194,6 +195,7 @@
                                 </div>
                             </div>
                         </div>
+                    {% endif %}
 
                         <div class="card py-1 py-md-1 border">
                             <div class="card-body">
