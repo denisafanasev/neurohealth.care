@@ -111,3 +111,9 @@ class UserProfileService():
         user_manager = UserManager()
 
         return user_manager.get_settings_user()
+
+    def get_current_user_role(self):
+
+        user_manager = UserManager()
+
+        return user_manager.get_user_by_id(user_manager.get_current_user_id())

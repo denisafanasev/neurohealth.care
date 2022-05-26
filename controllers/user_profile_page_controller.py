@@ -20,7 +20,29 @@ class UserProfilePageController():
         """        
 
         user_profile_service = UserProfileService()
-        return user_profile_service.get_users_profile(_user_id)
+
+        user = user_profile_service.get_users_profile(_user_id)
+
+        user_view = {}
+
+        user_view['user_id'] = user.user_id
+        user_view['login'] = user.login
+        user_view['name'] = user.name
+        user_view['email'] = user.email
+        user_view['role'] = user.role
+        user_view['access_time'] = user.access_time
+
+        user_view['created_date'] = str(user.created_date.strftime("%d/%m/%Y"))
+        if not user.expires_date == "неограниченно":
+            user_view['expires_date'] = str(user.expires_date.strftime("%d/%m/%Y"))
+        else:
+            user_view['expires_date'] = user.expires_date
+
+        user_view['probationers_number'] = user.probationers_number
+
+        user_view['is_active'] = user.active
+
+        return user_view
 
     def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _access_time):
         """

@@ -156,3 +156,13 @@ class DataStore():
         """
 
         self.data_store.upsert(_data, where(_where) == _data[_where])
+
+    def update_messages(self, _message, _id):
+        """
+        Обновление записей действий пользователей
+        Args:
+            _message(Dict): структура данных для записи
+            _id(Int): переменная для поиска нужно записи
+        """
+
+        self.data_store.update(add("message", [_message]), where("id") == _id)
