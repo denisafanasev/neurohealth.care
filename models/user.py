@@ -1,3 +1,5 @@
+import datetime
+
 from flask_login import UserMixin
 from datetime import date
 from dateutil.relativedelta import relativedelta
@@ -56,6 +58,9 @@ class User(UserMixin):
             self.created_date = date.today()
         else:
             self.created_date = _created_date
+
+        if type(self.created_date) is str:
+            self.created_date = datetime.datetime.strptime(self.created_date, "%d/%m/%Y")
         
         # если дата экспирации не указана, то будем вычислять дату по умолчанию
         if _access_time == "6 месяцев":
