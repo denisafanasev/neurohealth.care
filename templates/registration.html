@@ -44,7 +44,7 @@
                             {% if _user_created %}
                                 <div class="alert alert-success alert-dismissible" role="alert">
                                     <div class="alert-message">
-                                        <strong>Пользователь создан</strong>
+                                        <strong>Пользователь создан! Вам выслано письмо для подтверждения email адреса. Пожалуйста, подтвердите email для начала работы!</strong>
                                     </div>
                                 </div>
                                 <div>
@@ -59,29 +59,29 @@
                                             <form id="loginForm" method="post" class="was-validated" enctype="multipart/form-data"
                                                 onsubmit="return checkPasswordsMatched(this);">
                                 
-                                                <div class="form-group">
-                                                    <strong><label>Login</label></strong>
+                                                <div class="form-group" align="left">
+                                                    <label class="form-label">Логин</label>
                                                     <input required type="text" class="form-control form-control-lg" name="login"
                                                         placeholder="введите login" />
                                                 </div>
-                                                <div class="form-group">
-                                                    <strong><label>Имя пользователя</label></strong>
+                                                <div class="form-group" align="left">
+                                                    <label class="form-label">Имя пользователя</label>
                                                     <input required class="form-control form-control-lg" type="login" name="user_name"
                                                         placeholder="введите имя пользователя" />
                                                 </div>
-                                                <div class="form-group">
-                                                    <strong><label>Пароль</label></strong>
+                                                <div class="form-group" align="left">
+                                                    <label class="form-label">Пароль</label>
                                                     <input required class="form-control form-control-lg" type="password" name="password"
                                                         placeholder="введите пароль" />
                                                 </div>
-                                                <div class="form-group">
-                                                    <strong><label>Пароль еще раз</label></strong>
+                                                <div class="form-group" align="left">
+                                                    <label class="form-label">Пароль еще раз</label>
                                                     <input required class="form-control form-control-lg" type="password" name="password2"
                                                         placeholder="введите пароль">
-                                                    <div class="form-group">
-                                                        <strong><label>Email</label></strong>
+                                                    <div class="form-group" align="left">
+                                                        <label class="form-label">Email</label>
                                                         <input required class="form-control form-control-lg" type="email" name="email"
-                                                            placeholder="введите email пользователя" />
+                                                            placeholder="введите email пользователя"/>
                                                     </div>
                                                     <div class="text-center mt-3">
                                                         <button type="submit" class="btn btn-primary">Регистрация</button>

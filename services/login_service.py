@@ -1,5 +1,5 @@
 from models.user_manager import UserManager
-
+from error import UserManagerException
 
 class LoginService():
     """
@@ -40,6 +40,13 @@ class LoginService():
         user_manager = UserManager()
 
         user = user_manager.get_user(_login, _password)
+
+        # делаем проверки, что пользователь может входить в систему
+        if (user.email_confirmed is False) and (user.token != "") and (user.role != "superuser"):
+            raise UserManagerException("Email пользователя не подтвержден")
+            
+        if not user.active:
+            raise UserManagerException("Данный пользователь заблокирован")
 
         return user
     

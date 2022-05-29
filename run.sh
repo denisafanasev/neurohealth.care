@@ -74,7 +74,7 @@ conda install -c conda-forge uwsgi
 #conda install -c conda-forge pyarrow
 #conda install -c conda-forge hdfs3
 #conda install -c anaconda psycopg2
-
+#conda install -c conda-forge flask-mail
 
 # hdfs test
 

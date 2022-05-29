@@ -1,6 +1,4 @@
 from models.action_manager import ActionManager
-
-
 class ActionService():
 
     def init(self):
@@ -13,7 +11,8 @@ class ActionService():
         return action_manager.get_actions()
 
     def get_current_user(self):
-
+        
+        # TODO: жесть какаято, надо переделать
         from models.user_manager import UserManager
         user_manager = UserManager()
 

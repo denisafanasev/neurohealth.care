@@ -8,8 +8,8 @@ dependencies:
   - autopep8=1.5.6
   - blinker=1.4
   - brotlipy=0.7.0
-  - ca-certificates=2021.9.30
-  - certifi=2021.5.30
+  - ca-certificates=2021.10.8
+  - certifi=2021.10.8
   - cffi=1.14.6
   - click=8.0.1
   - coverage=5.3
@@ -17,6 +17,7 @@ dependencies:
   - dataclasses=0.8
   - flask=1.1.2
   - flask-login=0.5.0
+  - flask-mail=0.9.1
   - icu=68.1
   - idna=3.2
   - importlib-metadata=4.8.1
@@ -32,7 +33,7 @@ dependencies:
   - markupsafe=2.0.1
   - mccabe=0.6.1
   - ncurses=6.2
-  - openssl=1.1.1l
+  - openssl=1.1.1o
   - pcre=8.45
   - pip=21.2.4
   - pycodestyle=2.7.0
