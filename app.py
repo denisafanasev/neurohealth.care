@@ -427,6 +427,24 @@ def empty_function():
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data="")
 
+@app.route('/price_list', methods=['GET', 'POST'])
+@login_required
+def price_list():
+    """
+    Страница прайс листа и подписки на платформу
+
+    Returns:
+        
+    """
+
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+
+    return render_template('price_list.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(
+                               endpoint), _data="")
+
 @app.route('/education_main_course/lesson', methods=['GET', 'POST'])
 @login_required
 def education_main_course_lesson():
@@ -574,6 +592,9 @@ def corrections():
 
     endpoint = request.endpoint
 
+    if not flask_login.current_user.is_admin():
+        return redirect("price_list")
+
     return render_template('corrections.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
@@ -593,6 +614,9 @@ def probes():
 
     endpoint = request.endpoint
 
+    if not flask_login.current_user.is_admin():
+        return redirect("price_list")
+
     return render_template('protocols.html', view="probes", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=page_controller.get_probes(), _is_probationer=page_controller.is_probationers())
@@ -605,6 +629,10 @@ def probe_profile():
     mpc = MainMenuPageController()
 
     endpoint = "probes"
+
+    if not flask_login.current_user.is_admin():
+        return redirect("price_list")
+
     probationer_id = request.args.get('probationer_id')
 
     data = {}
@@ -681,6 +709,9 @@ def results():
 
     endpoint = request.endpoint
 
+    if not flask_login.current_user.is_admin():
+        return redirect("price_list")
+
     return render_template('results.html', view="results", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
@@ -697,6 +728,9 @@ def probationers():
 
     page_controller = ProbationersPageController()
     mpc = MainMenuPageController()
+
+    if not flask_login.current_user.is_admin():
+        return redirect("price_list")
 
     global attempt
     attempt = False
@@ -718,6 +752,9 @@ def probationer_card():
     page_controller = ProbationerCardPageController()
     mpc = MainMenuPageController()
     endpoint = "probationers"
+
+    if not flask_login.current_user.is_admin():
+        return redirect("price_list")
 
     probationer_id = request.args.get('probationer_id')
     global attempt
@@ -823,6 +860,9 @@ def age_range_list():
     page_controller = AgeRangeListPageController()
     mpc = MainMenuPageController()
 
+    if not flask_login.current_user.is_admin():
+        return redirect("main_page")
+
     endpoint = request.endpoint
 
     return render_template('age_range_list.html', view="age_range_list", _menu=mpc.get_main_menu(),
@@ -841,6 +881,9 @@ def estimated_values():
     """
     page_controller = EstimatedValuesPageController()
     mpc = MainMenuPageController()
+
+    if not flask_login.current_user.is_admin():
+        return redirect("main_page")
 
     endpoint = request.endpoint
     id_file_name = request.args.get("id")
