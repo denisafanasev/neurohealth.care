@@ -1,6 +1,6 @@
 import logging
 from logging.handlers import RotatingFileHandler
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template, url_for
 from flask_login import LoginManager, login_required, login_user, logout_user
 import flask_login
 
@@ -158,8 +158,14 @@ def registration():
 
         try:
 
-            login_page_controller.create_user(
+            token = login_page_controller.create_user(
                 user_login, user_name, user_password, user_password2, user_email, is_create_superuser)
+            
+            confirm_url = url_for(user_email, token=token, _external=True)
+            html = render_template('email_confirmation.html', confirm_url=confirm_url)
+
+            login_page_controller.send_confirmation_email(user_email, html)
+            
             return render_template('registration.html', view="registration", _user_created=True,
                                     _error_message="", _create_superuser=False)
 

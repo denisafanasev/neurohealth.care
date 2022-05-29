@@ -24,6 +24,12 @@ class User(UserMixin):
     created_date = ""
     expires_date = ""
     probationers_number = DEFAULT_PROBATIONS_NUMBER
+    token = ""
+    email_confirmed = False
+
+    # TODO мне кажется это дублирует created_date
+    access_time = ""
+    email_confirmed = False
 
     def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _active=True, _created_date="",
                  _expires_date="", _probationers_number=DEFAULT_PROBATIONS_NUMBER,
@@ -52,6 +58,8 @@ class User(UserMixin):
         self.probationers_number = _probationers_number
         self.access_time = _access_time
         self.active = _active
+        self.token = ""
+        self.email_confirmed = False
 
         # если дата создания не указана, то будем считать что пользователь создан сегодня
         if _created_date == "":
@@ -111,4 +119,18 @@ class User(UserMixin):
         if self.role =="superuser":
             return True
         else:
+            return False
+    
+    def is_enail_verified(self):
+        """
+        Возвращает признак того, что пользователь подтвердил свой email адрес
+
+        Returns:
+            Boolean: True если у пользователя подтвержденный email адрес и False если нет
+        """        
+
+        if self.role =="superuser":
+            return True
+        else:
+            #TODO реализовать логику определения подтвержденного email
             return False

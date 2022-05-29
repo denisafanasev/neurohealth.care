@@ -17,6 +17,22 @@ THREADING_ENABLE = True
 DEBUG = False
 LOG_FILE = "neuro_health.log"
 
+SECRET_KEY = 'my_secret_key'
+SECURITY_PASSWORD_SALT = 'my_security_password_salt'
+
+# mail settings
+MAIL_SERVER = 'smtp.googlemail.com'
+MAIL_PORT = 465
+MAIL_USE_TLS = False
+MAIL_USE_SSL = True
+
+# mail accounts
+MAIL_DEFAULT_SENDER = 'from@example.com'
+
+# gmail authentication
+MAIL_USERNAME = ""
+MAIL_PASSWORD = ""
+
 
 SUPERUSER_MENU = [
     {"module": "Центр управления", "name": "Пользователи", "endpoint": "user_manager", "icon": "users"},

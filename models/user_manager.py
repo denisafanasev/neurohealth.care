@@ -1,12 +1,15 @@
 import hashlib
 import flask_login
+
 from datetime import datetime
+from itsdangerous import URLSafeTimedSerializer
 
 from models.user import User
 from data_adapters.data_store import DataStore
 from services.action_service import ActionService
 
 from error import UserManagerException
+import config
 
 class UserManager():
     """
@@ -27,7 +30,20 @@ class UserManager():
         """  
 
         return hashlib.md5(_password.encode()).hexdigest()
-    
+
+    def create_token(self, email):
+        """создание токена по email адресу
+
+        Args:
+            email (string): email адрес
+
+        Returns:
+            string: токен
+        """
+
+        serializer = URLSafeTimedSerializer(config.SECRET_KEY)
+        return serializer.dumps(email, salt=config.SECURITY_PASSWORD_SALT)
+
     def validate_password(self, _password):
         """
         Проверка пароля на корректное значение
@@ -90,19 +106,37 @@ class UserManager():
 
         # проверим наличие в структуре хранения необязательных атрибутов
         if _data_row.get('probationers_number') is not None:
-                user.probationers_number = int(_data_row['probationers_number'])
+            user.probationers_number = int(_data_row['probationers_number'])
+        else:
+            user.probationers_number = 5
         
         if _data_row.get('created_date') is not None:
-                user.created_date = datetime.strptime(_data_row['created_date'], '%d/%m/%Y')
+            user.created_date = datetime.strptime(_data_row['created_date'], '%d/%m/%Y')
+        else:
+            user.created_date = datetime.strptime("01/01/1990", '%d/%m/%Y')
 
         if _data_row.get('expires_date') is not None:
             if not _data_row.get('expires_date') == 'неограниченно':
                 user.expires_date = datetime.strptime(_data_row['expires_date'], '%d/%m/%Y')
             else:
                 user.expires_date = _data_row['expires_date']
+        else:
+            user.expires_date = ""
 
         if _data_row.get('access_time') is not None:
-                user.access_time = _data_row['access_time']
+            user.access_time = _data_row['access_time']
+        else:
+            user.access_time = ""
+
+        if _data_row.get('token') is not None:
+            user.token = _data_row['token']
+        else:
+            user.token = ""
+        
+        if _data_row.get('email_confirmed') is not None:
+            user.email_confirmed = _data_row['email_confirmed']
+        else:
+            user.email_confirmed = False
 
         return user
 
@@ -114,6 +148,7 @@ class UserManager():
             _user_id   - Required  : id пользователя (Int)
         """
 
+        """
         user = {}
         user["login"] = "введите логин пользователя.."
         user["name"] = "введите имя пользователя.."
@@ -123,15 +158,17 @@ class UserManager():
         user["role"] = "Выберите роль пользователя"
         user["probationers_number"] = "Выберите количество доступных тестируемых"
         user["access_time"] = "Выберите срок предоставления доступа"
+        user["token"] = ""
         user["active"] = True
+        user["email_confirmed"] = False
+        """
+
+        user = None
 
         data_store = DataStore("users")
-
         user_data = data_store.get_row_by_id(_user_id)
 
-        if data_store.get_rows() == []:
-            return None
-        elif user_data is not None:
+        if user_data is not None:
             user = self.user_row_to_user(user_data)
 
         return user
@@ -154,25 +191,25 @@ class UserManager():
 
         user_data = data_store.get_rows({"login": login, "password": password})
 
+        # проверим, что у нас данному набору логин и пароль соответсвует только одна запись пользователя
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей")
-        
-        if len(user_data) == 1:
-            user = self.user_row_to_user(user_data[0])
-            if not user.active:
-                raise UserManagerException("Данный пользователь заблокирован")
-
+       
         if len(user_data) == 0:
             raise UserManagerException("Данный пользователь не найден")
+       
+    
+        # получаем объект Пользователь
+        user = self.user_row_to_user(user_data[0])
 
         return user
-    
+   
     def get_user_by_login(self, _login):
         """
         Возвращает пользователя по логину
 
         Args:
-            _login   - Required  : current iteration (String)
+            _login   - Required  : login пользователя (String)
         """
 
         user = None
@@ -183,11 +220,34 @@ class UserManager():
         user_data = data_store.get_rows({"login": login})
 
         if len(user_data) > 1:
-            raise UserManagerException("Ошибка в базе данных пользователей")
+            raise UserManagerException("Ошибка в базе данных пользователей, login не уникальный")
         
         if len(user_data) == 1:
             user = self.user_row_to_user(user_data[0])
         
+        return user
+    
+    def get_user_by_email(self, _email):
+        """
+        Возвращает пользователя по email
+
+        Args:
+            _email   - Required  : email пользователя (String)
+        """
+
+        user = None
+
+        email = _email.lower()
+        data_store = DataStore("users")
+
+        user_data = data_store.get_rows({"email": email})
+
+        if len(user_data) > 1:
+            raise UserManagerException("Ошибка в базе данных пользователей, email не уникальный")
+       
+        if len(user_data) == 1:
+            user = self.user_row_to_user(user_data[0])
+       
         return user
     
     def get_users(self):
@@ -249,6 +309,7 @@ class UserManager():
             _password2 (String): контрольный ввод пароля пользователя
             _email (String): email пользователя
             _role (String): роль пользователя [user/superuser]
+            _probationers_number (Integer): количество доступных тестирумых
             _access_time (String): срок доступа
 
         Raises:
@@ -268,21 +329,31 @@ class UserManager():
         # если ошибок нет, то записываем его в БД
 
         password = self.hash_password(_password)
+        password2 = self.hash_password(_password2)
         login = _login.lower()
         email = _email.lower()
         role = _role
         name = _name
         access_time = _access_time
+        email_confirmed = False
+        # создаем токен для подтверждения регистрации
+        token = self.create_token(email)
 
         # создаем новую запись
         data_store = DataStore("users")
 
         # проверим, что у пользователя с таким логином не существует
 
-        user = self.get_user_by_login(login)
+        if password != password2:
+            raise UserManagerException("Пароли не совпадают")
 
+        user = self.get_user_by_login(login)
         if user is not None:
             raise UserManagerException("Пользователь с таким логином уже существует")
+
+        user = self.get_user_by_email(email)
+        if user is not None:
+            raise UserManagerException("Пользователь с таким email уже существует")
 
         # создаем новую запись
         user = User(_login=login, _name=name, _email=email, _role=role, _access_time=access_time,
@@ -297,10 +368,11 @@ class UserManager():
         user_data = {"login": user.login, "password": password, "email": user.email,
                      "role": user.role, "name": user.name, "created_date": user.created_date.strftime("%d/%m/%Y"),
                      "expires_date": expires_date, "probationers_number": user.probationers_number,
-                     "access_time": user.access_time, "active": user.active}
-
-
+                     "access_time": user.access_time, "active": user.active, "email_confirmed": user.email_confirmed, "token": user.token}
+                    
         data_store.add_row(user_data)
+
+        return 
     
     def get_current_user_id(self):
         """
@@ -390,6 +462,7 @@ class UserManager():
 
         data_store.discharge_password(user_data)
 
+    # TODO: переделать на на 2 разные функции
     def activation_deactivation(self, _login):
         """
         Блокировка/разблокировка пользователя

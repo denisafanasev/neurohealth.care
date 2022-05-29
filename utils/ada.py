@@ -176,3 +176,4 @@ def get_files_list_recursively(_dir):
     files_in_dir = [f for f in listdir(path_from) if isfile(join(path_from, f))]
 
     return files_in_dir
+

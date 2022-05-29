@@ -41,10 +41,27 @@ class RegistrationPageController():
             _password2 (String): контрольный ввод пароля пользователя
             _email (String): email пользователя
             _create_superuser (Boolean): признак создания суперпользователя
+        
+        Returns:
+            string: токен созданного пользователя
 
         """
 
         # создаем суперпользователя
         registration_service = RegistrationService()
-        registration_service.create_user(
+        user = registration_service.create_user(
             _login, _name, _password, _password2, _email, _create_superuser)
+
+        return user.token
+
+    def send_confirmation_email(self, _email, _html):
+        """
+        Отправляет пользователю письмо с подтверждением регистрации
+
+        Args:
+            _email (String): email пользователя
+            _html (String): текст письма
+        """
+
+        registration_service = RegistrationService()
+        registration_service.send_confirmation_email(_email, "подтверждение регистрации", _html)
