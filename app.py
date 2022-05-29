@@ -642,7 +642,7 @@ def probe_profile():
 
         elif mode == "add_value_tests":
             probe_id = request.args.get("probe_id")
-            grades = [{"id": key, "grade": value} for key, value in request.form.items() if key.isdigit() or ("_" in key)]
+            grades = [{"id": key, "grade": value} for key, value in request.form.items() if key.isdigit() or ("_" in key and key.split("_")[0].isdigit())]
             page_controller.add_grades_in_probe(grades, int(probe_id))
 
             if request.form.get("button") == "draft" or request.form.get("button") == "end":
