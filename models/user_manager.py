@@ -496,6 +496,7 @@ class UserManager():
 
         return user.active
 
+    # TODO: переделать, унести это в отдельный класс и config.py для работы со статичными настройками
     def get_settings_user(self):
 
         """

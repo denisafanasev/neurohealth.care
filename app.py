@@ -284,9 +284,10 @@ def user_profile():
     data_begin = page_controller.get_users_profile_view(user_id)
     data = {}
     if isinstance(data_begin, dict):
-        active = True
+        active = data_begin['is_active']
     else:
-        active = data_begin.active
+        active = False
+    
     error_type = False
 
     try:
@@ -361,7 +362,7 @@ def user_profile():
                     mode = "discharge"
 
             elif request.form["button"] == "is_active":
-                active = page_controller.activation_deactivation(data_begin.login)
+                active = page_controller.activation_deactivation(data_begin['login'])
                 error_type = "Successful"
 
                 if active:
