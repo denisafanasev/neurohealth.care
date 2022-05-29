@@ -19,7 +19,15 @@ class EducationCourseLessonPageController():
         lesson = {
             "id": course.id,
             "name": course.name,
-            "lesson": course.lessons
+            "lesson": {
+                "id": course.lessons.id,
+                "id_module": course.lessons.id_module,
+                "name": course.lessons.name,
+                "link": course.lessons.link,
+                "materials": course.lessons.materials,
+                "text": course.lessons.text,
+                "task": course.lessons.task
+            }
         }
 
         return lesson
