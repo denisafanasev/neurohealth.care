@@ -284,9 +284,10 @@ def user_profile():
     data_begin = page_controller.get_users_profile_view(user_id)
     data = {}
     if isinstance(data_begin, dict):
-        active = True
+        active = data_begin['is_active']
     else:
-        active = data_begin.active
+        active = False
+    
     error_type = False
 
     try:
@@ -361,7 +362,7 @@ def user_profile():
                     mode = "discharge"
 
             elif request.form["button"] == "is_active":
-                active = page_controller.activation_deactivation(data_begin.login)
+                active = page_controller.activation_deactivation(data_begin['login'])
                 error_type = "Successful"
 
                 if active:
@@ -425,20 +426,6 @@ def empty_function():
     return render_template('index.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data="")
-
-
-@app.route('/education_introduction_course', methods=['GET', 'POST'])
-@login_required
-def education_introduction_course():
-    """
-    Пустая функция-заглушка
-
-    Returns:
-        
-    """
-
-    return redirect("/education_course?id_course=0")
-
 
 @app.route('/education_main_course/lesson', methods=['GET', 'POST'])
 @login_required
