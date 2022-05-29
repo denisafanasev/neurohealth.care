@@ -1,5 +1,0 @@
-{"_default": {"1": {"id": 1, "range": "базовые значение", "name_file": "base_criteria"},
-              "2": {"id": 2, "range": "4-7 лет", "name_file": "4_7_age"},
-              "3": {"id": 3, "range": "8-10 лет", "name_file": "8_10_age"},
-              "4": {"id": 4, "range": "11-14 лет", "name_file": "11_14_age"}
-}}

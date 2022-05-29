@@ -6,6 +6,7 @@ import pathlib
 
 VERSION = "0.0.9.1"
 APP_NAME = "NeuroHealth"
+DATA_FOLDER = "../neurohealth.care.data.devs/"
 
 if str(pathlib.Path().resolve()).find("prod")!=-1:
     ENVIRONMENT = "prod"

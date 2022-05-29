@@ -1,6 +1,7 @@
 from tinydb import TinyDB, Query, where
 import json
 from tinydb.operations import delete, increment, add
+import config
 
 class DataStore():
     """
@@ -21,7 +22,7 @@ class DataStore():
         @params:
             _type    - Required  : тип данных (String)
         """
-        self.data_store = TinyDB("data/" + _type + ".json", encoding='utf-8', ensure_ascii=False)
+        self.data_store = TinyDB(config.DATA_FOLDER + _type + ".json", encoding='utf-8', ensure_ascii=False)
 
         if _table != "_default":
             self.data_store = self.data_store.table(_table)
