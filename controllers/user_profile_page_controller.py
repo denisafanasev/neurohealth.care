@@ -24,23 +24,37 @@ class UserProfilePageController():
         user = user_profile_service.get_users_profile(_user_id)
 
         user_view = {}
+        if user is not None:
+            user_view['user_id'] = user.user_id
+            user_view['login'] = user.login
+            user_view['name'] = user.name
+            user_view['email'] = user.email
+            user_view['role'] = user.role
+            user_view['access_time'] = user.access_time
 
-        user_view['user_id'] = user.user_id
-        user_view['login'] = user.login
-        user_view['name'] = user.name
-        user_view['email'] = user.email
-        user_view['role'] = user.role
-        user_view['access_time'] = user.access_time
+            user_view['created_date'] = str(user.created_date.strftime("%d/%m/%Y"))
+            if not user.expires_date == "неограниченно":
+                user_view['expires_date'] = str(user.expires_date.strftime("%d/%m/%Y"))
+            else:
+                user_view['expires_date'] = user.expires_date
 
-        user_view['created_date'] = str(user.created_date.strftime("%d/%m/%Y"))
-        if not user.expires_date == "неограниченно":
-            user_view['expires_date'] = str(user.expires_date.strftime("%d/%m/%Y"))
+            user_view['probationers_number'] = user.probationers_number
+            user_view['token'] = user.token
+
+            user_view['is_active'] = user.active
         else:
-            user_view['expires_date'] = user.expires_date
 
-        user_view['probationers_number'] = user.probationers_number
-
-        user_view['is_active'] = user.active
+            user_view["login"] = "введите логин пользователя.."
+            user_view["name"] = "введите имя пользователя.."
+            user_view["email"] = "введите email пользователя.."
+            user_view["password"] = "введите пароль.."
+            user_view["password2"] = "введите повторно пароль.."
+            user_view["role"] = "Выберите роль пользователя"
+            user_view["probationers_number"] = "Выберите количество доступных тестируемых"
+            user_view["access_time"] = "Выберите срок предоставления доступа"
+            user_view["token"] = ""
+            user_view["is_active"] = True
+            user_view["email_confirmed"] = False
 
         return user_view
 

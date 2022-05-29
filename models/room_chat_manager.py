@@ -124,7 +124,7 @@ class RoomChatManager():
         if not "user_files" in os.listdir(config.DATA_FOLDER):
             # os.mkdir("data/user_files")
             os.mkdir(config.DATA_FOLDER+"user_files")
-        path = config.DATA_FOLDER+"user_files/{"+user_dir+"}"
+        path = config.DATA_FOLDER+"user_files/"+user_dir
 
         if not user_dir in os.listdir(config.DATA_FOLDER+"user_files"):
             os.mkdir(path)
@@ -140,3 +140,14 @@ class RoomChatManager():
 
         return file
 
+    def get_path_file(self, _user, _name_file):
+
+        data_store = DataStore("files")
+        path_file = data_store.get_rows({"name_file_unique": _name_file})[0]["path"]
+
+        if path_file == []:
+            path_file = None
+        else:
+            path_file += "/" + _name_file
+
+        return path_file

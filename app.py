@@ -1,6 +1,6 @@
 import logging
 from logging.handlers import RotatingFileHandler
-from flask import Flask, request, redirect, render_template, url_for
+from flask import Flask, request, redirect, render_template, url_for, send_file
 from flask_login import LoginManager, login_required, login_user, logout_user
 import flask_login
 
@@ -31,6 +31,7 @@ from controllers.education_main_course_lesson_page_controller import EducationMa
 from controllers.education_list_courses_page_controller import EducationListCoursesPageController
 from controllers.education_course_page_controller import EducationCoursePageController
 from controllers.education_course_lesson_page_controller import EducationCourseLessonPageController
+from controllers.upload_page_controller import UploadPageController
 
 from error import UserManagerException
 
@@ -525,7 +526,6 @@ def education_course_lesson():
             text = request.form.get("text")
             files = request.files.getlist("files")
             page_controller.add_message({"text": text, "files": files}, id_room_chat)
-            # room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
         else:
             id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, request.form.get("user"))["id"]
             return redirect(
@@ -533,8 +533,6 @@ def education_course_lesson():
 
     data = page_controller.get_lesson(id_lesson, int(id_course), int(id_video))
     room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
-    # if user_role != "superuser":
-    #     room_chat = page_controller.room_chat_entry(id_lesson, id_course)
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
@@ -868,6 +866,22 @@ def estimated_values():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=data, _ranges_age=page_controller.get_age_ranges(), _id_file_name=int(id_file_name),
                            _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
+
+@app.route('/upload', methods=['GET', 'POST'])
+@login_required
+def upload():
+
+    page_controller = UploadPageController()
+
+    name_file = request.args.get("name_file")
+    id_dataset = request.args.get("id_dataset")
+    dataset = request.args.get("dataset")
+
+    path_file = page_controller.get_path_file(dataset, name_file, id_dataset)
+    if path_file is not None:
+        return send_file(path_file, as_attachment=True)
+    else:
+        return False
 
 @app.errorhandler(404)
 @login_required
