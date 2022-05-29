@@ -1,6 +1,8 @@
+from distutils.command.config import config
 from data_adapters.data_store import DataStore
 from models.course import Module, Lesson, CoursesList
 import os
+import config
 
 class CourseManager():
 
@@ -56,7 +58,8 @@ class CourseManager():
             data_store_module = DataStore(f"course_{_id}/modules")
             data_store_lessons = DataStore(f"course_{_id}/lessons")
         except FileNotFoundError:
-            os.mkdir(f"data/course_{_id}")
+            # os.mkdir(f"data/course_{_id}")
+            os.mkdir(config.DATA_FOLDER+"course_{"+str(_id)+"}")
             data_store_module = DataStore(f"course_{_id}/modules")
             data_store_lessons = DataStore(f"course_{_id}/lessons")
 
@@ -128,7 +131,8 @@ class CourseManager():
             try:
                 data_store_course = DataStore(f"course_{i_course['id']}/settings")
             except FileNotFoundError:
-                os.mkdir(f"data/course_{i_course['id']}")
+                # os.mkdir(f"data/course_{i_course['id']}")
+                os.mkdir(config.DATA_FOLDER+"course_{"+str(i_course['id'])+"}")
                 data_store_course = DataStore(f"course_{i_course['id']}/settings")
 
             try:

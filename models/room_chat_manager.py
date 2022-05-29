@@ -1,4 +1,5 @@
 import os
+import config
 
 from models.room_chat import RoomChat, Message, UserFile
 from data_adapters.data_store import DataStore
@@ -120,11 +121,12 @@ class RoomChatManager():
 
         data_store = DataStore("files")
         user_dir = "user_{}".format(_user)
-        if not "user_files" in os.listdir("/data"):
-            os.mkdir("data/user_files")
-        path = f"data/user_files/{user_dir}"
+        if not "user_files" in os.listdir(config.DATA_FOLDER):
+            # os.mkdir("data/user_files")
+            os.mkdir(config.DATA_FOLDER+"user_files")
+        path = config.DATA_FOLDER+"user_files/{"+user_dir+"}"
 
-        if not user_dir in os.listdir("data/user_files"):
+        if not user_dir in os.listdir(config.DATA_FOLDER+"user_files"):
             os.mkdir(path)
             amount = 0
         else:
