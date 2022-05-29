@@ -134,7 +134,7 @@
     <h1 class="h3 mb-2">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url_for('education_main_courses') }}">Школа нейропсихологии</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('education_main_courses') }}">Курс</a></li>
                 <li class="breadcrumb-item">{{ _data['name'] }}</li>
                 <li class="breadcrumb-item active" aria-current="page">{{ _data['lesson']['name'] }}</li>
             </ol>
@@ -247,7 +247,7 @@
                                                 </td>
                                                 <td>{{ name_file }}</td>
                                                 <td>
-                                                    <a href="{{ i_materials }}" download="inline">Файл</a>
+                                                    <a href="{{ i_materials }}" download="inline">Скачать</a>
                                                 </td>
                                             </tr>
                                         {% endfor %}

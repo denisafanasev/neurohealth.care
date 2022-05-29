@@ -488,7 +488,7 @@ def education_course():
     else:
         data = None
 
-    endpoint = request.endpoint
+    endpoint = 'education_list_courses'
 
 
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
@@ -501,7 +501,7 @@ def education_course_lesson():
     page_controller = EducationCourseLessonPageController()
     mpc = MainMenuPageController()
 
-    endpoint = request.endpoint
+    endpoint = 'education_list_courses'
 
     id_course = request.args.get("id_course")
     id_lesson = int(request.args.get("id_lesson"))

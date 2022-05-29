@@ -33,7 +33,7 @@ class MainMenuPageController():
         for i, item in enumerate(data):
             main_menu.add(item['module'])
 
-        main_menu = sorted(main_menu)
+        # main_menu = sorted(main_menu)
 
         for main_item in main_menu:
             module_menu = []

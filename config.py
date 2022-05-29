@@ -43,20 +43,25 @@ SUPERUSER_MENU = [
 ]
 
 EDUCATION_MENU = [
-    {"module": "Центр обучения", "name": "Список курсов",
+    {"module": "Центр обучения", "name": "Каталог курсов",
         "endpoint": "education_list_courses", "icon": "video"}
 ]
 
+TESTING_MENU = [
+
+    {"module": "Центр тестирования", "name": "Тестируемые", "endpoint": "probationers", "icon": "users"},
+    {"module": "Центр тестирования", "name": "Протоколы", "endpoint": "probes", "icon": "list"},
+    {"module": "Центр тестирования", "name": "Результаты", "endpoint": "results", "icon": "activity"}    
+]
+
+CORRECTIONS_MENU = [
+
+    {"module": "Центр коррекции", "name": "Коррекция", "endpoint": "corrections", "icon": "trending-up"}
+    
+]
+
 MAIN_MENU = [
-
-    {"module": "", "name": "Рабочий стол", "endpoint": "main_page", "icon": "sliders"},
-    
-    {"module": "Центр тестирование", "name": "Тестируемые", "endpoint": "probationers", "icon": "users"},
-    {"module": "Центр тестирование", "name": "Протоколы", "endpoint": "probes", "icon": "list"},
-    {"module": "Центр тестирование", "name": "Результаты", "endpoint": "results", "icon": "activity"},
-
-    {"module": "Центр коррекции", "name": "Коррекция", "endpoint": "corrections", "icon": "trending-up"},
-    
+    {"module": "", "name": "Рабочий стол", "endpoint": "main_page", "icon": "sliders"}  
 ]
 
 SETTINGS_MENU = [
