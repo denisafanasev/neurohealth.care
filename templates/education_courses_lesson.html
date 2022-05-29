@@ -33,7 +33,6 @@
 
 
     <style>
-    body{margin-top:20px;}
 
     .chat-messages {
         display: list-item;
@@ -247,7 +246,7 @@
                                                 </td>
                                                 <td>{{ name_file }}</td>
                                                 <td>
-                                                    <a href="{{ i_materials }}" download="inline">Скачать</a>
+                                                    <a href="/upload?name_file={{ i_materials }}&dataset=course&id_dataset={{ _data['lesson']['id_module'] }}">Файл</a>
                                                 </td>
                                             </tr>
                                         {% endfor %}
@@ -334,7 +333,7 @@
                                                             {% if i_message['files'] %}
                                                                 <div class="row">
                                                                     {% for i_file in i_message['files'] %}
-                                                                        <a download href="/{{ i_file['path'] }}/{{ i_file['name_file_unique'] }}">{{ i_file['name_file_user'] }}</a>
+                                                                        <a href="/upload?name_file={{ i_file['name_file_unique'] }}&dataset=chat">{{ i_file['name_file_user'] }}</a>
                                                                     {% endfor %}
                                                                 </div>
                                                             {% endif %}
