@@ -166,7 +166,6 @@
                                                     title="Модуль 4 / Урок 1 / Функция переработки зрительно-пространственной инфор">
                                             </iframe>
                                         </div>
-
                                      {% endif %}
                                 {% endfor %}
                             </div>
@@ -190,7 +189,7 @@
                                                     href="{% if request.args.get('id_video')|int <= _data['lesson']['link']|count - 1 %}/education_course/lesson?id_course={{ id_course }}&id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int + 1 }}{% endif %}">
                                                 >>
                                             </a>
-
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -301,41 +300,27 @@
 
                             <div class="col-md-12 text-left">
                                 <div class="card py-1 py-md-1 border">
-                                        <div class="card-body">
-                                            <p class="card-text">
-                                                {{ _data['lesson']['task'] }}
-                                            </p>
-                                            {% if request.args.get('id_chat') %}
-                                                <div id="editor" style="z-index: 0"><p></p></div>
-                                                <input type="hidden" id="hiddenInput" name="text">
-                                                <div>
-                                                    <input type="file" multiple name="files" class="form-control">
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                        <div class="card d-flex align-self-baseline" style="margin-left: auto">
-                                            <div class="card-header">
-                                                <button type="submit" name="send" value="send" class="btn btn-primary">Отправить</button>
+                                    <div class="card-body">
+                                        <p class="card-text">
+                                            {{ _data['lesson']['task'] }}
+                                        </p>
+                                        {% if request.args.get('id_chat') %}
+                                            <div id="editor" style="z-index: 0"><p></p></div>
+                                            <input type="hidden" id="hiddenInput" name="text">
+                                            <div>
+                                                <input type="file" multiple name="files" class="form-control">
                                             </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="card d-flex align-self-baseline" style="margin-left: auto">
+                                        <div class="card-header">
+                                            <button type="submit" name="send" value="send" class="btn btn-primary">Отправить</button>
                                         </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row d-flex align-items-stretch bd-highlight">
                                 <div class="col-12 p-2 bd-highlight">
-{#                                    {% if _room_chat['message'] %}#}
-{#                                        <div class="list-group">#}
-{#                                        {% for i_message in _room_chat["message"]%}#}
-{#                                            <div class="card card-body">#}
-{#                                                {{ i_message['text'] }}#}
-{#                                                {% if i_message['files'] %}#}
-{#                                                    {% for i_file in i_message['files'] %}#}
-{#                                                        <a download="" href="{{ i_file['path'] }}/{{ i_file['name_file_unique'] }}">{{ i_file['name_file_user'] }}</a>#}
-{#                                                    {% endfor %}#}
-{#                                                {% endif %}#}
-{#                                            </div>#}
-{#                                        {% endfor %}#}
-{#                                        </div>#}
-{#                                    {% endif %}#}
                                     {% if _room_chat['message'] %}
                                         <div class="border position-relative">
                                             <div class="card-group chat-messages p-4">
