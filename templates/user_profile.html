@@ -102,7 +102,7 @@
                         <div class="mb-2">
                             <label class="form-label"><strong>Роль пользователя</strong></label>
                             <select required type="text" name="role" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
-                                {% if _settings %}
+                                {% if _mode != "view" %}
                                     <option value="">Выберите роль пользователя</option>
                                     {% for i in _settings['role'] %}
                                         <option {% if i == _data['role'] %} selected {% endif %} value="{{ i }}">{{ i }}</option>
@@ -119,10 +119,10 @@
                         <div class="mb-2">
                             <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
                             <select required type="text" name="probationers_number" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
-                                {% if _settings %}
+                                {% if _mode != "view" %}
                                     <option value="">Выберите количество доступных тестируемых</option>
                                     {% for i in _settings['probationers_number'] %}
-                                            <option {% if _data['probationers_number'] == i %} selected {% endif %}value="{{ i*5 }}"> {{ i*5 }} </option>
+                                            <option {% if _data['probationers_number'] == i %} selected {% endif %}value="{{ i }}"> {{ i }} </option>
                                     {% endfor %}
                                 {% else %}
                                     <option>{{ _data['probationers_number'] }}</option>
@@ -136,13 +136,13 @@
                         <div class="mb-2">
                             <label class="form-label"><strong>Срок предоставления доступа</strong></label>
                             <select required type="text" name="access_time" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
-                                {% if _settings %}
+                                {% if _mode != "view" %}
                                     <option value="">Выберите срок предоставления доступа</option>
                                     {% for i in _settings['access_time'] %}
-                                        <option {% if i == _data['access_time'] %} selected {% endif %}value="{{ i }}">{{ i }}</option>
+                                        <option {% if i['name_period'] == _data['access_time'] %} selected {% endif %}value="{{ i['name_period'] }}">{{ i['name_period'] }}</option>
                                     {% endfor %}
                                 {% else %}
-                                    <option>{{ _data['access_time'] }}</option>
+                                    <option value="{{ _data['access_time'] }}">{{ _data['access_time'] }}</option>
                                 {% endif %}
                             </select>
                             <div class="invalid-feedback">

@@ -9,6 +9,7 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 
 # general page controllers
 from werkzeug import exceptions
+from werkzeug.utils import secure_filename
 
 from controllers.main_page_controller import MainPageController
 from controllers.main_menu_controller import MainMenuPageController
@@ -265,7 +266,7 @@ def user_profile():
         pass
 
     error = None
-    settings_user = None
+    settings_user = page_controller.get_settings_user()
 
     if user_id is None:
         # если пользователь не задан, то открываем страницу в режиме создания нового пользователя
@@ -329,8 +330,8 @@ def user_profile():
                     user["role"] = request.form["role"]
                     user["probationers_number"] = int(request.form["probationers_number"])
                     user["access_time"] = request.form["access_time"]
-                    user["created_date"] = data_begin.created_date
-                    user["active"] = data_begin.active
+                    user["created_date"] = data_begin["created_date"]
+                    user["active"] = data_begin["is_active"]
 
                     page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
                                                         user["probationers_number"], user["access_time"],
@@ -436,16 +437,7 @@ def education_introduction_course():
         
     """
 
-    page_controller = None
-    mpc = MainMenuPageController()
-
-    data = ""
-
-    endpoint = request.endpoint
-
-    return render_template('index.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=data)
+    return redirect("/education_course?id_course=0")
 
 
 @app.route('/education_main_course/lesson', methods=['GET', 'POST'])
@@ -479,15 +471,7 @@ def education_main_courses():
         
     """
 
-    page_controller = EducationMainCoursePageController()
-    mpc = MainMenuPageController()
-
-    data = page_controller.get_course(1)
-
-    endpoint = request.endpoint
-
-    return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
+    return redirect("/education_course?id_course=1")
 
 @app.route('/education_list_courses', methods=['GET', 'POST'])
 @login_required
@@ -510,13 +494,15 @@ def education_course():
     page_controller = EducationCoursePageController()
     mpc = MainMenuPageController()
 
-    id_module = request.args.get("id_course")
-    if id_module is not None:
-        data = page_controller.get_course(id_module)
+    id_course = request.args.get("id_course")
+
+    if id_course is not None:
+        data = page_controller.get_course(id_course)
     else:
         data = None
 
     endpoint = request.endpoint
+
 
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
@@ -532,13 +518,40 @@ def education_course_lesson():
 
     id_course = request.args.get("id_course")
     id_lesson = int(request.args.get("id_lesson"))
+    id_video = request.args.get("id_video")
+    id_room_chat = request.args.get("id_chat")
+    user = page_controller.get_current_user()
+    user_list = None
+    if id_room_chat is None:
+        if user["role"] != "superuser":
+            id_room_chat = page_controller.room_chat_entry(id_lesson, id_course)["id"]
+            return redirect(f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
 
-    data = page_controller.get_lesson(id_lesson, int(id_course))
+    if id_video is None:
+        id_video = 1
+
+    if user["role"] == "superuser":
+        user_list = page_controller.get_user_list()
+
+    if request.method == "POST":
+        if request.form.get("send"):
+            text = request.form.get("text")
+            files = request.files.getlist("files")
+            page_controller.add_message({"text": text, "files": files}, id_room_chat)
+            # room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
+        else:
+            id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, request.form.get("user"))["id"]
+            return redirect(
+                f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
+
+    data = page_controller.get_lesson(id_lesson, int(id_course), int(id_video))
+    room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
+    # if user_role != "superuser":
+    #     room_chat = page_controller.room_chat_entry(id_lesson, id_course)
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=data)
-
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _data=data, _room_chat=room_chat, _user_list=user_list, _user=user)
 
 @app.route('/education_home_tasks', methods=['GET', 'POST'])
 @login_required
@@ -558,7 +571,6 @@ def education_home_tasks():
     return render_template('index.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data="")
-
 
 @app.route('/corrections', methods=['GET', 'POST'])
 @login_required
@@ -643,7 +655,6 @@ def probe_profile():
 
         elif mode == "add_value_tests":
             probe_id = request.args.get("probe_id")
-            x = request.form
             grades = [{"id": key, "grade": value} for key, value in request.form.items() if key.isdigit() or ("_" in key)]
             page_controller.add_grades_in_probe(grades, int(probe_id))
 

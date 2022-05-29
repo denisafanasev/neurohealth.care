@@ -24,3 +24,12 @@ class UserManagerService():
         users = user_manager.get_users()
 
         return users
+
+    def get_current_user(self, _login_user):
+
+        user_manager = UserManager()
+
+        if _login_user == "":
+            return user_manager.get_user_by_id(user_manager.get_current_user_id())
+        else:
+            return user_manager.get_user_by_login(_login_user)

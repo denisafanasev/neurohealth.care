@@ -6,16 +6,86 @@
     <script src="https://player.vimeo.com/api/player.js"></script>
 
     <script>
-    $( document ).ready(function() {
+    document.addEventListener("DOMContentLoaded", function () {
         var quill = new Quill('#editor', {
-        theme: 'snow'
+            modules: {
+                toolbar: [
+                  ['bold', 'italic'],
+                  ['link', 'blockquote', 'code-block'],
+                  [{ list: 'ordered' }, { list: 'bullet' }]
+                ]
+              },
+            theme: 'snow',
+
         });
+        var form = document.querySelector('form');
+        form.onsubmit = function () {
+            // Populate hidden form on submit
+            var about = document.querySelector('input[name=text]');
+            about.value = quill.root.innerHTML;
+            if (about.value === "<p><br></p>") {
+                alert("Ошибка: не заполнено поле для отправки домашнего задания!")
+                return false;
+            }
+        };
     });
     </script>
 
+
     <style>
+    body{margin-top:20px;}
+
+    .chat-messages {
+        display: list-item;
+        flex-direction: column;
+        overflow-y: scroll;
+        overflow-x: initial;
+        white-space: inherit;
+        height: 500px;
+        max-height: 500px;
+    }
+
+    .chat-message-left {
+        display: block;
+        flex-shrink: 0;
+        word-wrap: break-word;
+
+    }
+
+    .chat-message-left {
+        margin-right: auto;
+        text-align: left;
+    }
+
+    .chat-message-right {
+        flex-direction: row-reverse;
+        margin-left: auto;
+        text-align: right;
+    }
+    .py-3 {
+        padding-top: 1rem!important;
+        padding-bottom: 1rem!important;
+    }
+    .px-4 {
+        padding-right: 1.5rem!important;
+        padding-left: 1.5rem!important;
+    }
+    .flex-grow-0 {
+        flex-grow: 0!important;
+    }
+    .border-top {
+        border-top: 1px solid #dee2e6!important;
+    }
     .card{
         border: #0a0a0a;
+    }
+    .card-title {
+        color: #0a0a0a;
+    }
+    .card-body.chat-message-left {
+        font-size: 15px;
+        font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+
     }
     .responsive-iframe {
       position: absolute;
@@ -83,39 +153,41 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-7 text-left">
-                        {% if _data['lesson']['link'] %}
-                            <div class="card py-1 py-md-1 border">
-                                <div class="card-body">
-                                     {% for i_video in _data['lesson']['link'] %}
-                                         {% if i_video['video'] %}
-                                            <div style="padding:56.25% 0 0 0;position:relative;">
-                                                <iframe src="{{ i_video['video'] }}&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
-                                                        allow="autoplay; fullscreen; picture-in-picture" allowfullscreen
-                                                        style="position:absolute;top:0;left:0;width:100%;height:100%;" webkitallowfullscreen mozallowfullscreen class="border"
-                                                        title="Модуль 4 / Урок 1 / Функция переработки зрительно-пространственной инфор">
-                                                </iframe>
-                                            </div>
+                    {% if _data['lesson']["link"] != [] %}
+                        <div class="card py-1 py-md-1 border">
+                            <div class="card-body">
+                                {% set id_course = request.args['id_course'] %}
+                                 {% for i_video in _data['lesson']['link'] %}
+                                     {% if i_video['video'] %}
+                                        <div style="padding:56.25% 0 0 0;position:relative;">
+                                            <iframe src="{{ i_video['video'] }}&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
+                                                    allow="autoplay; fullscreen; picture-in-picture" allowfullscreen
+                                                    style="position:absolute;top:0;left:0;width:100%;height:100%;" webkitallowfullscreen mozallowfullscreen class="border"
+                                                    title="Модуль 4 / Урок 1 / Функция переработки зрительно-пространственной инфор">
+                                            </iframe>
+                                        </div>
 
-                                         {% endif %}
-                                    {% endfor %}
-                                </div>
-                                <div class="card-footer">
-                                    <div class="pagination">
+                                     {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="card-footer">
+                                <div style="">
+                                    <div class="pagination" >
 
                                             <a class="border" style="margin-right: auto"
-                                                    href="{% if request.args.get('id_video')|int >= 2 %}/education_main_course/lesson?id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int - 1 }}{% endif %}">
+                                                    href="{% if request.args.get('id_video')|int >= 2 %}/education_course/lesson?id_course={{ id_course }}&id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int - 1 }}{% endif %}">
                                                 <<
                                             </a>
 
                                         {% for i_video in _data['lesson']['link'] %}
                                             <a class="{% if i_video['video'] %}active{% endif %} border" style="margin: auto"
-                                                    href="/education_main_course/lesson?id_lesson={{ _data['lesson']['id'] }}&id_video={{ i_video['id'] }}">
+                                                    href="/education_course/lesson?id_course={{ id_course }}&id_lesson={{ _data['lesson']['id'] }}&id_video={{ i_video['id'] }}">
                                                 {{ i_video['id'] }}
                                             </a>
                                         {% endfor %}
 
                                             <a class="border" style="margin-left: auto"
-                                                    href="{% if request.args.get('id_video')|int <= _data['lesson']['link']|count - 1 %}/education_main_course/lesson?id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int + 1 }}{% endif %}  ">
+                                                    href="{% if request.args.get('id_video')|int <= _data['lesson']['link']|count - 1 %}/education_course/lesson?id_course={{ id_course }}&id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int + 1 }}{% endif %}">
                                                 >>
                                             </a>
 
@@ -175,8 +247,8 @@
                                                          src="{% if type == 'doc' or type == "docx" %}/static/img/icons/icon_word.png{% else %}/static/img/icons/icon_pdf.png{% endif %}">
                                                 </td>
                                                 <td>{{ name_file }}</td>
-                                                <td><a download="inline"
-                                                        href="{{ i_materials }}">Файл</a>
+                                                <td>
+                                                    <a href="{{ i_materials }}" download="inline">Файл</a>
                                                 </td>
                                             </tr>
                                         {% endfor %}
@@ -202,36 +274,91 @@
             </div>
         </div>
 
-                    
         {% if _data['lesson']['task'] %}
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 <div class="card border">
                     <div class="card-header">
-                        <h4>
-                            Домашнее задание
-                        </h4>
+                        <div class="row">
+                            <div class="col">
+                                <h4>
+                                    Домашнее задание
+                                </h4>
+                            </div>
+                            {% if _user['role'] == "superuser" %}
+                                <div class="col">
+                                    <select class="form-select" onchange="this.form.submit();" name="user">
+                                            <option selected disabled value="">Выберите ученика</option>
+                                        {% for i_user in _user_list %}
+                                            <option value="{{ i_user }}">{{ i_user }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
+
                             <div class="col-md-12 text-left">
                                 <div class="card py-1 py-md-1 border">
-                                    <div class="card-body">
-                                        <p class="card-text">
-                                        {{ _data['lesson']['task'] }}
-                                    </p>
-                                        <div id="editor"></div>
-                                    </div>
+                                        <div class="card-body">
+                                            <p class="card-text">
+                                                {{ _data['lesson']['task'] }}
+                                            </p>
+                                            {% if request.args.get('id_chat') %}
+                                                <div id="editor" style="z-index: 0"><p></p></div>
+                                                <input type="hidden" id="hiddenInput" name="text">
+                                                <div>
+                                                    <input type="file" multiple name="files" class="form-control">
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="card d-flex align-self-baseline" style="margin-left: auto">
+                                            <div class="card-header">
+                                                <button type="submit" name="send" value="send" class="btn btn-primary">Отправить</button>
+                                            </div>
+                                        </div>
                                 </div>
                             </div>
-                            <div class="row d-flex align-items-stretch bd-highlight" align="right">
+                            <div class="row d-flex align-items-stretch bd-highlight">
                                 <div class="col-12 p-2 bd-highlight">
-                                    <div class="card d-flex align-self-baseline">
-                                        <div class="card-header">
-                                            <a type="submit" name="button" href="{{ url_for('user_manager') }}" class="btn btn-primary ">
-                                                Сохранить
-                                            </a>
+{#                                    {% if _room_chat['message'] %}#}
+{#                                        <div class="list-group">#}
+{#                                        {% for i_message in _room_chat["message"]%}#}
+{#                                            <div class="card card-body">#}
+{#                                                {{ i_message['text'] }}#}
+{#                                                {% if i_message['files'] %}#}
+{#                                                    {% for i_file in i_message['files'] %}#}
+{#                                                        <a download="" href="{{ i_file['path'] }}/{{ i_file['name_file_unique'] }}">{{ i_file['name_file_user'] }}</a>#}
+{#                                                    {% endfor %}#}
+{#                                                {% endif %}#}
+{#                                            </div>#}
+{#                                        {% endfor %}#}
+{#                                        </div>#}
+{#                                    {% endif %}#}
+                                    {% if _room_chat['message'] %}
+                                        <div class="border position-relative">
+                                            <div class="card-group chat-messages p-4">
+                                                {% for i_message in _room_chat['message'] %}
+                                                    <div class="card border-top chat-message-left pb-4">
+                                                        <div class="card-header">
+                                                            <h3 class="card-title message">{{ i_message['name_sender'] }}</h3>
+                                                        </div>
+                                                        <div class="card-body  flex-shrink-1  rounded py-2 px-3 mr-3">
+                                                            {{ i_message['text'] }}
+                                                            {% if i_message['files'] %}
+                                                                <div class="row">
+                                                                    {% for i_file in i_message['files'] %}
+                                                                        <a download href="/{{ i_file['path'] }}/{{ i_file['name_file_unique'] }}">{{ i_file['name_file_user'] }}</a>
+                                                                    {% endfor %}
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
                                         </div>
-                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
