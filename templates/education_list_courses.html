@@ -29,30 +29,23 @@
 
     <h1 class="h3 mb-2">Школа нейропсихологии</h1>
     {% if _data %}
-        <div class="card- row row-cols-1 row-cols-md-3 g-4">
-                {% for i_course in _data %}
-                    <div class="col-sm-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="row">
-                                    <div class="col-7">
-                                        <h4>{{ i_course['name'] }}</h4>
-                                    </div>
-                                    <div class="col">
-                                        <img class="card-img" src="{% if i_course['image'] != '' %}{{ i_course['image'] }}{% else %}/static/img/avatars/149071.jpg{% endif %}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <p class="card-text">{{ i_course['description'] }}</p>
-                                <a href="/education_course?id_course={{ i_course['id'] }}" class="btn btn-secondary">
-                                    Смотреть
-                                </a>
-                            </div>
-                        </div>
+        <div class="card- row row-cols-1 row-cols-md-12 g-4">
+            {% for i_course in _data %}
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card">
+                    <img class="card-img-top" src="/static/img/photos/{% if i_course['image'] != '' %}{{ i_course['image'] }}{% else %}unsplash-3.jpg{% endif %}" alt="Unsplash">
+                    <div class="card-header">
+                        <h2 class="card-title mb-0">{{ i_course['name'] }}</h2>
                     </div>
-                {% endfor %}
-
+                    <div class="card-body">
+                        <p class="card-text">{{ i_course['description'] }}</p>
+                        <a href="/education_course?id_course={{ i_course['id'] }}" class="btn btn-primary">
+                            Перейти к курсу
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     {% else %}
         <div class="text-center">

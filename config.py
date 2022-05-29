@@ -43,11 +43,7 @@ SUPERUSER_MENU = [
 ]
 
 EDUCATION_MENU = [
-    {"module": "Школа нейропсихологии", "name": "Вводный модуль",
-        "endpoint": "education_introduction_course", "icon": "monitor"},
-    {"module": "Школа нейропсихологии", "name": "Основные модули",
-        "endpoint": "education_main_courses", "icon": "video"},
-    {"module": "Школа нейропсихологии", "name": "Список курсов",
+    {"module": "Центр обучения", "name": "Список курсов",
         "endpoint": "education_list_courses", "icon": "video"}
 ]
 

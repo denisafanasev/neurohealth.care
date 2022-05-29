@@ -426,20 +426,6 @@ def empty_function():
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data="")
 
-
-@app.route('/education_introduction_course', methods=['GET', 'POST'])
-@login_required
-def education_introduction_course():
-    """
-    Пустая функция-заглушка
-
-    Returns:
-        
-    """
-
-    return redirect("/education_course?id_course=0")
-
-
 @app.route('/education_main_course/lesson', methods=['GET', 'POST'])
 @login_required
 def education_main_course_lesson():
