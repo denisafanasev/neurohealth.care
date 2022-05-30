@@ -31,7 +31,7 @@ from controllers.education_main_course_lesson_page_controller import EducationMa
 from controllers.education_list_courses_page_controller import EducationListCoursesPageController
 from controllers.education_course_page_controller import EducationCoursePageController
 from controllers.education_course_lesson_page_controller import EducationCourseLessonPageController
-# from controllers.upload_page_controller import UploadPageController
+from controllers.upload_page_controller import UploadPageController
 
 from error import UserManagerException
 
@@ -309,7 +309,7 @@ def user_profile():
 
                     error = page_controller.create_user(user["login"], user["name"], user["password"],
                                                         user["password2"], user["email"], user["role"],
-                                                        user["probationers_number"])
+                                                        user["probationers_number"], user["access_time"])
 
                     if error is None:
                         mode = "view"
@@ -330,6 +330,7 @@ def user_profile():
                     user["email"] = request.form["email"]
                     user["role"] = request.form["role"]
                     user["probationers_number"] = int(request.form["probationers_number"])
+                    user["access_time"] = request.form["access_time"]
                     user["created_date"] = data_begin["created_date"]
                     user["active"] = data_begin["is_active"]
                     user['education_module_expiration_date'] = data_begin["education_module_expiration_date"]
@@ -365,9 +366,10 @@ def user_profile():
                 if mode == "edit":
                     reference_point = request.form["reference_point"]
                     period = request.form["period"]
-                    user_login = request.form["login"]
+                    user_login = data_begin['login']
                     page_controller.access_extension(int(period), reference_point, user_login)
                     data = page_controller.get_users_profile_view(user_id)
+                    mode = "view"
 
             elif request.form["button"] == "is_active":
                 active = page_controller.activation_deactivation(data_begin['login'])
@@ -472,6 +474,7 @@ def education_main_course_lesson():
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=data)
+
 
 @app.route('/education_main_courses', methods=['GET', 'POST'])
 @login_required
@@ -785,6 +788,7 @@ def probationer_card():
                 if mode == "new":
                     # добавляем нового тестируемого и получаем список с ошибками
                     # если их нет, то получаем пустой список
+                    attempt = True
                     probationer = {}
                     probationer["name_probationer"] = request.form["name_probationer"]
                     probationer["date_of_birth"] = request.form["date_of_birth"]
@@ -911,21 +915,21 @@ def estimated_values():
                            _data=data, _ranges_age=page_controller.get_age_ranges(), _id_file_name=int(id_file_name),
                            _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
 
-# @app.route('/upload', methods=['GET', 'POST'])
-# @login_required
-# def upload():
-#
-#     page_controller = UploadPageController()
-#
-#     name_file = request.args.get("name_file")
-#     id_dataset = request.args.get("id_dataset")
-#     dataset = request.args.get("dataset")
-#
-#     path_file = page_controller.get_path_file(dataset, name_file, id_dataset)
-#     if path_file is not None:
-#         return send_file(path_file, as_attachment=True)
-#     else:
-#         return False
+@app.route('/download', methods=['GET', 'POST'])
+@login_required
+def upload():
+
+    page_controller = UploadPageController()
+
+    name_file = request.args.get("name_file")
+    id_dataset = request.args.get("id_dataset")
+    dataset = request.args.get("dataset")
+
+    path_file = page_controller.get_path_file(dataset, name_file, id_dataset)
+    if path_file is not None:
+        return send_file(path_file, as_attachment=True)
+    else:
+        return False
 
 @app.errorhandler(404)
 @login_required

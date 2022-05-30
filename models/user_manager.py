@@ -107,6 +107,9 @@ class UserManager():
             raise UserManagerException("DB structure error: no attribute " + error.args[0])
 
         # проверим наличие в структуре хранения необязательных атрибутов
+        if _data_row.get('expires_date') is not None:
+            user.education_module_expiration_date = datetime.strptime(_data_row['expires_date'], '%d/%m/%Y')
+
         if _data_row.get('probationers_number') is not None:
             user.probationers_number = int(_data_row['probationers_number'])
         else:
@@ -119,8 +122,6 @@ class UserManager():
 
         if _data_row.get('education_module_expiration_date') is not None:
             user.education_module_expiration_date = datetime.strptime(_data_row['education_module_expiration_date'], '%d/%m/%Y')
-        else:
-            user.education_module_expiration_date = ""
 
         if _data_row.get('token') is not None:
             user.token = _data_row['token']
