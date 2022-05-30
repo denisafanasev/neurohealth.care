@@ -1,3 +1,4 @@
+import config
 from services.probationer_card_service import ProbationerCardService
 
 class ProbationerCardPageController():
@@ -76,8 +77,10 @@ class ProbationerCardPageController():
 
     def get_settings_probationer(self):
 
-        probationer_card_service = ProbationerCardService()
+        settings = {}
 
-        return probationer_card_service.get_settings_probationer()
+        settings["educational_institution"] = config.EDUCATIONAL_INSTITUSION
+
+        return settings
 
 

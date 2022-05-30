@@ -844,7 +844,7 @@ def probationer_card():
     return render_template('probationer_card.html', view="probationer_card", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
                            _mode=mode, _data_begin=data_begin, _error=error, _error_type=error_type,
-                           _settings=config.EDUCATIONAL_INSTITUSION)
+                           _settings=page_controller.get_settings_probationer())
 
 @app.route('/settings/age_range_list', methods=['GET', 'POST'])
 @login_required
