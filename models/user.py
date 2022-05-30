@@ -22,18 +22,13 @@ class User(UserMixin):
     role = ""
     email = ""
     created_date = ""
-    expires_date = ""
+    education_module_expiration_date = ""
     probationers_number = DEFAULT_PROBATIONS_NUMBER
     token = ""
     email_confirmed = False
 
-    # TODO мне кажется это дублирует created_date
-    access_time = ""
-    email_confirmed = False
-
     def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _active=True, _created_date="",
-                 _expires_date="", _probationers_number=DEFAULT_PROBATIONS_NUMBER,
-                 _access_time=DEFAULT_EXPIRATION_MONTHS):
+                 _education_module_expiration_date="", _probationers_number=DEFAULT_PROBATIONS_NUMBER):
         """
         Конструктор класса
 
@@ -44,9 +39,8 @@ class User(UserMixin):
             _email (str, optional): Email пользователя. Defaults to ""
             _role (str, optional): Роль пользователя. Defaults to "user"
             _created_date (date, optional): Дата создания пользователя в системе. Defaults to ""
-            _expires_date (date, optional): Дата до которой пользователь активен. Defaults to "".
+            _education_module_expiration_date (date, optional): Дата до которой пользователь активен. Defaults to "".
             _probationers_number (int, optional): Количество тестируемых, доступное пользователю. Defaults to DEFAULT_PROBATIONS_NUMBER
-            _access_time (int, optional): Время доступа к системе. Defaults to DEFAULT_EXPIRATION_MONTHS
             _active (bool): Активирован/заблокирован пользователь
         """        
 
@@ -56,7 +50,6 @@ class User(UserMixin):
         self.email = _email
         self.role = _role
         self.probationers_number = _probationers_number
-        self.access_time = _access_time
         self.active = _active
         self.token = ""
         self.email_confirmed = False
@@ -69,16 +62,14 @@ class User(UserMixin):
 
         if type(self.created_date) is str:
             self.created_date = datetime.datetime.strptime(self.created_date, "%d/%m/%Y")
-        
-        # если дата экспирации не указана, то будем вычислять дату по умолчанию
-        if _access_time == "6 месяцев":
-            self.expires_date = self.created_date + relativedelta(months=+DEFAULT_EXPIRATION_MONTHS)
 
-        elif _access_time == "1 год":
-            self.expires_date = self.created_date + relativedelta(years=+1)
-
+        if _education_module_expiration_date == "":
+            self.education_module_expiration_date = self.created_date
         else:
-            self.expires_date = "неограниченно"
+            if type(_education_module_expiration_date) is str:
+                self.education_module_expiration_date = datetime.datetime.strptime(_education_module_expiration_date, "%d/%m/%Y")
+            else:
+                self.education_module_expiration_date = _education_module_expiration_date
 
         self.probationers_number = _probationers_number
     
@@ -94,7 +85,7 @@ class User(UserMixin):
 
         if self.active:
             is_active = True
-        elif self.expires_date >= date.today():
+        elif self.education_module_expiration_date >= date.today():
             is_active = True
         
         return is_active
@@ -121,7 +112,7 @@ class User(UserMixin):
         else:
             return False
     
-    def is_enail_verified(self):
+    def is_email_verified(self):
         """
         Возвращает признак того, что пользователь подтвердил свой email адрес
 

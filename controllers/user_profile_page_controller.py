@@ -1,3 +1,4 @@
+import config
 from services.user_profile_service import UserProfileService
 from error import UserManagerException
 
@@ -30,13 +31,9 @@ class UserProfilePageController():
             user_view['name'] = user.name
             user_view['email'] = user.email
             user_view['role'] = user.role
-            user_view['access_time'] = user.access_time
 
             user_view['created_date'] = str(user.created_date.strftime("%d/%m/%Y"))
-            if not user.expires_date == "неограниченно":
-                user_view['expires_date'] = str(user.expires_date.strftime("%d/%m/%Y"))
-            else:
-                user_view['expires_date'] = user.expires_date
+            user_view['education_module_expiration_date'] = str(user.education_module_expiration_date.strftime("%d/%m/%Y"))
 
             user_view['probationers_number'] = user.probationers_number
             user_view['token'] = user.token
@@ -51,14 +48,13 @@ class UserProfilePageController():
             user_view["password2"] = "введите повторно пароль.."
             user_view["role"] = "Выберите роль пользователя"
             user_view["probationers_number"] = "Выберите количество доступных тестируемых"
-            user_view["access_time"] = "Выберите срок предоставления доступа"
             user_view["token"] = ""
             user_view["is_active"] = True
             user_view["email_confirmed"] = False
 
         return user_view
 
-    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _access_time):
+    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number):
         """
         Создает в системе пользователя
 
@@ -70,7 +66,6 @@ class UserProfilePageController():
             _email (String): email пользователя
             _role (String): роль пользователя [user/superuser]
             _probationers_number (int): количество доступных тестируемых
-            _access_time (String): срок доступа
 
         Returns:
             String: ошибка при создании пользователя
@@ -80,11 +75,12 @@ class UserProfilePageController():
         user_profile_service = UserProfileService()
         try:
             user_profile_service.create_user(_login, _name, _password, _password2, _email, _role,
-                                            _probationers_number, _access_time)
+                                            _probationers_number)
         except UserManagerException as error:
             return error
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time, _created_date, _active):
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date, _active,
+                    _education_module_expiration_date):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -93,7 +89,6 @@ class UserProfilePageController():
             _name (String): имя пользователя
             _email (String): email пользователя
             _role (String): роль пользователя [user/superuser]
-            _access_time (String): срок доступа
 
         Returns:
             Dict: словарь с информацией о пользователе
@@ -101,8 +96,8 @@ class UserProfilePageController():
 
         user_profile_service = UserProfileService()
 
-        return user_profile_service.change_user(_login, _name, _email, _role, _probationers_number, _access_time,
-                                                _created_date, _active)
+        return user_profile_service.change_user(_login, _name, _email, _role, _probationers_number,
+                                                _created_date, _active, _education_module_expiration_date)
 
     def discharge_password(self, _login, _password, _password2):
         """
@@ -147,6 +142,17 @@ class UserProfilePageController():
             settings_user (Dict): словарь с настройками
         """
 
+        settings_user = {
+            "role": config.ROLE,
+            "probationers_number": config.PROBATIONERS_NUMBER,
+            "education_module_expiration_date": config.EDUCATION_MODULE_EXPIRATION_DATE,
+            "reference_point": config.REFERENCE_POINT
+        }
+
+        return settings_user
+
+    def access_extension(self, _period, _reference_point, _login):
+
         user_profile_service = UserProfileService()
 
-        return user_profile_service.get_settings_user()
+        return user_profile_service.access_extension(_period, _reference_point, _login)

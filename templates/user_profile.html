@@ -31,9 +31,16 @@
             dateFormat: "H:i",
         });
     });
+    {#import {checkPasswordsMatched, checkLogin, checkPassword, checkRole} from "static/js/nhc_utils";#}
+    {#checkPasswordsMatched(form);#}
+    {#$(form).click(checkPasswordsMatched(form));#}
+
+
 </script>
 
-<script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>
+{#<script src="{{url_for('static' , filename="js/nhc_utils.js")}}">#}
+{#    $(form).click(checkPasswordsMatched(form));#}
+{#</script>#}
 
 <div class="container-fluid p-0">
 
@@ -56,7 +63,40 @@
         </div>
     {% endif %}
 
-    <form id="add_user" name="add_user" method="post" class="was-validated" enctype="multipart/form-data" onsubmit="return checkPassword(this);">
+    <form id="add_user" name="add_user" method="post" class="was-validated" enctype="multipart/form-data" onclick="return checkPasswordsMatched(this);">
+        {% if _mode == "edit" %}
+        <div class="row d-flex align-items-stretch bd-highlight">
+            <div class="col-12 p-2 bd-highlight">
+                <div class="card d-flex align-self-baseline" style="height: 100%;">
+                    <div class="card-header">
+                        <h5 class="card-title">Доступ к центру обучения</h5>
+                        <div class="col-6 mb-2">
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Продление срока доступа</strong></label>
+                                <select class="form-select" name="period">
+                                    <option selected disabled value="">Выберите продление срок доступа..</option>
+                                    {% for i in _settings['education_module_expiration_date'] %}
+                                        <option value="{{ i['amount'] }}">{{ i['name_period'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <select name="reference_point" class="form-select">
+                                    <option selected disabled value="">Выберите начальное время отсчета..</option>
+                                    {% for i_point in _settings['reference_point'] %}
+                                        <option value="{{ i_point['value'] }}">{{ i_point['name_point'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="p-2" align="right">
+                                <button class="btn btn-primary extension" name="button"  value="extension">Продлить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         <div class="row d-flex align-items-stretch bd-highlight">
             <div class="col-6 p-2 bd-highlight">
                 <div class="card d-flex align-self-baseline" style="height: 100%;">
@@ -66,28 +106,43 @@
                         <div class="mb-2">
                             <label class="form-label"><strong>Login</strong></label>
                             <input required type="text" name="login" class="form-control" {% if _mode!="new" %} readonly {% endif %} {% if _data['login'] != _data_begin['login'] or _mode != "new" %} value="{{ _data['login'] }}" {% else %} placeholder="Введите логин пользователя" {% endif %}>
+                            <div class="invalid-feedback">
+                                Поле, обязательное для заполнения!
+                            </div>
                         </div>
 
                         <div class="mb-2">
                             <label class="form-label"><strong>Имя пользователя</strong></label>
                             <input required type="text" name="user_name" class="form-control"  {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['name'] != _data_begin['name'] or _mode != "new"%} value="{{ _data['name'] }}" {% else %} placeholder="Введите имя пользователя" {% endif %}>
+                            <div class="invalid-feedback">
+                                Поле, обязательное для заполнения!
+                            </div>
                         </div>
 
                         {% if _mode=="new" or _mode=="discharge" %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Пароль</strong></label>
                                 <input required type="password" name="password" class="form-control" {% if _data['password']!= _data_begin['password']%} value="{{ _data['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
+                                <div class="invalid-feedback">
+                                    Поле, обязательное для заполнения!
+                                </div>
                             </div>
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Повтор пароля</strong></label>
                                 <input required type="password" name="password2" class="form-control" {% if _data['password2']!= _data_begin['password2'] %} value="{{ _data['password2'] }}" {% else %} placeholder="Повторно введите пароль" {% endif %}>
+                                <div class="invalid-feedback">
+                                    Поле, обязательное для заполнения!
+                                </div>
                             </div>
                         {% endif %}
 
                         <div class="mb-2">
                             <label class="form-label"><strong>Email</strong></label>
                             <input required type="email" name="email" class="form-control" {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data['email'] != _data_begin['email'] or _mode != "new"%} value="{{ _data['email'] }}" {% else %} placeholder="Введите email пользователя" {% endif %}>
+                            <div class="invalid-feedback">
+                                Поле, обязательное для заполнения!
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -132,23 +187,15 @@
                                 Поле, обязательное для заполнения!
                             </div>
                         </div>
-
-                        <div class="mb-2">
-                            <label class="form-label"><strong>Срок предоставления доступа</strong></label>
-                            <select required type="text" name="access_time" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
-                                {% if _mode != "view" %}
-                                    <option value="">Выберите срок предоставления доступа</option>
-                                    {% for i in _settings['access_time'] %}
-                                        <option {% if i['name_period'] == _data['access_time'] %} selected {% endif %}value="{{ i['name_period'] }}">{{ i['name_period'] }}</option>
-                                    {% endfor %}
-                                {% else %}
-                                    <option value="{{ _data['access_time'] }}">{{ _data['access_time'] }}</option>
-                                {% endif %}
-                            </select>
-                            <div class="invalid-feedback">
-                                Поле, обязательное для заполнения!
+                        {% if _mode != "new" %}
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Доступ к центру обучения</strong></label>
+                                <input class="form-control" disabled value="{{ _data['education_module_expiration_date'] }}">
+                                <div class="invalid-feedback">
+                                    Поле, обязательное для заполнения!
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

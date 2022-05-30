@@ -34,6 +34,20 @@ MAIL_DEFAULT_SENDER = 'from@example.com'
 MAIL_USERNAME = ""
 MAIL_PASSWORD = ""
 
+# probationer settings
+EDUCATIONAL_INSTITUSION = ["Гимназия", "Массовая школа", "Коррекционная школа", "Домашнее обучение"]
+
+# user settings
+PROBATIONERS_NUMBER = [5, 10, 15, 20, 25, 30]
+ROLE = ["user", "superuser"]
+EDUCATION_MODULE_EXPIRATION_DATE = [{"name_period": "1 месяц", "amount": 1},
+                                    {"name_period": "3 месяца", "amount": 3},
+                                    {"name_period": "6 месяцев", "amount": 6},
+                                    {"name_period": "1 год", "amount": 12},
+                                    {"name_period": "неограниченно"}]
+REFERENCE_POINT = [{"name_point": "от даты окончания", "value": "end"},
+                   {"name_point": "от текущей даты", "value": "today"}]
+
 
 SUPERUSER_MENU = [
     {"module": "Центр управления", "name": "Пользователи", "endpoint": "user_manager", "icon": "users"},
