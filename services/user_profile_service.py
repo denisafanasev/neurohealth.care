@@ -18,7 +18,7 @@ class UserProfileService():
         user = user_manager.get_user_by_id(user_id)
         return user
 
-    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _access_time):
+    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number):
         """
         Создает в системе суперпользователя
 
@@ -30,7 +30,6 @@ class UserProfileService():
             _email (String): email пользователя
             _role (String): роль пользователя [user/superuser]
             _probationers_number (int): количество доступных тестируемых
-            _access_time (String): срок доступа
 
         Returns:
             List: список ошибок при создании пользователя
@@ -40,9 +39,9 @@ class UserProfileService():
 
         ActionService().add_notifications(_login, "add", "user_manager")
 
-        return user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number, _access_time)
+        return user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time, _created_date, _active):
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date, _active, _education_module_expiration_date):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -51,7 +50,6 @@ class UserProfileService():
             _name (String): имя пользователя
             _email (String): email пользователя
             _role (String): роль пользователя [user/superuser]
-            _access_time (String): срок доступа
 
         Returns:
             Dict: словарь с информацией о пользователе
@@ -61,8 +59,7 @@ class UserProfileService():
 
         ActionService().add_notifications(_login, "overwrite", "user_manager")
 
-        return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _access_time,
-                                        _created_date, _active)
+        return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _created_date, _active, _education_module_expiration_date)
 
     def discharge_password(self, _login, _password, _password2):
         """
@@ -100,20 +97,14 @@ class UserProfileService():
 
         return user_manager.activation_deactivation(_login)
 
-    def get_settings_user(self):
-        """
-        Возвращает возможные настройки пользователя
-
-        Returns:
-            settings_user (Dict): словарь с настройками
-        """
-
-        user_manager = UserManager()
-
-        return user_manager.get_settings_user()
-
     def get_current_user_role(self):
 
         user_manager = UserManager()
 
         return user_manager.get_user_by_id(user_manager.get_current_user_id())
+
+    def access_extension(self, _period, _reference_point, _login):
+
+        user_manager = UserManager()
+
+        return user_manager.access_extension(_period, _reference_point, _login)

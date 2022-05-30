@@ -2,15 +2,16 @@
 
 {% block estimated_values %}
     <style>
-        .select{
-            position: absolute;
-            right: -77px;
-            top: 40px;
-            z-index: 1;
+        .about{
+            {#position: absolute;#}
+            {#right: -77px;#}
+            {#top: 40px;#}
+
+            margin: auto;
         }
         .table{
-            position: relative;
-            z-index: 0;
+            word-wrap: break-word;
+            width: 100%;
         }
         .criteria{
             border: 1px solid #ced4da;
@@ -27,72 +28,64 @@
 
     <div class="card">
         <div class="card-body">
-            <h2 class="card-title">Справочник оценочных значений</h2>
-
-            <form method="post" enctype="multipart/form-data" >
+        <form method="post" enctype="multipart/form-data" >
+            <div class="row">
+             <h2 class="card-title col-sm">Справочник оценочных значений</h2>
             {% if _data %}
-                <div class="select row">
-                    <div class="about">
-                        <label><strong>Диапазон возрастов</strong></label>
-                    </div>
-                    <div class="about">
-                        <select type="text" name="action" onchange="this.form.submit();" class="criteria form-select">
-                            {% for i_rage in _ranges_age %}
-                                <option {% if i_rage['id'] == _id_file_name %} selected {% endif %} value="{{ i_rage['id'] }}">{{ i_rage['range'] }}   </option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                <div class="about col-sm-4">
+                    <label><strong>Диапазон возрастов</strong></label>
+                    <select type="text" name="action" onchange="this.form.submit();" class="criteria form-select">
+                        {% for i_rage in _ranges_age %}
+                            <option {% if i_rage['id'] == _id_file_name %} selected {% endif %} value="{{ i_rage['id'] }}">{{ i_rage['range'] }}   </option>
+                        {% endfor %}
+                    </select>
                 </div>
-
                 <div>
                     <button type="submit" name="save" value="save" class="btn btn-primary">Сохранить</button>
                 </div>
-
+            </div>
                 <div id="assessment">
+                    {% for i_data in _data %}
+                        <div class="row">
+                            <div class="col-sm-12" style="overflow-y: scroll;">
+                                <table id="datatables-buttons" class="table table-bordered"
+                                    role="grid" aria-describedby="datatables-reponsive_info">
+                                    <tbody>
+                                        <tr>
+                                            <th id="assessment_parameters" class="align-content-center" colspan="4" style="text-align: center; font-size: 16px; width: 100%"><u>{{ i_data["assessment_parameters"] }}</u></th>
+                                        </tr>
+                                        {% for i_test in i_data["tests"] %}
 
-                        {% for i_data in _data %}
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <table id="datatables-buttons" class="table table-bordered" style="width: 100%;"
-                                        role="grid" aria-describedby="datatables-reponsive_info">
-                                        <tbody>
-                                            <tr>
-                                                <th id="assessment_parameters" class="align-content-center" colspan="4" style="text-align: center; font-size: 16px; width: 100%"><u>{{ i_data["assessment_parameters"] }}</u></th>
+                                                <tr>
+                                                    <th id="name_test" align="rigth" colspan="4" style="text-align: -webkit-center">Тест: {{ i_test["name_test"] }}</th>
+                                                </tr>
+                                                {% for i_parameter in i_test['parameters'] %}
+                                                    {% if i_parameter['name_parameters'] != "" %}
+                                                        <td style="width:25%;" class="align-self-lg-start col-1">  {{ i_parameter['name_parameters'] }}  </td>
+                                                    {% endif %}
+                                                    {% for i_criteria in i_parameter['criteria'] %}
+                                                        <tr class="align-self-lg-end">
+                                                            {% for i_key, i_value in i_criteria.items() %}
+                                                                {% if i_key != "id" %}
+                                                                    <td style="width:25%;" align="center" class="col-1"></td>
+                                                                    <td style="width:25%;" align="center" class="col-1">
+                                                                        <p disabled id="{{ i_criteria["id"] }}_name">{{ i_key }}</p>
+                                                                    </td>
+                                                                    <td style="box-sizing: border-box; width:25%;" align="center" class=" col-1">
+                                                                        <input required name="{{ i_criteria["id"] }}_grade" value="{{ i_value }}">
+                                                                    </td>
 
-                                            </tr>
-                                            {% for i_test in i_data["tests"] %}
-
-                                                    <tr>
-                                                        <th id="name_test" align="rigth" colspan="4" style="text-align: -webkit-center">Тест: {{ i_test["name_test"] }}</th>
-                                                    </tr>
-                                                    {% for i_parameter in i_test['parameters'] %}
-                                                        {% if i_parameter['name_parameters'] != "" %}
-                                                            <td style="width:25%;" class="align-self-lg-start col-1">  {{ i_parameter['name_parameters'] }}  </td>
-                                                        {% endif %}
-                                                        {% for i_criteria in i_parameter['criteria'] %}
-                                                            <tr class="align-self-lg-end">
-                                                                {% for i_key, i_value in i_criteria.items() %}
-                                                                    {% if i_key != "id" %}
-                                                                        <td style="width:25%;" align="center" class="col-1"></td>
-                                                                        <td style="width:25%;" align="center" class="col-1">
-                                                                            <p disabled id="{{ i_criteria["id"] }}_name">{{ i_key }}</p>
-                                                                        </td>
-                                                                        <td style="width:25%;" align="center" class="align-self-lg-start col-1">
-                                                                            <input required name="{{ i_criteria["id"] }}_grade" value="{{ i_value }}">
-                                                                        </td>
-
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                            </tr>
-                                                        {% endfor %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </tr>
                                                     {% endfor %}
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                {% endfor %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
-                        {% endfor %}
-
+                        </div>
+                    {% endfor %}
                 </div>
             {% else %}
                 <div class="text-center">

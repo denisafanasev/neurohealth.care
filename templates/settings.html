@@ -50,7 +50,7 @@
         <h1 class="h3 mb-3">Настройки</h1>
     
         <div class="row">
-            <div class="col-2">
+            <div class="col">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Настройки</h5>
@@ -66,7 +66,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-10">
+            <div class="col-sm-9">
                 <div class="tab-content">
                     <div id="example" class="tab-pane fade {% if _endpoint == "estimated_values" %} show active {% endif %}" id="{{ url_for("estimated_values") }}" role="tabpanel">
                         {% block estimated_values %}

@@ -37,7 +37,27 @@ class ProbationerCardPageController():
 
         probationer_card_service = ProbationerCardService()
 
-        return probationer_card_service.get_probationer_card_view(probationer_id)
+        patient = probationer_card_service.get_probationer_card_view(probationer_id)
+
+        patient_view = {}
+        if patient is not None:
+            patient_view["name_probationer"] = patient.name_probationer
+            patient_view["date_of_birth"] = patient.date_of_birth
+            patient_view["name_parent"] = patient.name_parent
+            patient_view["contacts"] = patient.contacts
+            patient_view["educational_institution"] = patient.educational_institution
+            patient_view["diagnoses"] = patient.diagnoses
+            patient_view["reasons_for_contact"] = patient.reasons_for_contact
+        else:
+            patient_view["name_probationer"] = "введите имя испытуемого.."
+            patient_view["date_of_birth"] = "введите дату рождения.."
+            patient_view["name_parent"] = "введите ФИО родителя.."
+            patient_view["contacts"] = "введите контакты для связи.."
+            patient_view["educational_institution"] = "введите название учебного заведения.."
+            patient_view["diagnoses"] = "введите диагнозы.."
+            patient_view["reasons_for_contact"] = "введите причины обращения.."
+
+        return patient_view
 
     def change_probationer(self, _probationer_id, _name_probationer, _date_of_birth, _name_parent,
                            _educational_institution,
@@ -54,5 +74,10 @@ class ProbationerCardPageController():
                            _educational_institution,
                            _contacts, _diagnoses, _reasons_for_contact)
 
+    def get_settings_probationer(self):
+
+        probationer_card_service = ProbationerCardService()
+
+        return probationer_card_service.get_settings_probationer()
 
 

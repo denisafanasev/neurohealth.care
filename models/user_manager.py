@@ -1,7 +1,9 @@
+import calendar
 import hashlib
 import flask_login
 
-from datetime import datetime
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from itsdangerous import URLSafeTimedSerializer
 
 from models.user import User
@@ -115,18 +117,10 @@ class UserManager():
         else:
             user.created_date = datetime.strptime("01/01/1990", '%d/%m/%Y')
 
-        if _data_row.get('expires_date') is not None:
-            if not _data_row.get('expires_date') == 'неограниченно':
-                user.expires_date = datetime.strptime(_data_row['expires_date'], '%d/%m/%Y')
-            else:
-                user.expires_date = _data_row['expires_date']
+        if _data_row.get('education_module_expiration_date') is not None:
+            user.education_module_expiration_date = datetime.strptime(_data_row['education_module_expiration_date'], '%d/%m/%Y')
         else:
-            user.expires_date = ""
-
-        if _data_row.get('access_time') is not None:
-            user.access_time = _data_row['access_time']
-        else:
-            user.access_time = ""
+            user.education_module_expiration_date = ""
 
         if _data_row.get('token') is not None:
             user.token = _data_row['token']
@@ -298,7 +292,7 @@ class UserManager():
         
         return False
     
-    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _access_time):
+    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number):
         """
         Процедура создания нового пользователя в системе
 
@@ -310,7 +304,6 @@ class UserManager():
             _email (String): email пользователя
             _role (String): роль пользователя [user/superuser]
             _probationers_number (Integer): количество доступных тестирумых
-            _access_time (String): срок доступа
 
         Raises:
             UserManagerException: ошибка создания нового пользователя
@@ -334,7 +327,6 @@ class UserManager():
         email = _email.lower()
         role = _role
         name = _name
-        access_time = _access_time
         email_confirmed = False
         # создаем токен для подтверждения регистрации
         token = self.create_token(email)
@@ -356,19 +348,15 @@ class UserManager():
             raise UserManagerException("Пользователь с таким email уже существует")
 
         # создаем новую запись
-        user = User(_login=login, _name=name, _email=email, _role=role, _access_time=access_time,
-                    _probationers_number=_probationers_number)
+        user = User(_login=login, _name=name, _email=email, _role=role, _probationers_number=_probationers_number)
 
 
-        if not user.expires_date == "неограниченно":
-            expires_date = user.expires_date.strftime("%d/%m/%Y")
-        else:
-            expires_date = user.expires_date
+        education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
 
         user_data = {"login": user.login, "password": password, "email": user.email,
                      "role": user.role, "name": user.name, "created_date": user.created_date.strftime("%d/%m/%Y"),
-                     "expires_date": expires_date, "probationers_number": user.probationers_number,
-                     "access_time": user.access_time, "active": user.active, "email_confirmed": user.email_confirmed, "token": user.token}
+                     "education_module_expiration_date": education_module_expiration_date, "probationers_number": user.probationers_number,
+                     "active": user.active, "email_confirmed": user.email_confirmed, "token": user.token}
                     
         data_store.add_row(user_data)
 
@@ -406,7 +394,8 @@ class UserManager():
 
         return user_role
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _access_time, _created_date, _active):
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date, _active,
+                    _education_module_expiration_date):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -415,7 +404,6 @@ class UserManager():
             _name (String): имя пользователя
             _email (String): email пользователя
             _role (String): роль пользователя [user/superuser]
-            _access_time (String): срок доступа
             _probationers_number (Int): максимальное количество испытуемых у пользователя
             _created_date (String): дата создания пользователя
 
@@ -423,18 +411,17 @@ class UserManager():
             Dict: словарь с информацией о пользователе
         """
 
-        user = User(_login=_login, _name=_name, _email=_email, _role=_role, _access_time=_access_time, _created_date=_created_date,
-                    _probationers_number=_probationers_number)
+        user = User(_login=_login, _name=_name, _email=_email, _role=_role, _created_date=_created_date,
+                    _probationers_number=_probationers_number, _education_module_expiration_date=_education_module_expiration_date)
 
-        if not user.expires_date == "неограниченно":
-            expires_date = user.expires_date.strftime("%d/%m/%Y")
-        else:
-            expires_date = user.expires_date
+
+        education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
+        user.created_date = user.created_date.strftime("%d/%m/%Y")
 
         data_store = DataStore("users")
         user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
-                     "probationers_number": user.probationers_number, "access_time": user.access_time,
-                     "expires_date": expires_date, "active": user.active}
+                     "probationers_number": user.probationers_number, "created_date": user.created_date,
+                     "education_module_expiration_date": education_module_expiration_date, "active": user.active}
 
         data_store.change_row(user_data)
         user = self.get_user_by_login(_login)
@@ -480,36 +467,26 @@ class UserManager():
             user.active = False
         else:
             user.active = True
-        user = User(_login=user.login, _name=user.name, _email=user.email, _role=user.role, _access_time=user.access_time,
-                    _created_date=user.created_date,
-                    _probationers_number=user.probationers_number, _active=user.active)
+        user = User(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+                    _created_date=user.created_date, _probationers_number=user.probationers_number, _active=user.active)
 
-        if not user.expires_date == "неограниченно":
-            expires_date = user.expires_date.strftime("%d/%m/%Y")
-        else:
-            expires_date = user.expires_date
+        education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
 
         user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
-                     "probationers_number": user.probationers_number, "access_time": user.access_time,
-                     "expires_date": expires_date, "active": user.active}
+                     "probationers_number": user.probationers_number,
+                     "education_module_expiration_date": education_module_expiration_date, "active": user.active}
         data_store.change_row(user_data)
 
         return user.active
 
-    # TODO: переделать, унести это в отдельный класс и config.py для работы со статичными настройками
-    def get_settings_user(self):
+    def access_extension(self, _period, _reference_point, _login):
 
-        """
-        Возвращает возможные настройки пользователя
+        data_store = DataStore("users")
+        user = self.get_user_by_login(_login)
 
-        Returns:
-            settings_user (Dict): словарь с настройками
-        """
+        if _reference_point == "end":
+            user.education_module_expiration_date = (user.education_module_expiration_date + relativedelta(months=_period)).strftime("%d/%m/%Y")
+        elif _reference_point == "today":
+            user.education_module_expiration_date = (datetime.now() + relativedelta(months=_period)).strftime("%d/%m/%Y")
 
-        data_store = DataStore("settings_user")
-
-        settings_user = data_store.get_rows()[0]
-
-        return settings_user
-
-
+        data_store.change_row({"education_module_expiration_date": user.education_module_expiration_date, "login": user.login})
