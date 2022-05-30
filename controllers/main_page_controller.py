@@ -48,10 +48,7 @@ class MainPageController():
         user_view['role'] = user.role
 
         user_view['created_date'] = str(user.created_date.strftime("%d/%m/%Y"))
-        if not user.expires_date == "неограниченно":
-            user_view['expires_date'] = str(user.expires_date.strftime("%d/%m/%Y"))
-        else:
-            user_view['expires_date'] = user.expires_date
+        user_view['education_module_expiration_date'] = str(user.education_module_expiration_date.strftime("%d/%m/%Y"))
 
         user_view['probationers_number'] = user.probationers_number
 

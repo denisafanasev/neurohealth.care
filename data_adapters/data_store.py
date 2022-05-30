@@ -96,10 +96,7 @@ class DataStore():
             _data (Dict): структура данных для записи
         """
 
-        self.data_store.update_multiple([({"name": _data["name"], "email":_data["email"], "role":_data["role"],
-                                           "probationers_number":_data["probationers_number"],
-                                           "expires_date":_data["expires_date"], "access_time":_data["access_time"],
-                                           "active":_data["active"]}, where("login") == _data["login"])])
+        self.data_store.update_multiple([(_data, where("login") == _data["login"])])
 
     def discharge_password(self, _data):
         """
@@ -130,11 +127,7 @@ class DataStore():
             _data(Dict): структура данных для записи
         """
 
-        self.data_store.update_multiple([({"name_probationer": _data["name_probationer"],
-                                           "date_of_birth": _data["date_of_birth"], "name_parent": _data["name_parent"],
-                                           "educational_institution": _data["educational_institution"],
-                                           "contacts": _data["contacts"],"diagnoses": _data["diagnoses"],
-                                           "reasons_for_contact": _data["reasons_for_contact"]},
+        self.data_store.update_multiple([(_data,
                                            where("probationer_id") == int(_data["probationer_id"]))])
 
     def update_action(self, _action, _login):

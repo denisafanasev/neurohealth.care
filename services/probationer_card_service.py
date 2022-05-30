@@ -52,3 +52,9 @@ class ProbationerCardService():
                            _contacts, _diagnoses, _reasons_for_contact)
 
         ActionService().add_notifications(name_probationer, "overwrite", "probationer_manager")
+
+    def get_settings_probationer(self):
+
+        probationer_manager = ProbationerManager()
+
+        return probationer_manager.get_settings_probationer()

@@ -48,16 +48,9 @@ class ProbationerManager():
             _probationers_id   - Required  : id пользователя (Int)
         """
 
-        patient = {}
-        patient["name_probationer"] = "введите имя испытуемого.."
-        patient["date_of_birth"] = "введите дату рождения.."
-        patient["name_parent"] = "введите ФИО родителя.."
-        patient["contacts"] = "введите контакты для связи.."
-        patient["educational_institution"] = "введите название учебного заведения.."
-        patient["diagnoses"] = "введите диагнозы.."
-        patient["reasons_for_contact"] = "введите причины обращения.."
-
         data_store = DataStore("probationers")
+
+        patient = None
 
         patients_data = data_store.get_row_by_id(_probationer_id)
 
@@ -167,9 +160,10 @@ class ProbationerManager():
             _reasons_for_contact(String): причины обращения
         """
 
-        probationer = self.probationer_row_to_probationer(_probationer_id, _name_probationer, _date_of_birth,
-                                                          _name_parent, _educational_institution, _contacts,
-                                                          _diagnoses, _reasons_for_contact)
+        probationer = self.probationer_row_to_probationer(_probationer_id=_probationer_id, _name_probationer=_name_probationer,
+                                                          _name_parent=_name_parent, _educational_institution=_educational_institution,
+                                                          _contacts=_contacts,
+                                                          _diagnoses=_diagnoses, _reasons_for_contact=_reasons_for_contact)
 
         probationer.date_of_birth = datetime.strptime(_date_of_birth, "%Y-%m-%d").strftime("%d/%m/%Y")
 
@@ -193,4 +187,10 @@ class ProbationerManager():
             return True
         else:
             return False
+
+    def get_settings_probationer(self):
+
+        data_store = DataStore("settings_probationer")
+
+        return data_store.get_rows()[0]
 
