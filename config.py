@@ -43,8 +43,7 @@ ROLE = ["user", "superuser"]
 EDUCATION_MODULE_EXPIRATION_DATE = [{"name_period": "1 месяц", "amount": 1},
                                     {"name_period": "3 месяца", "amount": 3},
                                     {"name_period": "6 месяцев", "amount": 6},
-                                    {"name_period": "1 год", "amount": 12},
-                                    {"name_period": "неограниченно"}]
+                                    {"name_period": "1 год", "amount": 12}]
 REFERENCE_POINT = [{"name_point": "от даты окончания", "value": "end"},
                    {"name_point": "от текущей даты", "value": "today"}]
 
