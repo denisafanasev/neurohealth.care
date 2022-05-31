@@ -28,7 +28,8 @@ class User(UserMixin):
     email_confirmed = False
 
     def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _active=True, _created_date="",
-                 _education_module_expiration_date="", _probationers_number=DEFAULT_PROBATIONS_NUMBER):
+                 _education_module_expiration_date="", _probationers_number=DEFAULT_PROBATIONS_NUMBER, _token="",
+                 _email_confirmed=False):
         """
         Конструктор класса
 
@@ -51,8 +52,8 @@ class User(UserMixin):
         self.role = _role
         self.probationers_number = _probationers_number
         self.active = _active
-        self.token = ""
-        self.email_confirmed = False
+        self.token = _token
+        self.email_confirmed = _email_confirmed
 
         # если дата создания не указана, то будем считать что пользователь создан сегодня
         if _created_date == "":
@@ -64,7 +65,7 @@ class User(UserMixin):
             self.created_date = datetime.datetime.strptime(self.created_date, "%d/%m/%Y")
 
         if _education_module_expiration_date == "":
-            self.education_module_expiration_date = self.created_date
+            self.education_module_expiration_date = date.today()
         else:
             if type(_education_module_expiration_date) is str:
                 self.education_module_expiration_date = datetime.datetime.strptime(_education_module_expiration_date, "%d/%m/%Y")

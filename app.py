@@ -309,7 +309,7 @@ def user_profile():
 
                     error = page_controller.create_user(user["login"], user["name"], user["password"],
                                                         user["password2"], user["email"], user["role"],
-                                                        user["probationers_number"], user["access_time"])
+                                                        user["probationers_number"])
 
                     if error is None:
                         mode = "view"
@@ -330,7 +330,6 @@ def user_profile():
                     user["email"] = request.form["email"]
                     user["role"] = request.form["role"]
                     user["probationers_number"] = int(request.form["probationers_number"])
-                    user["access_time"] = request.form["access_time"]
                     user["created_date"] = data_begin["created_date"]
                     user["active"] = data_begin["is_active"]
                     user['education_module_expiration_date'] = data_begin["education_module_expiration_date"]

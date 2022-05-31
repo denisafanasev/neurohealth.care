@@ -13,12 +13,13 @@ from services.action_service import ActionService
 from error import UserManagerException
 import config
 
+
 class UserManager():
     """
     Класс модели управления пользователями, ведения списка пользователей
     Взаимодейтвует с модулем хранения данных, преобразую доменные структуры в объекты типа Dict
     Вовзращает в слой бизнес-логики приложения объекты в доменных структурах
-    """    
+    """
 
     def hash_password(self, _password):
         """
@@ -29,7 +30,7 @@ class UserManager():
 
         Returns:
             String: представление результата hash функции
-        """  
+        """
 
         return hashlib.md5(_password.encode()).hexdigest()
 
@@ -55,11 +56,11 @@ class UserManager():
 
         Raises:
             UserManagerException: ошибка корректности значения пароля
-        """        
+        """
 
-        if (len(_password) < 3) or (len(_password)>20):
+        if (len(_password) < 3) or (len(_password) > 20):
             raise UserManagerException("неверная длинная пароля, укажите минимум 4 и максимум 20 символов")
-    
+
     def validate_role(self, _role):
         """
         Проверка корректности указания роли пользователя в системе
@@ -69,11 +70,11 @@ class UserManager():
 
         Raises:
             UserManagerException: ошибка корректности указанного значения роли
-        """        
+        """
 
         if _role != "superuser" and _role != "user":
             raise UserManagerException("Роль пользователя задана не верно")
-    
+
     def validate_login(self, _login):
         """
         Проверка корректности значения логина пользователя
@@ -83,9 +84,9 @@ class UserManager():
 
         Raises:
             UserManagerException: ошибка корректности указанного логина пользователя
-        """        
+        """
 
-        if (len(_login) < 4) or (len(_login)>10):
+        if (len(_login) < 4) or (len(_login) > 10):
             raise UserManagerException("неверная длинная логина пользователя, укажите минимум 4 символа и максимум 10")
 
     def user_row_to_user(self, _data_row):
@@ -97,37 +98,38 @@ class UserManager():
 
         Returns:
             User: пользователь
-        """        
+        """
 
         # создадим пользователя с указанием обязательных атрибутов
         try:
             user = User(_data_row.doc_id, _data_row['login'], _data_row['name'], _data_row['email'], _data_row['role'],
-                    _data_row['active'])
+                        _data_row['active'])
         except KeyError as error:
             raise UserManagerException("DB structure error: no attribute " + error.args[0])
 
         # проверим наличие в структуре хранения необязательных атрибутов
-        if _data_row.get('expires_date') is not None:
-            user.education_module_expiration_date = datetime.strptime(_data_row['expires_date'], '%d/%m/%Y')
 
         if _data_row.get('probationers_number') is not None:
             user.probationers_number = int(_data_row['probationers_number'])
         else:
             user.probationers_number = 5
-        
+
         if _data_row.get('created_date') is not None:
             user.created_date = datetime.strptime(_data_row['created_date'], '%d/%m/%Y')
         else:
             user.created_date = datetime.strptime("01/01/1990", '%d/%m/%Y')
 
         if _data_row.get('education_module_expiration_date') is not None:
-            user.education_module_expiration_date = datetime.strptime(_data_row['education_module_expiration_date'], '%d/%m/%Y')
+            user.education_module_expiration_date = datetime.strptime(_data_row['education_module_expiration_date'],
+                                                                      '%d/%m/%Y')
+        else:
+            user.education_module_expiration_date = datetime.today()
 
         if _data_row.get('token') is not None:
             user.token = _data_row['token']
         else:
             user.token = ""
-        
+
         if _data_row.get('email_confirmed') is not None:
             user.email_confirmed = _data_row['email_confirmed']
         else:
@@ -164,7 +166,23 @@ class UserManager():
         user_data = data_store.get_row_by_id(_user_id)
 
         if user_data is not None:
+            if user_data.get('access_time') is not None:
+                data_store.delete_key_in_row("access_time", "login", user_data["login"])
+            if user_data.get("expires_date") is not None:
+                data_store.delete_key_in_row("expires_date", "login", user_data["login"])
             user = self.user_row_to_user(user_data)
+            if user_data.get("education_module_expiration_date") is None:
+                self.change_user(user.login, user.name, user.email, user.role, user.probationers_number,
+                                 user.created_date, user.active,
+                                 user.education_module_expiration_date, user.token, user.email_confirmed)
+            elif user_data.get("token") is None:
+                self.change_user(user.login, user.name, user.email, user.role, user.probationers_number,
+                                 user.created_date, user.active,
+                                 user.education_module_expiration_date, user.token, user.email_confirmed)
+            elif user_data.get("email_confirmed") is None:
+                self.change_user(user.login, user.name, user.email, user.role, user.probationers_number,
+                                 user.created_date, user.active,
+                                 user.education_module_expiration_date, user.token, user.email_confirmed)
 
         return user
 
@@ -189,16 +207,15 @@ class UserManager():
         # проверим, что у нас данному набору логин и пароль соответсвует только одна запись пользователя
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей")
-       
+
         if len(user_data) == 0:
             raise UserManagerException("Данный пользователь не найден")
-       
-    
+
         # получаем объект Пользователь
         user = self.user_row_to_user(user_data[0])
 
         return user
-   
+
     def get_user_by_login(self, _login):
         """
         Возвращает пользователя по логину
@@ -216,12 +233,12 @@ class UserManager():
 
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей, login не уникальный")
-        
+
         if len(user_data) == 1:
             user = self.user_row_to_user(user_data[0])
-        
+
         return user
-    
+
     def get_user_by_email(self, _email):
         """
         Возвращает пользователя по email
@@ -239,12 +256,12 @@ class UserManager():
 
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей, email не уникальный")
-       
+
         if len(user_data) == 1:
             user = self.user_row_to_user(user_data[0])
-       
+
         return user
-    
+
     def get_users(self):
         """
         Возвращает список пользователей в системе, в соответствии с ролью пользователя, который запрашивает список
@@ -263,10 +280,10 @@ class UserManager():
         users_list_data = data_store.get_rows()
 
         for user_data in users_list_data:
-    
-            #user = User(user_data.doc_id, user_data['login'], user_data['name'], user_data['email'], user_data['role'])
+
+            # user = User(user_data.doc_id, user_data['login'], user_data['name'], user_data['email'], user_data['role'])
             user = self.user_row_to_user(user_data)
-            
+
             if self.get_user_role(self.get_current_user_id()) == "superuser":
                 users.append(user)
             else:
@@ -274,7 +291,6 @@ class UserManager():
                     users.append(user)
 
         return users
-        
 
     def is_there_users(self):
         """
@@ -290,9 +306,9 @@ class UserManager():
 
         if data != 0:
             return True
-        
+
         return False
-    
+
     def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number):
         """
         Процедура создания нового пользователя в системе
@@ -351,33 +367,33 @@ class UserManager():
         # создаем новую запись
         user = User(_login=login, _name=name, _email=email, _role=role, _probationers_number=_probationers_number)
 
-
         education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
 
         user_data = {"login": user.login, "password": password, "email": user.email,
                      "role": user.role, "name": user.name, "created_date": user.created_date.strftime("%d/%m/%Y"),
-                     "education_module_expiration_date": education_module_expiration_date, "probationers_number": user.probationers_number,
+                     "education_module_expiration_date": education_module_expiration_date,
+                     "probationers_number": user.probationers_number,
                      "active": user.active, "email_confirmed": user.email_confirmed, "token": user.token}
-                    
+
         data_store.add_row(user_data)
 
-        return 
-    
+        return
+
     def get_current_user_id(self):
         """
         Возвращает id текущего авторизованного пользователя
 
         Returns:
             Int: id пользователя
-        """        
-        
+        """
+
         id = None
 
         if flask_login.current_user.is_authenticated:
             id = flask_login.current_user.user_id
-        
+
         return id
-    
+
     def get_user_role(self, _id):
         """
         Возвращает роль пользователя по id
@@ -387,7 +403,7 @@ class UserManager():
 
         Returns:
             String: роль пользователя
-        """        
+        """
 
         user_id = self.get_current_user_id()
         user = self.get_user_by_id(user_id)
@@ -396,7 +412,7 @@ class UserManager():
         return user_role
 
     def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date, _active,
-                    _education_module_expiration_date):
+                    _education_module_expiration_date="", _token="", _email_confirmed=False):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -413,8 +429,13 @@ class UserManager():
         """
 
         user = User(_login=_login, _name=_name, _email=_email, _role=_role, _created_date=_created_date,
-                    _probationers_number=_probationers_number, _education_module_expiration_date=_education_module_expiration_date)
+                    _probationers_number=_probationers_number, _token=_token, _email_confirmed=_email_confirmed,
+                    _education_module_expiration_date=_education_module_expiration_date)
 
+        # user = self.user_row_to_user({"login": _login, "email": _email, "role": _role, "name": _name,
+        #              "probationers_number": _probationers_number, "created_date": _created_date,
+        #              "education_module_expiration_date": _education_module_expiration_date, "active": _active,
+        #                               "token": _token, "email_confirmed": _email_confirmed})
 
         education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
         user.created_date = user.created_date.strftime("%d/%m/%Y")
@@ -422,13 +443,13 @@ class UserManager():
         data_store = DataStore("users")
         user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
                      "probationers_number": user.probationers_number, "created_date": user.created_date,
-                     "education_module_expiration_date": education_module_expiration_date, "active": user.active}
+                     "education_module_expiration_date": education_module_expiration_date, "active": user.active,
+                     "token": user.token, "email_confirmed": user.email_confirmed}
 
         data_store.change_row(user_data)
         user = self.get_user_by_login(_login)
 
         return user
-
 
     def discharge_password(self, _login, _password, _password2):
         """
@@ -486,8 +507,11 @@ class UserManager():
         user = self.get_user_by_login(_login)
 
         if _reference_point == "end":
-            user.education_module_expiration_date = (user.education_module_expiration_date + relativedelta(months=_period)).strftime("%d/%m/%Y")
+            user.education_module_expiration_date = (
+                        user.education_module_expiration_date + relativedelta(months=_period)).strftime("%d/%m/%Y")
         elif _reference_point == "today":
-            user.education_module_expiration_date = (datetime.now() + relativedelta(months=_period)).strftime("%d/%m/%Y")
+            user.education_module_expiration_date = (datetime.now() + relativedelta(months=_period)).strftime(
+                "%d/%m/%Y")
 
-        data_store.change_row({"education_module_expiration_date": user.education_module_expiration_date, "login": user.login})
+        data_store.change_row(
+            {"education_module_expiration_date": user.education_module_expiration_date, "login": user.login})
