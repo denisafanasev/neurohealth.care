@@ -132,7 +132,7 @@ class CourseManager():
                 data_store_course = DataStore(f"course_{i_course['id']}/settings")
             except FileNotFoundError:
                 # os.mkdir(f"data/course_{i_course['id']}")
-                os.mkdir(config.DATA_FOLDER+"course_{"+str(i_course['id'])+"}")
+                os.mkdir(config.DATA_FOLDER+"course_"+str(i_course['id']))
                 data_store_course = DataStore(f"course_{i_course['id']}/settings")
 
             try:

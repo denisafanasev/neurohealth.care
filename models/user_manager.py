@@ -428,7 +428,7 @@ class UserManager():
             Dict: словарь с информацией о пользователе
         """
 
-        user = User(_login=_login, _name=_name, _email=_email, _role=_role, _created_date=_created_date,
+        user = User(_login=_login, _name=_name, _email=_email, _role=_role, _created_date=_created_date, _active=_active,
                     _probationers_number=_probationers_number, _token=_token, _email_confirmed=_email_confirmed,
                     _education_module_expiration_date=_education_module_expiration_date)
 
@@ -439,6 +439,10 @@ class UserManager():
 
         education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
         user.created_date = user.created_date.strftime("%d/%m/%Y")
+        if _active is None:
+            user.active = False
+        elif _active == "True":
+            user.active = True
 
         data_store = DataStore("users")
         user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
@@ -472,7 +476,7 @@ class UserManager():
         data_store.discharge_password(user_data)
 
     # TODO: переделать на на 2 разные функции
-    def activation_deactivation(self, _login):
+    def activation(self, _login):
         """
         Блокировка/разблокировка пользователя
 
@@ -483,23 +487,39 @@ class UserManager():
             _active (bool): Активирован/заблокирован пользователь
         """
         data_store = DataStore("users")
-        user = self.get_user_by_login(_login)
+        data_store.change_row({"login": _login, "active": True})
 
-        if user.active:
-            user.active = False
-        else:
-            user.active = True
-        user = User(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
-                    _created_date=user.created_date, _probationers_number=user.probationers_number, _active=user.active)
+        # if user.active:
+        #     user.active = False
+        # else:
+        #     user.active = True
+        # user = User(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+        #             _created_date=user.created_date, _probationers_number=user.probationers_number, _active=user.active)
+        #
+        # education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
+        #
+        # user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
+        #              "probationers_number": user.probationers_number,
+        #              "education_module_expiration_date": education_module_expiration_date, "active": user.active}
+        # data_store.change_row(user_data)
 
-        education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
 
-        user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
-                     "probationers_number": user.probationers_number,
-                     "education_module_expiration_date": education_module_expiration_date, "active": user.active}
-        data_store.change_row(user_data)
+        return True
 
-        return user.active
+    def deactivation(self, _login):
+        """
+        Блокировка/разблокировка пользователя
+
+        Args:
+            _login(String): логин пользователя
+
+        Returns:
+            _active (bool): Активирован/заблокирован пользователь
+        """
+        data_store = DataStore("users")
+        data_store.change_row({"login": _login, "active": False})
+
+        return False
 
     def access_extension(self, _period, _reference_point, _login):
 

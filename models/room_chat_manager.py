@@ -102,12 +102,11 @@ class RoomChatManager():
 
         _message["id"] = amount + 1
         message = self.message_row_to_message(_message)
-        # if "</p><p>" in message.text:
-        #     message.text = message.text.replace("</p><p>", "\n")
+
         if message.files is not None:
             file_list = []
             for i_file in message.files:
-                file = self.save_files(message.name_sender, i_file)
+                file = self.save_files(i_file)
                 file_list.append(file.name_file_unique)
             message.files = file_list
 
@@ -117,37 +116,11 @@ class RoomChatManager():
         data_store.update_messages(message.id, int(_id_room_chat))
 
 
-    def save_files(self, _user, _file):
+    def save_files(self, _file):
 
         data_store = DataStore("files")
-        user_dir = "user_{}".format(_user)
-        if not "user_files" in os.listdir(config.DATA_FOLDER):
-            # os.mkdir("data/user_files")
-            os.mkdir(config.DATA_FOLDER+"user_files")
-        path = config.DATA_FOLDER+"user_files/"+user_dir
 
-        if not user_dir in os.listdir(config.DATA_FOLDER+"user_files"):
-            os.mkdir(path)
-            amount = 0
-        else:
-            amount = len(os.listdir(path))
-
-        type_file = _file.content_type.split("/")[-1]
-        user_file_unique = "user_file_{num}.{type}".format(num=amount+1, type=type_file)
-        file = self.file_row_to_file({"name_file_user": _file.filename, "name_file_unique": user_file_unique, "path": path})
+        file = self.file_row_to_file({"name_file_user": _file["name_file_user"], "name_file_unique": _file["name_file_unique"], "path": _file["path"]})
         data_store.add_row({"name_file_user": file.name_file_user, "name_file_unique": file.name_file_unique, "path": file.path})
-        _file.save(os.path.join(path, user_file_unique))
 
         return file
-
-    def get_path_file(self, _user, _name_file):
-
-        data_store = DataStore("files")
-        path_file = data_store.get_rows({"name_file_unique": _name_file})[0]["path"]
-
-        if path_file == []:
-            path_file = None
-        else:
-            path_file += "/" + _name_file
-
-        return path_file
