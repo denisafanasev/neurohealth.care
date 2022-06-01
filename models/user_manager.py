@@ -172,17 +172,20 @@ class UserManager():
                 data_store.delete_key_in_row("expires_date", "login", user_data["login"])
             user = self.user_row_to_user(user_data)
             if user_data.get("education_module_expiration_date") is None:
-                self.change_user(user.login, user.name, user.email, user.role, user.probationers_number,
-                                 user.created_date, user.active,
-                                 user.education_module_expiration_date, user.token, user.email_confirmed)
+                self.change_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+                                 _probationers_number=user.probationers_number, _created_date=user.created_date,
+                                 _education_module_expiration_date=user.education_module_expiration_date,
+                                 _token=user.token, _email_confirmed=user.email_confirmed)
             elif user_data.get("token") is None:
-                self.change_user(user.login, user.name, user.email, user.role, user.probationers_number,
-                                 user.created_date, user.active,
-                                 user.education_module_expiration_date, user.token, user.email_confirmed)
+                self.change_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+                                 _probationers_number=user.probationers_number, _created_date=user.created_date,
+                                 _education_module_expiration_date=user.education_module_expiration_date,
+                                 _token=user.token, _email_confirmed=user.email_confirmed)
             elif user_data.get("email_confirmed") is None:
-                self.change_user(user.login, user.name, user.email, user.role, user.probationers_number,
-                                 user.created_date, user.active,
-                                 user.education_module_expiration_date, user.token, user.email_confirmed)
+                self.change_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+                                 _probationers_number=user.probationers_number, _created_date=user.created_date,
+                                 _education_module_expiration_date=user.education_module_expiration_date,
+                                 _token=user.token, _email_confirmed=user.email_confirmed)
 
         return user
 
@@ -499,7 +502,6 @@ class UserManager():
         #              "education_module_expiration_date": education_module_expiration_date, "active": user.active}
         # data_store.change_row(user_data)
 
-
         return True
 
     def deactivation(self, _login):
@@ -524,7 +526,7 @@ class UserManager():
 
         if _reference_point == "end":
             user.education_module_expiration_date = (
-                        user.education_module_expiration_date + relativedelta(months=_period)).strftime("%d/%m/%Y")
+                    user.education_module_expiration_date + relativedelta(months=_period)).strftime("%d/%m/%Y")
         elif _reference_point == "today":
             user.education_module_expiration_date = (datetime.now() + relativedelta(months=_period)).strftime(
                 "%d/%m/%Y")

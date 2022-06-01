@@ -126,7 +126,7 @@
                                     <div class="col-sm-12 col-md-6">
                                         <div class="dt-buttons btn-group flex-wrap">
                                             <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
-                                            href="#" data-bs-toggle="modal" data-bs-target="#{{ _data_now[-1]['user_id'] }}"
+                                            data-bs-toggle="modal" data-bs-target="#{{ _data_now[-1]['user_id'] }}"
                                                     onclick="document.getElementById('{{ _data_now[-1]['user_id'] }}').style.display='block'">
                                                 <span>Добавить пользователя</span>
                                             </a>
@@ -438,7 +438,9 @@
                                 <div class="mb-2">
                                     <label class="form-label" style="height: 100%"><strong>Статус</strong></label>
                                     <div>
-                                        <input id="is_active" name="is_active_{{ item['user_id']|int }}" class="form-check-input" type="checkbox" value="True">
+                                        <input id="is_active" name="is_active_{{ item['user_id']|int }}"
+                                               class="form-check-input" type="checkbox" value="True"
+                                               {% if _data_edit['active'] %}checked{% endif %}>
                                         <label class="form-check-label" for="is_active">Разблокирован</label>
                                     </div>
                                 </div>
