@@ -31,7 +31,7 @@ from controllers.education_main_course_lesson_page_controller import EducationMa
 from controllers.education_list_courses_page_controller import EducationListCoursesPageController
 from controllers.education_course_page_controller import EducationCoursePageController
 from controllers.education_course_lesson_page_controller import EducationCourseLessonPageController
-from controllers.upload_page_controller import UploadPageController
+from controllers.download_page_controller import DownloadPageController
 
 from error import UserManagerException
 
@@ -282,18 +282,17 @@ def user_profile():
         if not flask_login.current_user.is_admin():
             mode = "edit"
 
-    data_begin = page_controller.get_users_profile_view(user_id)
-    data = {}
-    if isinstance(data_begin, dict):
-        active = data_begin['is_active']
+    data = page_controller.get_users_profile_view(user_id)
+    data_edit = {}
+    if isinstance(data, dict):
+        active = data['active']
     else:
         active = False
     
     error_type = False
-
     try:
         if request.method == 'POST':
-            if request.form["button"] == "add":
+            if request.form.get("button") == "add":
                 if mode == "new":
                     # добавляем нового пользователя и получаем список с ошибками
                     # если их нет, то получаем пустой список
@@ -316,13 +315,13 @@ def user_profile():
                         error = "Пользователь сохранён!"
                         error_type = "Successful"
 
-                    data = user
+                    data_edit = user
 
-            elif request.form["button"] == "edit":
+            elif request.form.get("button") == "edit":
                 if mode == "view":
                     mode = "edit"
 
-            elif request.form["button"] == "save":
+            elif request.form.get("button") == "save":
                 if mode == "edit":
                     user = {}
                     user["login"] = request.form["login"]
@@ -330,20 +329,24 @@ def user_profile():
                     user["email"] = request.form["email"]
                     user["role"] = request.form["role"]
                     user["probationers_number"] = int(request.form["probationers_number"])
-                    user["created_date"] = data_begin["created_date"]
-                    user["active"] = data_begin["is_active"]
-                    user['education_module_expiration_date'] = data_begin["education_module_expiration_date"]
+                    user["created_date"] = data["created_date"]
+                    user["active"] = request.form.get("is_active")
+                    user['education_module_expiration_date'] = data["education_module_expiration_date"]
 
                     page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
                                                         user["probationers_number"], user["created_date"], user["active"],
                                                 user['education_module_expiration_date'])
 
-                    data = user
+                    data_edit = user
                     mode = "view"
                     error = "Изменения сохранены!"
                     error_type = "Successful"
+                    if data_edit["active"] == "True":
+                        data_edit["active"] = True
+                    elif data_edit["active"] is None:
+                        data_edit["active"] = False
 
-            elif request.form["button"] == "discharge" or request.form["button"] == "save_discharge":
+            elif request.form.get("button") == "discharge" or request.form.get("button") == "save_discharge":
                 if mode == "discharge":
                     user = {}
                     user["login"] = request.form["login"]
@@ -361,17 +364,17 @@ def user_profile():
                 else:
                     mode = "discharge"
 
-            elif request.form["button"] == "extension":
+            elif request.form.get("button") == "extension":
                 if mode == "edit":
                     reference_point = request.form["reference_point"]
                     period = request.form["period"]
-                    user_login = data_begin['login']
+                    user_login = data['login']
                     page_controller.access_extension(int(period), reference_point, user_login)
-                    data = page_controller.get_users_profile_view(user_id)
+                    data_edit = page_controller.get_users_profile_view(user_id)
                     mode = "view"
 
-            elif request.form["button"] == "is_active":
-                active = page_controller.activation_deactivation(data_begin['login'])
+            elif request.form.get("button") is None and (request.form.get("is_active") is None or request.form.get("is_active")):
+                active = page_controller.activation_deactivation(data['login'], data["active"])
                 error_type = "Successful"
 
                 if active:
@@ -380,6 +383,7 @@ def user_profile():
                     error = "Пользователь успешно заблокирован!"
 
                 mode = "view"
+                data['active'] = active
             
             else:
                 return redirect("user_manager")
@@ -387,12 +391,12 @@ def user_profile():
     except exceptions.BadRequestKeyError:
         mode = "view"
 
-    if data == {}:
-        data = data_begin
+    if data_edit == {}:
+        data_edit = data
 
     return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=data, _data_begin=data_begin, _settings=settings_user,
+                           _data_edit=data_edit, _data=data, _settings=settings_user,
                            _is_current_user_admin=flask_login.current_user.is_admin(),
                            _mode=mode, _error=error, _active=active, _error_type=error_type)
 
@@ -558,7 +562,10 @@ def education_course_lesson():
                 f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
 
     data = page_controller.get_lesson(id_lesson, int(id_course), int(id_video))
-    room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
+    if id_room_chat is not None:
+        room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
+    else:
+        room_chat = None
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
@@ -916,9 +923,9 @@ def estimated_values():
 
 @app.route('/download', methods=['GET', 'POST'])
 @login_required
-def upload():
+def download():
 
-    page_controller = UploadPageController()
+    page_controller = DownloadPageController()
 
     name_file = request.args.get("name_file")
     id_dataset = request.args.get("id_dataset")

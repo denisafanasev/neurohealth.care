@@ -80,7 +80,7 @@ class UserProfileService():
 
         ActionService().add_notifications(_login, "overwrite", "user_manager")
 
-    def activation_deactivation(self, _login):
+    def activation_deactivation(self, _login, _active):
         """
         Блокировка/разблокировка пользователя
 
@@ -95,7 +95,10 @@ class UserProfileService():
 
         ActionService().add_notifications(_login, "overwrite", "user_manager")
 
-        return user_manager.activation_deactivation(_login)
+        if not _active:
+            return user_manager.activation(_login)
+        elif _active:
+            return user_manager.deactivation(_login)
 
     def get_current_user_role(self):
 
