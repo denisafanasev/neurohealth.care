@@ -17,6 +17,7 @@ class EducationCourseLessonPageController():
             course.lessons.text = Markup(course.lessons.text)
 
         lesson = {
+            "id_course": _id_course,
             "id": course.id,
             "name": course.name,
             "lesson": {

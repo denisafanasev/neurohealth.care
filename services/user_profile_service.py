@@ -41,7 +41,7 @@ class UserProfileService():
 
         return user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date, _active, _education_module_expiration_date):
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date, _education_module_expiration_date):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -59,7 +59,7 @@ class UserProfileService():
 
         ActionService().add_notifications(_login, "overwrite", "user_manager")
 
-        return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _created_date, _active, _education_module_expiration_date)
+        return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _created_date, _education_module_expiration_date)
 
     def discharge_password(self, _login, _password, _password2):
         """
