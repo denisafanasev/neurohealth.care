@@ -411,7 +411,7 @@ class UserManager():
 
         return user_role
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date, _active,
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
                     _education_module_expiration_date="", _token="", _email_confirmed=False):
         """
         Обновляет информацию о пользователе и возвращает ее
@@ -428,7 +428,7 @@ class UserManager():
             Dict: словарь с информацией о пользователе
         """
 
-        user = User(_login=_login, _name=_name, _email=_email, _role=_role, _created_date=_created_date, _active=_active,
+        user = User(_login=_login, _name=_name, _email=_email, _role=_role, _created_date=_created_date,
                     _probationers_number=_probationers_number, _token=_token, _email_confirmed=_email_confirmed,
                     _education_module_expiration_date=_education_module_expiration_date)
 
@@ -439,15 +439,11 @@ class UserManager():
 
         education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
         user.created_date = user.created_date.strftime("%d/%m/%Y")
-        if _active is None:
-            user.active = False
-        elif _active == "True":
-            user.active = True
 
         data_store = DataStore("users")
         user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
                      "probationers_number": user.probationers_number, "created_date": user.created_date,
-                     "education_module_expiration_date": education_module_expiration_date, "active": user.active,
+                     "education_module_expiration_date": education_module_expiration_date,
                      "token": user.token, "email_confirmed": user.email_confirmed}
 
         data_store.change_row(user_data)
