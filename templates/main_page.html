@@ -103,13 +103,11 @@
 
                     <ul class="timeline mt-2 mb-0">
                         {% for item in _data %}
-                            {% for action in item["action"] %}
                                 <li class="timeline-item"></li>
-                                    <strong>{{ action }}</strong>
-                                    <span class="float-end text-muted text-sm">30m ago</span>
+                                    <span class="float-end text-muted text-sm">{{ item['timedelta'] }}</span>
+                                    <strong>{{ item["action"] }}</strong>
                                     <p>тут должно быть описание активности...</p>
                                 </li>
-                            {% endfor %}
                         {% endfor %}
                     </ul>
                 </div>

@@ -26,8 +26,10 @@ class MainPageController():
         for i_action in actions_list:
             action = {}
 
-            action["login"] = i_action.user_login
-            action["action"] = i_action.action
+            action["login"] = i_action["action"].user_login
+            action["action"] = i_action["action"].action
+            action["created_date"] = str(i_action['action'].created_date.strftime("%d/%m/%Y %H:%M:%S"))
+            action['timedelta'] = i_action['timedelta']
 
             actions.append(action)
 

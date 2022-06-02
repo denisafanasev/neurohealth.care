@@ -1,4 +1,6 @@
 from services.course_service import CourseService
+from services.user_profile_service import UserProfileService
+
 
 class EducationCoursePageController():
 
@@ -27,3 +29,12 @@ class EducationCoursePageController():
             courses_list.append(course)
 
         return courses_list
+
+    def get_current_user(self):
+
+        user_service = UserProfileService()
+
+        user = user_service.get_current_user_role()
+
+        return {"login": user.login, "role": user.role,
+                "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y"))}
