@@ -48,6 +48,7 @@ sentry_sdk.init(
     traces_sample_rate=1.0
 )
 
+
 class Config(object):
     DEBUG = config.DEBUG
     LOG_FILE = config.LOG_FILE
@@ -73,6 +74,7 @@ login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
 
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
@@ -84,6 +86,7 @@ def index():
     """
 
     return redirect("main_page")
+
 
 @app.context_processor
 def inject_global_context():
@@ -106,11 +109,12 @@ def load_user(user_id):
 
     Returns:
 
-    """    
+    """
     login_page_controller = LoginPageController()
     user = login_page_controller.get_user_by_id(user_id)
 
     return user
+
 
 @app.route('/debug-sentry')
 def trigger_error():
@@ -118,6 +122,7 @@ def trigger_error():
     """
 
     division_by_zero = 1 / 0
+
 
 @app.route("/logout")
 @login_required
@@ -131,6 +136,7 @@ def logout():
 
     logout_user()
     return redirect('main_page')
+
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
@@ -148,7 +154,6 @@ def registration():
     if not login_page_controller.is_there_users():
         is_create_superuser = True
 
-
     if request.method == 'POST':
 
         user_login = request.form['login']
@@ -161,21 +166,21 @@ def registration():
 
             token = login_page_controller.create_user(
                 user_login, user_name, user_password, user_password2, user_email, is_create_superuser)
-            
+
             confirm_url = url_for(user_email, token=token, _external=True)
             html = render_template('email_confirmation.html', confirm_url=confirm_url)
 
             login_page_controller.send_confirmation_email(user_email, html)
-            
+
             return render_template('registration.html', view="registration", _user_created=True,
-                                    _error_message="", _create_superuser=False)
+                                   _error_message="", _create_superuser=False)
 
         except UserManagerException as e:
 
             error_message = str(e)
 
     return render_template('registration.html', view="registration", _user_created=False,
-                            _error_message=error_message, _create_superuser=is_create_superuser)
+                           _error_message=error_message, _create_superuser=is_create_superuser)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -241,7 +246,6 @@ def user_manager():
 
     error = None
     settings_user = page_controller.get_settings_user()
-
 
     if user_id is None:
         # если пользователь не задан, то открываем страницу в режиме создания нового пользователя
@@ -344,6 +348,9 @@ def user_manager():
 
                     data_edit = data
                     data_edit[user_id] = user
+                    new_user = page_controller.get_users_profile_view('')
+                    new_user['user_id'] = 0
+                    users_list.append(new_user)
                     mode[user_id] = "view"
                     error = "Изменения сохранены!"
                     error_type = "Successful"
@@ -449,7 +456,7 @@ def user_profile():
         active = data['active']
     else:
         active = False
-    
+
     error_type = False
     try:
         if request.method == 'POST':
@@ -495,7 +502,7 @@ def user_profile():
                     user['education_module_expiration_date'] = data["education_module_expiration_date"]
 
                     page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
-                                                        user["probationers_number"], user["created_date"], user["active"],
+                                                user["probationers_number"], user["created_date"], user["active"],
                                                 user['education_module_expiration_date'])
 
                     data_edit = user
@@ -534,7 +541,8 @@ def user_profile():
                     data_edit = page_controller.get_users_profile_view(user_id)
                     mode = "view"
 
-            elif request.form.get("button") is None and (request.form.get("is_active") is None or request.form.get("is_active")):
+            elif request.form.get("button") is None and (
+                    request.form.get("is_active") is None or request.form.get("is_active")):
                 active = page_controller.activation_deactivation(data['login'], data["active"])
                 error_type = "Successful"
 
@@ -545,7 +553,7 @@ def user_profile():
 
                 mode = "view"
                 data['active'] = active
-            
+
             else:
                 return redirect("user_manager")
 
@@ -570,7 +578,7 @@ def main_page():
 
     Returns:
         
-    """    
+    """
 
     page_controller = MainPageController()
     mpc = MainMenuPageController()
@@ -601,6 +609,7 @@ def empty_function():
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data="")
 
+
 @app.route('/price_list', methods=['GET', 'POST'])
 @login_required
 def price_list():
@@ -619,10 +628,10 @@ def price_list():
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data="")
 
+
 @app.route('/education_main_course/lesson', methods=['GET', 'POST'])
 @login_required
 def education_main_course_lesson():
-
     page_controller = EducationMainCourseLessonPageController()
     mpc = MainMenuPageController()
 
@@ -652,10 +661,10 @@ def education_main_courses():
 
     return redirect("/education_course?id_course=1")
 
+
 @app.route('/education_list_courses', methods=['GET', 'POST'])
 @login_required
 def education_list_courses():
-
     page_controller = EducationListCoursesPageController()
     mpc = MainMenuPageController()
 
@@ -666,10 +675,10 @@ def education_list_courses():
     return render_template('education_list_courses.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
 
+
 @app.route('/education_course', methods=['GET', 'POST'])
 @login_required
 def education_course():
-
     page_controller = EducationCoursePageController()
     mpc = MainMenuPageController()
 
@@ -682,14 +691,13 @@ def education_course():
 
     endpoint = 'education_list_courses'
 
-
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
+
 
 @app.route('/education_course/lesson', methods=['GET', 'POST'])
 @login_required
 def education_course_lesson():
-
     page_controller = EducationCourseLessonPageController()
     mpc = MainMenuPageController()
 
@@ -704,7 +712,8 @@ def education_course_lesson():
     if id_room_chat is None:
         if user["role"] != "superuser":
             id_room_chat = page_controller.room_chat_entry(id_lesson, id_course)["id"]
-            return redirect(f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
+            return redirect(
+                f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
 
     if id_video is None:
         id_video = 1
@@ -732,6 +741,7 @@ def education_course_lesson():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=data, _room_chat=room_chat, _user_list=user_list, _user=user)
 
+
 @app.route('/education_home_tasks', methods=['GET', 'POST'])
 @login_required
 def education_home_tasks():
@@ -751,6 +761,7 @@ def education_home_tasks():
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data="")
 
+
 @app.route('/corrections', methods=['GET', 'POST'])
 @login_required
 def corrections():
@@ -759,7 +770,7 @@ def corrections():
 
     Returns:
         
-    """    
+    """
 
     page_controller = CorrectionsPageController()
     mpc = MainMenuPageController()
@@ -773,6 +784,7 @@ def corrections():
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
+
 @app.route('/probes', methods=['GET', 'POST'])
 @login_required
 def probes():
@@ -781,7 +793,7 @@ def probes():
 
     Returns:
         
-    """    
+    """
 
     page_controller = ProbesPageController()
     mpc = MainMenuPageController()
@@ -795,10 +807,10 @@ def probes():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=page_controller.get_probes(), _is_probationer=page_controller.is_probationers())
 
+
 @app.route('/probe_profile', methods=['GET', 'POST'])
 @login_required
 def probe_profile():
-
     page_controller = ProbeProfileController()
     mpc = MainMenuPageController()
 
@@ -844,7 +856,8 @@ def probe_profile():
 
         elif mode == "add_value_tests":
             probe_id = request.args.get("probe_id")
-            grades = [{"id": key, "grade": value} for key, value in request.form.items() if key.isdigit() or ("_" in key and key.split("_")[0].isdigit())]
+            grades = [{"id": key, "grade": value} for key, value in request.form.items() if
+                      key.isdigit() or ("_" in key and key.split("_")[0].isdigit())]
             page_controller.add_grades_in_probe(grades, int(probe_id))
 
             if request.form.get("button") == "draft" or request.form.get("button") == "end":
@@ -857,16 +870,18 @@ def probe_profile():
                 page_controller.add_grades_in_probe(grades, int(probe_id))
                 next_test_id = int(request.form["action"])
 
-                return redirect("probe_profile?probationer_id={probationer_id}&probe_id={probe_id}&test_id={test_id}".format(
-                    probationer_id=probationer_id,
-                    probe_id=probe_id,
-                    test_id=next_test_id
-                ))
+                return redirect(
+                    "probe_profile?probationer_id={probationer_id}&probe_id={probe_id}&test_id={test_id}".format(
+                        probationer_id=probationer_id,
+                        probe_id=probe_id,
+                        test_id=next_test_id
+                    ))
 
     return render_template('probe_profile.html', view="probe_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _probationers_list=probationers, _data=data,
                            _mode=mode, _probes=test_list, _protocol=protocol)
+
 
 @app.route('/results', methods=['GET', 'POST'])
 @login_required
@@ -876,7 +891,7 @@ def results():
 
     Returns:
         
-    """    
+    """
 
     page_controller = ResultsPageController()
     mpc = MainMenuPageController()
@@ -890,6 +905,7 @@ def results():
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data())
 
+
 @app.route('/probationers', methods=['GET', 'POST'])
 @login_required
 def probationers():
@@ -898,7 +914,7 @@ def probationers():
 
     Returns:
         
-    """    
+    """
 
     page_controller = ProbationersPageController()
     mpc = MainMenuPageController()
@@ -915,6 +931,7 @@ def probationers():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=page_controller.get_probationers_list_view(),
                            _is_current_user_admin=flask_login.current_user.is_admin())
+
 
 @app.route('/probationer_card', methods=['GET', 'POST'])
 @login_required
@@ -966,7 +983,8 @@ def probationer_card():
                     probationer["reasons_for_contact"] = request.form["reasons_for_contact"]
 
                     error = page_controller.create_probationers(user_login, probationer["name_probationer"],
-                                                                probationer["date_of_birth"], probationer["name_parent"],
+                                                                probationer["date_of_birth"],
+                                                                probationer["name_parent"],
                                                                 probationer["educational_institution"],
                                                                 probationer["contacts"], probationer["diagnoses"],
                                                                 probationer["reasons_for_contact"])
@@ -979,11 +997,9 @@ def probationer_card():
                     data = probationer
             elif request.form["button"] == "edit":
                 if mode == "view":
-
                     mode = "edit"
             elif request.form["button"] == "save":
                 if mode == "edit":
-
                     probationer = {}
 
                     probationer["name_probationer"] = request.form["name_probationer"]
@@ -995,9 +1011,9 @@ def probationer_card():
                     probationer["reasons_for_contact"] = request.form["reasons_for_contact"]
 
                     page_controller.change_probationer(probationer_id, probationer["name_probationer"],
-                                                        probationer["date_of_birth"], probationer["name_parent"],
-                                                        probationer["educational_institution"],
-                                                        probationer["contacts"],
+                                                       probationer["date_of_birth"], probationer["name_parent"],
+                                                       probationer["educational_institution"],
+                                                       probationer["contacts"],
                                                        probationer["diagnoses"], probationer["reasons_for_contact"])
 
                     data = probationer
@@ -1016,6 +1032,7 @@ def probationer_card():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
                            _mode=mode, _data_begin=data_begin, _error=error, _error_type=error_type,
                            _settings=page_controller.get_settings_probationer())
+
 
 @app.route('/settings/age_range_list', methods=['GET', 'POST'])
 @login_required
@@ -1039,6 +1056,7 @@ def age_range_list():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _ranges_age=page_controller.get_age_ranges(),
                            _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
+
 
 @app.route('/settings/estimated_values', methods=['GET', 'POST'])
 @login_required
@@ -1082,10 +1100,10 @@ def estimated_values():
                            _data=data, _ranges_age=page_controller.get_age_ranges(), _id_file_name=int(id_file_name),
                            _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
 
+
 @app.route('/download', methods=['GET', 'POST'])
 @login_required
 def download():
-
     page_controller = DownloadPageController()
 
     name_file = request.args.get("name_file")
@@ -1098,6 +1116,7 @@ def download():
     else:
         return False
 
+
 @app.errorhandler(404)
 @login_required
 def not_found(e):
@@ -1109,7 +1128,7 @@ def not_found(e):
 
     Returns:
 
-    """    
+    """
 
     return render_template("404.html"), 404
 
