@@ -308,7 +308,6 @@ def user_manager():
                     user["email"] = request.form[f"email_{user_id}"]
                     user["role"] = request.form[f"role_{user_id}"]
                     user["probationers_number"] = int(request.form[f"probationers_number_{user_id}"])
-                    active = True
 
                     error = page_controller.create_user(user["login"], user["name"], user["password"],
                                                         user["password2"], user["email"], user["role"],
@@ -406,7 +405,7 @@ def user_manager():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data_now=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),
                            _data_edit=data_edit, _data=data, _settings=settings_user,
-                           _mode=mode, _error=error, _active=active, _error_type=error_type)
+                           _mode=mode, _error=error, _error_type=error_type)
 
 
 @app.route('/user_profile', methods=['GET', 'POST'])

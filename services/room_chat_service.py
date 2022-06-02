@@ -27,12 +27,3 @@ class RoomChatService():
             _message["files"] = None
 
         return room_chat_manager.add_message(_message, _room_chat_id)
-
-    def get_path_file(self, _name_file):
-
-        room_chat_manager = RoomChatManager()
-        user_manager_service = UserManagerService()
-
-        user_login = user_manager_service.get_current_user("").login
-
-        return room_chat_manager.get_path_file(user_login, _name_file)
