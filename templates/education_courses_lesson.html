@@ -152,21 +152,23 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-7 text-left">
-                    {% if _data['lesson']["link"] != [] %}
+                    {% if _data['lesson']["link"] is not none %}
                         <div class="card py-1 py-md-1 border">
                             <div class="card-body">
                                 {% set id_course = request.args['id_course'] %}
-                                 {% for i_video in _data['lesson']['link'] %}
-                                     {% if i_video['video'] %}
-                                        <div style="padding:56.25% 0 0 0;position:relative;">
-                                            <iframe src="{{ i_video['video'] }}&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
-                                                    allow="autoplay; fullscreen; picture-in-picture" allowfullscreen
-                                                    style="position:absolute;top:0;left:0;width:100%;height:100%;" webkitallowfullscreen mozallowfullscreen class="border"
-                                                    title="Модуль 4 / Урок 1 / Функция переработки зрительно-пространственной инфор">
-                                            </iframe>
-                                        </div>
-                                     {% endif %}
-                                {% endfor %}
+                                {% if _data['lesson']['link'] is not none %}
+                                    {% for i_video in _data['lesson']['link'] %}
+                                         {% if i_video['video'] %}
+                                            <div style="padding:56.25% 0 0 0;position:relative;">
+                                                <iframe src="{{ i_video['video'] }}&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
+                                                        allow="autoplay; fullscreen; picture-in-picture" allowfullscreen
+                                                        style="position:absolute;top:0;left:0;width:100%;height:100%;" webkitallowfullscreen mozallowfullscreen class="border"
+                                                        title="Модуль 4 / Урок 1 / Функция переработки зрительно-пространственной инфор">
+                                                </iframe>
+                                            </div>
+                                         {% endif %}
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                             <div class="card-footer">
                                 <div style="">
@@ -246,7 +248,7 @@
                                                 </td>
                                                 <td>{{ name_file }}</td>
                                                 <td>
-                                                    <a href="/upload?name_file={{ i_materials }}&dataset=course&id_dataset={{ _data['lesson']['id_module'] }}">Файл</a>
+                                                    <a href="/download?name_file={{ i_materials }}&dataset=course&id_dataset={{ _data['id_course'] }}">Файл</a>
                                                 </td>
                                             </tr>
                                         {% endfor %}
@@ -333,7 +335,7 @@
                                                             {% if i_message['files'] %}
                                                                 <div class="row">
                                                                     {% for i_file in i_message['files'] %}
-                                                                        <a href="/upload?name_file={{ i_file['name_file_unique'] }}&dataset=chat">{{ i_file['name_file_user'] }}</a>
+                                                                        <a href="/download?name_file={{ i_file['name_file_unique'] }}&dataset=chat">{{ i_file['name_file_user'] }}</a>
                                                                     {% endfor %}
                                                                 </div>
                                                             {% endif %}

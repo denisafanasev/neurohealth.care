@@ -38,7 +38,7 @@ class UserProfilePageController():
             user_view['probationers_number'] = user.probationers_number
             user_view['token'] = user.token
 
-            user_view['is_active'] = user.active
+            user_view['active'] = user.active
         else:
 
             user_view["login"] = "введите логин пользователя.."
@@ -49,7 +49,7 @@ class UserProfilePageController():
             user_view["role"] = "Выберите роль пользователя"
             user_view["probationers_number"] = "Выберите количество доступных тестируемых"
             user_view["token"] = ""
-            user_view["is_active"] = True
+            user_view["active"] = True
             user_view["email_confirmed"] = False
 
         return user_view
@@ -79,7 +79,7 @@ class UserProfilePageController():
         except UserManagerException as error:
             return error
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date, _active,
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
                     _education_module_expiration_date):
         """
         Обновляет информацию о пользователе и возвращает ее
@@ -97,7 +97,7 @@ class UserProfilePageController():
         user_profile_service = UserProfileService()
 
         return user_profile_service.change_user(_login, _name, _email, _role, _probationers_number,
-                                                _created_date, _active, _education_module_expiration_date)
+                                                _created_date, _education_module_expiration_date)
 
     def discharge_password(self, _login, _password, _password2):
         """
@@ -119,7 +119,7 @@ class UserProfilePageController():
 
             return error
 
-    def activation_deactivation(self, _login):
+    def activation_deactivation(self, _login, _active):
         """
         Блокировка/разблокировка пользователя
 
@@ -132,7 +132,7 @@ class UserProfilePageController():
 
         user_profile_service = UserProfileService()
 
-        return user_profile_service.activation_deactivation(_login)
+        return user_profile_service.activation_deactivation(_login, _active)
 
     def get_settings_user(self):
         """
