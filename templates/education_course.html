@@ -28,7 +28,7 @@
                             <th>Статус</th>
                             <th style="width:60%;">Наименование урока</th>
                             <th style="width:15%">Ссылка</th>
-                            <th class="d-none d-md-table-cell" style="width:15%">Срок выполнения</th>
+                            <th class="d-none d-md-table-cell" style="width:15%">Срок доступа</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,7 +45,7 @@
                             </td>
                             <td>{{ i_lesson['name'] }}</td>
                             <td><a href="/education_course/lesson?id_course={{ id_course }}&id_lesson={{ i_lesson['id'] }}&id_video=1">Выполнить</a></td>
-                            <td class="d-none d-md-table-cell">Июнь 21, 1961</td>
+                            <td class="d-none d-md-table-cell">{{ _user['education_module_expiration_date'] }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

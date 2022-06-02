@@ -87,7 +87,8 @@ class EducationCourseLessonPageController():
 
         user = user_service.get_current_user_role()
 
-        return {"login": user.login, "role": user.role}
+        return {"login": user.login, "role": user.role,
+                "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y"))}
 
     def get_user_list(self):
 
