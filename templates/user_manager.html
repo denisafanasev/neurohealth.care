@@ -14,12 +14,12 @@
             });
             datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
 
-{#            {% for item in _data_now %}#}
-{#                var modal = document.getElementById('{{ item['user_id'] }}');#}
-{#                {% if _mode[item['user_id']] != "view" %}#}
-{#                    modal_{{ item['user_id'] }}.style.display = "block";#}
-{#                {% endif %}#}
-{#            {% endfor %}#}
+            {% for item in _data_now %}
+                var modal_{{ item['user_id'] }} = document.getElementById('{{ item['user_id'] }}');
+                {% if _mode[item['user_id']] == "edit" %}
+                    modal_{{ item['user_id'] }}.style.display = "block";
+                {% endif %}
+            {% endfor %}
         });
     </script>
 
@@ -39,10 +39,14 @@
             padding-top: 16px;
         }
 
+        .pagination {
+            z-index: 0;
+        }
+
         /* The Modal (background) */
         .modal {
             display: none; /* Hidden by default */
-            z-index: 1; /* Sit on top */
+            z-index: 99; /* Sit on top */
             width: 100%; /* Full width */
             height: 100%; /* Full height */
             overflow: auto; /* Enable scroll if needed */
@@ -191,10 +195,10 @@
                                                        onclick="document.getElementById('extension_{{ item['user_id'] }}').style.display='block';">{{ item['education_module_expiration_date'] }}</a></td>
 
                                                 {% if item['is_active'] %}
-                                                    <td><span class="badge bg-success"><a href="#" data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}"
+                                                    <td><span class="badge bg-success"><a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}"
                                                                                           onclick="document.getElementById('status_{{ item['user_id'] }}').style.display='block';">Active</a></span></td>
                                                 {% else %}
-                                                    <td><span class="badge bg-warning"><a href="#" data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}"
+                                                    <td><span class="badge bg-warning"><a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}"
                                                                                           onclick="document.getElementById('status_{{ item['user_id'] }}').style.display='block';">Inactive</a></span></td>
                                                 {% endif %}
 {#                                                <td>#}
@@ -237,10 +241,13 @@
                     if (event.target === modal_extension_{{ item['user_id'] }}) {
                         modal_discharge_{{ item['user_id'] }}.style.display = "none";
                     }
+                    datatablesButtons.bLengthChange = false;
+                    datatablesButtons.paging = false;
                 }
             </script>
             <div id="{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal">
                 <div class="modal-content animate">
+                    <h3 class="modal-title">{% if _mode[item['user_id']] == "view" %}Просмотр{% else %} Редактирование{% endif %} карточки пользователя</h3>
                     <form id="add_user" name="add_user" method="post" class="was-validated" enctype="multipart/form-data" onsubmit="return checkPassword(this);">
                     <div class="row d-flex align-items-stretch bd-highlight">
 
@@ -304,8 +311,7 @@
 
                         <div class="col p-1 bd-highlight border">
 
-                            <div class="card d-flex align-self-baseline"
-                                 style="height: 100%;">
+                            <div class="card d-flex align-self-baseline" style="height: 100%;">
 
                                 <div class="card-header">
                                     <h5 class="card-title">Параметры доступа</h5>
@@ -344,25 +350,12 @@
                                             Поле, обязательное для заполнения!
                                         </div>
                                     </div>
-                                    {% if _mode[ item['user_id']|int] != "new" %}
-                                        <div class="mb-2">
-                                            <label class="form-label"><strong>Доступ к центру обучения</strong></label>
-                                            <input class="form-control" disabled value="{{ _data_edit[ item['user_id']|int]['education_module_expiration_date'] }}">
-                                            <div class="invalid-feedback">
-                                                Поле, обязательное для заполнения!
-                                            </div>
-                                        </div>
-                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row d-flex align-items-stretch bd-highlight"
-                         align="right">
+                    <div class="row d-flex align-items-stretch bd-highlight" align="right">
                         <div class="col-12 p-2">
-                            <a onclick="document.getElementById('{{ item['user_id'] }}').style.display='none'" type="submit" name="button" class="btn btn-primary cancelbtn">
-                                {% if _mode[ item['user_id']|int] != "view" %}Отмена{% else %}Назад{% endif %}
-                            </a>
                             {% if _mode[ item['user_id']|int] !="discharge" %}
                                 <button type="submit" name="button_{{ item['user_id']|int }}" value="{% if _mode[ item['user_id']|int]=="new" %}add{% elif _mode[ item['user_id']|int]=="edit" %}save{% else %}edit{% endif %}" class="btn btn-primary ">
                                     {% if _mode[ item['user_id']|int]=="new" %}Добавить пользователя
@@ -371,23 +364,27 @@
                                     {% endif %}
                                 </button>
                             {% endif %}
-                            {% if _mode[ item['user_id']|int] == "discharge" or _mode[ item['user_id']|int] == "view" %}
-                                <a type="submit" name="button_{{ item['user_id']|int }}" href="#" data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}"
-                                                                                          onclick="document.getElementById('discharge_{{ item['user_id'] }}').style.display='block';" class="btn btn-primary">Сброс пароля
+                            {% if _mode[ item['user_id']|int] == "view" %}
+                                <a type="submit" href="#" data-bs-toggle="modal" data-bs-target="#discharge_{{ item['user_id'] }}"
+                                                                                          onclick="document.getElementById('{{ item['user_id'] }}').style.display='none';
+                                                                                          document.getElementById('discharge_{{ item['user_id'] }}').style.display='block';" class="btn btn-primary">Сброс пароля
                                 </a>
                             {% endif %}
+                            <a onclick="document.getElementById('{{ item['user_id'] }}').style.display='none'" type="submit" name="button" class="btn btn-primary cancelbtn">
+                                Отмена
+                            </a>
                         </div>
                     </div>
                 </form>
                 </div>
             </div>
             <div id="extension_{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal">
-                <div class="modal-content animate" style="width: 39%">
-                    <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto;">
-                        <div class="card-header">
-                            <h5 class="card-title">Доступ к центру обучения</h5>
-                            <div class="mb-2">
-                                <form id="form" name="form" method="post" enctype="multipart/form-data">
+                <div class="modal-content animate" style="width: 31%">
+                    <h3 class="modal-title">Доступ к центру обучения</h3>
+                    <form id="form" name="form" method="post" enctype="multipart/form-data">
+                        <div class="row d-flex align-items-stretch bd-highlight">
+                            <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto;">
+                                <div class="card-header">
                                     <div class="mb-2">
 
                                         <label class="form-label"><strong>Продление срока доступа</strong></label>
@@ -410,60 +407,56 @@
                                             {% endfor %}
                                         </select>
                                     </div>
-                                <div class="row d-flex align-items-stretch bd-highlight"
-                                     align="right">
-                                    <div class="p-2">
-                                        <a onclick="document.getElementById('extension_{{ item['user_id'] }}').style.display='none'" type="submit" name="button" class="btn btn-primary cancelbtn">
-                                            {% if _mode[ item['user_id']|int] != "view" %}Отмена{% else %}Назад{% endif %}
-                                        </a>
-                                    </div>
-                                    <div class="p-2" align="right">
-                                        <button type="submit" class="btn btn-primary " name="button_{{ item['user_id']|int }}" value="extension">
-                                            Продлить
-                                        </button>
-                                    </div>
                                 </div>
-                                </form>
                             </div>
                         </div>
-                    </div>
+                        <div class="row d-flex align-items-stretch bd-highlight" align="right">
+                            <div class="p-1">
+                                <button type="submit" class="btn btn-primary " name="button_{{ item['user_id']|int }}" value="extension">
+                                    Продлить
+                                </button>
+                                <a onclick="document.getElementById('extension_{{ item['user_id'] }}').style.display='none'" type="submit" name="button" class="btn btn-primary cancelbtn">
+                                    Отмена
+                                </a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
             <div id="status_{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal" >
                 <div class="modal-content animate" style="width: 20%">
+                <h3 class="modal-title">Статус пользователя</h3>
                     <form id="status_user" name="status_user" method="post" enctype="multipart/form-data">
                         <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; ">
                             <div class="card-header">
-                                <h5 class="card-title">Статус пользователя</h5>
                                 <div class="mb-2">
                                     <label class="form-label" style="height: 100%"><strong>Статус</strong></label>
                                     <div>
                                         <input id="is_active" name="is_active_{{ item['user_id']|int }}"
                                                class="form-check-input" type="checkbox" value="True"
-                                               {% if _data_edit['active'] %}checked{% endif %}>
+                                               {% if _data_edit[item['user_id']]['active'] %}checked{% endif %}>
                                         <label class="form-check-label" for="is_active">Разблокирован</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-2" align="right">
-                            <a onclick="document.getElementById('status_{{ item['user_id'] }}').style.display='none'" type="submit" name="button" class="btn btn-primary cancelbtn">
-                                {% if _mode[ item['user_id']|int] != "view" %}Отмена{% else %}Назад{% endif %}
+                        <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
+                            <div class="p-2" align="right">
+                            <button class="btn btn-primary" name="button_{{ item['user_id']|int }}" value="is_active">Сохранить</button>
+                            <a onclick="document.getElementById('status_{{ item['user_id'] }}').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
+                                Отмена
                             </a>
                         </div>
-                        <div class="p-2" align="right">
-                            <button class="btn btn-primary" name="button_{{ item['user_id']|int }}" value="is_active">Сохранить</button>
                         </div>
                     </form>
                 </div>
             </div>
             <div id="discharge_{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal" >
                 <div class="modal-content animate" style="width: 20%">
+                    <h3 class="modal-title">Сброс пароля</h3>
                     <form id="status_user" name="status_user" method="post" enctype="multipart/form-data">
                         <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; ">
                             <div class="card-header">
-                                <h5 class="card-title">Статус пользователя</h5>
-
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Пароль</strong></label>
                                     <input required type="password" name="password_{{ item['user_id']|int }}_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password']!= _data[ item['user_id']|int]['password'] %}
@@ -483,10 +476,15 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="mb-2" align="right">
+                        <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
+                            <div class="p-1" align="right">
                             <button type="submit" name="button_{{ item['user_id']|int }}" value="discharge" class="btn btn-primary ">
                                 Сохранить
                             </button>
+                            <a onclick="document.getElementById('discharge_{{ item['user_id'] }}').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
+                                Отмена
+                            </a>
+                        </div>
                         </div>
                     </form>
                 </div>
