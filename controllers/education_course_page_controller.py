@@ -8,27 +8,27 @@ class EducationCoursePageController():
 
         course_service = CourseService()
 
-        courses = course_service.get_course(_id)
-        courses_list = []
+        course = course_service.get_course(_id)
+        modules_list = []
 
-        for i_course in courses:
-            course = {}
-            course["id"] = i_course.id
-            course["name"] = i_course.name
+        for i_module in course:
+            module = {}
+            module["id"] = i_module.id
+            module["name"] = i_module.name
             lesson_list = []
 
-            for i_lesson in i_course.lessons:
+            for i_lesson in i_module.lessons:
                 lesson = {
                     "id": i_lesson.id,
                     "name": i_lesson.name
                 }
                 lesson_list.append(lesson)
 
-            course["lessons"] = lesson_list
+            module["lessons"] = lesson_list
 
-            courses_list.append(course)
+            modules_list.append(module)
 
-        return courses_list
+        return modules_list
 
     def get_current_user(self):
 
@@ -36,5 +36,5 @@ class EducationCoursePageController():
 
         user = user_service.get_current_user_role()
 
-        return {"login": user.login, "role": user.role,
+        return {"login": user.login, "role": user.role, "active_education_module": user.active_education_module,
                 "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y"))}

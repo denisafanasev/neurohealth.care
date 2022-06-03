@@ -47,6 +47,7 @@ class UserManagerPageController():
             user_view['probationers_number'] = user.probationers_number
 
             user_view['is_active'] = user.active
+            user_view['active_education_module'] = user.active_education_module
 
             users_list_view.append(user_view)
             

@@ -9,25 +9,25 @@ class EducationCourseLessonPageController():
     def get_lesson(self, _id, _id_course, _id_video=1):
         course_service = CourseService()
 
-        course = course_service.get_lesson(_id, _id_course, _id_video)
-        if course.lessons.task:
-            course.lessons.task = Markup(course.lessons.task)
+        module = course_service.get_lesson(_id, _id_course, _id_video)
+        if module.lessons.task:
+            module.lessons.task = Markup(module.lessons.task)
 
-        if course.lessons.text:
-            course.lessons.text = Markup(course.lessons.text)
+        if module.lessons.text:
+            module.lessons.text = Markup(module.lessons.text)
 
         lesson = {
             "id_course": _id_course,
-            "id": course.id,
-            "name": course.name,
+            "id_module": module.id,
+            "name": module.name,
             "lesson": {
-                "id": course.lessons.id,
-                "id_module": course.lessons.id_module,
-                "name": course.lessons.name,
-                "link": course.lessons.link,
-                "materials": course.lessons.materials,
-                "text": course.lessons.text,
-                "task": course.lessons.task
+                "id": module.lessons.id,
+                "id_module": module.lessons.id_module,
+                "name": module.lessons.name,
+                "link": module.lessons.link,
+                "materials": module.lessons.materials,
+                "text": module.lessons.text,
+                "task": module.lessons.task
             }
         }
 
@@ -87,7 +87,7 @@ class EducationCourseLessonPageController():
 
         user = user_service.get_current_user_role()
 
-        return {"login": user.login, "role": user.role,
+        return {"login": user.login, "role": user.role, "active_education_module": user.active_education_module,
                 "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y"))}
 
     def get_user_list(self):
