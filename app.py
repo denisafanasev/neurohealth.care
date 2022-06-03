@@ -339,6 +339,7 @@ def user_manager():
                     data[0] = page_controller.get_users_profile_view(user_id)
                     data_edit = data
                     data_edit[user_id] = user
+                    users_list = manager_page_controller.get_users_list_view()
                     mode[user_id] = "view"
                     error = "Изменения сохранены!"
                     error_type = "Successful"
