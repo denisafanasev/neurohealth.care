@@ -1,3 +1,4 @@
+import datetime
 import logging
 from logging.handlers import RotatingFileHandler
 from flask import Flask, request, redirect, render_template, url_for, send_file
@@ -247,19 +248,6 @@ def user_manager():
     error = None
     settings_user = page_controller.get_settings_user()
 
-    if user_id is None:
-        # если пользователь не задан, то открываем страницу в режиме создания нового пользователя
-        # страница доступна только администратору
-        if not flask_login.current_user.is_admin():
-            return redirect("main_page")
-
-        mode = "new"
-        user_id = ""
-        settings_user = page_controller.get_settings_user()
-    else:
-        if not flask_login.current_user.is_admin():
-            mode = "edit"
-
     mode = {0: "new"}
     data_edit = {}
     data = {0: page_controller.get_users_profile_view(user_id)}
@@ -281,11 +269,10 @@ def user_manager():
             mode[i_id['user_id']] = "new"
 
         data[i_id['user_id']] = page_controller.get_users_profile_view(i_id["user_id"])
-        data_edit = {}
-        if isinstance(data, dict):
-            active = data[i_id['user_id']]['active']
-        else:
-            active = False
+        # if isinstance(data, dict):
+        #     active = data[i_id['user_id']]['active']
+        # else:
+        #     active = False
 
     error_type = False
     try:
@@ -294,7 +281,7 @@ def user_manager():
             for i in users_list:
                 if request.form.get(f"button_{i['user_id']}") is not None:
                     user_id = i['user_id']
-                    continue
+                    break
 
             if request.form.get(f"button_{user_id}") == "add":
                 if mode[user_id] == "new":
@@ -308,6 +295,7 @@ def user_manager():
                     user["email"] = request.form[f"email_{user_id}"]
                     user["role"] = request.form[f"role_{user_id}"]
                     user["probationers_number"] = int(request.form[f"probationers_number_{user_id}"])
+                    user["active"] = True
 
                     error = page_controller.create_user(user["login"], user["name"], user["password"],
                                                         user["password2"], user["email"], user["role"],
@@ -318,12 +306,13 @@ def user_manager():
                         error = "Пользователь сохранён!"
                         error_type = "Successful"
 
+                    data[0] = page_controller.get_users_profile_view(user_id)
                     data_edit = data
                     data_edit[len(users_list)] = user
                     users_list = manager_page_controller.get_users_list_view()
-                    new_user = page_controller.get_users_profile_view('')
-                    new_user['user_id'] = 0
-                    users_list.append(new_user)
+                    # new_user = page_controller.get_users_profile_view('')
+                    # new_user['user_id'] = 0
+                    # users_list.append(new_user)
 
             elif request.form.get(f"button_{user_id}") == "edit":
                 if mode[user_id] == "view":
@@ -345,11 +334,9 @@ def user_manager():
                                                 user["probationers_number"], user["created_date"],
                                                 user['education_module_expiration_date'])
 
+                    data[0] = page_controller.get_users_profile_view(user_id)
                     data_edit = data
                     data_edit[user_id] = user
-                    new_user = page_controller.get_users_profile_view('')
-                    new_user['user_id'] = 0
-                    users_list.append(new_user)
                     mode[user_id] = "view"
                     error = "Изменения сохранены!"
                     error_type = "Successful"
@@ -392,6 +379,10 @@ def user_manager():
             else:
                 return redirect("user_manager")
 
+            new_user = page_controller.get_users_profile_view('')
+            new_user['user_id'] = 0
+            users_list.append(new_user)
+
             users_list = manager_page_controller.get_users_list_view()
 
     except exceptions.BadRequestKeyError:
@@ -401,9 +392,13 @@ def user_manager():
     if data_edit == {}:
         data_edit = data
 
+    new_user = page_controller.get_users_profile_view('')
+    new_user['user_id'] = 0
+    users_list.append(new_user)
+
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data_now=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),
+                           _users_list=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),
                            _data_edit=data_edit, _data=data, _settings=settings_user,
                            _mode=mode, _error=error, _error_type=error_type)
 
@@ -681,17 +676,18 @@ def education_course():
     page_controller = EducationCoursePageController()
     mpc = MainMenuPageController()
 
+    endpoint = 'education_list_courses'
     id_course = request.args.get("id_course")
+    user = page_controller.get_current_user()
 
     if id_course is not None:
         data = page_controller.get_course(id_course)
     else:
         data = None
 
-    endpoint = 'education_list_courses'
-
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
+                           _user=user)
 
 
 @app.route('/education_course/lesson', methods=['GET', 'POST'])
@@ -706,8 +702,15 @@ def education_course_lesson():
     id_lesson = int(request.args.get("id_lesson"))
     id_video = request.args.get("id_video")
     id_room_chat = request.args.get("id_chat")
+
     user = page_controller.get_current_user()
+    data = page_controller.get_lesson(id_lesson, int(id_course), int(id_video))
     user_list = None
+
+    if user['active_education_module'] == 'inactive':
+        if data['id_module'] != 1 and user['role'] != 'superuser':
+            return redirect('/price_list')
+
     if id_room_chat is None:
         if user["role"] != "superuser":
             id_room_chat = page_controller.room_chat_entry(id_lesson, id_course)["id"]
@@ -730,7 +733,6 @@ def education_course_lesson():
             return redirect(
                 f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
 
-    data = page_controller.get_lesson(id_lesson, int(id_course), int(id_video))
     if id_room_chat is not None:
         room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
     else:

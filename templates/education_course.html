@@ -28,11 +28,16 @@
                             <th>Статус</th>
                             <th style="width:60%;">Наименование урока</th>
                             <th style="width:15%">Ссылка</th>
-                            <th class="d-none d-md-table-cell" style="width:15%">Срок выполнения</th>
+                            <th class="d-none d-md-table-cell" style="width:15%">Срок доступа</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% set id_course = request.args['id_course'] %}
+                        {% if loop.first %}
+                            {% set module_first = true %}
+                        {% else %}
+                            {% set module_first = false %}
+                        {% endif %}
                         {% for i_lesson in i_course['lessons'] %}
                         <tr>
                             <td class="table-action">
@@ -43,9 +48,14 @@
                                     <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
                                 </svg>
                             </td>
-                            <td>{{ i_lesson['name'] }}</td>
-                            <td><a href="/education_course/lesson?id_course={{ id_course }}&id_lesson={{ i_lesson['id'] }}&id_video=1">Выполнить</a></td>
-                            <td class="d-none d-md-table-cell">Июнь 21, 1961</td>
+                            {% if _user['active_education_module'] != "inactive" or module_first %}
+                                <td>{{ i_lesson['name'] }}</td>
+                                <td><a href="/education_course/lesson?id_course={{ id_course }}&id_lesson={{ i_lesson['id'] }}&id_video=1">Выполнить</a></td>
+                            {% else %}
+                                <td class="table-danger">{{ i_lesson['name'] }}</td>
+                                <td><a href="{{ url_for('price_list') }}">Получить доступ</a></td>
+                            {% endif %}
+                            <td class="d-none d-md-table-cell">{{ _user['education_module_expiration_date'] }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -155,7 +155,6 @@
                     {% if _data['lesson']["link"] is not none %}
                         <div class="card py-1 py-md-1 border">
                             <div class="card-body">
-                                {% set id_course = request.args['id_course'] %}
                                 {% if _data['lesson']['link'] is not none %}
                                     {% for i_video in _data['lesson']['link'] %}
                                          {% if i_video['video'] %}
@@ -175,19 +174,19 @@
                                     <div class="pagination" >
 
                                             <a class="border" style="margin-right: auto"
-                                                    href="{% if request.args.get('id_video')|int >= 2 %}/education_course/lesson?id_course={{ id_course }}&id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int - 1 }}{% endif %}">
+                                                    href="{% if request.args.get('id_video')|int >= 2 %}/education_course/lesson?id_course={{ _data['id_course'] }}&id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int - 1 }}{% endif %}">
                                                 <<
                                             </a>
 
                                         {% for i_video in _data['lesson']['link'] %}
                                             <a class="{% if i_video['video'] %}active{% endif %} border" style="margin: auto"
-                                                    href="/education_course/lesson?id_course={{ id_course }}&id_lesson={{ _data['lesson']['id'] }}&id_video={{ i_video['id'] }}">
+                                                    href="/education_course/lesson?id_course={{ _data['id_course'] }}&id_lesson={{ _data['lesson']['id'] }}&id_video={{ i_video['id'] }}">
                                                 {{ i_video['id'] }}
                                             </a>
                                         {% endfor %}
 
                                             <a class="border" style="margin-left: auto"
-                                                    href="{% if request.args.get('id_video')|int <= _data['lesson']['link']|count - 1 %}/education_course/lesson?id_course={{ id_course }}&id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int + 1 }}{% endif %}">
+                                                    href="{% if request.args.get('id_video')|int <= _data['lesson']['link']|count - 1 %}/education_course/lesson?id_course={{ _data['id_course'] }}&id_lesson={{ _data['lesson']['id'] }}&id_video={{ request.args.get('id_video')|int + 1 }}{% endif %}">
                                                 >>
                                             </a>
                                         </div>
@@ -211,8 +210,8 @@
                                             <td class="table-action">
                                                 <i class="align-middle me-2 fas fa-fw fa-calendar-alt"></i>
                                             </td>
-                                            <td>Срок выполнения</td>
-                                            <td class="d-none d-md-table-cell">Июнь 21, 1961</td>
+                                            <td>Срок доступа</td>
+                                            <td class="d-none d-md-table-cell">{{ _user['education_module_expiration_date'] }}</td>
                                         </tr>
                                         <tr>
                                             <td class="table-action">

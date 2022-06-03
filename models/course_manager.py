@@ -37,7 +37,7 @@ class CourseManager():
 
         return courses_list
 
-    def course_row_to_course(self, _data_row):
+    def module_row_to_module(self, _data_row):
         """
         Преобразует структуру данных, в которой хранится информация о уроке в структуру Course
 
@@ -48,9 +48,9 @@ class CourseManager():
             Module: курс
         """
 
-        course = Module(_data_row["id"], _data_row["name"], _data_row["lessons"])
+        module = Module(_data_row["id"], _data_row["name"], _data_row["lessons"])
 
-        return course
+        return module
 
     def get_course(self, _id=1):
 
@@ -87,7 +87,7 @@ class CourseManager():
 
             i_module["lessons"] = lessons_list
 
-            modules_list.append(self.course_row_to_course(i_module))
+            modules_list.append(self.module_row_to_module(i_module))
 
         return modules_list
 
@@ -118,7 +118,7 @@ class CourseManager():
         module = data_store_modules.get_rows({"id": lesson["id_module"]})[0]
         module["lessons"] = self.lesson_row_to_lesson(lesson)
 
-        return self.course_row_to_course(module)
+        return self.module_row_to_module(module)
 
     def get_courses(self):
 
