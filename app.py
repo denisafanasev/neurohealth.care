@@ -168,7 +168,7 @@ def registration():
             token = login_page_controller.create_user(
                 user_login, user_name, user_password, user_password2, user_email, is_create_superuser)
 
-            #TODO: доделать подтверждение почты
+            # TODO: доделать подтверждение почты
 
             confirm_url = url_for(user_email, token=token, _external=True)
             html = render_template('email_confirmation.html', confirm_url=confirm_url)
@@ -243,9 +243,9 @@ def user_manager():
     endpoint = request.endpoint
     users_list = manager_page_controller.get_users_list_view()
     user_id = ''
-    new_user = page_controller.get_users_profile_view(user_id)
-    new_user['user_id'] = 0
-    users_list.append(new_user)
+    # new_user = page_controller.get_users_profile_view(user_id)
+    # new_user['user_id'] = 0
+    # users_list.append(new_user)
 
     error = None
     settings_user = page_controller.get_settings_user()
@@ -258,7 +258,7 @@ def user_manager():
             mode[i_id['user_id']] = "view"
         else:
             try:
-                if request.form[f"button_{i_id['user_id']}"] == "save_discharge":
+                if request.form[f"button_{i_id['user_id']}"] == "discharge":
                     mode[i_id['user_id']] = "discharge"
                 elif request.form[f"button_{i_id['user_id']}"] == "extension":
                     mode[i_id['user_id']] = "extension"
@@ -343,17 +343,17 @@ def user_manager():
                     error = "Изменения сохранены!"
                     error_type = "Successful"
 
-            elif request.form.get(f"button_{user_id}") == "discharge" or request.form.get(f"button_{user_id}") == "save_discharge":
+            elif request.form.get(f"button_{user_id}") == "discharge":
                 user = {}
                 user["login"] = data[user_id]['login']
-                user["password"] = request.form[f"password_{user_id}_{user_id}"]
-                user["password2"] = request.form[f"password2_{user_id}_{user_id}"]
+                user["password"] = request.form[f"password_{user_id}"]
+                user["password2"] = request.form[f"password2_{user_id}"]
 
                 error = page_controller.discharge_password(user["login"], user["password"], user["password2"])
 
-                if error is None:
-                    mode[user_id] = "view"
+                mode[user_id] = "view"
 
+                if error is None:
                     error = "Пароль успешно изменен!"
                     error_type = "Successful"
 
@@ -381,11 +381,11 @@ def user_manager():
             else:
                 return redirect("user_manager")
 
-            new_user = page_controller.get_users_profile_view('')
-            new_user['user_id'] = 0
-            users_list.append(new_user)
-
-            users_list = manager_page_controller.get_users_list_view()
+            # new_user = page_controller.get_users_profile_view('')
+            # new_user['user_id'] = 0
+            # users_list.append(new_user)
+            #
+            # users_list = manager_page_controller.get_users_list_view()
 
     except exceptions.BadRequestKeyError:
         for i_id in users_list:
@@ -701,23 +701,26 @@ def education_course_lesson():
     endpoint = 'education_list_courses'
 
     id_course = request.args.get("id_course")
+    id_module = request.args.get("id_module")
     id_lesson = int(request.args.get("id_lesson"))
     id_video = request.args.get("id_video")
-    id_room_chat = request.args.get("id_chat")
+    # id_room_chat = request.args.get("id_chat")
 
     user = page_controller.get_current_user()
+
+    if user['active_education_module'] == 'inactive':
+        if int(id_module) != 1 and user['role'] != 'superuser':
+            return redirect('/price_list')
+
+    # if id_room_chat is not None:
     data = page_controller.get_lesson(id_lesson, int(id_course), int(id_video))
     user_list = None
 
-    if user['active_education_module'] == 'inactive':
-        if data['id_module'] != 1 and user['role'] != 'superuser':
-            return redirect('/price_list')
-
-    if id_room_chat is None:
-        if user["role"] != "superuser":
-            id_room_chat = page_controller.room_chat_entry(id_lesson, id_course)["id"]
-            return redirect(
-                f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
+    # if id_room_chat is None:
+    #     if user["role"] != "superuser":
+    #         id_room_chat = page_controller.room_chat_entry(id_lesson, id_course)["id"]
+    #         return redirect(
+    #             f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
 
     if id_video is None:
         id_video = 1
@@ -729,20 +732,20 @@ def education_course_lesson():
         if request.form.get("send"):
             text = request.form.get("text")
             files = request.files.getlist("files")
-            page_controller.add_message({"text": text, "files": files}, id_room_chat)
+            # page_controller.add_message({"text": text, "files": files}, id_room_chat)
         else:
             id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, request.form.get("user"))["id"]
             return redirect(
                 f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
 
-    if id_room_chat is not None:
-        room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
-    else:
-        room_chat = None
+    # if id_room_chat is not None:
+    #     room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
+    # else:
+    #     room_chat = None
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=data, _room_chat=room_chat, _user_list=user_list, _user=user)
+                           _data=data, _room_chat=None, _user_list=user_list, _user=user)
 
 
 @app.route('/education_home_tasks', methods=['GET', 'POST'])
