@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block main_block %}
+<div class="container-fluid p-0">
+
+    <h1 class="h3 mb-3">Центр развития</h1>
+
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <img class="card-img-top" src="/static/img/photos/204516408_S.jpg" alt="В разработке">
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{{ _data }}</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        Данный раздел находиться в разработке. Пока на платформе доступен только раздел <a href="{{ url_for('education_list_courses') }}">"Центр обучения"</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

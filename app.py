@@ -603,8 +603,7 @@ def empty_function():
     endpoint = request.endpoint
 
     return render_template('index.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data="")
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data="")
 
 
 @app.route('/price_list', methods=['GET', 'POST'])
@@ -622,6 +621,24 @@ def price_list():
     endpoint = request.endpoint
 
     return render_template('price_list.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data="")
+
+
+@app.route('/evolution_centre_dummy', methods=['GET', 'POST'])
+@login_required
+def evolution_centre_dummy():
+    """
+    Страница заглушка для разделов, которые еще не готовы
+
+    Returns:
+        
+    """
+
+    mpc = MainMenuPageController()
+
+    endpoint = request.endpoint
+
+    return render_template('evolution_centre_dummy.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data="")
 
@@ -785,7 +802,7 @@ def corrections():
     endpoint = request.endpoint
 
     if not flask_login.current_user.is_admin():
-        return redirect("price_list")
+        return redirect("evolution_centre_dummy")
 
     return render_template('corrections.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
@@ -805,10 +822,10 @@ def probes():
     page_controller = ProbesPageController()
     mpc = MainMenuPageController()
 
-    endpoint = request.endpoint
+    endpoint = "probes"
 
     if not flask_login.current_user.is_admin():
-        return redirect("price_list")
+        return redirect("evolution_centre_dummy")
 
     return render_template('protocols.html', view="probes", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
@@ -824,7 +841,7 @@ def probe_profile():
     endpoint = "probes"
 
     if not flask_login.current_user.is_admin():
-        return redirect("price_list")
+        return redirect("evolution_centre_dummy")
 
     probationer_id = request.args.get('probationer_id')
 
@@ -903,10 +920,10 @@ def results():
     page_controller = ResultsPageController()
     mpc = MainMenuPageController()
 
-    endpoint = request.endpoint
+    endpoint = "results"
 
     if not flask_login.current_user.is_admin():
-        return redirect("price_list")
+        return redirect("evolution_centre_dummy")
 
     return render_template('results.html', view="results", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
@@ -923,16 +940,16 @@ def probationers():
         
     """
 
+    endpoint = "probationers"
+
+    if not flask_login.current_user.is_admin():
+        return redirect("evolution_centre_dummy")
+
     page_controller = ProbationersPageController()
     mpc = MainMenuPageController()
 
-    if not flask_login.current_user.is_admin():
-        return redirect("price_list")
-
     global attempt
     attempt = False
-
-    endpoint = request.endpoint
 
     return render_template('probationers.html', view="probationers", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
@@ -947,12 +964,13 @@ def probationer_card():
         Страница просмотра, редактирования и добавления карточки испытуемого
     """
 
-    page_controller = ProbationerCardPageController()
-    mpc = MainMenuPageController()
     endpoint = "probationers"
 
     if not flask_login.current_user.is_admin():
-        return redirect("price_list")
+        return redirect("evolution_centre_dummy")
+    
+    page_controller = ProbationerCardPageController()
+    mpc = MainMenuPageController()
 
     probationer_id = request.args.get('probationer_id')
     error = None

@@ -4,7 +4,7 @@ app configuration
 
 import pathlib
 
-VERSION = "0.0.9.1"
+VERSION = "1.0.0"
 APP_NAME = "NeuroHealth"
 DATA_FOLDER = "../neurohealth.care.data.devs/"
 
