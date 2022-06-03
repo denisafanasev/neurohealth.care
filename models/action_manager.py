@@ -13,12 +13,17 @@ class ActionManager():
             _action (List): список действий пользователя
         """
 
-        action = Action(_data_row['id'], _data_row["login"], _data_row["action"])
+        action = Action(_id=_data_row['id'], _user_login=_data_row["login"], _action=_data_row["action"])
 
         if _data_row.get("created_date") is not None:
             action.created_date = datetime.strptime(_data_row["created_date"], '%d/%m/%Y %H:%M:%S')
         else:
             action.created_date = datetime.now()
+
+        if _data_row.get("comment_action") is not None:
+            action.comment_action = _data_row["comment_action"]
+        else:
+            action.comment_action = ''
 
         return action
 
@@ -43,32 +48,38 @@ class ActionManager():
         elif _action == "view":
             _action = "посмотрел"
 
-        if _name_place == "estimated_values":
-            _name_place = "в файле"
-            _place = "данные " + str(_place)
-        elif _name_place == "probationer_manager":
-            _name_place = "испытуемого"
-            _place = "данные " + str(_place)
-        elif _name_place == "user_manager":
-            _name_place = "пользователя"
-            _place = "данные " + str(_place)
-        elif _name_place == "probes_manager":
-            _name_place = ""
-            _place = "данные " + str(_place)
-        elif _name_place == "course_manager":
-            _name_place = ""
-            _place = f"урок {_place.lessons.name} модуля {_place.lessons.id_module}"
+        comment_action = ''
 
-        action = "{user} {action} {place} {name_place}".format(
+        if _name_place == "estimated_values":
+            _name_place = "данные в файле"
+            comment_action = f"для диапазона возрастов {_place}"
+
+        elif _name_place == "probationer_manager":
+            _name_place = "данные тестируемого"
+            comment_action = f"Имя тестируемого: {_place}"
+
+        elif _name_place == "user_manager":
+            _name_place = "данные пользователя"
+            comment_action = f"Login пользователя: {_place}"
+
+        elif _name_place == "probes_manager":
+            _name_place = "данные "
+            comment_action = f"{_place}"
+
+        elif _name_place == "course_manager":
+            _name_place = "урок"
+            comment_action = f"{_place.lessons.name[0:-2]} модуля {_place.lessons.id_module}"
+
+        action = "{user} {action} {name_place}".format(
             user=_user,
-            place=_place,
             action=_action,
             name_place=_name_place)
         id = data_store.get_rows_count() + 1
-        action = self.action_row_to_action({"id": id, "login": _user, "action": action})
+
+        action = self.action_row_to_action({"id": id, "login": _user, "action": action, "comment_action": comment_action})
 
         data_store.add_row({"id": action.id, "login": action.user_login, "action": action.action,
-                            "created_date": action.created_date.strftime("%d/%m/%Y %H:%M:%S")})
+                            "comment_action": action.comment_action, "created_date": action.created_date.strftime("%d/%m/%Y %H:%M:%S")})
 
     def get_actions(self):
         """
@@ -92,6 +103,8 @@ class ActionManager():
             if not user.role == "superuser":
                 if user.login == i_action["login"]:
                     action = self.action_row_to_action(i_action)
+                    if action.comment_action == '':
+                        data_store.update_row({"comment_action": action.comment_action, "id": action.id}, "id")
                     if date < action.created_date:
                         actions.append({"action": action, "timedelta": date - date})
                         data_store.update_row({"created_date": date.strftime("%d/%m/%Y %H:%M:%S"), "id": action.id}, "id")

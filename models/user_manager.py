@@ -145,6 +145,9 @@ class UserManager():
             else:
                 user.active_education_module = "active"
 
+        if user.role == 'superuser':
+            user.education_module_expiration_date += relativedelta(year=datetime.today().year + 10)
+
         return user
 
     def get_user_by_id(self, _user_id):

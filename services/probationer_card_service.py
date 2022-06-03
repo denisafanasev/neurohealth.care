@@ -42,14 +42,12 @@ class ProbationerCardService():
         return probationer_manager.get_probationer_by_id(probationer_id)
 
     def change_probationer(self, _probationer_id, _name_probationer, _date_of_birth, _name_parent,
-                           _educational_institution,
-                           _contacts, _diagnoses, _reasons_for_contact):
+                           _educational_institution, _contacts, _diagnoses, _reasons_for_contact):
 
         probationer_manager = ProbationerManager()
 
-        name_probationer = probationer_manager.change_probationer(_probationer_id, _name_probationer, _date_of_birth, _name_parent,
-                           _educational_institution,
-                           _contacts, _diagnoses, _reasons_for_contact)
+        name_probationer = probationer_manager.change_probationer(_probationer_id, _name_probationer, _date_of_birth,
+                            _name_parent, _educational_institution, _contacts, _diagnoses, _reasons_for_contact)
 
         ActionService().add_notifications(name_probationer, "overwrite", "probationer_manager")
 

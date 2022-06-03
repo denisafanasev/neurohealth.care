@@ -7,7 +7,7 @@ class Action():
     Класс действий
     """
 
-    def __init__(self, _id=None, _user_login="", _action="", _created_date=None):
+    def __init__(self, _id=None, _user_login="", _action="", _created_date=None, _comment_action=''):
         """
         Конструктор класса
 
@@ -20,6 +20,7 @@ class Action():
         self.id = _id
         self.user_login = _user_login
         self.action = _action
+        self.comment_action = _comment_action
 
         if _created_date is None:
             self.created_date = date.today()
