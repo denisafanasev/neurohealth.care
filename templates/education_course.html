@@ -40,7 +40,7 @@
                         {% endif %}
                         {% for i_lesson in i_course['lessons'] %}
                         <tr>
-                            {% if _user['active_education_module'] != "inactive" or module_first %}
+                            {% if (_user['active_education_module'] != "inactive" or module_first) or _user['role'] == 'superuser' %}
                                 <td class="table-action">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -50,7 +50,7 @@
                                     </svg>
                                 </td>
                                 <td>{{ i_lesson['name'] }}</td>
-                                <td><a href="/education_course/lesson?id_course={{ id_course }}&id_lesson={{ i_lesson['id'] }}&id_video=1">Выполнить</a></td>
+                                <td><a href="/education_course/lesson?id_course={{ id_course }}&id_lesson={{ i_lesson['id'] }}&id_module={{ i_course['id'] }}&id_video=1">Выполнить</a></td>
                                 <td class="d-none d-md-table-cell">{% if module_first %}Неограничен{% else %}{{ _user['education_module_expiration_date'] }}{% endif %}</td>
                             {% else %}
                                 <td class="table-action table-warning">
