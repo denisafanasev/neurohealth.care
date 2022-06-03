@@ -46,7 +46,7 @@ class RegistrationService():
             _role = "superuser"
 
         # создаем запись нового пользователя  базе данных пользователей
-        user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number=5, _access_time = "бессрочно")
+        user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number=5)
 
         # если ппользователь успешно создан, находим нового только что созданного пользователя
         user = user_manager.get_user_by_login(_login)
