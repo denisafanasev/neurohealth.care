@@ -30,6 +30,7 @@ class MainPageController():
             action["action"] = i_action["action"].action
             action["created_date"] = str(i_action['action'].created_date.strftime("%d/%m/%Y %H:%M:%S"))
             action['timedelta'] = i_action['timedelta']
+            action['comment_action'] = i_action['action'].comment_action
 
             actions.append(action)
 

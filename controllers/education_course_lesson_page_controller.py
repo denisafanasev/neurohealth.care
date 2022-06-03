@@ -27,7 +27,7 @@ class EducationCourseLessonPageController():
                 "link": module.lessons.link,
                 "materials": module.lessons.materials,
                 "text": module.lessons.text,
-                "task": module.lessons.task
+                # "task": module.lessons.task
             }
         }
 

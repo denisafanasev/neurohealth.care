@@ -106,7 +106,7 @@
                                 <li class="timeline-item"></li>
                                     <span class="float-end text-muted text-sm">{{ item['timedelta'] }}</span>
                                     <strong>{{ item["action"] }}</strong>
-                                    <p>тут должно быть описание активности...</p>
+                                    <p>{{ item['comment_action'] }}</p>
                                 </li>
                         {% endfor %}
                     </ul>

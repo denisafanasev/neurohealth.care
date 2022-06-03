@@ -168,6 +168,8 @@ def registration():
             token = login_page_controller.create_user(
                 user_login, user_name, user_password, user_password2, user_email, is_create_superuser)
 
+            #TODO: доделать подтверждение почты
+
             confirm_url = url_for(user_email, token=token, _external=True)
             html = render_template('email_confirmation.html', confirm_url=confirm_url)
 

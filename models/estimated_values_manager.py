@@ -81,12 +81,12 @@ class EstimatedValuesManager():
 
         data = DataStore("age_range")
 
-        age_range = data.get_rows({"id": _id_file_name})[0]["name_file"]
+        age_range = data.get_rows({"id": _id_file_name})[0]
         return age_range
 
     def overwrite(self, _id_file_name, _criteria):
 
-        age_range_file = DataStore(self.get_age_range(_id_file_name))
+        age_range_file = DataStore(self.get_age_range(_id_file_name)["name_file"])
 
         for i_id in range(1, 214):
             criteria = age_range_file.get_rows({"id": i_id})[0]
@@ -96,4 +96,4 @@ class EstimatedValuesManager():
                     criteria[i] = _criteria[i_id - 1]
                     age_range_file.update_row(criteria, "id")
 
-        return _id_file_name
+        return self.get_age_range(_id_file_name)['range']

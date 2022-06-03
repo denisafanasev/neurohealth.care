@@ -145,6 +145,9 @@ class UserManager():
             else:
                 user.active_education_module = "active"
 
+        if user.role == 'superuser':
+            user.education_module_expiration_date += relativedelta(year=datetime.today().year + 10)
+
         return user
 
     def get_user_by_id(self, _user_id):
@@ -378,7 +381,8 @@ class UserManager():
             raise UserManagerException("Пользователь с таким email уже существует")
 
         # создаем новую запись
-        user = User(_login=login, _name=name, _email=email, _role=role, _probationers_number=_probationers_number)
+        user = User(_login=login, _name=name, _email=email, _role=role, _probationers_number=_probationers_number,
+                    _token=token)
 
         education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
 
