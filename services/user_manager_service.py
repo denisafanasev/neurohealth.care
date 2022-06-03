@@ -139,4 +139,6 @@ class UserManagerService():
 
         user_manager = UserManager()
 
-        return user_manager.access_extension(_period, _reference_point, _login)
+        user_manager.access_extension(_period, _reference_point, _login)
+
+        ActionService().add_notifications(_login, "overwrite", "user_manager")
