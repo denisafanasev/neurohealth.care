@@ -1,6 +1,4 @@
-// export {checkPasswordsMatched, checkLogin}
-
-export function checkPasswordsMatched(form) {
+function checkPasswordsMatched(form) {
     var password = form.password.value;
     var password2 = form.password2.value;
     var text = "Ошибка: неверная длинная пароля, укажите минимум 5 и максимум 20 символов"
@@ -17,7 +15,7 @@ export function checkPasswordsMatched(form) {
         return checkLogin(form);
     }
   }
-  export function checkLogin(form) {
+function checkLogin(form) {
     var login = form.login.value;
     var text = "Ошибка: ошибка корректности указанного логина пользователя"
 
@@ -29,7 +27,7 @@ export function checkPasswordsMatched(form) {
     }
   }
 
-export function checkRole(form) {
+function checkRole(form) {
     var role = form.role.value;
     var text = "Ошибка: ошибка корректности указанного значения роли"
 
@@ -41,7 +39,7 @@ export function checkRole(form) {
     }
   }
 
-export function checkPassword(form) {
+function checkPassword(form) {
   var password = form.password.value;
   var text = "Ошибка: неверная длина пароля"
 
