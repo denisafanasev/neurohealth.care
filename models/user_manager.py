@@ -135,6 +135,16 @@ class UserManager():
         else:
             user.email_confirmed = False
 
+        date_today = datetime.today()
+
+        if date_today > user.education_module_expiration_date:
+            user.active_education_module = "inactive"
+        else:
+            if user.education_module_expiration_date - date_today < timedelta(days=31):
+                user.active_education_module = "ends"
+            else:
+                user.active_education_module = "active"
+
         return user
 
     def get_user_by_id(self, _user_id):

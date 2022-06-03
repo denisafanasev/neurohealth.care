@@ -1,3 +1,4 @@
+import datetime
 import logging
 from logging.handlers import RotatingFileHandler
 from flask import Flask, request, redirect, render_template, url_for, send_file
@@ -247,18 +248,6 @@ def user_manager():
     error = None
     settings_user = page_controller.get_settings_user()
 
-    # if user_id is None:
-    #     # если пользователь не задан, то открываем страницу в режиме создания нового пользователя
-    #     # страница доступна только администратору
-    #     if not flask_login.current_user.is_admin():
-    #         return redirect("main_page")
-    #
-    #     user_id = ""
-    #     settings_user = page_controller.get_settings_user()
-    # else:
-    #     if not flask_login.current_user.is_admin():
-    #         mode = "edit"
-
     mode = {0: "new"}
     data_edit = {}
     data = {0: page_controller.get_users_profile_view(user_id)}
@@ -280,7 +269,6 @@ def user_manager():
             mode[i_id['user_id']] = "new"
 
         data[i_id['user_id']] = page_controller.get_users_profile_view(i_id["user_id"])
-        data_edit = {}
         # if isinstance(data, dict):
         #     active = data[i_id['user_id']]['active']
         # else:
@@ -410,7 +398,7 @@ def user_manager():
 
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data_now=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),
+                           _users_list=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),
                            _data_edit=data_edit, _data=data, _settings=settings_user,
                            _mode=mode, _error=error, _error_type=error_type)
 
@@ -714,8 +702,15 @@ def education_course_lesson():
     id_lesson = int(request.args.get("id_lesson"))
     id_video = request.args.get("id_video")
     id_room_chat = request.args.get("id_chat")
+
     user = page_controller.get_current_user()
+    data = page_controller.get_lesson(id_lesson, int(id_course), int(id_video))
     user_list = None
+
+    if user['active_education_module'] == 'inactive':
+        if data['id_module'] != 1 and user['role'] != 'superuser':
+            return redirect('/price_list')
+
     if id_room_chat is None:
         if user["role"] != "superuser":
             id_room_chat = page_controller.room_chat_entry(id_lesson, id_course)["id"]
@@ -738,7 +733,6 @@ def education_course_lesson():
             return redirect(
                 f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
 
-    data = page_controller.get_lesson(id_lesson, int(id_course), int(id_video))
     if id_room_chat is not None:
         room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
     else:
