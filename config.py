@@ -4,7 +4,7 @@ app configuration
 
 import pathlib
 
-VERSION = "0.0.9.1"
+VERSION = "1.0.0"
 APP_NAME = "NeuroHealth"
 DATA_FOLDER = "../neurohealth.care.data.devs/"
 
@@ -40,10 +40,12 @@ EDUCATIONAL_INSTITUSION = ["Гимназия", "Массовая школа", "�
 # user settings
 PROBATIONERS_NUMBER = [5, 10, 15, 20, 25, 30]
 ROLE = ["user", "superuser"]
+
 EDUCATION_MODULE_EXPIRATION_DATE = [{"name_period": "1 месяц", "amount": 1},
                                     {"name_period": "3 месяца", "amount": 3},
                                     {"name_period": "6 месяцев", "amount": 6},
                                     {"name_period": "1 год", "amount": 12}]
+
 REFERENCE_POINT = [{"name_point": "от даты окончания", "value": "end"},
                    {"name_point": "от текущей даты", "value": "today"}]
 
@@ -51,26 +53,19 @@ REFERENCE_POINT = [{"name_point": "от даты окончания", "value": "
 SUPERUSER_MENU = [
     {"module": "Центр управления", "name": "Пользователи", "endpoint": "user_manager", "icon": "users"},
     {"module": "Центр управления", "name": "Настройки", "endpoint": "age_range_list", "icon": "settings"},
-        {"module": "Центр управления", "name": "Домашние задания",
-        "endpoint": "education_home_tasks", "icon": "edit"},
+    {"module": "Центр управления", "name": "Домашние задания", "endpoint": "education_home_tasks", "icon": "edit"}
 ]
 
 EDUCATION_MENU = [
-    {"module": "Центр обучения", "name": "Каталог курсов",
-        "endpoint": "education_list_courses", "icon": "video"}
+    {"module": "Центр обучения", "name": "Каталог курсов", "endpoint": "education_list_courses", "icon": "video"}
 ]
 
-TESTING_MENU = [
+EVOLUTION_MENU = [
 
-    {"module": "Центр тестирования", "name": "Тестируемые", "endpoint": "probationers", "icon": "users"},
-    {"module": "Центр тестирования", "name": "Протоколы", "endpoint": "probes", "icon": "list"},
-    {"module": "Центр тестирования", "name": "Результаты", "endpoint": "results", "icon": "activity"}    
-]
-
-CORRECTIONS_MENU = [
-
-    {"module": "Центр коррекции", "name": "Коррекция", "endpoint": "corrections", "icon": "trending-up"}
-    
+    {"module": "Центр развития", "name": "Тестируемые", "endpoint": "probationers", "icon": "users"},
+    {"module": "Центр развития", "name": "Протоколы", "endpoint": "probes", "icon": "list"},
+    {"module": "Центр развития", "name": "Результаты", "endpoint": "results", "icon": "activity"},
+    {"module": "Центр развития", "name": "Коррекция", "endpoint": "corrections", "icon": "trending-up"}
 ]
 
 MAIN_MENU = [

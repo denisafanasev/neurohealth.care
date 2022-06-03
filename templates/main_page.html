@@ -6,58 +6,30 @@
     <h1 class="h3 mb-3">Рабочий стол</h1>
 
     <div class="row">
-       
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card">
-                    <img class="card-img-top" src="/static/img/photos/370212158_S.jpg" alt="Обучение">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Центр обучения</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">В центре обучения доступны образовательные курсы, программы и обучающие материалы по нейропсихологии, процессу тестирования и проведения развивающих занятий и упражнений</p>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"></li>
-                            <li class="list-group-item">Сейчас доступно <strong>3</strong> курса</li>
-                            <li class="list-group-item"></li>
-                        </ul>
-                        <a href="{{ url_for('education_list_courses') }}" class="btn btn-primary">Перейти к модулю</a>
-                    </div>
+        <div class="col-12 col-md-6 col-lg-8">
+            <div class="card">
+                <img class="card-img-top" src="/static/img/photos/370212158_S.jpg" alt="Обучение">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><a href="{{ url_for('education_list_courses') }}">Центр обучения</a></h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">В центре обучения доступны образовательные курсы, программы и обучающие материалы по
+                        нейропсихологии, процессу тестирования и проведения развивающих занятий и упражнений</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"></li>
+                        <li class="list-group-item">Сейчас доступно <strong>3</strong> курса</li>
+                        <li class="list-group-item"></li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card">
-                    <img class="card-img-top" src="/static/img/photos/50729393_S.jpg" alt="Тестирование и коррекция">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Центр тестирования и коррекции</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">В центре тестирование и коррекции доступнен функционал оценки нейропсихологических особенностей детей, ведение журнала тестирований, занятий и аналитика</p>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"></li>
-                            <li class="list-group-item">Вам доступно <strong> - </strong> тестируемых</li>
-                            <li class="list-group-item"></li>
-                        </ul>
-                        <a href="{{ url_for('price_list') }}" class="btn btn-primary">Перейти к модулю</a>
-                    </div>
-                </div>
-            </div>
-
-        
-
-            
-        
-    
-        <div class="col-xl-4">
+        <div class="col-12 col-md-6 col-lg-4">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Мой профиль</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row g-0">
-                        <p>В данном блоке представлены основные параметры профиля и настройки доступа к платформе. Обратитесь к администратору, в случае каких-то вопросов или необходимости корректировки параметров</p>
-                    </div>
-    
                     <table class="table table-sm mt-2 mb-4">
                         <tbody>
                             <tr>
@@ -89,11 +61,7 @@
                                 <td><span class="badge bg-success">Доступно</span></td>
                             </tr>
                             <tr>
-                                <th>Центр тестирования</th>
-                                <td><span class="badge bg-danger">Недоступно</span></td>
-                            </tr>
-                            <tr>
-                                <th>Центр коррекции</th>
+                                <th>Центр развития</th>
                                 <td><span class="badge bg-danger">Недоступно</span></td>
                             </tr>
                         </tbody>

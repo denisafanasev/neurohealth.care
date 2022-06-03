@@ -43,6 +43,9 @@ class MainMenuPageController():
                     module_menu.append(item)
 
             menu.append([main_item, module_menu])
+
+        menu.sort()
+        
         return menu
 
     def get_active_menu_item_number(self, _endpoind):
