@@ -23,7 +23,7 @@
         });
     </script>
 
-    <script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>
+{#    <script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>#}
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -162,16 +162,19 @@
                                                 style="width:5%;" aria-label="Position: activate to sort column ascending">Тестируемые
                                             </th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:10%;" aria-label="Position: activate to sort column ascending">Дата создания
+                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Дата создания
                                             </th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:10%;" aria-label="Position: activate to sort column ascending">Срок доступа
+                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Срок доступа
                                             </th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                 style="width:5%;" aria-label="Position: activate to sort column ascending">Статус
                                             </th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                 style="width:5%;" aria-label="Position: activate to sort column ascending">Доступ к центру обучения
+                                            </th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Подтвержден email
                                             </th>
                                         </tr>
                                         </thead>
@@ -217,6 +220,12 @@
                                                     <td><span class="badge bg-warning"><a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}">Заканчивается</a></span></td>
                                                 {% endif %}
 
+                                                {% if item['email_confirmed'] %}
+                                                    <td style="display: flex; text-align: center"><span class="fas fa-circle chat-online"></span></td>
+                                                {% else %}
+                                                    <td style="display: flex; text-align: center"><span class="fas fa-circle chat-offline"></span></td>
+                                                {% endif %}
+
                                             </tr>
                                             {% endif %}
                                         {% endfor %}
@@ -252,10 +261,52 @@
                     }
                 }
             </script>
+            <script >
+            function checkPasswordsMatched_{{ item['user_id'] }}(form) {
+                var password = form.password_{{ item['user_id'] }}.value;
+                var password2 = form.password2_{{ item['user_id'] }}.value;
+                var text = "Ошибка: неверная длинная пароля, укажите минимум 5 и максимум 20 символов"
+                var text2 = "Ошибка: введенные пароли не совпадают"
+
+                if (password.length < 5 || password.length > 20){
+                    alert(text);
+                    return false;
+                }
+                if (password !== password2){
+                    alert(text2);
+                    return false;
+                }else {
+                    return checkLogin_{{ item['user_id'] }}(form);
+                }
+              }
+            function checkLogin_{{ item['user_id'] }}(form) {
+                var login = form.login_{{ item['user_id'] }}.value;
+                var text = "Ошибка: ошибка корректности указанного логина пользователя"
+
+                if (login.length < 3 || login.length > 11) {
+                  alert(text);
+                  return false;
+                }else{
+                    return checkRole_{{ item['user_id'] }}(form);
+                }
+              }
+
+            function checkRole_{{ item['user_id'] }}(form) {
+                var role = form.role_{{ item['user_id'] }}.value;
+                var text = "Ошибка: ошибка корректности указанного значения роли"
+
+                if (role !== "user" && role !== "superuser"){
+                    alert(text);
+                    return false;
+                }else{
+                    return true;
+                }
+              }
+            </script>
             <div id="{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal">
                 <div class="modal-content animate">
                     <h3 class="modal-title">{% if _mode[item['user_id']] == "view" %}Просмотр{% else %} Редактирование{% endif %} карточки пользователя</h3>
-                    <form id="add_user_{{ item['user_id'] }}" name="add_user" method="post" class="was-validated" enctype="multipart/form-data" onsubmit="return checkPassword(this);">
+                    <form id="add_user_{{ item['user_id'] }}" name="add_user" method="post" class="was-validated" enctype="multipart/form-data" onsubmit="return checkPasswordsMatched_{{ item['user_id']|int }}(this);">
                     <div class="row d-flex align-items-stretch bd-highlight">
 
                         <div style="margin-right: 5px" class="col p-1 bd-highlight border">
@@ -265,7 +316,7 @@
 
                                     <div class="mb-2">
                                         <label class="form-label"><strong>Login</strong></label>
-                                        <input required type="text" name="login_{{ item['user_id']|int }}" class="form-control" {% if _mode[ item['user_id']|int]!="new" %}readonly {% endif %}
+                                        <input required type="text" id="login_{{ item['user_id']|int }}" name="login_{{ item['user_id']|int }}" class="form-control" {% if _mode[ item['user_id']|int]!="new" %}readonly {% endif %}
                                                 {% if _data_edit[ item['user_id']|int]['login'] != _data[ item['user_id']|int]['login'] or _mode[ item['user_id']|int] != "new" %}value="{{ _data_edit[ item['user_id']|int]['login'] }}" {% else %}
                                                placeholder="Введите логин пользователя" {% endif %}>
                                         <div class="invalid-feedback">
@@ -274,8 +325,7 @@
                                     </div>
 
                                     <div class="mb-2">
-                                        <label class="form-label"><strong>Имя
-                                            пользователя</strong></label>
+                                        <label class="form-label"><strong>Имя пользователя</strong></label>
                                         <input required type="text" name="user_name_{{ item['user_id']|int }}" class="form-control" {% if _mode[ item['user_id']|int]=="view" or _mode[ item['user_id']|int]=="discharge" %}readonly {% endif %}
                                                 {% if _data_edit[ item['user_id']|int]['name'] != _data[ item['user_id']|int]['name'] or _mode[ item['user_id']|int] != "new" %} value="{{ _data_edit[ item['user_id']|int]['name'] }}" {% else %}
                                                placeholder="Введите имя пользователя" {% endif %}>
@@ -439,7 +489,7 @@
                                 <div class="mb-2">
                                     <label class="form-label" style="height: 100%"><strong>Статус</strong></label>
                                     <div>
-                                        <input id="is_active" name="is_active_{{ item['user_id']|int }}"
+                                        <input id="is_active_{{ item['user_id']|int }}" name="is_active_{{ item['user_id']|int }}"
                                                class="form-check-input" type="checkbox" value="True"
                                                {% if _data_edit[item['user_id']]['active'] %}checked{% endif %}>
                                         <label class="form-check-label" for="is_active">Разблокирован</label>
@@ -462,12 +512,12 @@
                 <div class="modal-content animate" style="width: 20%">
                     <h3 class="modal-title">Сброс пароля</h3>
                     <form id="discharge_user_{{ item['user_id']|int }}" name="discharge_user_{{ item['user_id']|int }}" method="post" enctype="multipart/form-data"
-                          class="was-validated" onsubmit="return checkPassword(this.form);">
+                          class="was-validated" onsubmit="return checkPasswordsMatched_{{ item['user_id'] }}(this);">
                         <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; ">
                             <div class="card-header">
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Пароль</strong></label>
-                                    <input id="password_{{ item['user_id']|int }}" required type="password" name="password" class="form-control"{% if _data_edit[ item['user_id']|int]['password']!= _data[ item['user_id']|int]['password'] %}
+                                    <input id="password_{{ item['user_id']|int }}" required type="password" name="password_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password']!= _data[ item['user_id']|int]['password'] %}
                                            value="{{ _data_edit[ item['user_id']|int]['password'] }}" {% else %}placeholder="Введите пароль" {% endif %}>
                                     <div class="invalid-feedback">
                                         Поле, обязательное для заполнения!
@@ -476,7 +526,7 @@
 
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Повтор пароля</strong></label>
-                                    <input id="password2_{{ item['user_id']|int }}" required type="password" name="password2" class="form-control"{% if _data_edit['password2']!= _data['password2'] %}
+                                    <input id="password2_{{ item['user_id']|int }}" required type="password" name="password2_{{ item['user_id']|int }}" class="form-control"{% if _data_edit['password2']!= _data['password2'] %}
                                            value="{{ _data_edit['password2'] }}" {% else %}placeholder="Повторно введите пароль" {% endif %}>
                                     <div class="invalid-feedback">
                                         Поле, обязательное для заполнения!

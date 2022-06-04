@@ -362,6 +362,7 @@ def user_manager():
                 reference_point = request.form[f"reference_point_{user_id}"]
                 period = request.form[f"period_{user_id}"]
                 user_login = data[user_id]['login']
+
                 page_controller.access_extension(int(period), reference_point, user_login)
                 data_edit = data
                 data_edit[user_id] = page_controller.get_users_profile_view(user_id)
@@ -386,7 +387,7 @@ def user_manager():
             # new_user['user_id'] = 0
             # users_list.append(new_user)
             #
-            # users_list = manager_page_controller.get_users_list_view()
+            users_list = manager_page_controller.get_users_list_view()
 
     except exceptions.BadRequestKeyError:
         for i_id in users_list:
