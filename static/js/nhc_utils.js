@@ -43,30 +43,30 @@ function checkPassword(form) {
   var password = form.password.value;
   var text = "Ошибка: неверная длина пароля"
 
-  if (password.length < 3 || password.length > 20) {
+  if (password.length < 5 || password.length > 20) {
     alert(text);
     return false;
   } else {
     return checkPasswordsMatched(form);
   }
 }
-$(function() {
-    $('#extension').click(
-        function (form) {
-            var reference_point = form.reference_point.value;
-            var period = form.period.value;
-            var text = "Ошибка: выберите срок продления доступа и от какой даты считать";
-
-            if (reference_point === "") {
-                alert(text);
-                return false;
-            } else {
-                if (period === "") {
-                    alert(text);
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-        });
-});
+// $(function() {
+//     $('#extension').click(
+//         function (form) {
+//             var reference_point = form.reference_point.value;
+//             var period = form.period.value;
+//             var text = "Ошибка: выберите срок продления доступа и от какой даты считать";
+//
+//             if (reference_point === "") {
+//                 alert(text);
+//                 return false;
+//             } else {
+//                 if (period === "") {
+//                     alert(text);
+//                     return false;
+//                 } else {
+//                     return true;
+//                 }
+//             }
+//         });
+// });
