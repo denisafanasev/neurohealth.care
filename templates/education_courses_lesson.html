@@ -102,7 +102,7 @@
         width: 30px;
     }
     .card-text{
-        margin-top: -4em;
+        margin-top: -1em;
         margin-bottom: 0;
         white-space: pre-line;
         font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
@@ -133,8 +133,10 @@
     <h1 class="h3 mb-2">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url_for('education_main_courses') }}">Курс</a></li>
+                <li class="breadcrumb-item"><a href="/education_course?id_course={{ _data['id_course'] }}">Курс</a></li>
+                {% if _data['name'] != '' %}
                 <li class="breadcrumb-item">{{ _data['name'] }}</li>
+                {% endif %}
                 <li class="breadcrumb-item active" aria-current="page">{{ _data['lesson']['name'] }}</li>
             </ol>
         </nav>
@@ -245,7 +247,7 @@
                                                     <img class="{% if type == 'doc' or type == "docx" %}word{% else %}pdf{% endif %}"
                                                          src="{% if type == 'doc' or type == "docx" %}/static/img/icons/icon_word.png{% else %}/static/img/icons/icon_pdf.png{% endif %}">
                                                 </td>
-                                                <td>{{ name_file }}</td>
+                                                <td style="word-break: break-all;">{{ name_file }}</td>
                                                 <td>
                                                     <a href="/download?name_file={{ i_materials }}&dataset=course&id_dataset={{ _data['id_course'] }}">Файл</a>
                                                 </td>
