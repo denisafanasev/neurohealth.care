@@ -137,16 +137,16 @@ class UserManager():
 
         date_today = datetime.today()
 
-        if date_today > user.education_module_expiration_date:
+        if user.role == 'superuser':
+            user.education_module_expiration_date += relativedelta(year=datetime.today().year + 10)
+
+        if date_today.date() > user.education_module_expiration_date.date():
             user.active_education_module = "inactive"
         else:
             if user.education_module_expiration_date - date_today < timedelta(days=31):
                 user.active_education_module = "ends"
             else:
                 user.active_education_module = "active"
-
-        if user.role == 'superuser':
-            user.education_module_expiration_date += relativedelta(year=datetime.today().year + 10)
 
         return user
 
