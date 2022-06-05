@@ -269,10 +269,6 @@ def user_manager():
             mode[i_id['user_id']] = "new"
 
         data[i_id['user_id']] = page_controller.get_users_profile_view(i_id["user_id"])
-        # if isinstance(data, dict):
-        #     active = data[i_id['user_id']]['active']
-        # else:
-        #     active = False
 
     error_type = False
     try:
@@ -282,6 +278,9 @@ def user_manager():
                 if request.form.get(f"button_{i['user_id']}") is not None:
                     user_id = i['user_id']
                     break
+
+            if request.form.get("button_0") is not None:
+                user_id = 0
 
             if request.form.get(f"button_{user_id}") == "add":
                 if mode[user_id] == "new":
@@ -306,9 +305,8 @@ def user_manager():
                         error = "Пользователь сохранён!"
                         error_type = "Successful"
 
-                    data[0] = page_controller.get_users_profile_view(user_id)
                     data_edit = data
-                    data_edit[len(users_list)] = user
+                    data_edit[len(users_list)] = page_controller.get_users_profile_view(len(users_list) + 1)
                     users_list = manager_page_controller.get_users_list_view()
                     # new_user = page_controller.get_users_profile_view('')
                     # new_user['user_id'] = 0
@@ -334,7 +332,7 @@ def user_manager():
                                                 user["probationers_number"], user["created_date"],
                                                 user['education_module_expiration_date'])
 
-                    data[0] = page_controller.get_users_profile_view(user_id)
+                    # data[user_id] = page_controller.get_users_profile_view(user_id)
                     data_edit = data
                     data_edit[user_id] = user
                     users_list = manager_page_controller.get_users_list_view()
