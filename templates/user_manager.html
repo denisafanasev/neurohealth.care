@@ -10,6 +10,7 @@
             var datatablesButtons = $("#datatables-buttons").DataTable({
                 responsive: true,
                 lengthChange: !1,
+                display: "envelope"
 
             });
             datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
@@ -25,19 +26,15 @@
 
 {#    <script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>#}
     <style>
+
+        table.dataTable thead .sorting,
+        table.dataTable thead .sorting_asc,
+        table.dataTable thead .sorting_desc {
+            background : none;
+        }
+
         body {
             font-family: Arial, Helvetica, sans-serif;
-        }
-
-
-        img.avatar {
-            width: 40%;
-            border-radius: 50%;
-        }
-
-        span.psw {
-            float: right;
-            padding-top: 16px;
         }
 
         .pagination {
@@ -142,15 +139,15 @@
 
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%;" role="grid" aria-describedby="datatables-buttons_info">
+                                    <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%" aria-describedby="datatables-buttons_info">
                                         <thead>
-                                        <tr role="row">
+                                        <tr role="row" style="text-align: center">
                                             <th style="width:5%;">#</th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                 style="width:10%;" aria-label="Position: activate to sort column ascending">Login
                                             </th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:20%;" aria-label="Position: activate to sort column ascending">Имя пользователя
+                                                style="width:15%;" aria-label="Position: activate to sort column ascending">Имя пользователя
                                             </th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                 style="width:10%;" aria-label="Position: activate to sort column ascending">Email
@@ -190,9 +187,9 @@
                                                     <a href="#" data-bs-toggle="modal" data-bs-target="#{{ item['user_id'] }}"
                                                     onclick="document.getElementById('{{ item['user_id'] }}').style.display='block'">{{ item['login'] }}</a>
                                                 </td>
-                                                <td>{{ item['name'] }}</td>
+                                                <td style="display: flex"><div style=" position: center; margin-left: 27%">{{ item['name'] }}</div></td>
                                                 <td>{{ item['email'] }}</td>
-                                                <td>{{ item['role'] }}</td>
+                                                <td style="text-align: center">{{ item['role'] }}</td>
                                                 <td>{{ item['probationers_number'] }}</td>
                                                 <td>{{ item['created_date'] }}</td>
                                                 <td><a href="#" data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}"
@@ -207,10 +204,12 @@
                                                         </div>
                                                     </td>
                                                 {% else %}
-                                                    <td style="display: flex; text-align: center">
-                                                        <a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}" onclick="document.getElementById('status_{{ item['user_id'] }}').style.display='block';">
-                                                            <span class="fas fa-circle chat-offline"></span>
-                                                        </a>
+                                                    <td style="display: flex">
+                                                        <div class="col" style="position: center; margin-left: 27%">
+                                                            <a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}" onclick="document.getElementById('status_{{ item['user_id'] }}').style.display='block';">
+                                                                <span class="fas fa-circle chat-offline"></span>
+                                                            </a>
+                                                        </div>
                                                     </td>
                                                 {% endif %}
 
