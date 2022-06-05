@@ -42,7 +42,7 @@
             {#datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");#}
         });
     </script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/base.min.css">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script type="text/javascript">
@@ -63,11 +63,11 @@
           }
     </script>
 
-    <style>
-    body{
-        color: black;
-    }
-    </style>
+{#    <style>#}
+{#    body{#}
+{#        color: black;#}
+{#    }#}
+{#    </style>#}
 
     <div class="container-fluid p-0">
 
@@ -208,6 +208,8 @@
                     <button type="submit" name="button" value="draft" class="btn btn-primary ">Сохранить как черновик</button>
 
                     <button type="submit" name="button" value="end" class="btn btn-primary ">Сохранить окончательно</button>
+
+                    <a href="{{ url_for("probes") }}" class="btn btn-primary ">Назад</a>
                 </div>
             {% endif %}
         </form>

@@ -10,7 +10,6 @@
             var datatablesButtons = $("#datatables-buttons").DataTable({
                 responsive: true,
                 lengthChange: !1,
-                display: "envelope"
 
             });
             datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
@@ -40,6 +39,7 @@
         .pagination {
             z-index: 0;
         }
+
 
         /* The Modal (background) */
         .modal {
@@ -183,14 +183,18 @@
 
                                                 <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg") }}" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
 
-                                                <td class="sorting_1 dtr-control">
-                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#{{ item['user_id'] }}"
-                                                    onclick="document.getElementById('{{ item['user_id'] }}').style.display='block'">{{ item['login'] }}</a>
+                                                <td class="sorting_1 dtr-control" style="display: flex">
+                                                    <div class="col" style="text-align: center;position: center; margin-right: 16%">
+                                                        <a href="#" data-bs-toggle="modal" data-bs-target="#{{ item['user_id'] }}"
+                                                        onclick="document.getElementById('{{ item['user_id'] }}').style.display='block'">{{ item['login'] }}</a>
+                                                    </div>
                                                 </td>
-                                                <td style="display: flex"><div style=" position: center; margin-left: 27%">{{ item['name'] }}</div></td>
-                                                <td>{{ item['email'] }}</td>
+                                                <td style="display: flex"><div style=" text-align: center; position: center; margin-right: 16%">{{ item['name'] }}</div></td>
+                                                <td style="display: flex">
+                                                    <div class="col" style="text-align: center;position: center; margin-right: 16%">{{ item['email'] }}</div></td>
                                                 <td style="text-align: center">{{ item['role'] }}</td>
-                                                <td>{{ item['probationers_number'] }}</td>
+                                                <td style="display: flex">
+                                                    <div class="col" style="text-align: center;position: center; margin-right: 16%">{{ item['probationers_number'] }}</div></td>
                                                 <td>{{ item['created_date'] }}</td>
                                                 <td><a href="#" data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}"
                                                        onclick="document.getElementById('extension_{{ item['user_id'] }}').style.display='block';">{{ item['education_module_expiration_date'] }}</a></td>
@@ -214,17 +218,17 @@
                                                 {% endif %}
 
                                                 {% if item['active_education_module'] == 'active' %}
-                                                    <td><span class="badge bg-success"><a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}">Активен</a></span></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-success" ><a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}">Активен</a></span></div></td>
                                                 {% elif item['active_education_module'] == 'inactive' %}
-                                                    <td><span class="badge bg-danger"><a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}">Заблокирован</a></span></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-danger"><a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}">Заблокирован</a></span></div></td>
                                                 {% elif item['active_education_module'] == 'ends' %}
-                                                    <td><span class="badge bg-warning"><a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}">Заканчивается</a></span></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-warning"><a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}">Заканчивается</a></span></div></td>
                                                 {% endif %}
 
                                                 {% if item['email_confirmed'] %}
-                                                    <td style="display: flex; text-align: center"><span class="fas fa-circle chat-online"></span></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="fas fa-circle chat-online"></span></div></td>
                                                 {% else %}
-                                                    <td style="display: flex; text-align: center"><span class="fas fa-circle chat-offline"></span></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="fas fa-circle chat-offline"></span></div></td>
                                                 {% endif %}
 
                                             </tr>
