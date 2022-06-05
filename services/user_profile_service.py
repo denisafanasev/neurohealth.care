@@ -100,6 +100,7 @@ class UserProfileService():
         elif _active:
             return user_manager.deactivation(_login)
 
+    # TODO: кажется что название не соответсвует сути
     def get_current_user_role(self):
 
         user_manager = UserManager()

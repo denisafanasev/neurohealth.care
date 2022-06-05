@@ -1,6 +1,6 @@
 from distutils.command.config import config
 from data_adapters.data_store import DataStore
-from models.course import Module, Lesson, CoursesList
+from models.course import Module, Lesson, CoursesList, Course
 import os
 import config
 
@@ -51,6 +51,21 @@ class CourseManager():
         module = Module(_data_row["id"], _data_row["name"], _data_row["lessons"])
 
         return module
+    
+    def course_row_to_course(self, _data_row):
+        """
+        Преобразует структуру данных, в которой хранится информация о уроке в структуру Lesson
+
+        Args:
+            _data_row (Dict): структура данных, которую возвращает дата адаптер
+
+        Returns:
+            Lesson: урок
+        """
+
+        course = Course(_data_row["id"], _data_row["name"], _data_row["description"], _data_row["type"])
+
+        return course
 
     def get_course(self, _id=1):
 
@@ -143,3 +158,16 @@ class CourseManager():
             courses.append(self.courses_list_row_to_courses_list(i_course))
 
         return courses
+    
+    def get_course_by_id(self, _id):
+
+        course = None
+
+        data_store = DataStore("courses_list")
+        course_data = data_store.get_row_by_id(_id)
+
+        if course_data is not None:
+
+            course = self.course_row_to_course(course_data)
+
+        return course

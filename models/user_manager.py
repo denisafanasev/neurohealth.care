@@ -183,7 +183,9 @@ class UserManager():
                 data_store.delete_key_in_row("access_time", "login", user_data["login"])
             if user_data.get("expires_date") is not None:
                 data_store.delete_key_in_row("expires_date", "login", user_data["login"])
+
             user = self.user_row_to_user(user_data)
+            
             if user_data.get("education_module_expiration_date") is None:
                 self.change_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
                                  _probationers_number=user.probationers_number, _created_date=user.created_date,

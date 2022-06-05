@@ -648,12 +648,12 @@ def education_list_courses():
     page_controller = EducationListCoursesPageController()
     mpc = MainMenuPageController()
 
-    data = page_controller.get_courses()
-
     endpoint = request.endpoint
+    data = page_controller.get_courses()
+    user = page_controller.get_current_user()
 
     return render_template('education_list_courses.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data, _user=user)
 
 
 @app.route('/education_course', methods=['GET', 'POST'])
@@ -664,16 +664,18 @@ def education_course():
 
     endpoint = 'education_list_courses'
     id_course = request.args.get("id_course")
+    
     user = page_controller.get_current_user()
+    course = page_controller.get_course_by_id(id_course)
 
     if id_course is not None:
-        data = page_controller.get_course(id_course)
+        data = page_controller.get_course_modules(id_course)
     else:
         data = None
 
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
-                           _user=user)
+                           _user=user, _course_type = course['type'])
 
 
 @app.route('/education_course/lesson', methods=['GET', 'POST'])
