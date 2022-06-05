@@ -314,6 +314,7 @@ def user_manager():
                     # new_user['user_id'] = 0
                     # users_list.append(new_user)
 
+
             elif request.form.get(f"button_{user_id}") == "edit":
                 if mode[user_id] == "view":
                     mode[user_id] = "edit"
