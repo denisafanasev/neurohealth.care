@@ -33,7 +33,7 @@ class CourseManager():
             CoursesList: список курсов
         """
 
-        courses_list = CoursesList(_data_row["id"], _data_row["name"], _data_row["description"], _data_row["image"])
+        courses_list = CoursesList(_data_row["id"], _data_row["name"], _data_row["description"], _data_row["image"], _data_row["type"])
 
         return courses_list
 

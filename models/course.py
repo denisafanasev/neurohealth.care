@@ -53,7 +53,7 @@ class CoursesList():
     Класс список курсов
     """
 
-    def __init__(self, _id=0, _name='', _description='', _image=''):
+    def __init__(self, _id=0, _name='', _description='', _image='', _type=''):
         """
         Коструктор класса
 
@@ -68,6 +68,7 @@ class CoursesList():
         self.name = _name
         self.description = _description
         self.image = _image
+        self.type = _type
 
 class Setting():
     """

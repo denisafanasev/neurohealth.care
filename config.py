@@ -57,15 +57,14 @@ SUPERUSER_MENU = [
 ]
 
 EDUCATION_MENU = [
-    {"module": "Центр обучения", "name": "Каталог курсов", "endpoint": "education_list_courses", "icon": "video"}
+    {"module": "Центр обучения", "name": "Я - нейромама", "endpoint": "education_list_courses", "icon": "video"}
 ]
 
 EVOLUTION_MENU = [
-
-    {"module": "Центр развития", "name": "Тестируемые", "endpoint": "probationers", "icon": "users"},
-    {"module": "Центр развития", "name": "Протоколы", "endpoint": "probes", "icon": "list"},
+    {"module": "Центр развития", "name": "Мои тестируемые", "endpoint": "probationers", "icon": "users"},
+    {"module": "Центр развития", "name": "Диагностика", "endpoint": "probes", "icon": "list"},
     {"module": "Центр развития", "name": "Результаты", "endpoint": "results", "icon": "activity"},
-    {"module": "Центр развития", "name": "Коррекция", "endpoint": "corrections", "icon": "trending-up"}
+    {"module": "Центр развития", "name": "Занятия", "endpoint": "corrections", "icon": "trending-up"}
 ]
 
 MAIN_MENU = [

@@ -644,39 +644,6 @@ def evolution_centre_dummy():
                                endpoint), _data="")
 
 
-@app.route('/education_main_course/lesson', methods=['GET', 'POST'])
-@login_required
-def education_main_course_lesson():
-    page_controller = EducationMainCourseLessonPageController()
-    mpc = MainMenuPageController()
-
-    endpoint = request.endpoint
-
-    id_lesson = request.args.get("id_lesson")
-    id_video = request.args.get("id_video")
-    if id_video is None:
-        id_video = 1
-
-    data = page_controller.get_lesson(int(id_lesson), int(id_video))
-
-    return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=data)
-
-
-@app.route('/education_main_courses', methods=['GET', 'POST'])
-@login_required
-def education_main_courses():
-    """
-    Пустая функция-заглушка
-
-    Returns:
-        
-    """
-
-    return redirect("/education_course?id_course=1")
-
-
 @app.route('/education_list_courses', methods=['GET', 'POST'])
 @login_required
 def education_list_courses():
