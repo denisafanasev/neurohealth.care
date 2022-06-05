@@ -307,9 +307,9 @@ def user_manager():
                         error = "Пользователь сохранён!"
                         error_type = "Successful"
 
-                    data_edit = data
-                    data_edit[len(users_list)] = page_controller.get_users_profile_view(len(users_list) + 1)
-                    users_list = manager_page_controller.get_users_list_view()
+                        data_edit = data
+                        users_list = manager_page_controller.get_users_list_view()
+                        data_edit[len(users_list)] = page_controller.get_users_profile_view(len(users_list))
                     # new_user = page_controller.get_users_profile_view('')
                     # new_user['user_id'] = 0
                     # users_list.append(new_user)
