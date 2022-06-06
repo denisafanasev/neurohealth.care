@@ -623,7 +623,7 @@ def price_list():
 
     mpc = MainMenuPageController()
 
-    endpoint = request.endpoint
+    endpoint = 'education_list_courses'
 
     return render_template('price_list.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data="")
@@ -669,19 +669,21 @@ def education_course():
     mpc = MainMenuPageController()
 
     endpoint = 'education_list_courses'
+    
     id_course = request.args.get("id_course")
     
+    course = None
     user = page_controller.get_current_user()
-    course = page_controller.get_course_by_id(id_course)
 
     if id_course is not None:
+        course = page_controller.get_course_by_id(id_course)
         data = page_controller.get_course_modules(id_course)
     else:
-        data = None
+        return redirect("education_list_courses")
 
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
-                           _user=user, _course_type = course['type'])
+                           _user=user, _course_type = course['type'], _course_name = course['name'])
 
 
 @app.route('/education_course/lesson', methods=['GET', 'POST'])
@@ -699,6 +701,11 @@ def education_course_lesson():
     # id_room_chat = request.args.get("id_chat")
 
     user = page_controller.get_current_user()
+    course = page_controller.get_course_by_id(id_course)
+
+    # тут проверяем, что пользователь подписан на курс
+    if user['role'] == 'user' and course['type'] == 'main' and int(id_module) > 1:
+        return redirect("price_list")
 
     if user['active_education_module'] == 'inactive':
         if int(id_module) != 1 and user['role'] != 'superuser':
@@ -737,7 +744,7 @@ def education_course_lesson():
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=data, _room_chat=None, _user_list=user_list, _user=user)
+                           _data=data, _room_chat=None, _user_list=user_list, _user=user, _course_name=course['name'])
 
 
 @app.route('/education_home_tasks', methods=['GET', 'POST'])

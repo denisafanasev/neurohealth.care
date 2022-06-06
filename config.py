@@ -6,12 +6,13 @@ import pathlib
 
 VERSION = "1.0.0"
 APP_NAME = "NeuroHealth"
-DATA_FOLDER = "../neurohealth.care.data.devs/"
 
 if str(pathlib.Path().resolve()).find("prod")!=-1:
     ENVIRONMENT = "prod"
 else:
     ENVIRONMENT = "dev"
+
+DATA_FOLDER = "../neurohealth.care.data."+ENVIRONMENT+"/"
 
 # system settings
 THREADING_ENABLE = True

@@ -101,3 +101,15 @@ class EducationCourseLessonPageController():
                 user_list.append(i_user.login)
 
         return user_list
+    
+    def get_course_by_id(self, _id):
+        course_service = CourseService()
+        course = course_service.get_course_by_id(_id)
+
+        course_formated = {}
+        course_formated["id"] = course.id
+        course_formated["name"] = course.name
+        course_formated["description"] = course.description
+        course_formated["type"] = course.type
+
+        return course_formated
