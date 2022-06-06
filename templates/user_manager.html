@@ -18,6 +18,8 @@
                 var modal_{{ item['user_id'] }} = document.getElementById('{{ item['user_id'] }}');
                 {% if _mode[item['user_id']] == "edit" %}
                     modal_{{ item['user_id'] }}.style.display = "block";
+                {% elif _error_type[item['user_id']] == "Error" %}
+                    modal_{{ item['user_id'] }}.style.display = "block";
                 {% endif %}
             {% endfor %}
         });
@@ -116,20 +118,21 @@
     <div class="container-fluid p-0">
 
         <h1 class="h3 mb-3">Управление пользователями</h1>
-
-        {% if _error_type=='Successful' %}
-            <div class="alert alert-success alert-dismissible" role="alert">
-                <div class="alert-message">
-                    <strong>Успешно</strong>  {{ _error }}
+        {% for item in _users_list %}
+            {% if _error_type[item['user_id']]=='Successful' %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <div class="alert-message">
+                        <strong>Успешно</strong>  {{ _error }}
+                    </div>
                 </div>
-            </div>
-        {% elif _error %}
-            <div class="alert alert-danger alert-dismissible" role="alert">
-                <div class="alert-message">
-                    <strong>Ошибка</strong> {{ _error }}
+            {% elif _error_type[item['user_id']] == "Error" %}
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <div class="alert-message">
+                        <strong>Ошибка</strong> {{ _error }}
+                    </div>
                 </div>
-            </div>
-        {% endif %}
+            {% endif %}
+        {% endfor %}
 
         <div class="row">
             <div class="col-12">
@@ -325,6 +328,13 @@
             <div id="{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal">
                 <div class="modal-content animate">
                     <h3 class="modal-title">{% if _mode[item['user_id']] == "view" %}Просмотр{% else %} Редактирование{% endif %} карточки пользователя</h3>
+                    {% if _error_type[item['user_id']] == 'Error' %}
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <div class="alert-message">
+                                <strong>Ошибка</strong> {{ _error }}
+                            </div>
+                        </div>
+                    {% endif %}
                     <form id="add_user_{{ item['user_id'] }}" name="add_user" method="post" class="was-validated" enctype="multipart/form-data" onsubmit="return checkPasswordsMatched_{{ item['user_id']|int }}(this);">
                     <div class="row d-flex align-items-stretch bd-highlight">
 
@@ -365,8 +375,8 @@
 
                                         <div class="mb-2">
                                             <label class="form-label"><strong>Повтор пароля</strong></label>
-                                            <input required type="password" name="password2_{{ item['user_id']|int }}" class="form-control"{% if _data_edit['password2']!= _data['password2'] %}
-                                                   value="{{ _data_edit['password2'] }}" {% else %}placeholder="Повторно введите пароль" {% endif %}>
+                                            <input required type="password" name="password2_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password2']!= _data[ item['user_id']|int]['password2'] %}
+                                                   value="{{ _data_edit[ item['user_id']|int]['password2'] }}" {% else %}placeholder="Повторно введите пароль" {% endif %}>
                                             <div class="invalid-feedback">
                                                 Поле, обязательное для заполнения!
                                             </div>
@@ -396,8 +406,6 @@
                                         <select required type="text" name="role_{{ item['user_id'] }}" class="form-select"
                                                 {% if _mode[ item['user_id']|int]=="view" or _mode[ item['user_id']|int]=="discharge" %}disabled {% endif %}>
                                             {% if _mode[ item['user_id']|int] != "view" %}
-                                                <option value="">Выберите роль пользователя
-                                                </option>
                                                 {% for i in _settings['role'] %}
                                                     <option {% if i == _data_edit[ item['user_id']|int]['role'] %}selected {% endif %}value="{{ i }}">{{ i }}</option>
                                                 {% endfor %}
@@ -414,7 +422,6 @@
                                         <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
                                         <select required type="text" name="probationers_number_{{ item['user_id'] }}" class="form-select" {% if _mode[ item['user_id']|int]=="view" or [ item['user_id']|int]=="discharge" %}disabled {% endif %}>
                                             {% if _mode[ item['user_id']|int] != "view" %}
-                                                <option value="">Выберите количество доступных тестируемых</option>
                                                 {% for i in _settings['probationers_number'] %}
                                                     <option{% if _data_edit[ item['user_id']|int]['probationers_number'] == i %} selected {% endif %} value="{{ i }}">{{ i }}</option>
                                                 {% endfor %}
