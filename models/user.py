@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 
 from flask_login import UserMixin
 from datetime import date
@@ -65,7 +65,7 @@ class User(UserMixin):
             self.created_date = datetime.datetime.strptime(self.created_date, "%d/%m/%Y")
 
         if _education_module_expiration_date == "":
-            self.education_module_expiration_date = date.today()
+            self.education_module_expiration_date = date.today() - timedelta(days=1)
         else:
             if type(_education_module_expiration_date) is str:
                 self.education_module_expiration_date = datetime.datetime.strptime(_education_module_expiration_date, "%d/%m/%Y")

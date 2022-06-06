@@ -43,7 +43,8 @@ class LoginService():
 
         # делаем проверки, что пользователь может входить в систему
         if (user.email_confirmed is False) and (user.token != "") and (user.role != "superuser"):
-            raise UserManagerException("Email пользователя не подтвержден")
+            # raise UserManagerException("Email пользователя не подтвержден")
+            pass
             
         if not user.active:
             raise UserManagerException("Данный пользователь заблокирован")
