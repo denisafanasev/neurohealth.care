@@ -117,6 +117,20 @@
 
         <h1 class="h3 mb-3">Управление пользователями</h1>
 
+        {% if _error_type=='Successful' %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <div class="alert-message">
+                    <strong>Успешно</strong>  {{ _error }}
+                </div>
+            </div>
+        {% elif _error %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <div class="alert-message">
+                    <strong>Ошибка</strong> {{ _error }}
+                </div>
+            </div>
+        {% endif %}
+
         <div class="row">
             <div class="col-12">
                 <div class="card border">
@@ -432,7 +446,8 @@
                                                                                           document.getElementById('discharge_{{ item['user_id'] }}').style.display='block';" class="btn btn-primary">Сброс пароля
                                 </a>
                             {% endif %}
-                            <a onclick="document.getElementById('{{ item['user_id'] }}').style.display='none'" type="submit" name="button" class="btn btn-primary cancelbtn">
+
+                            <a href="{{ url_for('user_manager') }}" type="submit" name="button" class="btn btn-primary cancelbtn">
                                 Отмена
                             </a>
                         </div>
