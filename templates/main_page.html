@@ -8,16 +8,17 @@
     <div class="row">
         <div class="col-12 col-md-6 col-lg-8">
             <div class="card">
-                <img class="card-img-top" src="/static/img/photos/370212158_S.jpg" alt="Обучение">
+                <img class="card-img-top" src="/static/img/photos/370212158_SS.png" alt="Обучение">
                 <div class="card-header">
                     <h5 class="card-title mb-0"><a href="{{ url_for('education_list_courses') }}">Центр обучения</a></h5>
                 </div>
                 <div class="card-body">
-                    <p class="card-text">В центре обучения доступны образовательные курсы, программы и обучающие материалы по
-                        нейропсихологии, процессу тестирования и проведения развивающих занятий и упражнений</p>
+                    <p class="card-text">В центре обучения доступны образовательные программы, курсы и обучающие материалы по
+                        нейропсихологии, процессу тестирования и проведения развивающих занятий и упражнений. Сейчас на платформе вам доступны:</p>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"></li>
-                        <li class="list-group-item">Сейчас доступно <strong>3</strong> курса</li>
+                        <li class="list-group-item"><strong>1</strong> образовательная программа "Я - Нейромама"</li>
+                        <li class="list-group-item"><strong>2</strong> образовательных курса</li>
                         <li class="list-group-item"></li>
                     </ul>
                 </div>
@@ -49,16 +50,18 @@
                                 <td>{{ _user["role"] }}</td>
                             </tr>
                             <tr>
-                                <th>Дата регистрации</th>
-                                <td>{{ _user["created_date"] }}</td>
-                            </tr>
-                            <tr>
                                 <th>Окончание подписки</th>
                                 <td>{{ _user["education_module_expiration_date"] }}</td>
                             </tr>
                             <tr>
                                 <th>Центр обучения</th>
-                                <td><span class="badge bg-success">Доступно</span></td>
+                                <td>
+                                    {% if _user['active_education_module'] == 'active' or _user['active_education_module'] == 'ends' %}
+                                        <span class="badge bg-success">Доступно</a></span>
+                                    {% elif _user['active_education_module'] == 'inactive' %}
+                                        <span class="badge bg-warning">Ограничено</a></span>
+                                    {% endif %}
+                                </td>
                             </tr>
                             <tr>
                                 <th>Центр развития</th>

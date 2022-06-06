@@ -53,7 +53,7 @@ class CoursesList():
     Класс список курсов
     """
 
-    def __init__(self, _id=0, _name='', _description='', _image=''):
+    def __init__(self, _id=0, _name='', _description='', _image='', _type=''):
         """
         Коструктор класса
 
@@ -68,7 +68,9 @@ class CoursesList():
         self.name = _name
         self.description = _description
         self.image = _image
+        self.type = _type
 
+# TODO: надо это в класс курса перенести
 class Setting():
     """
     Класс настройки
@@ -83,3 +85,24 @@ class Setting():
         """
 
         self.image = _image
+
+class Course():
+    """
+    Класс курса
+    """
+
+    def __init__(self, _id, _name, _description, _type):
+        """
+        Конструктор класса
+
+        Args:
+            _id(Integer): id курса
+            _name(String): имя курса
+            _description(String): описание курса
+            _type(String): тип курса
+        """
+
+        self.id = _id
+        self.name = _name
+        self.description = _description
+        self.type = _type

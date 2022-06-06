@@ -15,8 +15,17 @@ class EducationListCoursesPageController():
                 "id": i_course.id,
                 "name": i_course.name,
                 "description": i_course.description,
-                "image": i_course.image
+                "image": i_course.image,
+                "type": i_course.type
             }
             courses_list.append(course)
 
         return courses_list
+    
+    def get_current_user(self):
+        course_service = CourseService()
+
+        user = course_service.get_current_user()
+
+        return {"login": user.login, "role": user.role, "active_education_module": user.active_education_module,
+                "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y"))}

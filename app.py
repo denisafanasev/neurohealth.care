@@ -27,8 +27,6 @@ from controllers.results_page_controller import ResultsPageController
 from controllers.probationers_page_controller import ProbationersPageController
 from controllers.user_profile_page_controller import UserProfilePageController
 from controllers.probationer_card_page_controller import ProbationerCardPageController
-from controllers.education_main_course_page_controller import EducationMainCoursePageController
-from controllers.education_main_course_lesson_page_controller import EducationMainCourseLessonPageController
 from controllers.education_list_courses_page_controller import EducationListCoursesPageController
 from controllers.education_course_page_controller import EducationCoursePageController
 from controllers.education_course_lesson_page_controller import EducationCourseLessonPageController
@@ -170,10 +168,10 @@ def registration():
 
             # TODO: доделать подтверждение почты
 
-            confirm_url = url_for(user_email, token=token, _external=True)
-            html = render_template('email_confirmation.html', confirm_url=confirm_url)
+            #confirm_url = url_for(user_email, token=token, _external=True)
+            #html = render_template('email_confirmation.html', confirm_url=confirm_url)
 
-            login_page_controller.send_confirmation_email(user_email, html)
+            #login_page_controller.send_confirmation_email(user_email, html)
 
             return render_template('registration.html', view="registration", _user_created=True,
                                    _error_message="", _create_superuser=False)
@@ -650,51 +648,18 @@ def evolution_centre_dummy():
                                endpoint), _data="")
 
 
-@app.route('/education_main_course/lesson', methods=['GET', 'POST'])
-@login_required
-def education_main_course_lesson():
-    page_controller = EducationMainCourseLessonPageController()
-    mpc = MainMenuPageController()
-
-    endpoint = request.endpoint
-
-    id_lesson = request.args.get("id_lesson")
-    id_video = request.args.get("id_video")
-    if id_video is None:
-        id_video = 1
-
-    data = page_controller.get_lesson(int(id_lesson), int(id_video))
-
-    return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=data)
-
-
-@app.route('/education_main_courses', methods=['GET', 'POST'])
-@login_required
-def education_main_courses():
-    """
-    Пустая функция-заглушка
-
-    Returns:
-        
-    """
-
-    return redirect("/education_course?id_course=1")
-
-
 @app.route('/education_list_courses', methods=['GET', 'POST'])
 @login_required
 def education_list_courses():
     page_controller = EducationListCoursesPageController()
     mpc = MainMenuPageController()
 
-    data = page_controller.get_courses()
-
     endpoint = request.endpoint
+    data = page_controller.get_courses()
+    user = page_controller.get_current_user()
 
     return render_template('education_list_courses.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data, _user=user)
 
 
 @app.route('/education_course', methods=['GET', 'POST'])
@@ -705,16 +670,18 @@ def education_course():
 
     endpoint = 'education_list_courses'
     id_course = request.args.get("id_course")
+    
     user = page_controller.get_current_user()
+    course = page_controller.get_course_by_id(id_course)
 
     if id_course is not None:
-        data = page_controller.get_course(id_course)
+        data = page_controller.get_course_modules(id_course)
     else:
         data = None
 
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
-                           _user=user)
+                           _user=user, _course_type = course['type'])
 
 
 @app.route('/education_course/lesson', methods=['GET', 'POST'])

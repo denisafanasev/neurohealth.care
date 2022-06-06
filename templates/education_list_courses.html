@@ -27,30 +27,123 @@
     }
     </style>
 
-    <h1 class="h3 mb-2">Центр обучения</h1>
-    {% if _data %}
-        <div class="card- row row-cols-1 row-cols-md-12 g-4">
-            {% for i_course in _data %}
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card">
-                    <img class="card-img-top" src="/static/img/photos/{% if i_course['image'] != '' %}{{ i_course['image'] }}{% else %}unsplash-3.jpg{% endif %}" alt="Unsplash">
-                    <div class="card-header">
-                        <h2 class="card-title mb-0">{{ i_course['name'] }}</h2>
+    <h1 class="h3 mb-2">Образовательная программа "Я - Нейромама"</h1>
+
+    
+        {% if _data %}
+            
+
+                <div class="row">
+                    <div class="col-12 col-md-6 col-lg-7">
+                        <div class="card">
+                            <div class="card-header">
+                                
+                            <h6 class="text-muted">Программа курса составлена с применением методов, которые используются в
+                                детской нейропсихологии.
+                                Курс поможет вам разобраться с высшими психическими функциями ребенка. Вы сможете самостоятельно составить
+                                программу
+                                именно для вашего ребенка, по которой будете развивать все необходимые для учебы базовые познавательные
+                                функции. <a href="">Полное описание образовательной программы</a></h6>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title mb-0">Основной обучающий курс</h2>
+                            </div>
+                            <div class="card-body">
+                                {% for i_course in _data %}
+                                {% if i_course['type']=='main' %}
+                                    <div class="raw">
+                                        <div class="card border text-left">
+                                            <img class="card-img-top"
+                                                src="/static/img/photos/{% if i_course['image'] != '' %}{{ i_course['image'] }}{% else %}unsplash-3.jpg{% endif %}"
+                                                alt="Unsplash">
+                                            <div class="card-header">
+                                                <h2 class="card-title mb-0">{{ i_course['name'] }}</h2>
+                                            </div>
+                                    
+                                            <div class="card-body">
+                                                <p class="card-text">{{ i_course['description'] }}</p>
+                                                <a href="/education_course?id_course={{ i_course['id'] }}" class="btn btn-primary">
+                                                    Перейти к курсу
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="card-text">{{ i_course['description'] }}</p>
-                        <a href="/education_course?id_course={{ i_course['id'] }}" class="btn btn-primary">
-                            Перейти к курсу
-                        </a>
+                    <div class="col-12 col-md-6 col-lg-5">
+
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-sm mt-2 mb-4">
+                                    <tbody>
+                                        <tr>
+                                            <th>Режим доступа</th>
+                                            <td>
+                                                {% if _user['active_education_module'] == 'active' or _user['active_education_module'] == 'ends' %}
+                                                    <span class="badge bg-success">Режим самостоятельного обучения</a></span>
+                                                {% elif _user['active_education_module'] == 'inactive' %}
+                                                    <span class="badge bg-warning">Режим ознакомления</a></span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Срок доступа</th>
+                                            <td>{{ _user['education_module_expiration_date'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Домашние задания</th>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Пройдено курсов</th>
+                                            <td>-</td>
+                                        </tr>   
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+            
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title mb-0">Дополнительные курсы</h2>
+                            </div>
+                            <div class="card-body">
+                                {% for i_course in _data %}
+                                {% if i_course['type']=='additional' %}
+                                <div class="raw">
+                                    <div class="card border text-left">
+                                        <img class="card-img-top"
+                                            src="/static/img/photos/{% if i_course['image'] != '' %}{{ i_course['image'] }}{% else %}unsplash-3.jpg{% endif %}"
+                                            alt="Unsplash">
+                                        <div class="card-header">
+                                            <h2 class="card-title mb-0">{{ i_course['name'] }}</h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text">{{ i_course['description'] }}</p>
+                                            <a href="/education_course?id_course={{ i_course['id'] }}" class="btn btn-primary">
+                                                Перейти к курсу
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    
                     </div>
+                    
                 </div>
+
+        {% else %}
+            <div class="text-center">
+                <h2>Данная страница недоступна из-за отсутсвия нужного файла.</h2>
             </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="text-center">
-            <h2>Данная страница недоступна из-за отсутсвия нужного файла.</h2>
-        </div>
-    {% endif %}
+        {% endif %}
 
 {% endblock %}
