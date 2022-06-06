@@ -253,6 +253,7 @@ def user_manager():
     mode = {0: "new"}
     data_edit = {}
     data = {0: page_controller.get_users_profile_view(user_id)}
+    error_type = {}
     for i_id in users_list:
         if i_id is not None and not request.form.get(f"button_{i_id['user_id']}"):
             mode[i_id['user_id']] = "view"
@@ -271,8 +272,8 @@ def user_manager():
             mode[i_id['user_id']] = "new"
 
         data[i_id['user_id']] = page_controller.get_users_profile_view(i_id["user_id"])
+        error_type[i_id['user_id']] = None
 
-    error_type = False
     try:
         if request.method == 'POST':
             user_id = None
@@ -302,14 +303,20 @@ def user_manager():
                                                         user["password2"], user["email"], user["role"],
                                                         user["probationers_number"])
 
-                    if error is None:
-                        mode[user_id] = "view"
-                        error = "Пользователь сохранён!"
-                        error_type = "Successful"
+                    data_edit = {key: value for key, value in data.items()}
 
-                        data_edit = data
+                    if error is None:
+                        mode[len(users_list)] = "view"
+                        error = "Пользователь сохранён!"
+                        error_type[len(users_list)] = "Successful"
+
                         users_list = manager_page_controller.get_users_list_view()
+                        data[len(users_list)] = page_controller.get_users_profile_view(len(users_list))
                         data_edit[len(users_list)] = page_controller.get_users_profile_view(len(users_list))
+
+                    else:
+                        data_edit[0] = user
+                        error_type[0] = "Error"
                     # new_user = page_controller.get_users_profile_view('')
                     # new_user['user_id'] = 0
                     # users_list.append(new_user)
