@@ -215,7 +215,7 @@ class UserManager():
 
         user = None
 
-        login = _login.lower()
+        login = _login.lower().strip()
         password = self.hash_password(_password)
 
         data_store = DataStore("users")
@@ -244,7 +244,7 @@ class UserManager():
 
         user = None
 
-        login = _login.lower()
+        login = _login.lower().strip()
         data_store = DataStore("users")
 
         user_data = data_store.get_rows({"login": login})
@@ -267,7 +267,7 @@ class UserManager():
 
         user = None
 
-        email = _email.lower()
+        email = _email.lower().strip()
         data_store = DataStore("users")
 
         user_data = data_store.get_rows({"email": email})
@@ -358,8 +358,8 @@ class UserManager():
 
         password = self.hash_password(_password)
         password2 = self.hash_password(_password2)
-        login = _login.lower()
-        email = _email.lower()
+        login = _login.lower().strip()
+        email = _email.lower().strip()
         role = _role
         name = _name
         email_confirmed = False
