@@ -85,9 +85,9 @@
                                             <th>Режим доступа</th>
                                             <td>
                                                 {% if _user['active_education_module'] == 'active' or _user['active_education_module'] == 'ends' %}
-                                                    <span class="badge bg-success">Режим самостоятельного обучения</a></span>
+                                                    <span class="badge bg-success">Режим самостоятельного обучения</span>
                                                 {% elif _user['active_education_module'] == 'inactive' %}
-                                                    <span class="badge bg-warning">Режим ознакомления</a></span>
+                                                    <span class="badge bg-warning">Режим ознакомления</span>
                                                 {% endif %}
                                             </td>
                                         </tr>

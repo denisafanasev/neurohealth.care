@@ -305,7 +305,7 @@ class UserManager():
             if self.get_user_role(self.get_current_user_id()) == "superuser":
                 users.append(user)
             else:
-                if self.get_current_user_id() == user.id:
+                if self.get_current_user_id() == user.user_id:
                     users.append(user)
 
         return users
