@@ -62,13 +62,13 @@ class User(UserMixin):
             self.created_date = _created_date
 
         if type(self.created_date) is str:
-            self.created_date = datetime.datetime.strptime(self.created_date, "%d/%m/%Y")
+            self.created_date = datetime.strptime(self.created_date, "%d/%m/%Y")
 
         if _education_module_expiration_date == "":
             self.education_module_expiration_date = date.today() - timedelta(days=1)
         else:
             if type(_education_module_expiration_date) is str:
-                self.education_module_expiration_date = datetime.datetime.strptime(_education_module_expiration_date, "%d/%m/%Y")
+                self.education_module_expiration_date = datetime.strptime(_education_module_expiration_date, "%d/%m/%Y")
             else:
                 self.education_module_expiration_date = _education_module_expiration_date
 
