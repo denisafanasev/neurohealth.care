@@ -46,9 +46,9 @@ class User(UserMixin):
         """        
 
         self.user_id = _user_id
-        self.login = _login
-        self.name = _name
-        self.email = _email
+        self.login = _login.lower().strip()
+        self.name = _name.strip()
+        self.email = _email.strip()
         self.role = _role
         self.probationers_number = _probationers_number
         self.active = _active
