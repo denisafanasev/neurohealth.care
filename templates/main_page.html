@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 
 {% block main_block %}
+    <style>
+    .table th{
+        width: 40% !important;
+    }
+    </style>
 <div class="container-fluid p-0">
 
     <h1 class="h3 mb-3">Рабочий стол</h1>
@@ -31,7 +36,7 @@
                     <h5 class="card-title mb-0">Мой профиль</h5>
                 </div>
                 <div class="card-body">
-                    <table class="table table-sm mt-2 mb-4">
+                    <table class="table table-sm mt-2 mb-4" style="table-layout: fixed; margin: 0px">
                         <tbody>
                             <tr>
                                 <th>Имя</th>
@@ -57,9 +62,9 @@
                                 <th>Центр обучения</th>
                                 <td>
                                     {% if _user['active_education_module'] == 'active' or _user['active_education_module'] == 'ends' %}
-                                        <span class="badge bg-success">Доступно</a></span>
+                                        <span class="badge bg-success">Доступно</span>
                                     {% elif _user['active_education_module'] == 'inactive' %}
-                                        <span class="badge bg-warning">Ограничено</a></span>
+                                        <span class="badge bg-warning">Ограничено</span>
                                     {% endif %}
                                 </td>
                             </tr>
