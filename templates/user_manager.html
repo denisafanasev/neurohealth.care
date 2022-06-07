@@ -36,6 +36,7 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
+            overflow-y: scroll!important;
         }
 
         .pagination {
@@ -52,8 +53,7 @@
             overflow: auto; /* Enable scroll if needed */
             background-color: rgb(0, 0, 0); /* Fallback color */
             background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-            {#padding-top: 60px;#}
-            position: absolute;
+            position: fixed;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
@@ -113,26 +113,27 @@
                 width: 100%;
             }
         }
+
     </style>
 
     <div class="container-fluid p-0">
 
         <h1 class="h3 mb-3">Управление пользователями</h1>
-        {% for item in _users_list %}
-            {% if _error_type[item['user_id']]=='Successful' %}
+
+            {% if _error_type=='Successful' %}
                 <div class="alert alert-success alert-dismissible" role="alert">
                     <div class="alert-message">
                         <strong>Успешно</strong>  {{ _error }}
                     </div>
                 </div>
-            {% elif _error_type[item['user_id']] == "Error" %}
+            {% elif _error_type == "Error" %}
                 <div class="alert alert-danger alert-dismissible" role="alert">
                     <div class="alert-message">
                         <strong>Ошибка</strong> {{ _error }}
                     </div>
                 </div>
             {% endif %}
-        {% endfor %}
+
 
         <div class="row">
             <div class="col-12">
@@ -156,7 +157,7 @@
 
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%" aria-describedby="datatables-buttons_info">
+                                    <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
                                         <thead>
                                         <tr role="row" style="text-align: center">
                                             <th style="width:5%;">#</th>
@@ -164,17 +165,17 @@
                                                 style="width:10%;" aria-label="Position: activate to sort column ascending">Login
                                             </th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:15%;" aria-label="Position: activate to sort column ascending">Имя пользователя
+                                                style="width:10%;" aria-label="Position: activate to sort column ascending">Имя пользователя
                                             </th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:10%;" aria-label="Position: activate to sort column ascending">Email
+                                                style="width:40%;" aria-label="Position: activate to sort column ascending">Email
                                             </th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:10%;" aria-label="Position: activate to sort column ascending">Роль
-                                            </th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Тестируемые
-                                            </th>
+{#                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"#}
+{#                                                style="width:10%;" aria-label="Position: activate to sort column ascending">Роль#}
+{#                                            </th>#}
+{#                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"#}
+{#                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Тестируемые#}
+{#                                            </th>#}
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                 style="width:5%;" aria-label="Position: activate to sort column ascending">Дата создания
                                             </th>
@@ -201,17 +202,18 @@
                                                 <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg") }}" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
 
                                                 <td class="sorting_1 dtr-control" style="display: flex">
-                                                    <div class="col" style="text-align: center;position: center; margin-right: 16%">
-                                                        <a href="#" data-bs-toggle="modal" data-bs-target="#{{ item['user_id'] }}"
-                                                        onclick="document.getElementById('{{ item['user_id'] }}').style.display='block'">{{ item['login'] }}</a>
+                                                    <div class="col{% if item['role'] == "superuser" %} bg-primary {% else %} bg-success {% endif %} bg-gradient" style="text-align: center;position: center; margin-right: 16%; color: white">
+                                                        <a  data-bs-toggle="modal" data-bs-target="#{{ item['user_id'] }}"
+                                                        onclick="document.getElementById('{{ item['user_id'] }}').style.display='block'">
+                                                            <span class="">{{ item['login'] }}</span></a>
                                                     </div>
                                                 </td>
                                                 <td style="display: flex"><div style=" text-align: center; position: center; margin-right: 16%">{{ item['name'] }}</div></td>
-                                                <td style="display: flex">
-                                                    <div class="col" style="text-align: center;position: center; margin-right: 16%">{{ item['email'] }}</div></td>
-                                                <td style="text-align: center">{{ item['role'] }}</td>
-                                                <td style="display: flex">
-                                                    <div class="col" style="text-align: center;position: center; margin-right: 16%">{{ item['probationers_number'] }}</div></td>
+                                                <td style="display: flex;">
+                                                    <div class="col" style="text-align: center;position: center; margin-right: 16%;">{{ item['email'] }}</div></td>
+{#                                                <td style="text-align: center">{{ item['role'] }}</td>#}
+{#                                                <td style="display: flex">#}
+{#                                                    <div class="col" style="text-align: center;position: center; margin-right: 16%">{{ item['probationers_number'] }}</div></td>#}
                                                 <td>{{ item['created_date'] }}</td>
                                                 <td><a href="#" data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}"
                                                        onclick="document.getElementById('extension_{{ item['user_id'] }}').style.display='block';">{{ item['education_module_expiration_date'] }}</a></td>
@@ -287,7 +289,7 @@
             function checkPasswordsMatched_{{ item['user_id'] }}(form) {
                 var password = form.password_{{ item['user_id'] }}.value;
                 var password2 = form.password2_{{ item['user_id'] }}.value;
-                var text = "Ошибка: неверная длинная пароля, укажите минимум 5 и максимум 20 символов"
+                var text = "Ошибка: неверная длина пароля, укажите минимум 5 и максимум 20 символов"
                 var text2 = "Ошибка: введенные пароли не совпадают"
 
                 if (password.length < 5 || password.length > 20){
@@ -303,7 +305,7 @@
               }
             function checkLogin_{{ item['user_id'] }}(form) {
                 var login = form.login_{{ item['user_id'] }}.value;
-                var text = "Ошибка: ошибка корректности указанного логина пользователя"
+                var text = "Ошибка: неверная длина логина, укажите минимум 3 и максимум 11 символов"
 
                 if (login.length < 3 || login.length > 11) {
                   alert(text);
@@ -321,9 +323,29 @@
                     alert(text);
                     return false;
                 }else{
-                    return true;
+                    return validate_{{ item['user_id'] }}(form);
                 }
               }
+
+              // Validate email
+              function validateEmail(email) {
+                var re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+                return re.test(String(email).toLowerCase());
+              }
+
+              // validate email and send form after success validation
+              function validate_{{ item['user_id'] }}(form) {
+                var email = form.email_{{ item['user_id'] }}.value;
+                var text = "Ошибка: ошибка корректности указанного email"
+
+                if (validateEmail(email)) {
+                    return true;
+                } else {
+                    alert(text)
+                    return false;
+                }
+              }
+
             </script>
             <div id="{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal">
                 <div class="modal-content animate">
@@ -335,7 +357,9 @@
                             </div>
                         </div>
                     {% endif %}
-                    <form id="add_user_{{ item['user_id'] }}" name="add_user" method="post" class="was-validated" enctype="multipart/form-data" onsubmit="return checkPasswordsMatched_{{ item['user_id']|int }}(this);">
+                    <form id="add_user_{{ item['user_id'] }}" name="add_user" method="post" class="was-validated" enctype="multipart/form-data"
+                          {% if _mode[item['user_id']] == "new" %}onsubmit="return checkPasswordsMatched_{{ item['user_id']|int }}(this);"
+                            {% elif _mode[item['user_id']] == "edit" %} onsubmit="return checkLogin_{{ item['user_id']|int }}(this);"{% endif %}>
                     <div class="row d-flex align-items-stretch bd-highlight">
 
                         <div style="margin-right: 5px" class="col p-1 bd-highlight border">
@@ -463,7 +487,7 @@
                 </div>
             </div>
             <div id="extension_{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal">
-                <div class="modal-content animate" style="width: 31%">
+                <div class="modal-content animate " style="width: 31%">
                     <h3 class="modal-title">Доступ к центру обучения</h3>
                     <form id="extension_{{ item['user_id'] }}" name="form" method="post" enctype="multipart/form-data" class="was-validated">
                         <div class="row d-flex align-items-stretch bd-highlight">

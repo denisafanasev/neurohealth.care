@@ -246,12 +246,13 @@ def user_manager():
     # users_list.append(new_user)
 
     error = None
+    error_type = None
     settings_user = page_controller.get_settings_user()
 
     mode = {0: "new"}
     data_edit = {}
     data = {0: page_controller.get_users_profile_view(user_id)}
-    error_type = {}
+
     for i_id in users_list:
         if i_id is not None and not request.form.get(f"button_{i_id['user_id']}"):
             mode[i_id['user_id']] = "view"
@@ -270,7 +271,7 @@ def user_manager():
             mode[i_id['user_id']] = "new"
 
         data[i_id['user_id']] = page_controller.get_users_profile_view(i_id["user_id"])
-        error_type[i_id['user_id']] = None
+
 
     try:
         if request.method == 'POST':
@@ -306,7 +307,7 @@ def user_manager():
                     if error is None:
                         mode[len(users_list)] = "view"
                         error = "Пользователь сохранён!"
-                        error_type[len(users_list)] = "Successful"
+                        error_type = "Successful"
 
                         users_list = manager_page_controller.get_users_list_view()
                         data[len(users_list)] = page_controller.get_users_profile_view(len(users_list))
@@ -314,7 +315,7 @@ def user_manager():
 
                     else:
                         data_edit[0] = user
-                        error_type[0] = "Error"
+                        error_type = "Error"
                     # new_user = page_controller.get_users_profile_view('')
                     # new_user['user_id'] = 0
                     # users_list.append(new_user)
@@ -354,13 +355,12 @@ def user_manager():
                 user["password"] = request.form[f"password_{user_id}"]
                 user["password2"] = request.form[f"password2_{user_id}"]
 
-                error = page_controller.discharge_password(user["login"], user["password"], user["password2"])
+                page_controller.discharge_password(user["login"], user["password"], user["password2"])
 
                 mode[user_id] = "view"
 
-                if error is None:
-                    error = "Пароль успешно изменен!"
-                    error_type = "Successful"
+                error = "Пароль успешно изменен!"
+                error_type = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "extension":
                 reference_point = request.form[f"reference_point_{user_id}"]
@@ -371,6 +371,8 @@ def user_manager():
                 data_edit = data
                 data_edit[user_id] = page_controller.get_users_profile_view(user_id)
                 mode[user_id] = "view"
+                error = "Пользователь сохранён!"
+                error_type = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "is_active":
                 active = page_controller.activation_deactivation(data[user_id]['login'], data[user_id]["active"])
