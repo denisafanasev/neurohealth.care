@@ -306,7 +306,7 @@ def user_manager():
 
                     if error is None:
                         mode[len(users_list)] = "view"
-                        error = "Пользователь сохранён!"
+                        error = "Пользователь успешно сохранён!"
                         error_type = "Successful"
 
                         users_list = manager_page_controller.get_users_list_view()
@@ -346,7 +346,7 @@ def user_manager():
                     data_edit[user_id] = user
                     users_list = manager_page_controller.get_users_list_view()
                     mode[user_id] = "view"
-                    error = "Изменения сохранены!"
+                    error = "Изменения успешно сохранены!"
                     error_type = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "discharge":
@@ -371,7 +371,7 @@ def user_manager():
                 data_edit = data
                 data_edit[user_id] = page_controller.get_users_profile_view(user_id)
                 mode[user_id] = "view"
-                error = "Пользователь сохранён!"
+                error = "Срок доступа успешно продлён!"
                 error_type = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "is_active":
