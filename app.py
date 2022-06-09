@@ -252,6 +252,7 @@ def user_manager():
     mode = {0: "new"}
     data_edit = {}
     data = {0: page_controller.get_users_profile_view(user_id)}
+    num_page = 0
 
     for i_id in users_list:
         if i_id is not None and not request.form.get(f"button_{i_id['user_id']}"):
@@ -284,6 +285,8 @@ def user_manager():
             if request.form.get("button_0") is not None:
                 user_id = 0
 
+            num_page = user_id // 10
+
             if request.form.get(f"button_{user_id}") == "add":
                 if mode[user_id] == "new":
                     # добавляем нового пользователя и получаем список с ошибками
@@ -306,7 +309,7 @@ def user_manager():
 
                     if error is None:
                         mode[len(users_list)] = "view"
-                        error = "Пользователь сохранён!"
+                        error = "Пользователь успешно сохранён!"
                         error_type = "Successful"
 
                         users_list = manager_page_controller.get_users_list_view()
@@ -346,7 +349,7 @@ def user_manager():
                     data_edit[user_id] = user
                     users_list = manager_page_controller.get_users_list_view()
                     mode[user_id] = "view"
-                    error = "Изменения сохранены!"
+                    error = "Изменения успешно сохранены!"
                     error_type = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "discharge":
@@ -371,7 +374,7 @@ def user_manager():
                 data_edit = data
                 data_edit[user_id] = page_controller.get_users_profile_view(user_id)
                 mode[user_id] = "view"
-                error = "Пользователь сохранён!"
+                error = "Срок доступа успешно продлён!"
                 error_type = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "is_active":
@@ -385,6 +388,9 @@ def user_manager():
 
                 mode[user_id] = "view"
                 data[user_id]['active'] = active
+
+            elif request.form.get(f"button_{user_id}") == "cancel":
+                mode[user_id] = "view"
 
             else:
                 return redirect("user_manager")
@@ -410,7 +416,7 @@ def user_manager():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _users_list=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),
                            _data_edit=data_edit, _data=data, _settings=settings_user,
-                           _mode=mode, _error=error, _error_type=error_type)
+                           _mode=mode, _error=error, _error_type=error_type, _num_page=num_page)
 
 
 @app.route('/user_profile', methods=['GET', 'POST'])
