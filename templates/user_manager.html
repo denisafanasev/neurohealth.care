@@ -10,6 +10,7 @@
             var datatablesButtons = $("#datatables-buttons").DataTable({
                 responsive: true,
                 lengthChange: !1,
+                displayStart: {{ _num_page * 10 }}
 
             });
             datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
@@ -478,9 +479,9 @@
                                 </a>
                             {% endif %}
 
-                            <a href="{{ url_for('user_manager') }}" type="submit" name="button" class="btn btn-primary cancelbtn">
+                            <button href="{{ url_for('user_manager') }}" value="cancel" type="submit" name="button_{{ item['user_id']|int }}" class="btn btn-primary cancelbtn">
                                 Отмена
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </form>
