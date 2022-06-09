@@ -17,9 +17,10 @@ function checkPasswordsMatched(form) {
   }
 function checkLogin(form) {
     var login = form.login.value;
-    var text = "Ошибка: ошибка корректности указанного логина пользователя"
+    
+    var text = "Ошибка длинны логина (должна быть от 3-х до 15-ти знаков)"
 
-    if (login.length < 3 || login.length > 11) {
+    if (login.length < 3 || login.length > 15) {
       alert(text);
       return false;
     }else{
