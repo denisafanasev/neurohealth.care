@@ -43,6 +43,7 @@ PROBATIONERS_NUMBER = [5, 10, 15, 20, 25, 30]
 ROLE = ["user", "superuser"]
 
 EDUCATION_MODULE_EXPIRATION_DATE = [{"name_period": "1 месяц", "amount": 1},
+                                    {"name_period": "2 месяц", "amount": 2},
                                     {"name_period": "3 месяца", "amount": 3},
                                     {"name_period": "6 месяцев", "amount": 6},
                                     {"name_period": "1 год", "amount": 12}]
