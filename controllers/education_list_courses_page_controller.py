@@ -3,6 +3,12 @@ from services.course_service import CourseService
 class EducationListCoursesPageController():
 
     def get_courses(self):
+        """
+        Возвращает список курсов
+
+        Returns:
+            courses(List): список курсов
+        """
 
         course_service = CourseService()
 
@@ -23,6 +29,15 @@ class EducationListCoursesPageController():
         return courses_list
     
     def get_current_user(self):
+        """
+        Возвращает объект User по id пользователя
+
+        Args:
+            _user_id   - Required  : id пользователя (Int)
+
+        Returns:
+            User: пользователь
+        """
         course_service = CourseService()
 
         user = course_service.get_current_user()

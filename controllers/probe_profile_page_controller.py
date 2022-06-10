@@ -58,6 +58,16 @@ class ProbeProfileController():
         return probationer_card_service.get_probationer_card_view(probationer_id)
 
     def get_protocol(self, _id_test, _probe_id):
+        """
+        Возвращает тест из пробы тестируемого
+
+        Args:
+            _id_test(Int): индентификатор теста
+            _probe_id(Int): индентафикатор пробы
+
+        Return:
+            Тест из пробы
+        """
 
         probe_profile_service = ProbeProfileService()
 
@@ -76,12 +86,26 @@ class ProbeProfileController():
         return probe
 
     def get_tests_list(self):
+        """
+        Возвращает список тестов
+
+        Returns:
+            Список тестов
+        """
 
         probe_profile_service = ProbeProfileService()
 
         return probe_profile_service.get_tests_list()
 
     def add_grades_in_probe(self, _grades, _probe_id, _protocol_status=""):
+        """
+        Добавление оценок за тест тестируемого в базу данных
+
+        Args:
+            _grades(List):список оценок за тест
+            _probe_id(Int): индентификатор пробы
+            _protocol_status(String): статус пробы
+        """
 
         probe_profile_service = ProbeProfileService()
 

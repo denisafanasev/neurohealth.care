@@ -194,6 +194,14 @@ class UserManagerPageController():
         return settings_user
 
     def access_extension(self, _period, _reference_point, _login):
+        """
+        Продление доступа пользователя к центру обучения
+
+        Args:
+            _period(Int): количество месяцев
+            _reference_point(String): точка отсчета
+            _login(String): логин пользователя
+        """
 
         user_manager_service = UserManagerService()
 

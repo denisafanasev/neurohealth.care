@@ -3,6 +3,11 @@ from services.action_service import ActionService
 
 
 class UserProfileService():
+    """
+    UserProfileService - класс бизнес-логики сервиса управления настройками приложения
+    Возвращает в слой отображения объекты в доменной модели
+    Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
+    """
 
     def init(self):
         pass
@@ -100,14 +105,27 @@ class UserProfileService():
         elif _active:
             return user_manager.deactivation(_login)
 
-    # TODO: кажется что название не соответсвует сути
-    def get_current_user_role(self):
+    def get_current_user(self):
+        """
+        Возвращает данные текущего пользователя
+
+        Returns:
+            User: пользователь
+        """
 
         user_manager = UserManager()
 
         return user_manager.get_user_by_id(user_manager.get_current_user_id())
 
     def access_extension(self, _period, _reference_point, _login):
+        """
+        Ппродление срока доступа пользователя к центру обучения
+
+        Args:
+            _period(Int): количество месяцев, на которое продлевают срок доступа пользователю
+            _reference_point(String): начальное время отсчета
+            _login(String): логин пользователя, которому продлевают срок доступа
+        """
 
         user_manager = UserManager()
 

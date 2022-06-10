@@ -3,8 +3,23 @@ import os
 import config
 
 class UploadService():
+    """
+    UploadService - класс бизнес-логики сервиса управления настройками приложения
+    Возвращает в слой отображения объекты в доменной модели
+    Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
+    """
 
     def upload_files(self, _files_list, _user_login):
+        """
+        Загружает файл на сервер
+
+        Args:
+            _files_list(List): список файлов
+            _user_login(String): логин пользователя, который отправил файлы
+
+        Returns:
+            List: список файлов
+        """
 
         files = []
         for i_file in _files_list:

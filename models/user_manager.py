@@ -536,6 +536,14 @@ class UserManager():
         return False
 
     def access_extension(self, _period, _reference_point, _login):
+        """
+        Ппродление срока доступа пользователя к центру обучения
+
+        Args:
+            _period(Int): количество месяцев, на которое продлевают срок доступа пользователю
+            _reference_point(String): начальное время отсчета
+            _login(String): логин пользователя, которому продлевают срок доступа
+        """
 
         data_store = DataStore("users")
         user = self.get_user_by_login(_login)

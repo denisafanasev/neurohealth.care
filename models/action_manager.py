@@ -159,16 +159,3 @@ class ActionManager():
 
 
         return actions
-
-    def is_there_users_action(self, _login):
-        """
-        Проверяет, записаны ли действия авторизованного пользователя
-        """
-
-        data_store = DataStore("action")
-        users_action = data_store.get_rows({"login": _login})
-
-        if users_action != []:
-            return True
-        else:
-            return False

@@ -46,6 +46,12 @@ class ProbesPageController():
         return probes
 
     def is_probationers(self):
+        """
+        Проверает, есть ли у пользователя тестируемые
+
+        Returns:
+            (Boolean)
+        """
 
         probationer_service = ProbationersService()
 

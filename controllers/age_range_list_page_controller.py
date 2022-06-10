@@ -16,6 +16,12 @@ class AgeRangeListPageController():
         pass
 
     def get_age_ranges(self):
+        """
+        Возвращает список диапазонов возрастов
+
+        Returns:
+            List: список диапазонов возрастов
+        """
 
         page_service = AgeRangeListsService()
 

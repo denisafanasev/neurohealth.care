@@ -67,14 +67,23 @@ class CourseManager():
 
         return course
 
-    def get_course(self, _id=1):
+    def get_course_modules_list(self, _id=1):
+        """
+        Возвращает список модулей курса по id
+
+        Args:
+            _id(Int): индентификатор курса
+
+        Returns:
+            modules_list(List): списко модулей курса
+        """
 
         try:
             data_store_module = DataStore(f"course_{_id}/modules")
             data_store_lessons = DataStore(f"course_{_id}/lessons")
         except FileNotFoundError:
             # os.mkdir(f"data/course_{_id}")
-            os.mkdir(config.DATA_FOLDER+"course_{"+str(_id)+"}")
+            os.mkdir(config.DATA_FOLDER+"course_"+str(_id))
             data_store_module = DataStore(f"course_{_id}/modules")
             data_store_lessons = DataStore(f"course_{_id}/lessons")
 
@@ -107,6 +116,17 @@ class CourseManager():
         return modules_list
 
     def get_lesson(self, _id, _id_course=1, _id_video=1):
+        """
+        Возвращает данные урока
+
+        Args:
+            _id(Int): индентификатор урока
+            _id_course(Int): индентификатор курса
+            _id_video(Int): индентификатор видео
+
+        Return:
+            Lesson: класс Lesson, обернутый в класс Module
+        """
 
         data_store_lessons = DataStore(f"course_{_id_course}/lessons")
         data_store_modules = DataStore(f"course_{_id_course}/modules")
@@ -136,6 +156,12 @@ class CourseManager():
         return self.module_row_to_module(module)
 
     def get_courses(self):
+        """
+        Возвращает список курсов
+
+        Returns:
+            courses(List): список курсов
+        """
 
         data_store = DataStore("courses_list")
 
@@ -160,6 +186,15 @@ class CourseManager():
         return courses
     
     def get_course_by_id(self, _id):
+        """
+        Возвращает курс по id
+
+        Args:
+            _id(Int): индентификатор курса
+
+        Returns:
+            course(Course): курс
+        """
 
         course = None
 
