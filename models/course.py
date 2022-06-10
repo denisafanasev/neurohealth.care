@@ -23,7 +23,7 @@ class Lesson():
     Класс урок
     """
 
-    def __init__(self, _id=0, _id_module=0, _name='', _materials=None, _link='', _text='', _task=''):
+    def __init__(self, _id=None, _id_module=None, _name='', _materials=None, _link='', _text='', _task=''):
         """
         Конструктор класса
 
@@ -53,7 +53,7 @@ class CoursesList():
     Класс список курсов
     """
 
-    def __init__(self, _id=0, _name='', _description='', _image='', _type=''):
+    def __init__(self, _id=None, _name='', _description='', _image='', _type=''):
         """
         Коструктор класса
 
@@ -71,27 +71,27 @@ class CoursesList():
         self.type = _type
 
 # TODO: надо это в класс курса перенести
-class Setting():
-    """
-    Класс настройки
-    """
-
-    def __init__(self, _image):
-        """
-        Конструктор класса
-
-        Args:
-            _image(String): ссылка на изображение
-        """
-
-        self.image = _image
+# class Setting():
+#     """
+#     Класс настройки
+#     """
+#
+#     def __init__(self, _image):
+#         """
+#         Конструктор класса
+#
+#         Args:
+#             _image(String): ссылка на изображение
+#         """
+#
+#         self.image = _image
 
 class Course():
     """
     Класс курса
     """
 
-    def __init__(self, _id, _name, _description, _type):
+    def __init__(self, _id=None, _name='', _description='', _type='', _image=None):
         """
         Конструктор класса
 
@@ -106,3 +106,4 @@ class Course():
         self.name = _name
         self.description = _description
         self.type = _type
+        self.image = _image

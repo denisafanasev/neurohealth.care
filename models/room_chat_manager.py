@@ -7,12 +7,30 @@ from data_adapters.data_store import DataStore
 class RoomChatManager():
 
     def room_chat_row_to_room_chat(self, _room_chat):
+        """
+        Преобразует структуру данных, в которой хранится информация о чате в структуру RoomChat
+
+        Args:
+            _room_chat (Dict): структура данных, которую возвращает дата адаптер
+
+        Returns:
+            RoomChat: пользователь
+        """
 
         room_chat = RoomChat(_id=_room_chat["id"], _name=_room_chat["name"], _message=_room_chat["message"])
 
         return room_chat
 
     def message_row_to_message(self, _message):
+        """
+        Преобразует структуру данных, в которой хранится информация о сообщение в структуру Message
+
+        Args:
+            _message (Dict): структура данных, которую возвращает дата адаптер
+
+        Returns:
+            Message: пользователь
+        """
 
         message = Message(_id=_message["id"], _name_sender=_message["name_sender"], _text=_message["text"],
                           _files=_message["files"])
@@ -20,6 +38,15 @@ class RoomChatManager():
         return message
 
     def file_row_to_file(self, _file):
+        """
+        Преобразует структуру данных, в которой хранится информация о файле в структуру File
+
+        Args:
+            _file (Dict): структура данных, которую возвращает дата адаптер
+
+        Returns:
+            UserFile: пользователь
+        """
 
         file = UserFile(_name_file_user=_file["name_file_user"], _name_file_unique=_file["name_file_unique"],
                         _path=_file["path"])
@@ -27,6 +54,15 @@ class RoomChatManager():
         return file
 
     def room_chat_entry(self, _id_lesson, _user, _id_course, _id_room_chat):
+        """
+        Подключает пользователя к чату
+
+        Args:
+            _id_lesson(Int): индентификатор урока
+            _user(User): данные пользователя
+            _id_course(Int): индентификатор курса
+            _id_room_chat(Int): индентификатор чата
+        """
 
         data_store = DataStore("room_chat")
 
@@ -52,6 +88,12 @@ class RoomChatManager():
         return room_chat
 
     def add_room_chat(self, _name_chat):
+        """
+        Создает новый чат
+
+        Args:
+            _name_chat(String): название чата
+        """
 
         data_store = DataStore("room_chat")
         count_room_chat = data_store.get_rows_count()
@@ -67,6 +109,12 @@ class RoomChatManager():
         return room_chat
 
     def get_messages(self, _id_message_list):
+        """
+        Возвращает все сообщения из чата
+
+        Args:
+            _id_message_list(List): список индентификаторов сообщений
+        """
 
         data_store_message = DataStore("message")
         message_list = []
@@ -83,6 +131,12 @@ class RoomChatManager():
         return message_list
 
     def get_files(self, _name_file_list):
+        """
+        Возвращает данные файлов из чата
+
+        Args:
+            _name_file_list(List): список уникальных имен файлов из чата
+        """
 
         data_store_files = DataStore("files")
         files_list = []
@@ -95,6 +149,13 @@ class RoomChatManager():
         return files_list
 
     def add_message(self, _message, _id_room_chat):
+        """
+        Сохраняет сообщение
+
+        Args:
+            _message(Dict): данные сообщения
+            _id_room_chat(Int): индентификатор чата
+        """
 
         data_store = DataStore("room_chat")
         data_store_message = DataStore("message")
@@ -117,6 +178,12 @@ class RoomChatManager():
 
 
     def save_files(self, _file):
+        """
+        Сохраняет данные файла
+
+        Args:
+            _file(Dict): данные файла
+        """
 
         data_store = DataStore("files")
 

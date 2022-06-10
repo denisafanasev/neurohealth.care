@@ -18,6 +18,12 @@ class EstimatedValuesPageController():
         pass
 
     def get_assessments(self, _id_file_name=1):
+        """
+        Возвращает оценочные значения для тестов
+
+        Args:
+            _id_file_name(Int): индентификатор названия файла с тестами
+        """
 
         page_service = EstimatedValuesService()
         assessments = page_service.get_assessments(_id_file_name)
@@ -38,12 +44,25 @@ class EstimatedValuesPageController():
         return assessments_list_view
 
     def get_age_ranges(self):
+        """
+        Возвращает список диапазонов возрастов
+
+        Returns:
+            List: список диапазонов возрастов
+        """
 
         page_service = EstimatedValuesService()
         return page_service.get_age_ranges()
 
-    def overwrite(self, _file_name, _criteria):
+    def overwrite(self, _id_file_name, _criteria):
+        """
+        Изменяет оценочные значения в тестах
+
+        Args:
+            _id_file_name(Int): индентификатор названия файла с тестами
+            _criteria(Dict): словарь с измененными оценочными значениями
+        """
 
         page_service = EstimatedValuesService()
 
-        return page_service.overwrite(_file_name, _criteria)
+        return page_service.overwrite(_id_file_name, _criteria)

@@ -12,6 +12,12 @@ class ProbesService():
         pass
 
     def get_probes(self):
+        """
+        Возвращает список проб
+
+        Returns:
+            List: список проб
+        """
 
         probes_manager = ProbesManager()
 

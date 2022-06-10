@@ -238,11 +238,11 @@
                                                 {% endif %}
 
                                                 {% if item['active_education_module'] == 'active' %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-success" ><a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}">Self service</a></span></div></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-success" >Self service</span></div></td>
                                                 {% elif item['active_education_module'] == 'inactive' %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-info"><a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}">Overview</a></span></div></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-info">Overview</span></div></td>
                                                 {% elif item['active_education_module'] == 'ends' %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-warning"><a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}">Expiring</a></span></div></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-warning">Expiring</span></div></td>
                                                 {% endif %}
 
                                                 {% if item['email_confirmed'] %}
