@@ -76,6 +76,9 @@ class ProbationerCardPageController():
                            _contacts, _diagnoses, _reasons_for_contact)
 
     def get_settings_probationer(self):
+        """
+        Возвращает возможные настройки тестируемого
+        """
 
         settings = {}
 

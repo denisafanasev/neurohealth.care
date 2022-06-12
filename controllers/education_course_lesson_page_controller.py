@@ -7,6 +7,15 @@ from flask import Markup
 class EducationCourseLessonPageController():
 
     def get_lesson(self, _id, _id_course, _id_video=1):
+        """
+        Возвращает данные урока
+
+        Args:
+            _id(Int): индентификатор урока
+            _id_course(Int): индентификатор курса
+            _id_video(Int): индентификатор видео
+        """
+
         course_service = CourseService()
 
         module = course_service.get_lesson(_id, _id_course, _id_video)
@@ -34,6 +43,18 @@ class EducationCourseLessonPageController():
         return lesson
 
     def room_chat_entry(self, _id_lesson="", _id_course="", _login_user="", _id_room_chat=None):
+        """
+        Подключает пользователя к чату
+
+        Args:
+            _id_lesson(Int): индентификатор урока
+            _login_user(User): данные пользователя
+            _id_course(Int): индентификатор курса
+            _id_room_chat(Int): индентификатор чата
+
+        Returns:
+            chat(Dict): данные чата
+        """
 
         room_chat_service = RoomChatService()
         room_chat = room_chat_service.room_chat_entry(_id_lesson, _id_course, _login_user, _id_room_chat)
@@ -76,21 +97,40 @@ class EducationCourseLessonPageController():
 
 
     def add_message(self, _message, _room_chat_id):
+        """
+        Сохраняет сообщение
+
+        Args:
+            _message(Dict): данные сообщения
+            _id_room_chat(Int): индентификатор чата
+        """
 
         room_chat_service = RoomChatService()
 
         return room_chat_service.add_message(_message, _room_chat_id)
 
     def get_current_user(self):
+        """
+        Возвращает текущего пользователя
+
+        Returns:
+            Dict: пользователь
+        """
 
         user_service = UserProfileService()
 
-        user = user_service.get_current_user_role()
+        user = user_service.get_current_user()
 
         return {"login": user.login, "role": user.role, "active_education_module": user.active_education_module,
                 "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y"))}
 
     def get_user_list(self):
+        """
+        Возвращает список пользователей
+
+        Returns:
+            List: список пользователей с типом User
+        """
 
         user_service = UserManagerService()
         users = user_service.get_users()
@@ -103,6 +143,16 @@ class EducationCourseLessonPageController():
         return user_list
     
     def get_course_by_id(self, _id):
+        """
+        Возвращает курс по id
+
+        Args:
+            _id(Int): индентификатор курса
+
+        Returns:
+            course(Dict): данные курса
+        """
+
         course_service = CourseService()
         course = course_service.get_course_by_id(_id)
 

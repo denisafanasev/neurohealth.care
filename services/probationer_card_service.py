@@ -2,6 +2,11 @@ from models.probationer_manager import ProbationerManager
 from services.action_service import ActionService
 
 class ProbationerCardService():
+    """
+    ProbationerCardService - класс бизнес-логики сервиса управления настройками приложения
+    Возвращает в слой отображения объекты в доменной модели
+    Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
+    """
 
     def __init__(self):
         pass

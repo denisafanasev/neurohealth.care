@@ -18,6 +18,13 @@ class MainPageController():
         pass
 
     def get_actions(self):
+        """
+        Возвращает список действий, сделанных авторизованным пользователем(если авторизованный пользователь админ,
+        то возвращает список действий всех пользователей, которые есть в системе)
+
+        Returns:
+            actions(List): список испытуемых
+        """
 
         index_service = ActionService()
         actions_list = index_service.get_actions()
@@ -38,6 +45,12 @@ class MainPageController():
         return actions
 
     def get_current_user(self):
+        """
+        Возвращает объект User по id пользователя
+
+        Args:
+            _user_id   - Required  : id пользователя (Int)
+        """
 
         index_service = ActionService()
 

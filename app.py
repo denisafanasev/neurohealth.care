@@ -230,16 +230,16 @@ def user_manager():
     Returns:
     """
 
-    manager_page_controller = UserManagerPageController()
+    page_controller = UserManagerPageController()
     mpc = MainMenuPageController()
-    page_controller = UserProfilePageController()
+    # page_controller = UserProfilePageController()
 
     # страница доступна только администратору
     if not flask_login.current_user.is_admin():
         return redirect("main_page")
 
     endpoint = request.endpoint
-    users_list = manager_page_controller.get_users_list_view()
+    users_list = page_controller.get_users_list_view()
     user_id = ''
     # new_user = page_controller.get_users_profile_view(user_id)
     # new_user['user_id'] = 0
@@ -312,7 +312,7 @@ def user_manager():
                         error = "Пользователь успешно сохранён!"
                         error_type = "Successful"
 
-                        users_list = manager_page_controller.get_users_list_view()
+                        users_list = page_controller.get_users_list_view()
                         data[len(users_list)] = page_controller.get_users_profile_view(len(users_list))
                         data_edit[len(users_list)] = page_controller.get_users_profile_view(len(users_list))
 
@@ -347,7 +347,7 @@ def user_manager():
                     # data[user_id] = page_controller.get_users_profile_view(user_id)
                     data_edit = data
                     data_edit[user_id] = user
-                    users_list = manager_page_controller.get_users_list_view()
+                    users_list = page_controller.get_users_list_view()
                     mode[user_id] = "view"
                     error = "Изменения успешно сохранены!"
                     error_type = "Successful"
@@ -374,7 +374,7 @@ def user_manager():
                 data_edit = data
                 data_edit[user_id] = page_controller.get_users_profile_view(user_id)
                 mode[user_id] = "view"
-                error = "Срок доступа успешно продлён!"
+                error = "Доступ пользователя к обучающей программе успешно изменен!"
                 error_type = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "is_active":
@@ -399,7 +399,7 @@ def user_manager():
             # new_user['user_id'] = 0
             # users_list.append(new_user)
             #
-            users_list = manager_page_controller.get_users_list_view()
+            users_list = page_controller.get_users_list_view()
 
     except exceptions.BadRequestKeyError:
         for i_id in users_list:
@@ -685,7 +685,7 @@ def education_course():
 
     if id_course is not None:
         course = page_controller.get_course_by_id(id_course)
-        data = page_controller.get_course_modules(id_course)
+        data = page_controller.get_course_modules_list(id_course)
     else:
         return redirect("education_list_courses")
 

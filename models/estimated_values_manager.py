@@ -21,6 +21,12 @@ class EstimatedValuesManager():
         return estimated_values
 
     def get_assessments(self, _id_file_name):
+        """
+        Возвращает оценочные значения для тестов
+
+        Args:
+            _id_file_name(Int): индентификатор названия файла с тестами
+        """
 
         estimated_values = []
         data_default = DataStore("structure")
@@ -61,6 +67,12 @@ class EstimatedValuesManager():
         return estimated_values
 
     def get_age_ranges(self):
+        """
+        Возвращает список диапазонов возрастов
+
+        Returns:
+            List: список диапазонов возрастов
+        """
 
         data = DataStore("age_range")
 
@@ -78,6 +90,15 @@ class EstimatedValuesManager():
         return age_range_list
 
     def get_age_range(self, _id_file_name):
+        """
+        Возвращает данные диапазона возрастов
+
+        Args:
+            _id_file_name(Int): индентификатор названия файла с тестами
+
+        Returns:
+            age_range(Dict): данные диапазона возрастов
+        """
 
         data = DataStore("age_range")
 
@@ -85,6 +106,13 @@ class EstimatedValuesManager():
         return age_range
 
     def overwrite(self, _id_file_name, _criteria):
+        """
+        Изменяет оценочные значения в тестах
+
+        Args:
+            _id_file_name(Int): индентификатор названия файла с тестами
+            _criteria(Dict): словарь с измененными оценочными значениями
+        """
 
         age_range_file = DataStore(self.get_age_range(_id_file_name)["name_file"])
 
