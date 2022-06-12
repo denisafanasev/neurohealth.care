@@ -269,7 +269,7 @@
                 var modal_{{ item['user_id'] }} = document.getElementById('{{ item['user_id'] }}');
                 var modal_extension_{{ item['user_id'] }} = document.getElementById('extension_{{ item['user_id'] }}');
                 var modal_status_{{ item['user_id'] }} = document.getElementById('status_{{ item['user_id'] }}');
-                var modal_discharge_{{ item['user_id'] }} = document.getElementById('status_{{ item['user_id'] }}');
+                var modal_discharge_{{ item['user_id'] }} = document.getElementById('discharge_{{ item['user_id'] }}');
                 // When the user clicks anywhere outside of the modal, close it
                 window.onclick = function (event) {
                     if (event.target === modal_{{ item['user_id'] }}) {
@@ -278,20 +278,29 @@
                     if (event.target === modal_extension_{{ item['user_id'] }}) {
                         modal_extension_{{ item['user_id'] }}.style.display = "none";
                     }
-                    if (event.target === modal_extension_{{ item['user_id'] }}) {
+                    if (event.target === modal_status_{{ item['user_id'] }}) {
                         modal_status_{{ item['user_id'] }}.style.display = "none";
                     }
-                    if (event.target === modal_extension_{{ item['user_id'] }}) {
+                    if (event.target === modal_discharge_{{ item['user_id'] }}) {
                         modal_discharge_{{ item['user_id'] }}.style.display = "none";
                     }
                 }
             </script>
+
+            <script>$('#button_{{ item['user_id']|int }}').on('click', function() {
+              return true;
+            });</script>
             <script >
             function checkPasswordsMatched_{{ item['user_id'] }}(form) {
                 var password = form.password_{{ item['user_id'] }}.value;
                 var password2 = form.password2_{{ item['user_id'] }}.value;
+                var button = form.button_{{ item['user_id']|int }}.data('value');
                 var text = "Ошибка: неверная длина пароля, укажите минимум 5 и максимум 20 символов"
                 var text2 = "Ошибка: введенные пароли не совпадают"
+
+                if (isset($_POST['button_{{ item['user_id']|int }}'])){
+                    return true;
+                }
 
                 if (password.length < 5 || password.length > 20){
                     alert(text);
@@ -479,7 +488,7 @@
                                 </a>
                             {% endif %}
 
-                            <button href="{{ url_for('user_manager') }}" value="cancel" type="submit" name="button_{{ item['user_id']|int }}" class="btn btn-primary cancelbtn">
+                            <button id="button_{{ item['user_id']|int }}" href="{{ url_for('user_manager') }}" value="cancel" formnovalidate name="button_{{ item['user_id']|int }}" class="btn btn-primary">
                                 Отмена
                             </button>
                         </div>

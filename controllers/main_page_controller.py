@@ -1,5 +1,7 @@
 import utils.ada as ada
 from services.action_service import ActionService
+from services.user_manager_service import UserManagerService
+from error import UserManagerException
 
 
 class MainPageController():
@@ -72,3 +74,12 @@ class MainPageController():
         user_view['active_education_module'] = user.active_education_module
 
         return user_view
+
+    def discharge_password(self, _login, _password, _password2, _current_password):
+
+        user_service = UserManagerService()
+
+        try:
+            user_service.discharge_password(_login, _password, _password2, _current_password)
+        except UserManagerException as error:
+            return error

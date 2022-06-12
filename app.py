@@ -390,7 +390,8 @@ def user_manager():
                 data[user_id]['active'] = active
 
             elif request.form.get(f"button_{user_id}") == "cancel":
-                mode[user_id] = "view"
+                if user_id != 0:
+                    mode[user_id] = "view"
 
             else:
                 return redirect("user_manager")
@@ -593,11 +594,34 @@ def main_page():
     page_controller = MainPageController()
     mpc = MainMenuPageController()
 
+    user = page_controller.get_current_user()
     endpoint = request.endpoint
+    error = None
+    error_type = None
+    password = ''
+    password2 = ''
+
+    if request.method == "POST":
+        if request.form.get("button") == "discharge":
+
+            password = request.form['password']
+            password2 = request.form["password2"]
+            current_password = request.form['current_password']
+
+            error = page_controller.discharge_password(user['login'], password, password2, current_password)
+
+            if error is None:
+                error = "Пароль успешно изменен!"
+                error_type = "Successful"
+            else:
+                error_type = "Error"
+
+
 
     return render_template('main_page.html', view="main_page", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=page_controller.get_actions(), _user=page_controller.get_current_user())
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _data=page_controller.get_actions(), _user=user, _error=error, _error_type=error_type,
+                           _password=password, _password2=password2)
 
 
 @app.route('/empty_function', methods=['GET', 'POST'])

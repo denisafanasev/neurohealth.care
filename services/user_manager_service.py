@@ -105,7 +105,7 @@ class UserManagerService():
 
         return user
 
-    def discharge_password(self, _login, _password, _password2):
+    def discharge_password(self, _login, _password, _password2, _current_password=''):
         """
         Обновляет в системе пароль пользователя
 
@@ -120,9 +120,10 @@ class UserManagerService():
 
         user_manager = UserManager()
 
-        user_manager.discharge_password(_login, _password, _password2)
-
+        error = user_manager.discharge_password(_login, _password, _password2, _current_password)
         ActionService().add_notifications(_login, "overwrite", "user_manager")
+
+        return error
 
     def activation_deactivation(self, _login, _active):
         """
