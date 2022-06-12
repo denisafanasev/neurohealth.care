@@ -4,7 +4,7 @@ app configuration
 
 import pathlib
 
-VERSION = "1.0.3"
+VERSION = "1.0.4"
 APP_NAME = "NeuroHealth"
 
 if str(pathlib.Path().resolve()).find("prod")!=-1:
@@ -59,7 +59,7 @@ SUPERUSER_MENU = [
 ]
 
 EDUCATION_MENU = [
-    {"module": "Центр обучения", "name": "Я - нейромама", "endpoint": "education_list_courses", "icon": "video"}
+    {"module": "Центр обучения", "name": "Я - НейроМама", "endpoint": "education_list_courses", "icon": "video"}
 ]
 
 EVOLUTION_MENU = [
