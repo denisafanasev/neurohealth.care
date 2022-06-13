@@ -112,7 +112,7 @@
                         нейропсихологии, процессу тестирования и проведения развивающих занятий и упражнений. Сейчас на платформе вам доступны:</p>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"></li>
-                        <li class="list-group-item"><strong>1</strong> образовательная программа "Я - Нейромама"</li>
+                        <li class="list-group-item"><strong>1</strong> образовательная программа "Я - НейроМама"</li>
                         <li class="list-group-item"><strong>2</strong> образовательных курса</li>
                         <li class="list-group-item"></li>
                     </ul>
@@ -135,6 +135,11 @@
                             <tr>
                                 <th>Логин</th>
                                 <td>{{ _user["login"] }}</td>
+                            </tr>
+                            <tr>
+                                <th>Пароль</th>
+                                <td><a href="#" onclick="document.getElementById('discharge').style.display='block'" type="submit">сменить
+                                        пароль</a></td>
                             </tr>
                             <tr>
                                 <th>Email</th>
@@ -161,10 +166,6 @@
                             <tr>
                                 <th>Центр развития</th>
                                 <td><span class="badge bg-danger">Недоступно</span></td>
-                            </tr>
-                            <tr>
-                                <th>Пароль</th>
-                                <td><a href="#" onclick="document.getElementById('discharge').style.display='block'" type="submit">сменить пароль</a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -202,27 +203,18 @@
                                 <label class="form-label"><strong>Текущий пароль</strong></label>
                                 <input required type="password" name="current_password" class="form-control"
                                        placeholder="Введите пароль">
-                                <div class="invalid-feedback">
-                                    Поле, обязательное для заполнения!
-                                </div>
                             </div>
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Пароль</strong></label>
                                 <input id="password" required type="password" name="password" class="form-control"
                                        value="{{ _password }}" placeholder="Введите пароль">
-                                <div class="invalid-feedback">
-                                    Поле, обязательное для заполнения!
-                                </div>
                             </div>
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Повтор пароля</strong></label>
                                 <input id="password2" required type="password" name="password2" class="form-control"
                                        value="{{ _password2 }}" placeholder="Повторно введите пароль">
-                                <div class="invalid-feedback">
-                                    Поле, обязательное для заполнения!
-                                </div>
                             </div>
                         </div>
                     </div>

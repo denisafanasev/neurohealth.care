@@ -227,7 +227,7 @@ class UserManager():
             raise UserManagerException("Ошибка в базе данных пользователей")
 
         if len(user_data) == 0:
-            raise UserManagerException("Данный пользователь не найден")
+            raise UserManagerException("Указаны неверные данные для входа")
 
         # получаем объект Пользователь
         user = self.user_row_to_user(user_data[0])
