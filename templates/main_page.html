@@ -1,9 +1,99 @@
 {% extends 'base.html' %}
 
 {% block main_block %}
+    <script src="{{ url_for('static' , filename="js/nhc_utils.js")}}" type="text/javascript"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            {% if _error_type == "Error" %}
+                var modal = document.getElementById('discharge');
+                modal.style.display = "block";
+                {% elif _error_type == 'Successful' %}
+                var modal = document.getElementById('discharge_successful');
+                modal.style.display = "block";
+            {% endif %}
+        });
+    </script>
+    <script>
+    var modal_discharge = document.getElementById('discharge');
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target === modal_extension) {
+            modal_discharge.style.display = "none";
+        }
+    }
+    </script>
     <style>
     .table th{
         width: 40% !important;
+    }
+
+    .modal {
+        display: none; /* Hidden by default */
+        z-index: 99; /* Sit on top */
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0); /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* Modal Content/Box */
+    .modal-content {
+
+        margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+        border: gray;
+        width: 80%; /* Could be more or less, depending on screen size */
+        padding: 16px;
+    }
+
+    .modal-backdrop{
+        display: none;
+    }
+    /* The Close Button (x) */
+
+    .close:hover,
+    .close:focus {
+        color: red;
+        cursor: pointer;
+    }
+
+    /* Add Zoom Animation */
+    .animate {
+        -webkit-animation: animatezoom 0.6s;
+        animation: animatezoom 0.6s
+    }
+
+    @-webkit-keyframes animatezoom {
+        from {
+            -webkit-transform: scale(0)
+        }
+        to {
+            -webkit-transform: scale(1)
+        }
+    }
+
+    @keyframes animatezoom {
+        from {
+            transform: scale(0)
+        }
+        to {
+            transform: scale(1)
+        }
+    }
+
+    /* Change styles for span and cancel button on extra small screens */
+    @media screen and (max-width: 300px) {
+        span.psw {
+            display: block;
+            float: none;
+        }
+        .cancelbtn {
+            width: 100%;
+        }
     }
     </style>
 <div class="container-fluid p-0">
@@ -72,6 +162,10 @@
                                 <th>Центр развития</th>
                                 <td><span class="badge bg-danger">Недоступно</span></td>
                             </tr>
+                            <tr>
+                                <th>Пароль</th>
+                                <td><a href="#" onclick="document.getElementById('discharge').style.display='block'" type="submit">сменить пароль</a></td>
+                            </tr>
                         </tbody>
                     </table>
     
@@ -90,5 +184,76 @@
             </div>
         </div>
     </div>
+        <div id="discharge" class="modal">
+            <div class="modal-content animate" style="width: 20%">
+                <h3 class="modal-title">Сброс пароля</h3>
+                {% if _error_type == "Error" %}
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                        <div class="alert-message">
+                            <strong>Ошибка</strong> {{ _error }}
+                        </div>
+                    </div>
+                {% endif %}
+                <form id="discharge_user" name="discharge_user" method="post" enctype="multipart/form-data"
+                      class="was-validated" onsubmit="return checkPasswordsMatched(this);">
+                    <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; ">
+                        <div class="card-header">
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Текущий пароль</strong></label>
+                                <input required type="password" name="current_password" class="form-control"
+                                       placeholder="Введите пароль">
+                                <div class="invalid-feedback">
+                                    Поле, обязательное для заполнения!
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Пароль</strong></label>
+                                <input id="password" required type="password" name="password" class="form-control"
+                                       value="{{ _password }}" placeholder="Введите пароль">
+                                <div class="invalid-feedback">
+                                    Поле, обязательное для заполнения!
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Повтор пароля</strong></label>
+                                <input id="password2" required type="password" name="password2" class="form-control"
+                                       value="{{ _password2 }}" placeholder="Повторно введите пароль">
+                                <div class="invalid-feedback">
+                                    Поле, обязательное для заполнения!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
+                        <div class="p-1" align="right">
+                            <button type="submit" name="button" value="discharge" class="btn btn-primary ">
+                                Сохранить
+                            </button>
+                            <a onclick="document.getElementById('discharge').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
+                                Отмена
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="discharge_successful" class="modal">
+            <div class="modal-content animate" style="width: 24%">
+                <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
+                    <div class="p-1" align="center">
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                            <div class="alert-message">
+                                <strong>Успешно</strong> {{ _error }}
+                            </div>
+                        </div>
+                        <a onclick="document.getElementById('discharge_successful').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
+                            Ок
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 </div>
 {% endblock %}

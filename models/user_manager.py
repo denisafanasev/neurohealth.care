@@ -470,7 +470,7 @@ class UserManager():
 
         return user
 
-    def discharge_password(self, _login, _password, _password2):
+    def discharge_password(self, _login, _password, _password2, _current_password=''):
         """
         Сброс пароля пользователя
 
@@ -486,11 +486,16 @@ class UserManager():
 
         password = self.hash_password(_password)
         data_store = DataStore("users")
+        if _current_password != "":
+            current_password = self.hash_password(_current_password)
+            user = data_store.get_rows({'login': _login})[0]
+            if current_password != user['password']:
+                raise UserManagerException("введенный текущий пароль неправильный")
+
         user_data = {"login": _login, "password": password}
 
         data_store.discharge_password(user_data)
 
-    # TODO: переделать на на 2 разные функции
     def activation(self, _login):
         """
         Блокировка/разблокировка пользователя
