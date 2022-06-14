@@ -39,7 +39,7 @@ class ActionService():
 
         return user_manager.get_user_by_id(user_manager.get_current_user_id())
 
-    def add_notifications(self, _place, _action, _name_place):
+    def add_notifications(self, _place, _action, _action_place, _name_place):
         """
         Процедура записи нового действия пользователя
 
@@ -53,4 +53,4 @@ class ActionService():
 
         user = self.get_current_user().login
 
-        return action_manager.add_notifications(user, _name_place, _action, _place)
+        return action_manager.add_notifications(user, _name_place, _action, _action_place, _place)

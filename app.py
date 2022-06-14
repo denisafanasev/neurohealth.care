@@ -246,7 +246,7 @@ def user_manager():
     # users_list.append(new_user)
 
     error = None
-    error_type = None
+    error_type = {}
     settings_user = page_controller.get_settings_user()
 
     mode = {0: "new"}
@@ -272,6 +272,7 @@ def user_manager():
             mode[i_id['user_id']] = "new"
 
         data[i_id['user_id']] = page_controller.get_users_profile_view(i_id["user_id"])
+        error_type[i_id['user_id']] = None
 
 
     try:
@@ -310,7 +311,7 @@ def user_manager():
                     if error is None:
                         mode[len(users_list)] = "view"
                         error = "Пользователь успешно сохранён!"
-                        error_type = "Successful"
+                        error_type[user_id] = "Successful"
 
                         users_list = page_controller.get_users_list_view()
                         data[len(users_list)] = page_controller.get_users_profile_view(len(users_list))
@@ -318,7 +319,7 @@ def user_manager():
 
                     else:
                         data_edit[0] = user
-                        error_type = "Error"
+                        error_type[user_id] = "Error"
                     # new_user = page_controller.get_users_profile_view('')
                     # new_user['user_id'] = 0
                     # users_list.append(new_user)
@@ -350,7 +351,7 @@ def user_manager():
                     users_list = page_controller.get_users_list_view()
                     mode[user_id] = "view"
                     error = "Изменения успешно сохранены!"
-                    error_type = "Successful"
+                    error_type[user_id] = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "discharge":
                 user = {}
@@ -363,7 +364,7 @@ def user_manager():
                 mode[user_id] = "view"
 
                 error = "Пароль успешно изменен!"
-                error_type = "Successful"
+                error_type[user_id] = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "extension":
                 reference_point = request.form[f"reference_point_{user_id}"]
@@ -375,19 +376,21 @@ def user_manager():
                 data_edit[user_id] = page_controller.get_users_profile_view(user_id)
                 mode[user_id] = "view"
                 error = "Доступ пользователя к обучающей программе успешно изменен!"
-                error_type = "Successful"
+                error_type[user_id] = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "is_active":
-                active = page_controller.activation_deactivation(data[user_id]['login'], data[user_id]["active"])
-                error_type = "Successful"
+                is_active = request.form.get(f"is_active_{user_id}")
+                if is_active is None and data[user_id]["active"] or is_active == "True" and not data[user_id]["active"]:
+                    active = page_controller.activation_deactivation(data[user_id]['login'], data[user_id]["active"])
+                    error_type[user_id] = "Successful"
+                    data[user_id]['active'] = active
 
-                if active:
-                    error = "Пользователь успешно разблокирован!"
-                else:
-                    error = "Пользователь успешно заблокирован!"
+                    if active:
+                        error = "Пользователь успешно разблокирован!"
+                    else:
+                        error = "Пользователь успешно заблокирован!"
 
                 mode[user_id] = "view"
-                data[user_id]['active'] = active
 
             elif request.form.get(f"button_{user_id}") == "cancel":
                 if user_id != 0:
@@ -396,10 +399,6 @@ def user_manager():
             else:
                 return redirect("user_manager")
 
-            # new_user = page_controller.get_users_profile_view('')
-            # new_user['user_id'] = 0
-            # users_list.append(new_user)
-            #
             users_list = page_controller.get_users_list_view()
 
     except exceptions.BadRequestKeyError:

@@ -40,7 +40,7 @@ class ProbeProfileService():
 
         probe_id = probes_manager.add_probe(_name_probationer, _probationer_id, _date_of_birth, _protocol_status)
 
-        ActionService().add_notifications(f"пробы испытуемого № {_probationer_id}", "add", "probes_manager")
+        ActionService().add_notifications(f"пробы испытуемого № {_probationer_id}", "add", '', "probes_manager")
         return probe_id
 
     def get_protocol(self, _id_test, _probe_id):

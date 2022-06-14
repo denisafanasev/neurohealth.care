@@ -15,6 +15,86 @@
     <script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            {% if _error_type == "Error" %}
+                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                document.querySelector('p[id=text_message]').textContent = "{{ _error }}";
+                var modal = document.getElementById('message');
+                modal.style.display = "block";
+            {% endif %}
+        });
+    </script>
+    <style>/* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            z-index: 99; /* Sit on top */
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+
+            margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+            border: gray;
+            width: 80%; /* Could be more or less, depending on screen size */
+            padding: 16px;
+        }
+
+        .modal-backdrop{
+            display: none;
+        }
+        /* The Close Button (x) */
+
+        .close:hover,
+        .close:focus {
+            color: red;
+            cursor: pointer;
+        }
+
+        /* Add Zoom Animation */
+        .animate {
+            -webkit-animation: animatezoom 0.6s;
+            animation: animatezoom 0.6s
+        }
+
+        @-webkit-keyframes animatezoom {
+            from {
+                -webkit-transform: scale(0)
+            }
+            to {
+                -webkit-transform: scale(1)
+            }
+        }
+
+        @keyframes animatezoom {
+            from {
+                transform: scale(0)
+            }
+            to {
+                transform: scale(1)
+            }
+        }
+
+        /* Change styles for span and cancel button on extra small screens */
+        @media screen and (max-width: 300px) {
+            span.psw {
+                display: block;
+                float: none;
+            }
+            .cancelbtn {
+                width: 100%;
+            }
+        }
+</style>
 </head>
 
 <body>
@@ -95,6 +175,23 @@
                                     </div>
                                 </div>
                             {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="message" class="modal">
+            <div class="modal-content animate" style="width: 34%">
+                <div class="row modal-header">
+                    <h3 id="title_message" class="col modal-title"></h3>
+                    <button style="text-align: right;" data-bs-dismiss="modal" class="btn btn-close" type="button" onclick="document.getElementById('message').style.display='none';"></button>
+                </div>
+                <div class="modal-body row d-flex align-items-stretch bd-highlight">
+                    <div class="col p-1 bd-highlight">
+                        <div class="card d-flex align-self-baseline" style="height: 100%;">
+                            <div class="card-header">
+                                <p style="font-family: 'Helvetica', 'Arial', sans-serif; color: #000000; font-size: larger" id="text_message"></p>
+                            </div>
                         </div>
                     </div>
                 </div>

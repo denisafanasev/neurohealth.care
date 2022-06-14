@@ -42,7 +42,7 @@ class CourseService():
 
         lesson = course_manager.get_lesson(_id, _id_course, _id_video)
 
-        action_service.add_notifications(lesson, "view", "course_manager")
+        action_service.add_notifications(lesson, "view", '', "course_manager")
 
         return lesson
 

@@ -42,7 +42,7 @@ class UserProfileService():
 
         user_manager = UserManager()
 
-        ActionService().add_notifications(_login, "add", "user_manager")
+        ActionService().add_notifications(_login, "add", '', "user_manager")
 
         return user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
 
@@ -62,7 +62,7 @@ class UserProfileService():
 
         user_manager = UserManager()
 
-        ActionService().add_notifications(_login, "overwrite", "user_manager")
+        ActionService().add_notifications(_login, "overwrite", '', "user_manager")
 
         return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _created_date, _education_module_expiration_date)
 
@@ -83,7 +83,7 @@ class UserProfileService():
 
         user_manager.discharge_password(_login, _password, _password2)
 
-        ActionService().add_notifications(_login, "overwrite", "user_manager")
+        ActionService().add_notifications(_login, "overwrite", '', "user_manager")
 
     def activation_deactivation(self, _login, _active):
         """
@@ -98,7 +98,7 @@ class UserProfileService():
 
         user_manager = UserManager()
 
-        ActionService().add_notifications(_login, "overwrite", "user_manager")
+        ActionService().add_notifications(_login, "overwrite", '', "user_manager")
 
         if not _active:
             return user_manager.activation(_login)

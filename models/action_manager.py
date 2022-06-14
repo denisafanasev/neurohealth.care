@@ -27,7 +27,7 @@ class ActionManager():
 
         return action
 
-    def add_notifications(self, _user, _name_place, _action, _place):
+    def add_notifications(self, _user, _name_place, _action, _action_place, _place):
         """
         Процедура записи нового действия пользователя
 
@@ -35,6 +35,7 @@ class ActionManager():
             _user (String): логин пользователя
             _name_place (String): название данных, где было совершенно действие
             _action (date, optional): действие пользователя
+            _action_place(String): что именно изменил/добавил пользователь
             _place (String): тип места, где было совершенно действие
         """
 
@@ -47,6 +48,8 @@ class ActionManager():
             _action = "добавил"
         elif _action == "view":
             _action = "посмотрел"
+        elif _action == 'extended':
+            _action = 'продлил'
 
         comment_action = ''
 
@@ -59,7 +62,7 @@ class ActionManager():
             comment_action = f"Имя тестируемого: {_place}"
 
         elif _name_place == "user_manager":
-            _name_place = "данные пользователя"
+            _name_place = f"{_action_place} пользователя"
             comment_action = f"Login пользователя: {_place}"
 
         elif _name_place == "probes_manager":
