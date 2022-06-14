@@ -78,7 +78,7 @@ class UserManagerService():
         error = user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
 
         if error is None:
-            ActionService().add_notifications(_login, "add", "user_manager")
+            ActionService().add_notifications(_login, "add", 'нового',"user_manager")
 
         return error
 
@@ -101,7 +101,7 @@ class UserManagerService():
         user = user_manager.change_user(_login, _name, _email, _role, _probationers_number, _created_date,
                                  _education_module_expiration_date)
 
-        ActionService().add_notifications(_login, "overwrite", "user_manager")
+        ActionService().add_notifications(_login, "overwrite", 'данные', "user_manager")
 
         return user
 
@@ -121,7 +121,7 @@ class UserManagerService():
         user_manager = UserManager()
 
         error = user_manager.discharge_password(_login, _password, _password2, _current_password)
-        ActionService().add_notifications(_login, "overwrite", "user_manager")
+        ActionService().add_notifications(_login, "overwrite", 'пароль', "user_manager")
 
         return error
 
@@ -138,7 +138,7 @@ class UserManagerService():
 
         user_manager = UserManager()
 
-        ActionService().add_notifications(_login, "overwrite", "user_manager")
+        ActionService().add_notifications(_login, "overwrite", 'доступ', "user_manager")
 
         if not _active:
             return user_manager.activation(_login)
@@ -170,4 +170,4 @@ class UserManagerService():
 
         user_manager.access_extension(_period, _reference_point, _login)
 
-        ActionService().add_notifications(_login, "overwrite", "user_manager")
+        ActionService().add_notifications(_login, "extended", 'срок доступа',"user_manager")

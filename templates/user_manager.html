@@ -14,15 +14,28 @@
 
             });
             datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
+            let message = document.getElementById('message');
 
             {% for item in _users_list %}
-                var modal_{{ item['user_id'] }} = document.getElementById('{{ item['user_id'] }}');
+                let modal_{{ item['user_id'] }} = document.getElementById('{{ item['user_id'] }}');
+
+
                 {% if _mode[item['user_id']] == "edit" %}
                     modal_{{ item['user_id'] }}.style.display = "block";
+
                 {% elif _error_type[item['user_id']] == "Error" %}
                     modal_{{ item['user_id'] }}.style.display = "block";
+                    {#document.querySelector('h3[id=title_message]').textContent = 'Ошибка';#}
+                    {#document.querySelector('p[id=text_message]').textContent = "{{ _error }}";#}
+                    {#message.style.display = 'block'#}
+
+                {% elif _error_type[item['user_id']] == "Successful" %}
+                    document.querySelector('h3[id=title_message]').textContent = 'Успешно';
+                    document.querySelector('p[id=text_message]').textContent = "{{ _error }}";
+                    message.style.display = 'block'
                 {% endif %}
             {% endfor %}
+
         });
     </script>
 
@@ -121,21 +134,6 @@
 
         <h1 class="h3 mb-3">Управление пользователями</h1>
 
-            {% if _error_type=='Successful' %}
-                <div class="alert alert-success alert-dismissible" role="alert">
-                    <div class="alert-message">
-                        <strong>Успешно</strong>  {{ _error }}
-                    </div>
-                </div>
-            {% elif _error_type == "Error" %}
-                <div class="alert alert-danger alert-dismissible" role="alert">
-                    <div class="alert-message">
-                        <strong>Ошибка</strong> {{ _error }}
-                    </div>
-                </div>
-            {% endif %}
-
-
         <div class="row">
             <div class="col-12">
                 <div class="card border">
@@ -204,9 +202,10 @@
 
                                                 <td class="sorting_1 dtr-control" style="display: flex">
                                                     <div class="col{% if item['role'] == "superuser" %} bg-primary {% else %} bg-success {% endif %} bg-gradient" style="text-align: center;position: center; margin-right: 16%; color: white">
-                                                        <a  data-bs-toggle="modal" data-bs-target="#{{ item['user_id'] }}"
+                                                        <a style="display: inline-block; width: 100%"  data-bs-toggle="modal" data-bs-target="#{{ item['user_id'] }}"
                                                         onclick="document.getElementById('{{ item['user_id'] }}').style.display='block'">
-                                                            <span class="">{{ item['login'] }}</span></a>
+                                                            <span class="">{{ item['login'] }}</span>
+                                                        </a>
                                                     </div>
                                                 </td>
                                                 <td style="display: flex"><div style=" text-align: center; position: center; margin-right: 16%">{{ item['name'] }}</div></td>
@@ -294,20 +293,23 @@
             function checkPasswordsMatched_{{ item['user_id'] }}(form) {
                 var password = form.password_{{ item['user_id'] }}.value;
                 var password2 = form.password2_{{ item['user_id'] }}.value;
-                var button = form.button_{{ item['user_id']|int }}.data('value');
-                var text = "Ошибка: неверная длина пароля, укажите минимум 5 и максимум 20 символов"
-                var text2 = "Ошибка: введенные пароли не совпадают"
+                var text = "неверная длина пароля, укажите минимум 5 и максимум 20 символов";
+                var text2 = "введенные пароли не совпадают";
+                var button = document.activeElement.getAttribute('value');
+                var message = document.getElementById('message');
 
-                if (isset($_POST['button_{{ item['user_id']|int }}'])){
-                    return true;
-                }
+                if (button === 'cancel') {return true;}
 
                 if (password.length < 5 || password.length > 20){
-                    alert(text);
+                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                    document.querySelector('p[id=text_message]').textContent = text;
+                    message.style.display = 'block'
                     return false;
                 }
                 if (password !== password2){
-                    alert(text2);
+                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                    document.querySelector('p[id=text_message]').textContent = text2;
+                    message.style.display = 'block'
                     return false;
                 }else {
                     return checkLogin_{{ item['user_id'] }}(form);
@@ -315,10 +317,16 @@
               }
             function checkLogin_{{ item['user_id'] }}(form) {
                 var login = form.login_{{ item['user_id'] }}.value;
-                var text = "Ошибка: неверная длина логина, укажите минимум 3 и максимум 11 символов"
+                var text = "неверная длина логина, укажите минимум 3 и максимум 11 символов";
+                var message = document.getElementById('message');
+                var button = document.activeElement.getAttribute('value');
+
+                if (button === 'cancel') {return true;}
 
                 if (login.length < 3 || login.length > 11) {
-                  alert(text);
+                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                    document.querySelector('p[id=text_message]').textContent = text;
+                    message.style.display = 'block';
                   return false;
                 }else{
                     return checkRole_{{ item['user_id'] }}(form);
@@ -327,35 +335,42 @@
 
             function checkRole_{{ item['user_id'] }}(form) {
                 var role = form.role_{{ item['user_id'] }}.value;
-                var text = "Ошибка: ошибка корректности указанного значения роли"
+                var text = "ошибка корректности указанного значения роли";
+                var message = document.getElementById('message');
+                var button = document.activeElement.getAttribute('value');
+
+                if (button === 'cancel') {return true;}
 
                 if (role !== "user" && role !== "superuser"){
-                    alert(text);
+                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                    document.querySelector('p[id=text_message]').textContent = text;
+                    message.style.display = 'block';
                     return false;
                 }else{
                     return validate_{{ item['user_id'] }}(form);
                 }
-              }
+            }
 
               // Validate email
-              function validateEmail(email) {
+            function validateEmail(email) {
                 var re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
                 return re.test(String(email).toLowerCase());
-              }
+            }
 
-              // validate email and send form after success validation
-              function validate_{{ item['user_id'] }}(form) {
+                // validate email and send form after success validation
+            function validate_{{ item['user_id'] }}(form) {
                 var email = form.email_{{ item['user_id'] }}.value;
                 var text = "Ошибка: ошибка корректности указанного email"
+                var message = document.getElementById('message');
 
                 if (validateEmail(email)) {
                     return true;
                 } else {
-                    alert(text)
+                    message.style.display = 'block'
+                    document.querySelector('p[id=text_message]').textContent = text;
                     return false;
                 }
-              }
-
+            }
             </script>
             <div id="{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal">
                 <div class="modal-content animate">
@@ -368,7 +383,7 @@
                         </div>
                     {% endif %}
                     <form id="add_user_{{ item['user_id'] }}" name="add_user" method="post" class="was-validated" enctype="multipart/form-data"
-                          {% if _mode[item['user_id']] == "new" %}onsubmit="return checkPasswordsMatched_{{ item['user_id']|int }}(this);"
+                          {% if _mode[item['user_id']] == "new" %}onsubmit="return checkPasswordsMatched_{{ item['user_id']|int }}(this, )"
                             {% elif _mode[item['user_id']] == "edit" %} onsubmit="return checkLogin_{{ item['user_id']|int }}(this);"{% endif %}>
                     <div class="row d-flex align-items-stretch bd-highlight">
 
@@ -488,9 +503,8 @@
                                 </a>
                             {% endif %}
 
-                            <button id="button_{{ item['user_id']|int }}" href="{{ url_for('user_manager') }}" value="cancel" formnovalidate name="button_{{ item['user_id']|int }}" class="btn btn-primary">
-                                Отмена
-                            </button>
+                            <button id="button_{{ item['user_id']|int }}_cancel" type="submit" value="cancel" formnovalidate name="button_{{ item['user_id']|int }}" class="btn btn-primary">Отмена</button>
+                        <input name="cancel_{{ item['user_id']|int }}" value="" type="hidden">
                         </div>
                     </div>
                 </form>
@@ -609,5 +623,22 @@
                 </div>
             </div>
         {% endfor %}
+            <div id="message" class="modal">
+                <div class="modal-content animate" style="width: 34%">
+                    <div class="row modal-header">
+                        <h3 id="title_message" class="col modal-title">{% if _error_type == 'Successful' %}Успешно{% elif _error_type == 'Error' %}Ошибка{% endif %}</h3>
+                        <button style="text-align: right;" data-bs-dismiss="modal" class="btn btn-close" type="button" onclick="document.getElementById('message').style.display='none';"></button>
+                    </div>
+                    <div class="modal-body row d-flex align-items-stretch bd-highlight">
+                        <div class="col p-1 bd-highlight">
+                            <div class="card d-flex align-self-baseline" style="height: 100%;">
+                                <div class="card-header">
+                                    <p style="font-family: 'Helvetica', 'Arial', sans-serif; color: #000000; font-size: larger" id="text_message"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </div>
 {% endblock %}
