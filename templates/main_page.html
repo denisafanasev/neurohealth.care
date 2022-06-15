@@ -7,9 +7,11 @@
             {% if _error_type == "Error" %}
                 var modal = document.getElementById('discharge');
                 modal.style.display = "block";
-                {% elif _error_type == 'Successful' %}
-                var modal = document.getElementById('discharge_successful');
-                modal.style.display = "block";
+            {% elif _error_type == 'Successful' %}
+                document.querySelector('h3[id=title_message]').textContent = 'Успешно';
+                document.querySelector('p[id=text_message]').textContent = "{{ _error }}";
+                var message = document.getElementById('message');
+                message.style.display = "block";
             {% endif %}
         });
     </script>
@@ -185,14 +187,13 @@
             </div>
         </div>
     </div>
-        <div id="discharge" class="modal">
-            <div class="modal-content animate" style="width: 20%">
-                <h3 class="modal-title">Сброс пароля</h3>
-                {% if _error_type == "Error" %}
-                    <div class="alert alert-danger alert-dismissible" role="alert">
-                        <div class="alert-message">
-                            <strong>Ошибка</strong> {{ _error }}
-                        </div>
+    <div id="discharge" class="modal">
+        <div class="modal-content animate" style="width: 20%">
+            <h3 class="modal-title">Сброс пароля</h3>
+            {% if _error_type == "Error" %}
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <div class="alert-message">
+                        <strong>Ошибка</strong> {{ _error }}
                     </div>
                 {% endif %}
                 <form id="discharge_user" name="discharge_user" method="post" enctype="multipart/form-data"
@@ -218,34 +219,36 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
-                        <div class="p-1" align="right">
-                            <button type="submit" name="button" value="discharge" class="btn btn-primary ">
-                                Сохранить
-                            </button>
-                            <a onclick="document.getElementById('discharge').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
-                                Отмена
-                            </a>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div id="discharge_successful" class="modal">
-            <div class="modal-content animate" style="width: 24%">
+                </div>
                 <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
-                    <div class="p-1" align="center">
-                        <div class="alert alert-success alert-dismissible" role="alert">
-                            <div class="alert-message">
-                                <strong>Успешно</strong> {{ _error }}
-                            </div>
-                        </div>
-                        <a onclick="document.getElementById('discharge_successful').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
-                            Ок
+                    <div class="p-1" align="right">
+                        <button type="submit" name="button" value="discharge" class="btn btn-primary ">
+                            Сохранить
+                        </button>
+                        <a onclick="document.getElementById('discharge').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
+                            Отмена
                         </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="message" class="modal">
+        <div class="modal-content animate" style="width: 34%">
+            <div class="row modal-header">
+                <h3 id="title_message" class="col modal-title">{% if _error_type == 'Successful' %}Успешно{% elif _error_type == 'Error' %}Ошибка{% endif %}</h3>
+                <button style="text-align: right;" data-bs-dismiss="modal" class="btn btn-close" type="button" onclick="document.getElementById('message').style.display='none';"></button>
+            </div>
+            <div class="modal-body row d-flex align-items-stretch bd-highlight">
+                <div class="col p-1 bd-highlight">
+                    <div class="card d-flex align-self-baseline" style="height: 100%;">
+                        <div class="card-header">
+                            <p style="font-family: 'Helvetica', 'Arial', sans-serif; color: #000000; font-size: larger" id="text_message"></p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 </div>
 {% endblock %}

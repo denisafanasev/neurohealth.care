@@ -51,4 +51,4 @@ class EstimatedValuesService():
 
         file_name = estimated_values_manager.overwrite(_id_file_name, _criteria)
 
-        ActionService().add_notifications(file_name, "overwrite", "estimated_values")
+        ActionService().add_notifications(file_name, "overwrite", '', "estimated_values")
