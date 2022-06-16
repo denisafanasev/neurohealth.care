@@ -70,22 +70,6 @@ class CoursesList():
         self.image = _image
         self.type = _type
 
-# TODO: надо это в класс курса перенести
-# class Setting():
-#     """
-#     Класс настройки
-#     """
-#
-#     def __init__(self, _image):
-#         """
-#         Конструктор класса
-#
-#         Args:
-#             _image(String): ссылка на изображение
-#         """
-#
-#         self.image = _image
-
 class Course():
     """
     Класс курса

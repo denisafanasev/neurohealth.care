@@ -1,6 +1,7 @@
 from models.probes_manager import ProbesManager
 from models.probationer_manager import ProbationerManager
 from services.action_service import ActionService
+from services.user_manager_service import UserManagerService
 
 
 class ProbeProfileService():
@@ -37,10 +38,13 @@ class ProbeProfileService():
         """
 
         probes_manager = ProbesManager()
+        user_service = UserManagerService()
 
         probe_id = probes_manager.add_probe(_name_probationer, _probationer_id, _date_of_birth, _protocol_status)
+        login_user = user_service.get_current_user('').login
 
-        ActionService().add_notifications(f"пробы испытуемого № {_probationer_id}", "add", '', "probes_manager")
+        ActionService().add_notifications(f"пробы испытуемого № {_probationer_id}", "add", '', "probes_manager",
+                                          login_user)
         return probe_id
 
     def get_protocol(self, _id_test, _probe_id):

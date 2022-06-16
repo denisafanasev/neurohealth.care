@@ -58,7 +58,7 @@ class ActionManager():
             comment_action = f"для диапазона возрастов {_place}"
 
         elif _name_place == "probationer_manager":
-            _name_place = "данные тестируемого"
+            _name_place = f"{_action_place} тестируемого"
             comment_action = f"Имя тестируемого: {_place}"
 
         elif _name_place == "user_manager":
