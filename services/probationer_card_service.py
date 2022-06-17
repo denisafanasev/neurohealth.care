@@ -1,5 +1,6 @@
 from models.probationer_manager import ProbationerManager
 from services.action_service import ActionService
+from services.user_manager_service import UserManagerService
 
 class ProbationerCardService():
     """
@@ -28,11 +29,14 @@ class ProbationerCardService():
         """
 
         probationer_manager = ProbationerManager()
+        user_service = UserManagerService()
+
         name_probationer = probationer_manager.create_probationer( _user_login, _name_probationer, _date_of_birth,
                                                _name_parent, _educational_institution, _contacts, _diagnoses,
                                                _reasons_for_contact)
+        login_user = user_service.get_current_user('').login
 
-        ActionService().add_notifications(name_probationer, "add", '', "probationer_manager")
+        ActionService().add_notifications(name_probationer, "add", 'нового', "probationer_manager", login_user)
 
     def get_probationer_card_view(self, probationer_id):
         """
@@ -48,16 +52,26 @@ class ProbationerCardService():
 
     def change_probationer(self, _probationer_id, _name_probationer, _date_of_birth, _name_parent,
                            _educational_institution, _contacts, _diagnoses, _reasons_for_contact):
+        """
+        Записывает изменения данных тестируемого
+
+        Args:
+            _probationer_id(Int): id тестируемого
+            _name_probationer(String): имя тестируемого
+            _date_of_birth(date, optional): дата рождения тестируемого
+            _name_parent(String): ФИО родителя тестируемого
+            _educational_institution(String): учебное заведение тестируемого
+            _contacts(String): контакты для связи
+            _diagnoses(String): сопутствующие диагнозы
+            _reasons_for_contact(String): причины обращения
+        """
 
         probationer_manager = ProbationerManager()
+        user_service = UserManagerService()
 
         name_probationer = probationer_manager.change_probationer(_probationer_id, _name_probationer, _date_of_birth,
                             _name_parent, _educational_institution, _contacts, _diagnoses, _reasons_for_contact)
 
-        ActionService().add_notifications(name_probationer, "overwrite", '',"probationer_manager")
+        login_user = user_service.get_current_user('').login
 
-    def get_settings_probationer(self):
-
-        probationer_manager = ProbationerManager()
-
-        return probationer_manager.get_settings_probationer()
+        ActionService().add_notifications(name_probationer, "overwrite", '', "probationer_manager", login_user)

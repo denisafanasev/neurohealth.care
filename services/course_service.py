@@ -1,6 +1,6 @@
 from models.course_manager import CourseManager
 from services.action_service import ActionService
-from models.user_manager import UserManager
+from services.user_manager_service import UserManagerService
 
 class CourseService():
     """
@@ -39,10 +39,12 @@ class CourseService():
 
         course_manager = CourseManager()
         action_service = ActionService()
+        user_service = UserManagerService()
 
+        login_user = user_service.get_current_user('').login
         lesson = course_manager.get_lesson(_id, _id_course, _id_video)
 
-        action_service.add_notifications(lesson, "view", '', "course_manager")
+        action_service.add_notifications(lesson, "view", '', "course_manager", login_user)
 
         return lesson
 
@@ -69,9 +71,9 @@ class CourseService():
             User: пользователь
         """
 
-        user_manager = UserManager()
+        user_service = UserManagerService()
 
-        return user_manager.get_user_by_id(user_manager.get_current_user_id())
+        return user_service.get_current_user('')
 
     def get_course_by_id(self, _id):
         """

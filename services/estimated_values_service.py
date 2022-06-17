@@ -1,5 +1,6 @@
 from models.estimated_values_manager import EstimatedValuesManager
 from services.action_service import ActionService
+from services.user_manager_service import UserManagerService
 
 class EstimatedValuesService():
     """
@@ -48,7 +49,9 @@ class EstimatedValuesService():
         """
 
         estimated_values_manager = EstimatedValuesManager()
+        user_service = UserManagerService()
 
         file_name = estimated_values_manager.overwrite(_id_file_name, _criteria)
+        login_user = user_service.get_current_user('').login
 
-        ActionService().add_notifications(file_name, "overwrite", '', "estimated_values")
+        ActionService().add_notifications(file_name, "overwrite", '', "estimated_values", login_user)
