@@ -39,7 +39,7 @@
         });
     </script>
 
-{#    <script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>#}
+    <script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>
     <style>
 
         table.dataTable thead .sorting,
@@ -262,7 +262,7 @@
                 </div>
             </div>
         </div>
-        {% for item in _users_list %}
+{% for item in _users_list %}
             <script>
                 // Get the modal
                 var modal_{{ item['user_id'] }} = document.getElementById('{{ item['user_id'] }}');
@@ -285,93 +285,93 @@
                     }
                 }
             </script>
+    {% endfor %}
 
-            <script>$('#button_{{ item['user_id']|int }}').on('click', function() {
-              return true;
-            });</script>
-            <script >
-            function checkPasswordsMatched_{{ item['user_id'] }}(form) {
-                var password = form.password_{{ item['user_id'] }}.value;
-                var password2 = form.password2_{{ item['user_id'] }}.value;
-                var text = "неверная длина пароля, укажите минимум 5 и максимум 20 символов";
-                var text2 = "введенные пароли не совпадают";
-                var button = document.activeElement.getAttribute('value');
-                var message = document.getElementById('message');
-
-                if (button === 'cancel') {return true;}
-
-                if (password.length < 5 || password.length > 20){
-                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                    document.querySelector('p[id=text_message]').textContent = text;
-                    message.style.display = 'block'
-                    return false;
-                }
-                if (password !== password2){
-                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                    document.querySelector('p[id=text_message]').textContent = text2;
-                    message.style.display = 'block'
-                    return false;
-                }else {
-                    return checkLogin_{{ item['user_id'] }}(form);
-                }
-              }
-            function checkLogin_{{ item['user_id'] }}(form) {
-                var login = form.login_{{ item['user_id'] }}.value;
-                var text = "неверная длина логина, укажите минимум 3 и максимум 11 символов";
-                var message = document.getElementById('message');
-                var button = document.activeElement.getAttribute('value');
-
-                if (button === 'cancel') {return true;}
-
-                if (login.length < 3 || login.length > 11) {
-                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                    document.querySelector('p[id=text_message]').textContent = text;
-                    message.style.display = 'block';
-                  return false;
-                }else{
-                    return checkRole_{{ item['user_id'] }}(form);
-                }
-              }
-
-            function checkRole_{{ item['user_id'] }}(form) {
-                var role = form.role_{{ item['user_id'] }}.value;
-                var text = "ошибка корректности указанного значения роли";
-                var message = document.getElementById('message');
-                var button = document.activeElement.getAttribute('value');
-
-                if (button === 'cancel') {return true;}
-
-                if (role !== "user" && role !== "superuser"){
-                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                    document.querySelector('p[id=text_message]').textContent = text;
-                    message.style.display = 'block';
-                    return false;
-                }else{
-                    return validate_{{ item['user_id'] }}(form);
-                }
-            }
-
-              // Validate email
-            function validateEmail(email) {
-                var re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-                return re.test(String(email).toLowerCase());
-            }
-
-                // validate email and send form after success validation
-            function validate_{{ item['user_id'] }}(form) {
-                var email = form.email_{{ item['user_id'] }}.value;
-                var text = "Ошибка: ошибка корректности указанного email"
-                var message = document.getElementById('message');
-
-                if (validateEmail(email)) {
-                    return true;
-                } else {
-                    message.style.display = 'block'
-                    document.querySelector('p[id=text_message]').textContent = text;
-                    return false;
-                }
-            }
-            </script>
+{#            <script >#}
+{#            function checkPasswordsMatched(form) {#}
+{#                var password = form.password.value;#}
+{#                var password2 = form.password2.value;#}
+{#                var text = "неверная длина пароля, укажите минимум 5 и максимум 20 символов";#}
+{#                var text2 = "введенные пароли не совпадают";#}
+{#                var button = document.activeElement.getAttribute('value');#}
+{#                var message = document.getElementById('message');#}
+{##}
+{#                if (button === 'cancel') {return true;}#}
+{##}
+{#                if (password.length < 5 || password.length > 20){#}
+{#                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';#}
+{#                    document.querySelector('p[id=text_message]').textContent = text;#}
+{#                    message.style.display = 'block'#}
+{#                    return false;#}
+{#                }#}
+{#                if (password !== password2){#}
+{#                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';#}
+{#                    document.querySelector('p[id=text_message]').textContent = text2;#}
+{#                    message.style.display = 'block'#}
+{#                    return false;#}
+{#                }else {#}
+{#                    return checkLogin(form);#}
+{#                }#}
+{#              }#}
+{#            function checkLogin(form) {#}
+{#                var login = form.login.value;#}
+{#                var text = "неверная длина логина, укажите минимум 3 и максимум 11 символов";#}
+{#                var message = document.getElementById('message');#}
+{#                var button = document.activeElement.getAttribute('value');#}
+{##}
+{#                if (button === 'cancel') {return true;}#}
+{##}
+{#                if (login.length < 3 || login.length > 11) {#}
+{#                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';#}
+{#                    document.querySelector('p[id=text_message]').textContent = text;#}
+{#                    message.style.display = 'block';#}
+{#                  return false;#}
+{#                }else{#}
+{#                    return checkRole(form);#}
+{#                }#}
+{#              }#}
+{##}
+{#            function checkRole(form) {#}
+{#                var role = form.role.value;#}
+{#                var text = "ошибка корректности указанного значения роли";#}
+{#                var message = document.getElementById('message');#}
+{#                var button = document.activeElement.getAttribute('value');#}
+{##}
+{#                if (button === 'cancel') {return true;}#}
+{##}
+{#                if (role !== "user" && role !== "superuser"){#}
+{#                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';#}
+{#                    document.querySelector('p[id=text_message]').textContent = text;#}
+{#                    message.style.display = 'block';#}
+{#                    return false;#}
+{#                }else{#}
+{#                    return validate(form);#}
+{#                }#}
+{#            }#}
+{##}
+{#              // Validate email#}
+{#            function validateEmail(email) {#}
+{#                var re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;#}
+{#                return re.test(String(email).toLowerCase());#}
+{#            }#}
+{##}
+{#                // validate email and send form after success validation#}
+{#            function validate(form) {#}
+{#                var email = form.email.value;#}
+{#                var text = "Ошибка: ошибка корректности указанного email"#}
+{#                var message = document.getElementById('message');#}
+{##}
+{#                if (validateEmail(email)) {#}
+{#                    return true;#}
+{#                } else {#}
+{#                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';#}
+{#                    document.querySelector('p[id=text_message]').textContent = text;#}
+{#                    message.style.display = 'block'#}
+{#                    return false;#}
+{#                }#}
+{#            }#}
+{#            </script>#}
+    {% for item in _users_list %}
             <div id="{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal">
                 <div class="modal-content animate">
                     <h3 class="modal-title">{% if _mode[item['user_id']] == "view" %}Просмотр{% else %} Редактирование{% endif %} карточки пользователя</h3>
@@ -383,8 +383,8 @@
                         </div>
                     {% endif %}
                     <form id="add_user_{{ item['user_id'] }}" name="add_user" method="post" class="was-validated" enctype="multipart/form-data"
-                          {% if _mode[item['user_id']] == "new" %}onsubmit="return checkPasswordsMatched_{{ item['user_id']|int }}(this, )"
-                            {% elif _mode[item['user_id']] == "edit" %} onsubmit="return checkLogin_{{ item['user_id']|int }}(this);"{% endif %}>
+                          {% if _mode[item['user_id']] == "new" %}onsubmit="return checkPasswordsMatched(this)"
+                            {% elif _mode[item['user_id']] == "edit" %} onsubmit="return checkLogin(this);"{% endif %}>
                     <div class="row d-flex align-items-stretch bd-highlight">
 
                         <div style="margin-right: 5px" class="col p-1 bd-highlight border">
@@ -394,7 +394,7 @@
 
                                     <div class="mb-2">
                                         <label class="form-label"><strong>Login</strong></label>
-                                        <input required type="text" id="login_{{ item['user_id']|int }}" name="login_{{ item['user_id']|int }}" class="form-control" {% if _mode[ item['user_id']|int]!="new" %}readonly {% endif %}
+                                        <input required type="text" id="login" name="login_{{ item['user_id']|int }}" class="form-control" {% if _mode[ item['user_id']|int]!="new" %}readonly {% endif %}
                                                 {% if _data_edit[ item['user_id']|int]['login'] != _data[ item['user_id']|int]['login'] or _mode[ item['user_id']|int] != "new" %}value="{{ _data_edit[ item['user_id']|int]['login'] }}" {% else %}
                                                placeholder="Введите логин пользователя" {% endif %}>
                                     </div>
@@ -409,20 +409,20 @@
                                     {% if _mode[ item['user_id']|int]=="new" %}
                                         <div class="mb-2">
                                             <label class="form-label"><strong>Пароль</strong></label>
-                                            <input required type="password" name="password_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password']!= _data[ item['user_id']|int]['password'] %}
+                                            <input id="password" required type="password" name="password_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password']!= _data[ item['user_id']|int]['password'] %}
                                                    value="{{ _data_edit[ item['user_id']|int]['password'] }}" {% else %}placeholder="Введите пароль" {% endif %}>
                                         </div>
 
                                         <div class="mb-2">
                                             <label class="form-label"><strong>Повтор пароля</strong></label>
-                                            <input required type="password" name="password2_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password2']!= _data[ item['user_id']|int]['password2'] %}
+                                            <input id="password2" required type="password" name="password2_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password2']!= _data[ item['user_id']|int]['password2'] %}
                                                    value="{{ _data_edit[ item['user_id']|int]['password2'] }}" {% else %}placeholder="Повторно введите пароль" {% endif %}>
                                         </div>
                                     {% endif %}
 
                                     <div class="mb-2">
                                         <label class="form-label"><strong>Email</strong></label>
-                                        <input required type="email" name="email_{{ item['user_id']|int }}" class="form-control"{% if _mode[ item['user_id']|int]=="view" or _mode[ item['user_id']|int]=="discharge" %} readonly {% endif %}
+                                        <input id="email" required type="email" name="email_{{ item['user_id']|int }}" class="form-control"{% if _mode[ item['user_id']|int]=="view" or _mode[ item['user_id']|int]=="discharge" %} readonly {% endif %}
                                                 {% if _data_edit[ item['user_id']|int]['email'] != _data[ item['user_id']|int]['email'] or _mode[ item['user_id']|int] != "new" %}value="{{ _data_edit[ item['user_id']|int]['email'] }}" {% else %}placeholder="Введите email пользователя" {% endif %}>
                                     </div>
                                 </div>
@@ -437,7 +437,7 @@
                                     <h5 class="card-title">Параметры доступа</h5>
                                     <div class="mb-2">
                                         <label class="form-label"><strong>Роль пользователя</strong></label>
-                                        <select required type="text" name="role_{{ item['user_id'] }}" class="form-select"
+                                        <select id="role" required type="text" name="role_{{ item['user_id'] }}" class="form-select"
                                                 {% if _mode[ item['user_id']|int]=="view" or _mode[ item['user_id']|int]=="discharge" %}disabled {% endif %}>
                                             {% if _mode[ item['user_id']|int] != "view" %}
                                                 {% for i in _settings['role'] %}
@@ -566,18 +566,18 @@
                 <div class="modal-content animate" style="width: 20%">
                     <h3 class="modal-title">Сброс пароля</h3>
                     <form id="discharge_user_{{ item['user_id']|int }}" name="discharge_user_{{ item['user_id']|int }}" method="post" enctype="multipart/form-data"
-                          class="was-validated" onsubmit="return checkPasswordsMatched_{{ item['user_id'] }}(this);">
+                          class="was-validated" onsubmit="return checkPasswordsMatched(this);">
                         <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; ">
                             <div class="card-header">
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Пароль</strong></label>
-                                    <input id="password_{{ item['user_id']|int }}" required type="password" name="password_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password']!= _data[ item['user_id']|int]['password'] %}
+                                    <input id="password" required type="password" name="password_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password']!= _data[ item['user_id']|int]['password'] %}
                                            value="{{ _data_edit[ item['user_id']|int]['password'] }}" {% else %}placeholder="Введите пароль" {% endif %}>
                                 </div>
 
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Повтор пароля</strong></label>
-                                    <input id="password2_{{ item['user_id']|int }}" required type="password" name="password2_{{ item['user_id']|int }}" class="form-control"{% if _data_edit['password2']!= _data['password2'] %}
+                                    <input id="password2" required type="password" name="password2_{{ item['user_id']|int }}" class="form-control"{% if _data_edit['password2']!= _data['password2'] %}
                                            value="{{ _data_edit['password2'] }}" {% else %}placeholder="Повторно введите пароль" {% endif %}>
                                 </div>
                             </div>

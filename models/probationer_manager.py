@@ -188,9 +188,3 @@ class ProbationerManager():
         else:
             return False
 
-    def get_settings_probationer(self):
-
-        data_store = DataStore("settings_probationer")
-
-        return data_store.get_rows()[0]
-

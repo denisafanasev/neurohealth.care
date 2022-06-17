@@ -54,9 +54,9 @@ class MainPageController():
             _user_id   - Required  : id пользователя (Int)
         """
 
-        index_service = ActionService()
+        action_service = ActionService()
 
-        user = index_service.get_current_user()
+        user = action_service.get_current_user()
         user_view = {}
 
         user_view['user_id'] = user.user_id

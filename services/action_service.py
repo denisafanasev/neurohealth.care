@@ -1,4 +1,6 @@
 from models.action_manager import ActionManager
+
+
 class ActionService():
     """
     EstimatedValuesService - класс бизнес-логики сервиса управления настройками приложения
@@ -32,25 +34,24 @@ class ActionService():
         Return:
             User: пользователь
         """
-        
-        # TODO: жесть какаято, надо переделать
-        from models.user_manager import UserManager
-        user_manager = UserManager()
+        from services.user_manager_service import UserManagerService
 
-        return user_manager.get_user_by_id(user_manager.get_current_user_id())
+        user_manager = UserManagerService()
 
-    def add_notifications(self, _place, _action, _action_place, _name_place):
+        return user_manager.get_current_user('')
+
+    def add_notifications(self, _place, _action, _action_place, _name_place, _login_user):
         """
         Процедура записи нового действия пользователя
 
         Args:
+            _login_user (String): логин пользователя
             _name_place (String): название данных, где было совершенно действие
             _action (date, optional): действие пользователя
+            _action_place(String): что именно изменил/добавил пользователь
             _place (String): тип места, где было совершенно действие
         """
 
         action_manager = ActionManager()
 
-        user = self.get_current_user().login
-
-        return action_manager.add_notifications(user, _name_place, _action, _action_place, _place)
+        return action_manager.add_notifications(_login_user, _name_place, _action, _action_place, _place)

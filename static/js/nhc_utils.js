@@ -4,6 +4,9 @@ function checkPasswordsMatched(form) {
     var text = "Ошибка: неверная длинная пароля, укажите минимум 5 и максимум 20 символов"
     var text2 = "Ошибка: введенные пароли не совпадают"
     var message = document.getElementById('message');
+    var button = document.activeElement.getAttribute('value');
+
+    if (button === 'cancel') {return true;}
 
     if (password.length < 5 || password.length > 20){
         document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
@@ -17,11 +20,18 @@ function checkPasswordsMatched(form) {
         message.style.display = 'block'
         return false;
     }else {
-        return checkLogin(form);
+        if (button === 'discharge'){
+            return true
+        } else {
+            return checkLogin(form);
+        }
     }
   }
 function checkLogin(form) {
     var login = form.login.value;
+    var button = document.activeElement.getAttribute('value');
+
+    if (button === 'cancel') {return true;}
     
     var text = "Ошибка длинны логина (должна быть от 3-х до 15-ти знаков)"
     var message = document.getElementById('message');
@@ -78,30 +88,11 @@ function validate(form) {
     var message = document.getElementById('message');
 
     if (validateEmail(email)) {
-        return checkRole(this);
+        return checkRole(form);
     } else {
-        message.style.display = 'block'
+        document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
         document.querySelector('p[id=text_message]').textContent = text;
+        message.style.display = 'block'
         return false;
     }
 }
-// $(function() {
-//     $('#extension').click(
-//         function (form) {
-//             var reference_point = form.reference_point.value;
-//             var period = form.period.value;
-//             var text = "Ошибка: выберите срок продления доступа и от какой даты считать";
-//
-//             if (reference_point === "") {
-//                 alert(text);
-//                 return false;
-//             } else {
-//                 if (period === "") {
-//                     alert(text);
-//                     return false;
-//                 } else {
-//                     return true;
-//                 }
-//             }
-//         });
-// });
