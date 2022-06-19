@@ -9,11 +9,118 @@
             // DataTables with Buttons
             var datatablesButtons = $("#datatables-buttons").DataTable({
                 responsive: true,
-                lengthChange: !1
+                lengthChange: !1,
+                displayStart: {{ _num_page * 10 }}
             });
             datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
+            let message = document.getElementById('message');
+
+            {% for item in _probationers_list %}
+                let modal_{{ item['probationer_id'] }} = document.getElementById('{{ item['probationer_id'] }}');
+
+                {% if _mode[item['probationer_id']] == "edit" %}
+                    modal_{{ item['probationer_id'] }}.style.display = "block";
+
+                {% elif _error_type[item['probationer_id']] == "Error" %}
+                    modal_{{ item['probationer_id'] }}.style.display = "block";
+
+                {% elif _error_type[item['probationer_id']] == "Successful" %}
+                    document.querySelector('h3[id=title_message]').textContent = 'Успешно';
+                    document.querySelector('p[id=text_message]').textContent = "{{ _error }}";
+                    message.style.display = 'block'
+                {% endif %}
+            {% endfor %}
         });
     </script>
+    <style>
+
+        table.dataTable thead .sorting,
+        table.dataTable thead .sorting_asc,
+        table.dataTable thead .sorting_desc {
+            background : none;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            overflow-y: scroll!important;
+        }
+
+        .pagination {
+            z-index: 0;
+        }
+
+
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            z-index: 99; /* Sit on top */
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+
+            margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+            border: gray;
+            width: 80%; /* Could be more or less, depending on screen size */
+            padding: 16px;
+        }
+
+        .modal-backdrop{
+            display: none;
+        }
+        /* The Close Button (x) */
+
+        .close:hover,
+        .close:focus {
+            color: red;
+            cursor: pointer;
+        }
+
+        /* Add Zoom Animation */
+        .animate {
+            -webkit-animation: animatezoom 0.6s;
+            animation: animatezoom 0.6s
+        }
+
+        @-webkit-keyframes animatezoom {
+            from {
+                -webkit-transform: scale(0)
+            }
+            to {
+                -webkit-transform: scale(1)
+            }
+        }
+
+        @keyframes animatezoom {
+            from {
+                transform: scale(0)
+            }
+            to {
+                transform: scale(1)
+            }
+        }
+
+        /* Change styles for span and cancel button on extra small screens */
+        @media screen and (max-width: 300px) {
+            span.psw {
+                display: block;
+                float: none;
+            }
+            .cancelbtn {
+                width: 100%;
+            }
+        }
+
+    </style>
 
     <div class="container-fluid p-0">
     
@@ -22,77 +129,207 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-{#                    <div class="card-header">#}
-{#                        #}
-{#                        #}
-{#                    </div>#}
                     <div class="card-body">
                         <div id="datatables-buttons_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-6">
+                                    <div class="dt-buttons btn-group flex-wrap">
+                                        <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
+                                            data-bs-toggle="modal" data-bs-target="#0"
+                                                    onclick="document.getElementById('0').style.display='block'">
+                                                <span>Добавить тестируемого</span>
+                                            </a>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%;"
+                                        role="grid" aria-describedby="datatables-buttons_info">
+                                        <thead>
+                                            <tr role="row" style="text-align: center">
+                                                <th style="width:5%;">#</th>
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">Имя испытуемого</th>
+                                                {% if _is_current_user_admin %}
+                                                    <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                        style="width:10%;" aria-label="Position: activate to sort column ascending">User_Login</th>
+                                                {% endif %}
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">Дата рождения</th>
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                    style="width:15%;" aria-label="Position: activate to sort column ascending">ФИО родителя</th>
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">Контакты</th>
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                    style="width:15%;" aria-label="Position: activate to sort column ascending">Учебное заведение</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="text-align: center">
 
-                        <div class="row">
-                            <div class="col-sm-12 col-md-6">
-                                <div class="dt-buttons btn-group flex-wrap">
-                                    <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('probationer_card')}}">
-                                        <span>Добавить испытуемого</span>
-                                    </a>
+                                            {% for item in _probationers_list %}
+                                                {% if item["probationer_id"] != 0 %}
+                                                    <tr class="even">
+
+                                                        <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg") }}" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+
+                                                        <td class="sorting_1 dtr-control">
+                                                            <div class="bg-success bg-gradient" style="color: white; text-align: center; ">
+                                                                <a style="display: inline-block; width: 100%"  data-bs-toggle="modal" data-bs-target="#{{ item['probationer_id'] }}"
+                                                                onclick="document.getElementById('{{ item['probationer_id'] }}').style.display='block'">
+                                                                    <span class="">{{ item['name_probationer'] }}</span>
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                        {% if _is_current_user_admin %}
+                                                            <td><div style="position: center; margin-right: 16%">{{ item['user_login'] }}</div></td>
+                                                        {% endif %}
+                                                        <td><div style="position: center; margin-right: 16%">{{ item['date_of_birth'] }}</div></td>
+                                                        <td><div style="position: center; margin-right: 10%">{{ item['name_parent'] }}</div></td>
+                                                        <td><div style="position: center; margin-right: 5%">{{ item['contacts'] }}</div></td>
+                                                        <td><div style="position: center; margin-right: 16%">{{ item['educational_institution'] }}</div></td>
+
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% for item in _probationers_list %}
+            <script>
+                var modal_{{ item['probationer_id'] }} = document.getElementById('{{ item['probationer_id'] }}');
 
-
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%;"
-                                    role="grid" aria-describedby="datatables-buttons_info">
-                                    <thead>
-                                        <tr role="row">
-                                            <th style="width:5%;">#</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:20%;" aria-label="Position: activate to sort column ascending">Имя испытуемого</th>
-                                            {% if _is_current_user_admin %}
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">User_Login</th>
-                                            {% endif %}
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:10%;" aria-label="Position: activate to sort column ascending">Дата рождения</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:10%;" aria-label="Position: activate to sort column ascending">ФИО родителя</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Контакты</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Учебное заведение</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                        {% for item in _data %}
-
-                                        <tr class="even">
-
-                                            <td><img src="{{ url_for('static' , filename="img/avatars/avatar.jpg")}}" width="32" height="32"
-                                                    class="rounded-circle my-n1" alt="Avatar"></td>
-
-                                            <td class="sorting_1 dtr-control"><a href="{{ url_for('probationer_card')}}?probationer_id={{ item['probationer_id'] }}">{{ item['name_probationer'] }}
-                                            </a></td>
-                                            {% if _is_current_user_admin %}
-                                                <td>{{ item['user_login'] }}</td>
-                                            {% endif %}
-                                            <td>{{ item['date_of_birth'] }}</td>
-                                            <td>{{ item['name_parent'] }}</td>
-                                            <td>{{ item['contacts'] }}</td>
-                                            <td>{{ item['educational_institution'] }}</td>
-
-                                        </tr>
-
-                                        {% endfor %}
-
-                                    </tbody>
-                                </table>
+                window.onclick = function (event) {
+                    if (event.target === modal_{{ item['probationer_id'] }}) {
+                        modal_{{ item['probationer_id'] }}.style.display = "none";
+                    }
+                }
+            </script>
+            <div id="{{ item['probationer_id'] }}" class="modal_{{ item['probationer_id'] }} modal">
+                <div class="modal-content animate">
+                    <h3 class="modal-title">{% if _mode[item['probationer_id']] == "view" %}Просмотр{% else %} Редактирование{% endif %} карточки тестируемого</h3>
+                    {% if _error_type['probationer_id']=='Error' %}
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <div class="alert-message">
+                                <strong>Ошибка</strong> {{ _error }}
                             </div>
                         </div>
+                    {% endif %}
+                    <form id="add_probationer" name="add_probationer" method="post" enctype="multipart/form-data" class="was-validated">
+                        <div class="row d-flex align-items-stretch bd-highlight">
+                            <div style="margin-right: 5px" class="col p-1 bd-highlight border">
+                                <div class="card d-flex align-self-baseline">
+                                    <div class="card-header">
 
-                    </div>
+                                        {% if _is_current_user_admin and _mode[item['probationer_id']] != 'new' %}
+                                            <div class="mb-2">
+                                                <label class="form-label"><strong>Login</strong></label>
+                                                <input required type="text" name="user_login_{{ item['probationer_id'] }}" class="form-control" readonly value="{{ item['user_login'] }}">
+                                            </div>
+                                        {% endif %}
+                                        <div class="mb-2">
+                                            <label class="form-label"><strong>Имя испытуемого</strong></label>
+                                            <input required type="text" name="name_probationer_{{ item['probationer_id'] }}" class="form-control"  {% if _mode[item['probationer_id']|int]=="view" %} readonly {% endif %}
+                                                    {% if _data_edit[item['probationer_id']|int]['name_probationer'] != _data[item['probationer_id']|int]['name_probationer'] or _mode[item['probationer_id']|int] != "new" %}
+                                                   value="{{ _data_edit[item['probationer_id']|int]['name_probationer'] }}" {% else %} placeholder= "{{ _data[item['probationer_id']|int]['name_probationer'] }}" {% endif %}>
+                                        </div>
+
+                                        <div class="mb-2">
+                                            <label class="form-label"><strong>Сопутствующие диагнозы</strong></label>
+                                            <textarea required name="diagnoses_{{ item['probationer_id'] }}" class="form-control"  {% if _mode[item['probationer_id']|int]=="view" %} readonly {% endif %} {% if _data[item['probationer_id']|int]['diagnoses']==_data_edit[item['probationer_id']|int]['diagnoses'] or _mode[item['probationer_id']|int] == "new" %}
+                                                      placeholder= "{{ _data[item['probationer_id']|int]['diagnoses'] }}" {% endif %}
+                                            >{% if _data_edit[item['probationer_id']|int]['diagnoses']!=_data[item['probationer_id']|int]['diagnoses'] or _mode[item['probationer_id']|int] != "new" %}{{ _data_edit[item['probationer_id']|int]['diagnoses'] }}{% endif %}</textarea>
+                                        </div>
+
+                                        <div class="mb-2">
+                                            <label class="form-label"><strong>Причины обращения</strong></label>
+                                            <textarea required name="reasons_for_contact_{{ item['probationer_id'] }}" class="form-control"  {% if _mode[item['probationer_id']|int]=="view"%} readonly {% endif %} {% if _data_edit[item['probationer_id']|int]['reasons_for_contact']==_data[item['probationer_id']|int]['reasons_for_contact'] or _mode[item['probationer_id']|int] == "new"  %}
+                                                      placeholder= "{{ _data[item['probationer_id']|int]['reasons_for_contact'] }}" {% endif %}>{% if _data_edit[item['probationer_id']|int]['reasons_for_contact']!=_data[item['probationer_id']|int]['reasons_for_contact'] or _mode[item['probationer_id']|int] != "new"  %}{{ _data_edit[item['probationer_id']|int]['reasons_for_contact'] }}{% endif %}</textarea>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col p-1 bd-highlight border">
+                                <div class="card d-flex align-self-baseline">
+                                    <div class="card-header">
+                                        <div class="mb-2">
+                                            <label class="form-label"><strong>Дата Рождения</strong></label>
+                                            <input required type="date" name="date_of_birth_{{ item['probationer_id'] }}" class="form-control" {% if _mode[item['probationer_id']|int] == "view" %} readonly {% endif %} value="{{ _data_edit[item['probationer_id']|int]['date_of_birth'] }}" >
+                                            <div class="invalid-feedback">
+                                                Поле, обязательное для заполнения!
+                                            </div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label"><strong>ФИО родителя</strong></label>
+                                            <input required type="text" name="name_parent_{{ item['probationer_id'] }}" class="form-control" {% if _mode[item['probationer_id']|int] == "view" %} readonly {% endif %} {% if _data_edit[item['probationer_id']|int]['name_parent']!=_data[item['probationer_id']|int]['name_parent'] or _mode[item['probationer_id']|int] != "new" %}
+                                                   value="{{ _data_edit[item['probationer_id']|int]['name_parent'] }}" {% else %}  placeholder="{{ _data[item['probationer_id']|int]['name_parent'] }}" {% endif %}>
+                                            <div class="invalid-feedback">
+                                                Поле, обязательное для заполнения!
+                                            </div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label"><strong>Учебное заведение</strong></label>
+                                            <select required type="text" name="educational_institution_{{ item['probationer_id'] }}" class="form-control" {% if _mode[item['probationer_id']|int]=="view"%} disabled {% endif %}>
+                                                <option selected disabled value="">Выберите название учебного заведения..</option>
+                                                {% for i_setting in _settings['educational_institution'] %}
+                                                    <option {% if i_setting == _data_edit[item['probationer_id']|int]['educational_institution'] %}selected{% endif %} value="{{ i_setting }}">{{ i_setting }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Поле, обязательное для заполнения!
+                                            </div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label"><strong>Контакты</strong></label>
+                                            <input required type="text" name="contacts_{{ item['probationer_id'] }}" class="form-control" {% if _mode[item['probationer_id']|int]=="view" %} readonly {% endif %} {% if _data_edit[item['probationer_id']|int]['contacts']!=_data[item['probationer_id']|int]['contacts'] or _mode[item['probationer_id']|int]!="new" %}
+                                                   value="{{ _data_edit[item['probationer_id']|int]['contacts'] }}" {% else %} placeholder= "{{ _data[item['probationer_id']|int]['contacts'] }}" {% endif %}>
+                                            <div class="invalid-feedback">
+                                                Поле, обязательное для заполнения!
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row d-flex align-items-stretch bd-highlight" align="right">
+                            <div class="col-12 p-2 bd-highlight">
+                                <div align="right">
+                                    <button type="submit" name="button_{{ item['probationer_id'] }}" value="{% if _mode[item['probationer_id']|int]=="new" %}add{% elif _mode[item['probationer_id']|int]=="edit" %}save{% else %}edit{% endif %}" class="btn btn-primary ">
+                                                                                    {% if _mode[item['probationer_id']|int]=="new" %}Добавить тестируемого
+                                                                                    {% elif _mode[item['probationer_id']|int]=="edit" %}Сохранить
+                                                                                    {% else %}Редактировать
+                                                                                    {% endif %}
+                                    </button>
+                                    <button id="button_{{ item['probationer_id']|int }}_cancel" type="submit" value="cancel" formnovalidate name="button_{{ item['probationer_id']|int }}" class="btn btn-primary">Отмена</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+        <div id="message" class="modal">
+            <div class="modal-content animate" style="width: 34%">
+                <div class="row modal-header">
+                    <h3 id="title_message" class="col modal-title">{% if _error_type == 'Successful' %}Успешно{% elif _error_type == 'Error' %}Ошибка{% endif %}</h3>
+                    <button style="text-align: right;" data-bs-dismiss="modal" class="btn btn-close" type="button" onclick="document.getElementById('message').style.display='none';"></button>
+                </div>
+                <div class="modal-body row d-flex align-items-stretch bd-highlight">
+                    <div class="col p-1 bd-highlight">
+                        <div class="card d-flex align-self-baseline" style="height: 100%;">
+                            <div class="card-header">
+                                <p style="font-family: 'Helvetica', 'Arial', sans-serif; color: #000000; font-size: larger" id="text_message"></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
