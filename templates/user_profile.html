@@ -103,43 +103,28 @@
                         <div class="mb-2">
                             <label class="form-label"><strong>Login</strong></label>
                             <input required type="text" name="login" class="form-control" {% if _mode!="new" %} readonly {% endif %} {% if _data_edit['login'] != _data['login'] or _mode != "new" %} value="{{ _data_edit['login'] }}" {% else %} placeholder="Введите логин пользователя" {% endif %}>
-                            <div class="invalid-feedback">
-                                Поле, обязательное для заполнения!
-                            </div>
                         </div>
 
                         <div class="mb-2">
                             <label class="form-label"><strong>Имя пользователя</strong></label>
                             <input required type="text" name="user_name" class="form-control"  {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data_edit['name'] != _data['name'] or _mode != "new"%} value="{{ _data_edit['name'] }}" {% else %} placeholder="Введите имя пользователя" {% endif %}>
-                            <div class="invalid-feedback">
-                                Поле, обязательное для заполнения!
-                            </div>
                         </div>
 
                         {% if _mode=="new" or _mode=="discharge" %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Пароль</strong></label>
                                 <input required type="password" name="password" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
-                                <div class="invalid-feedback">
-                                    Поле, обязательное для заполнения!
-                                </div>
                             </div>
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Повтор пароля</strong></label>
                                 <input required type="password" name="password2" class="form-control" {% if _data_edit['password2']!= _data['password2'] %} value="{{ _data_edit['password2'] }}" {% else %} placeholder="Повторно введите пароль" {% endif %}>
-                                <div class="invalid-feedback">
-                                    Поле, обязательное для заполнения!
-                                </div>
                             </div>
                         {% endif %}
 
                         <div class="mb-2">
                             <label class="form-label"><strong>Email</strong></label>
                             <input required type="email" name="email" class="form-control" {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data_edit['email'] != _data['email'] or _mode != "new"%} value="{{ _data_edit['email'] }}" {% else %} placeholder="Введите email пользователя" {% endif %}>
-                            <div class="invalid-feedback">
-                                Поле, обязательное для заполнения!
-                            </div>
                         </div>
 
                         <div class="mb-2">
@@ -173,9 +158,6 @@
                                     <option>{{ _data_edit['role'] }}</option>
                                 {% endif %}
                             </select>
-                            <div class="invalid-feedback">
-                                Поле, обязательное для заполнения!
-                            </div>
                         </div>
 
                         <div class="mb-2">
@@ -190,17 +172,11 @@
                                     <option>{{ _data_edit['probationers_number'] }}</option>
                                 {% endif %}
                             </select>
-                            <div class="invalid-feedback">
-                                Поле, обязательное для заполнения!
-                            </div>
                         </div>
                         {% if _mode != "new" %}
                             <div class="mb-2">
                                 <label class="form-label"><strong>Доступ к центру обучения</strong></label>
                                 <input class="form-control" disabled value="{{ _data_edit['education_module_expiration_date'] }}">
-                                <div class="invalid-feedback">
-                                    Поле, обязательное для заполнения!
-                                </div>
                             </div>
                         {% endif %}
                     </div>

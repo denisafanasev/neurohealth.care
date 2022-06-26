@@ -397,9 +397,6 @@
                                         <input required type="text" id="login" name="login_{{ item['user_id']|int }}" class="form-control" {% if _mode[ item['user_id']|int]!="new" %}readonly {% endif %}
                                                 {% if _data_edit[ item['user_id']|int]['login'] != _data[ item['user_id']|int]['login'] or _mode[ item['user_id']|int] != "new" %}value="{{ _data_edit[ item['user_id']|int]['login'] }}" {% else %}
                                                placeholder="Введите логин пользователя" {% endif %}>
-                                        <div class="invalid-feedback">
-                                            Поле, обязательное для заполнения!
-                                        </div>
                                     </div>
 
                                     <div class="mb-2">
@@ -407,9 +404,6 @@
                                         <input required type="text" name="user_name_{{ item['user_id']|int }}" class="form-control" {% if _mode[ item['user_id']|int]=="view" or _mode[ item['user_id']|int]=="discharge" %}readonly {% endif %}
                                                 {% if _data_edit[ item['user_id']|int]['name'] != _data[ item['user_id']|int]['name'] or _mode[ item['user_id']|int] != "new" %} value="{{ _data_edit[ item['user_id']|int]['name'] }}" {% else %}
                                                placeholder="Введите имя пользователя" {% endif %}>
-                                        <div class="invalid-feedback">
-                                            Поле, обязательное для заполнения!
-                                        </div>
                                     </div>
 
                                     {% if _mode[ item['user_id']|int]=="new" %}
@@ -417,18 +411,12 @@
                                             <label class="form-label"><strong>Пароль</strong></label>
                                             <input id="password" required type="password" name="password_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password']!= _data[ item['user_id']|int]['password'] %}
                                                    value="{{ _data_edit[ item['user_id']|int]['password'] }}" {% else %}placeholder="Введите пароль" {% endif %}>
-                                            <div class="invalid-feedback">
-                                                Поле, обязательное для заполнения!
-                                            </div>
                                         </div>
 
                                         <div class="mb-2">
                                             <label class="form-label"><strong>Повтор пароля</strong></label>
                                             <input id="password2" required type="password" name="password2_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password2']!= _data[ item['user_id']|int]['password2'] %}
                                                    value="{{ _data_edit[ item['user_id']|int]['password2'] }}" {% else %}placeholder="Повторно введите пароль" {% endif %}>
-                                            <div class="invalid-feedback">
-                                                Поле, обязательное для заполнения!
-                                            </div>
                                         </div>
                                     {% endif %}
 
@@ -436,9 +424,6 @@
                                         <label class="form-label"><strong>Email</strong></label>
                                         <input id="email" required type="email" name="email_{{ item['user_id']|int }}" class="form-control"{% if _mode[ item['user_id']|int]=="view" or _mode[ item['user_id']|int]=="discharge" %} readonly {% endif %}
                                                 {% if _data_edit[ item['user_id']|int]['email'] != _data[ item['user_id']|int]['email'] or _mode[ item['user_id']|int] != "new" %}value="{{ _data_edit[ item['user_id']|int]['email'] }}" {% else %}placeholder="Введите email пользователя" {% endif %}>
-                                        <div class="invalid-feedback">
-                                            Поле, обязательное для заполнения!
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -462,9 +447,6 @@
                                                 <option>{{ _data_edit[ item['user_id']|int]['role'] }}</option>
                                             {% endif %}
                                         </select>
-                                        <div class="invalid-feedback">
-                                            Поле, обязательное для заполнения!
-                                        </div>
                                     </div>
 
                                     <div class="mb-2">
@@ -478,9 +460,6 @@
                                                 <option>{{ _data_edit[ item['user_id']|int]['probationers_number'] }}</option>
                                             {% endif %}
                                         </select>
-                                        <div class="invalid-feedback">
-                                            Поле, обязательное для заполнения!
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -594,18 +573,12 @@
                                     <label class="form-label"><strong>Пароль</strong></label>
                                     <input id="password" required type="password" name="password_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password']!= _data[ item['user_id']|int]['password'] %}
                                            value="{{ _data_edit[ item['user_id']|int]['password'] }}" {% else %}placeholder="Введите пароль" {% endif %}>
-                                    <div class="invalid-feedback">
-                                        Поле, обязательное для заполнения!
-                                    </div>
                                 </div>
 
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Повтор пароля</strong></label>
                                     <input id="password2" required type="password" name="password2_{{ item['user_id']|int }}" class="form-control"{% if _data_edit['password2']!= _data['password2'] %}
                                            value="{{ _data_edit['password2'] }}" {% else %}placeholder="Повторно введите пароль" {% endif %}>
-                                    <div class="invalid-feedback">
-                                        Поле, обязательное для заполнения!
-                                    </div>
                                 </div>
                             </div>
                         </div>
