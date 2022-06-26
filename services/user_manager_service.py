@@ -1,7 +1,6 @@
 from models.user_manager import UserManager
 from services.action_service import ActionService
 
-
 class UserManagerService():
     """
     UserManagerService - класс бизнес-логики сервиса управления настройками приложения
@@ -52,8 +51,20 @@ class UserManagerService():
         Returns:
             Dict: характеристики профиля пользователя
         """
+        from services.user_profile_service import UserProfileService
+
         user_manager = UserManager()
+        user_profile_service = UserProfileService()
+
         user = user_manager.get_user_by_id(user_id)
+
+        if user is not None:
+            if user.role == "user":
+                learning_stream_list = user_profile_service.get_learning_streams_users(user.learning_stream_list)
+                user.learning_stream_list = learning_stream_list
+            else:
+                user.learning_stream_list = None
+
         return user
 
     def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number):
@@ -178,3 +189,29 @@ class UserManagerService():
         login_superuser = self.get_current_user('').login
 
         ActionService().add_notifications(_login, "extended", 'срок доступа', "user_manager", login_superuser)
+
+    def add_user_in_learning_stream(self, _id_learning_stream, _users_list):
+        """
+        Добавляет пользователей к обучающему потоку
+
+        Args:
+            _id_learning_stream(Int): идентификатор обучающего потока
+            _users_list(List): список пользователей
+        """
+
+        user_manager = UserManager()
+
+        return user_manager.add_user_in_learning_stream(_id_learning_stream, _users_list)
+
+    def exclusion_of_users_from_list(self, _excluded_users_list, _id_learning_stream):
+        """
+        Исключает пользователей из обучающего потока
+
+        Args:
+            _id_learning_stream(Int): идентификатор обучающего потока
+            _excluded_users_list(List): список пользователей
+        """
+
+        user_manager = UserManager()
+
+        user_manager.exclusion_of_users_from_list(_excluded_users_list, _id_learning_stream)

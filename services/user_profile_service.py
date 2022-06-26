@@ -1,6 +1,6 @@
 from models.user_manager import UserManager
 from services.action_service import ActionService
-
+from services.learning_stream_service import LearningStreamService
 
 class UserProfileService():
     """
@@ -47,7 +47,8 @@ class UserProfileService():
 
         return user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date, _education_module_expiration_date):
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
+                    _education_module_expiration_date):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -65,7 +66,8 @@ class UserProfileService():
 
         ActionService().add_notifications(_login, "overwrite", '', "user_manager", _login)
 
-        return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _created_date, _education_module_expiration_date)
+        return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _created_date,
+                                        _education_module_expiration_date)
 
     def discharge_password(self, _login, _password, _password2):
         """
@@ -131,3 +133,23 @@ class UserProfileService():
         user_manager = UserManager()
 
         return user_manager.access_extension(_period, _reference_point, _login)
+
+    def get_learning_streams_users(self, _learning_stream_list):
+        """
+        Возвращает список обучающих потоков по id, в которых есть пользователь
+
+        Args:
+            _learning_stream_list(List): список id обучающих потоков
+
+        Returns:
+            (List): список обучающих потоков
+        """
+
+        learning_stream_service = LearningStreamService()
+
+        learning_stream_list = []
+        for learning_stream in _learning_stream_list:
+            learning_stream_list.append(learning_stream_service.get_learning_stream(learning_stream))
+
+        return learning_stream_list
+

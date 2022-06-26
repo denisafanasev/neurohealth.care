@@ -31,6 +31,8 @@ from controllers.education_list_courses_page_controller import EducationListCour
 from controllers.education_course_page_controller import EducationCoursePageController
 from controllers.education_course_lesson_page_controller import EducationCourseLessonPageController
 from controllers.download_page_controller import DownloadPageController
+from controllers.learning_stream_page_controller import LearningStreamPageController
+from controllers.learning_stream_profile_page_controller import LearningStreamProfilePageController
 
 from error import UserManagerException
 
@@ -268,12 +270,8 @@ def user_manager():
             except exceptions.BadRequestKeyError:
                 mode[i_id['user_id']] = "view"
 
-        if i_id['user_id'] == 0:
-            mode[i_id['user_id']] = "new"
-
         data[i_id['user_id']] = page_controller.get_users_profile_view(i_id["user_id"])
         error_type[i_id['user_id']] = None
-
 
     try:
         if request.method == 'POST':
@@ -1246,6 +1244,96 @@ def estimated_values():
                            _data=data, _ranges_age=page_controller.get_age_ranges(), _id_file_name=int(id_file_name),
                            _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
 
+@app.route('/learning_streams', methods=['GET', 'POST'])
+@login_required
+def learning_streams():
+
+    page_controller = LearningStreamPageController()
+    endpoint = "learning_streams"
+    mpc = MainMenuPageController()
+
+    learning_streams_list = page_controller.get_learning_streams_list()
+
+
+
+    return render_template('learning_streams.html', view="learning_streams", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _learning_streams_list=learning_streams_list, _endpoint=endpoint)
+
+@app.route('/learning_stream_card', methods=['GET', 'POST'])
+@login_required
+def learning_stream_card():
+
+    page_controller = LearningStreamProfilePageController()
+    endpoint = "learning_streams"
+    mpc = MainMenuPageController()
+
+    curators_list = page_controller.get_curators_list()
+    students_list = page_controller.get_students_list()
+    courses_list = page_controller.get_courses_list()
+    id_learning_stream = request.args.get('id')
+    error = None
+    error_type = None
+
+    if id_learning_stream is not None:
+        if request.form.get('button') is None:
+            mode = 'view'
+        else:
+            mode = 'edit'
+
+        id_learning_stream = int(id_learning_stream)
+    else:
+        mode = 'new'
+
+    learning_stream = page_controller.get_learning_stream(id_learning_stream)
+
+    if request.method == 'POST':
+        if request.form.get("button") == 'new':
+            learning_stream_edit = {
+                "name": request.form.get("name"),
+                "id_course": int(request.form.get("course")),
+                "curators_list": [i['login'] for i in curators_list if request.form.get(i['login']) is not None],
+                "students_list": [i['login'] for i in students_list if request.form.get(i['login']) is not None],
+                "teacher": request.form.get("teacher"),
+                "date_start": request.form.get("date_start"),
+                "date_end": request.form.get("date_end")
+            }
+
+            if learning_stream_edit['teacher'] not in learning_stream['curators_list']:
+                learning_stream_edit['curators_list'].append(learning_stream_edit['teacher'])
+
+            id_learning_stream = page_controller.create_learning_stream(learning_stream_edit)
+            # learning_stream_edit['course'] = {"id": learning_stream_edit.pop("id_course")}
+            # learning_stream = learning_stream_edit
+            # mode = "view"
+            return redirect(f"/learning_stream_card?id={id_learning_stream}")
+
+        elif request.form.get('button') == 'edit':
+            mode = "edit"
+
+        elif request.form.get('button') == "save":
+            learning_stream_edit = {
+                "id": learning_stream['id'],
+                "name": request.form.get("name"),
+                "id_course": int(request.form.get("course")),
+                "curators_list": [i['login'] for i in curators_list if request.form.get(i['login']) is not None],
+                "students_list": [i['login'] for i in students_list if request.form.get(i['login']) is not None],
+                "teacher": request.form.get("teacher"),
+                "date_start": request.form.get("date_start"),
+                "date_end": request.form.get("date_end")
+            }
+
+            page_controller.change_learning_stream(learning_stream_edit, learning_stream['students_list'],
+                                                   learning_stream["curators_list"])
+            mode = "view"
+            learning_stream_edit['course'] = {"id": learning_stream_edit.pop("id_course")}
+            learning_stream = learning_stream_edit
+
+
+    return render_template('learning_stream_card.html', view="learning_streams", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _endpoint=endpoint,
+                           _curators_list=curators_list, _students_list=students_list, _courses_list=courses_list,
+                           _mode=mode, _learning_stream=learning_stream)
 
 @app.route('/download', methods=['GET', 'POST'])
 @login_required

@@ -148,6 +148,11 @@ class UserManager():
             else:
                 user.active_education_module = "active"
 
+        if _data_row.get('learning_stream_list') is not None:
+            user.learning_stream_list = _data_row.get('learning_stream_list')
+        else:
+            user.learning_stream_list = []
+
         return user
 
     def get_user_by_id(self, _user_id):
@@ -509,20 +514,6 @@ class UserManager():
         data_store = DataStore("users")
         data_store.change_row({"login": _login, "active": True})
 
-        # if user.active:
-        #     user.active = False
-        # else:
-        #     user.active = True
-        # user = User(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
-        #             _created_date=user.created_date, _probationers_number=user.probationers_number, _active=user.active)
-        #
-        # education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
-        #
-        # user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
-        #              "probationers_number": user.probationers_number,
-        #              "education_module_expiration_date": education_module_expiration_date, "active": user.active}
-        # data_store.change_row(user_data)
-
         return True
 
     def deactivation(self, _login):
@@ -562,3 +553,40 @@ class UserManager():
 
         data_store.change_row(
             {"education_module_expiration_date": user.education_module_expiration_date, "login": user.login})
+
+    def add_user_in_learning_stream(self, _id_learning_stream, _users_list):
+        """
+        Добавляет пользователей к обучающему потоку
+
+        Args:
+            _id_learning_stream(Int): идентификатор обучающего потока
+            _users_list(List): список пользователей
+        """
+
+        data_store = DataStore("users")
+
+        for login_user in _users_list:
+            user = self.get_user_by_login(login_user)
+
+            if _id_learning_stream not in user.learning_stream_list:
+                user.learning_stream_list.append(_id_learning_stream)
+                data_store.change_row({"learning_stream_list": user.learning_stream_list, "login": user.login})
+
+    def exclusion_of_users_from_list(self, _excluded_users_list, _id_learning_stream):
+        """
+        Исключает пользователей из обучающего потока
+
+        Args:
+            _id_learning_stream(Int): идентификатор обучающего потока
+            _excluded_users_list(List): список пользователей
+        """
+
+        data_store = DataStore('users')
+
+        for user_login in _excluded_users_list:
+
+            user = self.get_user_by_login(user_login)
+
+            user.learning_stream_list.remove(_id_learning_stream)
+            data_store.change_row({"learning_stream_list": user.learning_stream_list, "login": user.login})
+

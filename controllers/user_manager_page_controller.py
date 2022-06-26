@@ -40,12 +40,9 @@ class UserManagerPageController():
             user_view['name'] = user.name
             user_view['email'] = user.email
             user_view['role'] = user.role
-
             user_view['created_date'] = str(user.created_date.strftime("%d/%m/%Y"))
             user_view['education_module_expiration_date'] = str(user.education_module_expiration_date.strftime("%d/%m/%Y"))
-
             user_view['probationers_number'] = user.probationers_number
-
             user_view['is_active'] = user.active
             user_view['active_education_module'] = user.active_education_module
             user_view['email_confirmed'] = user.email_confirmed
@@ -79,10 +76,20 @@ class UserManagerPageController():
 
             user_view['probationers_number'] = user.probationers_number
             user_view['token'] = user.token
+            user_view['learning_stream_list'] = []
+            if user.learning_stream_list is not None:
+                for learning_stream in user.learning_stream_list:
+                    user_view['learning_stream_list'].append({
+                        "name": learning_stream.name,
+                        "teacher": learning_stream.teacher,
+                        "date_start": learning_stream.date_start.strftime("%d/%m/%Y"),
+                        "date_end": learning_stream.date_end.strftime("%d/%m/%Y"),
+                        "course": learning_stream.course.name,
+                        "status": learning_stream.status
+                    })
 
             user_view['active'] = user.active
         else:
-
             user_view["login"] = "введите логин пользователя.."
             user_view["name"] = "введите имя пользователя.."
             user_view["email"] = "введите email пользователя.."
