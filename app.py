@@ -385,6 +385,7 @@ def user_manager():
                     error_type[user_id] = "Successful"
                     data[user_id]['active'] = active
 
+                    # TODO: тут ошибка при переключении активности пользователя
                     if active:
                         error = "Пользователь успешно разблокирован!"
                     else:
