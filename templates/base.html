@@ -142,5 +142,27 @@
 
             </div>
         </div>
+
+        <!-- modal error window -->
+        
+        <div id="message" class="modal">
+            <div class="modal-content" style="width: 25%">
+                <h3 id="title_message" class="modal-title"></h3>
+                <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; width: 100%;">
+                    <div class="card-header">
+                        <div>
+                            <p class="mb-0" id="text_message"></p>
+                        </div>
+                    </div>
+                </div>
+                <div align="right">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                        onclick="document.getElementById('message').style.display='none';">OK</button>
+                </div>
+            </div>
+        </div>
+
+        {% include 'message_form.html' %}
+        
     </body>
 </html>

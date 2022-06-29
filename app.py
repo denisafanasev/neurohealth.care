@@ -379,20 +379,20 @@ def user_manager():
                 error_type[user_id] = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "is_active":
-                is_active = request.form.get(f"is_active_{user_id}")
-                if is_active is None and data[user_id]["active"] or is_active == "True" and not data[user_id]["active"]:
-                    active = page_controller.activation_deactivation(data[user_id]['login'], data[user_id]["active"])
-                    error_type[user_id] = "Successful"
-                    data[user_id]['active'] = active
-
-                    # TODO: тут ошибка при переключении активности пользователя
-                    if active:
-                        error = "Пользователь успешно разблокирован!"
-                    else:
-                        error = "Пользователь успешно заблокирован!"
-
+                # делаем блокировки или разблокировку пользователя
+                
+                error_type[user_id] = "Successful"
                 mode[user_id] = "view"
+                is_active = request.form.get(f"is_active_{user_id}")
 
+                if is_active == "True":
+                    page_controller.activation(data[user_id]['login'])
+                    error = "Пользователь успешно разблокирован!"
+                
+                else:
+                    page_controller.deactivation(data[user_id]['login'])
+                    error = "Пользователь успешно заблокирован!"
+                    
             elif request.form.get(f"button_{user_id}") == "cancel":
                 if user_id != 0:
                     mode[user_id] = "view"

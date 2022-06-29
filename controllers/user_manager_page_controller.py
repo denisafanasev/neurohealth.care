@@ -161,9 +161,9 @@ class UserManagerPageController():
 
             return error
 
-    def activation_deactivation(self, _login, _active):
+    def activation(self, _login):
         """
-        Блокировка/разблокировка пользователя
+        разблокировка пользователя
 
         Args:
             _login(String): логин пользователя
@@ -174,7 +174,22 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
 
-        return user_manager_service.activation_deactivation(_login, _active)
+        user_manager_service.activation(_login)
+    
+    def deactivation(self, _login):
+        """
+        Блокировка пользователя
+
+        Args:
+            _login(String): логин пользователя
+
+        Returns:
+            _active (bool): Активирован/заблокирован пользователь
+        """
+
+        user_manager_service = UserManagerService()
+
+        user_manager_service.deactivation(_login)
 
     def get_settings_user(self):
         """

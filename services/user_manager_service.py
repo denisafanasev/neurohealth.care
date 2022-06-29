@@ -129,27 +129,35 @@ class UserManagerService():
 
         return error
 
-    def activation_deactivation(self, _login, _active):
+    def activation(self, _login):
         """
-        Блокировка/разблокировка пользователя
+        разблокировка пользователя
 
         Args:
             _login(String): логин пользователя
-
-        Returns:
-            _active (bool): Активирован/заблокирован пользователь
         """
 
         user_manager = UserManager()
+        user_manager.activation(_login)
+       
+        user_login = self.get_current_user('').login
+        ActionService().add_notifications(_login, "overwrite", 'доступ', "user_manager", user_login)
 
-        if not _active:
-            user_manager.activation(_login)
-        elif _active:
-            user_manager.deactivation(_login)
 
-        login_superuser = self.get_current_user('').login
+    def deactivation(self, _login):
+        """
+        Блокировка пользователя
 
-        ActionService().add_notifications(_login, "overwrite", 'доступ', "user_manager", login_superuser)
+        Args:
+            _login(String): логин пользователя
+        """
+
+        user_manager = UserManager()
+        user_manager.deactivation(_login)
+
+        user_login = self.get_current_user('').login
+        ActionService().add_notifications(_login, "overwrite", 'доступ', "user_manager", user_login)
+
 
     def get_current_user_role(self):
         """
@@ -162,6 +170,7 @@ class UserManagerService():
         user_manager = UserManager()
 
         return user_manager.get_user_by_id(user_manager.get_current_user_id()).role
+
 
     def access_extension(self, _period, _reference_point, _login):
         """
