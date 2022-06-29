@@ -18,7 +18,7 @@
             theme: 'snow',
 
         });
-        var form = document.querySelector('form');
+        var form = document.getElementById("chat");
         form.onsubmit = function () {
             // Populate hidden form on submit
             var about = document.querySelector('input[name=text]');
@@ -276,7 +276,7 @@
         </div>
 
         {% if _data['lesson']['task'] %}
-            <form method="post" enctype="multipart/form-data">
+
                 <div class="card border">
                     <div class="card-header">
                         <div class="row">
@@ -306,19 +306,32 @@
                                         <p class="card-text">
                                             {{ _data['lesson']['task'] }}
                                         </p>
-                                        {% if request.args.get('id_chat') %}
-                                            <div id="editor" style="z-index: 0"><p></p></div>
-                                            <input type="hidden" id="hiddenInput" name="text">
-                                            <div>
-                                                <input type="file" multiple name="files" class="form-control">
-                                            </div>
+                                        {% if request.args.get('id_chat') != "none" %}
+                                            <form method="post" enctype="multipart/form-data">
+                                                <div class="mb-2">
+                                                    <label class="form-label" for="hometask">Сдача домашнего задания</label>
+                                                    <div class="input-group">
+                                                        <input id="hometask" type="file" multiple name="files" class="form-control">
+                                                        <button id="button" class="btn btn-primary" name="button" type="submit" value="homework">Отправить</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            <form id="chat" method="post" enctype="multipart/form-data">
+                                                <label class="form-label" for="editor">Чат</label>
+                                                <div class="mb-2">
+                                                    <div id="editor" style="z-index: 0"><p></p></div>
+                                                    <input type="hidden" id="hiddenInput" name="text">
+                                                </div>
+                                            </form>
                                         {% endif %}
                                     </div>
+                                {% if request.args.get('id_chat') != "none" %}
                                     <div class="card d-flex align-self-baseline" style="margin-left: auto">
                                         <div class="card-header">
-                                            <button type="submit" name="send" value="send" class="btn btn-primary">Отправить</button>
+                                            <button type="submit" name="send" value="send" form="chat" class="btn btn-primary">Отправить</button>
                                         </div>
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="row d-flex align-items-stretch bd-highlight">
@@ -351,7 +364,6 @@
                         </div>
                     </div>
                 </div>
-            </form>
         {% else %}
             <div class="card border">
                 <div class="card-header">

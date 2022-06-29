@@ -339,7 +339,7 @@ def user_manager():
                     user['education_module_expiration_date'] = data[user_id]["education_module_expiration_date"]
                     user['active'] = data[user_id]['active']
 
-                    page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
+                    error = page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
                                                 user["probationers_number"], user["created_date"],
                                                 user['education_module_expiration_date'])
 
@@ -348,7 +348,6 @@ def user_manager():
                     data_edit[user_id] = user
                     users_list = page_controller.get_users_list_view()
                     mode[user_id] = "view"
-                    error = "Изменения успешно сохранены!"
                     error_type[user_id] = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "discharge":
@@ -357,11 +356,10 @@ def user_manager():
                 user["password"] = request.form[f"password_{user_id}"]
                 user["password2"] = request.form[f"password2_{user_id}"]
 
-                page_controller.discharge_password(user["login"], user["password"], user["password2"])
+                error = page_controller.discharge_password(user["login"], user["password"], user["password2"])
 
                 mode[user_id] = "view"
 
-                error = "Пароль успешно изменен!"
                 error_type[user_id] = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "extension":
@@ -369,24 +367,18 @@ def user_manager():
                 period = request.form[f"period_{user_id}"]
                 user_login = data[user_id]['login']
 
-                page_controller.access_extension(int(period), reference_point, user_login)
+                error = page_controller.access_extension(int(period), reference_point, user_login)
                 data_edit = data
                 data_edit[user_id] = page_controller.get_users_profile_view(user_id)
                 mode[user_id] = "view"
-                error = "Доступ пользователя к обучающей программе успешно изменен!"
                 error_type[user_id] = "Successful"
 
             elif request.form.get(f"button_{user_id}") == "is_active":
                 is_active = request.form.get(f"is_active_{user_id}")
                 if is_active is None and data[user_id]["active"] or is_active == "True" and not data[user_id]["active"]:
-                    active = page_controller.activation_deactivation(data[user_id]['login'], data[user_id]["active"])
+                    error, active = page_controller.activation_deactivation(data[user_id]['login'], data[user_id]["active"])
                     error_type[user_id] = "Successful"
                     data[user_id]['active'] = active
-
-                    if active:
-                        error = "Пользователь успешно разблокирован!"
-                    else:
-                        error = "Пользователь успешно заблокирован!"
 
                 mode[user_id] = "view"
 
@@ -613,8 +605,6 @@ def main_page():
             else:
                 error_type = "Error"
 
-
-
     return render_template('main_page.html', view="main_page", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=page_controller.get_actions(), _user=user, _error=error, _error_type=error_type,
@@ -700,19 +690,18 @@ def education_course():
     endpoint = 'education_list_courses'
     
     id_course = request.args.get("id_course")
-    
-    course = None
-    user = page_controller.get_current_user()
 
     if id_course is not None:
+        user = page_controller.get_current_user(int(id_course))
         course = page_controller.get_course_by_id(id_course)
-        data = page_controller.get_course_modules_list(id_course)
+        data = page_controller.get_course_modules_list(id_course, user['login'])
+
     else:
         return redirect("education_list_courses")
 
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
-                           _user=user, _course_type = course['type'], _course_name = course['name'])
+                           _user=user, _course_type=course.get('type'), _course_name=course.get('name'))
 
 
 @app.route('/education_course/lesson', methods=['GET', 'POST'])
@@ -724,31 +713,39 @@ def education_course_lesson():
     endpoint = 'education_list_courses'
 
     id_course = request.args.get("id_course")
-    id_module = request.args.get("id_module")
+    id_module = int(request.args.get("id_module"))
     id_lesson = int(request.args.get("id_lesson"))
     id_video = request.args.get("id_video")
-    # id_room_chat = request.args.get("id_chat")
+    id_room_chat = request.args.get("id_chat")
 
-    user = page_controller.get_current_user()
+    user = page_controller.get_current_user(int(id_course))
     course = page_controller.get_course_by_id(id_course)
-
-    # тут проверяем, что пользователь подписан на курс
-    if user['role'] == 'user' and course['type'] == 'main' and int(id_module) > 1:
-        return redirect("price_list")
-
-    if user['active_education_module'] == 'inactive':
-        if int(id_module) != 1 and user['role'] != 'superuser':
-            return redirect('/price_list')
-
-    # if id_room_chat is not None:
-    data = page_controller.get_lesson(id_lesson, int(id_course), int(id_video))
     user_list = None
 
-    # if id_room_chat is None:
-    #     if user["role"] != "superuser":
-    #         id_room_chat = page_controller.room_chat_entry(id_lesson, id_course)["id"]
-    #         return redirect(
-    #             f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
+    # # тут проверяем, что пользователь подписан на курс
+    # if user['role'] == 'user' and course['type'] == 'main' and int(id_module) > 1:
+    #     return redirect("/price_list")
+
+    if user['active_education_module'] == 'inactive' and user['learning_stream'].get('status') != "идет":
+        if int(id_module) > 1 and user['role'] != 'superuser':
+            return redirect('/price_list')
+
+    data = page_controller.get_lesson(id_lesson, int(id_course), int(id_video))
+
+    if data["lesson"].get("task") is not None:
+        if id_room_chat is None:
+            if user["role"] != "superuser":
+                if user['learning_stream'].get("status") == "идет":
+                    id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module,
+                                                                   _id_learning_stream=user['learning_stream']['id'])["id"]
+                    return redirect(
+                        f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
+                elif user['active_education_module'] != "inactive":
+                    id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module)['id']
+                    return redirect(
+                        f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
+            return redirect(
+                f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat=none")
 
     if id_video is None:
         id_video = 1
@@ -759,21 +756,26 @@ def education_course_lesson():
     if request.method == "POST":
         if request.form.get("send"):
             text = request.form.get("text")
+            page_controller.add_message({"text": text}, id_room_chat)
+
+        elif request.form.get("button") == "homework":
             files = request.files.getlist("files")
-            # page_controller.add_message({"text": text, "files": files}, id_room_chat)
+            page_controller.save_homework(files, id_room_chat)
         else:
             id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, request.form.get("user"))["id"]
             return redirect(
-                f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
+                f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
 
-    # if id_room_chat is not None:
-    #     room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
-    # else:
-    #     room_chat = None
+    if id_room_chat == "none":
+        room_chat = None
+    elif id_room_chat is not None:
+        room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
+    else:
+        room_chat = None
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=data, _room_chat=None, _user_list=user_list, _user=user, _course_name=course['name'])
+                           _data=data, _room_chat=room_chat, _user_list=user_list, _user=user, _course_name=course['name'])
 
 
 @app.route('/education_home_tasks', methods=['GET', 'POST'])
@@ -1166,7 +1168,6 @@ def probationer_card():
                     error_type = "Successful"
 
     except exceptions.BadRequestKeyError:
-
         mode = "view"
 
     if data == {}:
@@ -1254,8 +1255,6 @@ def learning_streams():
 
     learning_streams_list = page_controller.get_learning_streams_list()
 
-
-
     return render_template('learning_streams.html', view="learning_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _learning_streams_list=learning_streams_list, _endpoint=endpoint)
@@ -1326,14 +1325,14 @@ def learning_stream_card():
             page_controller.change_learning_stream(learning_stream_edit, learning_stream['students_list'],
                                                    learning_stream["curators_list"])
             mode = "view"
-            learning_stream_edit['course'] = {"id": learning_stream_edit.pop("id_course")}
-            learning_stream = learning_stream_edit
+            learning_stream = page_controller.get_learning_stream(id_learning_stream)
 
 
     return render_template('learning_stream_card.html', view="learning_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _endpoint=endpoint,
                            _curators_list=curators_list, _students_list=students_list, _courses_list=courses_list,
                            _mode=mode, _learning_stream=learning_stream)
+
 
 @app.route('/download', methods=['GET', 'POST'])
 @login_required

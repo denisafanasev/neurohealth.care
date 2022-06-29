@@ -77,7 +77,7 @@ class UserManagerPageController():
             user_view['probationers_number'] = user.probationers_number
             user_view['token'] = user.token
             user_view['learning_stream_list'] = []
-            if user.learning_stream_list is not None:
+            if user.role == "user":
                 for learning_stream in user.learning_stream_list:
                     user_view['learning_stream_list'].append({
                         "name": learning_stream.name,
@@ -145,8 +145,12 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
 
-        return user_manager_service.change_user(_login, _name, _email, _role, _probationers_number,
-                                                _created_date, _education_module_expiration_date)
+        user_manager_service.change_user(_login, _name, _email, _role, _probationers_number, _created_date,
+                                         _education_module_expiration_date)
+
+        error = "Изменения успешно сохранены!"
+
+        return error
 
     def discharge_password(self, _login, _password, _password2):
         """
@@ -168,6 +172,10 @@ class UserManagerPageController():
 
             return error
 
+        error = "Пароль успешно изменен!"
+
+        return error
+
     def activation_deactivation(self, _login, _active):
         """
         Блокировка/разблокировка пользователя
@@ -181,7 +189,13 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
 
-        return user_manager_service.activation_deactivation(_login, _active)
+        active = user_manager_service.activation_deactivation(_login, _active)
+        if active:
+            error = "Пользователь успешно разблокирован!"
+        else:
+            error = "Пользователь успешно заблокирован!"
+
+        return error, active
 
     def get_settings_user(self):
         """
@@ -212,4 +226,7 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
 
-        return user_manager_service.access_extension(_period, _reference_point, _login)
+        user_manager_service.access_extension(_period, _reference_point, _login)
+        error = "Доступ пользователя к обучающей программе успешно изменен!"
+
+        return error

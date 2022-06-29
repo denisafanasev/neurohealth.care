@@ -2,7 +2,7 @@
 
 class RoomChat():
 
-    def __init__(self, _id=0, _name='', _message=None):
+    def __init__(self, _id=None, _name='', _message=None, _id_learning_stream=None):
 
         self.id = _id
         self.name = _name
@@ -10,23 +10,13 @@ class RoomChat():
             self.message = None
         else:
             self.message = _message
+        self.id_learning_stream = _id_learning_stream
 
 class Message():
 
-    def __init__(self, _id=0, _name_sender='', _text='', _files=None):
+    def __init__(self, _id=0, _name_sender='', _text='', _date_send=''):
 
         self.id = _id
         self.name_sender = _name_sender
         self.text = _text
-        if _files == []:
-            self.files = None
-        else:
-            self.files = _files
-
-class UserFile():
-
-    def __init__(self, _name_file_user='', _name_file_unique='', _path=''):
-
-        self.name_file_user = _name_file_user
-        self.name_file_unique = _name_file_unique
-        self.path = _path
+        self.date_send = _date_send

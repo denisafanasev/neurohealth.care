@@ -8,7 +8,6 @@ from itsdangerous import URLSafeTimedSerializer
 
 from models.user import User
 from data_adapters.data_store import DataStore
-from services.action_service import ActionService
 
 from error import UserManagerException
 import config
@@ -148,10 +147,10 @@ class UserManager():
             else:
                 user.active_education_module = "active"
 
-        if _data_row.get('learning_stream_list') is not None:
-            user.learning_stream_list = _data_row.get('learning_stream_list')
-        else:
-            user.learning_stream_list = []
+        # if _data_row.get('learning_stream_list') is not None:
+        #      user.learning_stream_list = _data_row.get('learning_stream_list')
+        # else:
+        #     user.learning_stream_list = []
 
         return user
 
@@ -161,21 +160,6 @@ class UserManager():
 
         Args:
             _user_id   - Required  : id пользователя (Int)
-        """
-
-        """
-        user = {}
-        user["login"] = "введите логин пользователя.."
-        user["name"] = "введите имя пользователя.."
-        user["email"] = "введите email пользователя.."
-        user["password"] = "введите пароль.."
-        user["password2"] = "введите повторно пароль.."
-        user["role"] = "Выберите роль пользователя"
-        user["probationers_number"] = "Выберите количество доступных тестируемых"
-        user["access_time"] = "Выберите срок предоставления доступа"
-        user["token"] = ""
-        user["active"] = True
-        user["email_confirmed"] = False
         """
 
         user = None

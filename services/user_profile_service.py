@@ -108,17 +108,23 @@ class UserProfileService():
         elif _active:
             return user_manager.deactivation(_login)
 
-    def get_current_user(self):
+    def get_current_user(self, _login_user):
         """
-        Возвращает данные текущего пользователя
+        Возвращает модель User пользователя. Если _login_user = '', то возвращает модель User текущего пользователя
+
+        Args:
+            _login_user: логин пользователя
 
         Returns:
-            User: пользователь
+            user(User): модель User
         """
 
         user_manager = UserManager()
 
-        return user_manager.get_user_by_id(user_manager.get_current_user_id())
+        if _login_user == "":
+            return user_manager.get_user_by_id(user_manager.get_current_user_id())
+        else:
+            return user_manager.get_user_by_login(_login_user)
 
     def access_extension(self, _period, _reference_point, _login):
         """

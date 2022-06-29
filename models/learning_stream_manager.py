@@ -88,7 +88,6 @@ class LearningStreamManager():
         for i_learning_stream in learning_streams:
             learning_streams_list.append(self.learning_stream_row_to_learning_stream(i_learning_stream))
 
-
         return learning_streams_list
 
     def get_learning_stream(self, _id):
@@ -130,3 +129,19 @@ class LearningStreamManager():
 
         return learning_stream
 
+    def get_learning_streams_list_by_login_user(self, _login_user, _role_user):
+
+        data_store = DataStore("learning_streams")
+
+        learning_streams_list = data_store.get_rows()
+        learning_streams = []
+        for i_learning_stream in learning_streams_list:
+            learning_stream = self.learning_stream_row_to_learning_stream(i_learning_stream)
+            if _role_user == "user":
+                if _login_user in learning_stream.students_list:
+                    learning_streams.append(learning_stream)
+            elif _role_user == "superuser":
+                if _login_user in learning_stream.curators_list:
+                    learning_streams.append(learning_stream)
+
+        return learning_streams

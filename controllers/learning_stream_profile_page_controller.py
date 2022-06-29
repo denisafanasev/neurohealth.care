@@ -139,4 +139,6 @@ class LearningStreamProfilePageController():
 
         learning_stream_service = LearningStreamService()
 
-        return learning_stream_service.change_learning_stream(_learning_stream, _old_students_list, _old_curators_list)
+        learning_stream_service.change_learning_stream(_learning_stream, _old_students_list, _old_curators_list)
+
+        _learning_stream['course'] = _learning_stream.pop("id_course")

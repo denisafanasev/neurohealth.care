@@ -3,23 +3,28 @@ from services.course_service import CourseService
 
 class EducationCoursePageController():
 
-    def get_course_modules_list(self, _id):
+    def get_course_modules_list(self, _id, _login_user):
         """
         Возвращает список модулей курса по id
 
         Args:
             _id(Int): индентификатор курса
+            _login_user(String): логин текущего пользователя
 
         Returns:
-            modules_list(List): список модулей курса
+            modules_list_view(List): список модулей курса
         """
 
         course_service = CourseService()
 
-        course = course_service.get_course_modules_list(_id)
-        modules_list = []
-
-        for i_module in course:
+        learning_stream = course_service.get_course_modules_list(_id, _login_user)
+        # modules_list_view = {
+        #     "id_learning_stream": learning_stream.id,
+        #     "date_end": learning_stream.date_end,
+        #     "modules_list": []
+        # }
+        modules_list_view = []
+        for i_module in learning_stream:
             module = {}
             module["id"] = i_module.id
             module["name"] = i_module.name
@@ -34,11 +39,11 @@ class EducationCoursePageController():
 
             module["lessons"] = lesson_list
 
-            modules_list.append(module)
+            modules_list_view.append(module)
 
-        return modules_list
+        return modules_list_view
 
-    def get_current_user(self):
+    def get_current_user(self, _id_course):
         """
         Возвращает данные текущего пользователя
 
@@ -49,10 +54,23 @@ class EducationCoursePageController():
         # TODO: из контроллера можно вызывать только свой сервис, а 
         course_service = CourseService()
 
-        user = course_service.get_current_user()
+        user = course_service.get_current_user(_id_course)
+        user_view = {
+            "login": user.login,
+            "role": user.role,
+            "active_education_module": user.active_education_module,
+            "education_module_expiration_date": user.education_module_expiration_date.strftime("%d/%m/%Y"),
+            "learning_stream": {}
+        }
 
-        return {"login": user.login, "role": user.role, "active_education_module": user.active_education_module,
-                "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y"))}
+        if type(user.learning_stream_list) is not list:
+            user_view['learning_stream'] = {
+                "id": user.learning_stream_list.id,
+                "date_end": user.learning_stream_list.date_end.strftime("%d/%m/%Y"),
+                "status": user.learning_stream_list.status
+            }
+
+        return user_view
     
     def get_course_by_id(self, _id):
         """

@@ -1,6 +1,6 @@
 from models.learning_stream_manager import LearningStreamManager
 from services.course_service import CourseService
-from services.user_manager_service import UserManagerService
+from services import user_manager_service
 
 class LearningStreamService():
 
@@ -34,9 +34,9 @@ class LearningStreamService():
             students_list(List): список пользователей
         """
 
-        user_manager_service = UserManagerService()
+        user_service = user_manager_service.UserManagerService()
 
-        users_list = user_manager_service.get_users()
+        users_list = user_service.get_users()
         students_list = []
 
         for user in users_list:
@@ -53,9 +53,9 @@ class LearningStreamService():
             curators_list(List): список пользователей
         """
 
-        user_manager_service = UserManagerService()
+        user_service = user_manager_service.UserManagerService()
 
-        users_list = user_manager_service.get_users()
+        users_list = user_service.get_users()
         curators_list = []
 
         for user in users_list:
@@ -105,15 +105,13 @@ class LearningStreamService():
             id(Int): идентификатор обучающего потока
         """
         learning_stream_manager = LearningStreamManager()
-        user_manager_service = UserManagerService()
 
         learning_stream = learning_stream_manager.create_learning_stream(_learning_stream)
 
-        user_manager_service.add_user_in_learning_stream(learning_stream.id, learning_stream.students_list)
-        user_manager_service.add_user_in_learning_stream(learning_stream.id, learning_stream.curators_list)
+        # user_service.add_user_in_learning_stream(learning_stream.id, learning_stream.students_list)
+        # user_service.add_user_in_learning_stream(learning_stream.id, learning_stream.curators_list)
 
         return learning_stream.id
-
 
     def change_learning_stream(self, _learning_stream, _old_students_list, _old_curators_list):
         """
@@ -126,22 +124,27 @@ class LearningStreamService():
         """
 
         learning_stream_manager = LearningStreamManager()
-        user_manager_service = UserManagerService()
 
-        learning_stream = learning_stream_manager.change_learning_stream(_learning_stream)
+        learning_stream_manager.change_learning_stream(_learning_stream)
 
-        if learning_stream.teacher not in learning_stream.curators_list:
-            learning_stream.curators_list.append(learning_stream.teacher)
+        # if learning_stream.teacher not in learning_stream.curators_list:
+        #     learning_stream.curators_list.append(learning_stream.teacher)
+        #
+        # user_service.add_user_in_learning_stream(learning_stream.id, learning_stream.curators_list)
+        # user_service.add_user_in_learning_stream(learning_stream.id, learning_stream.students_list)
+        #
+        # excluded_users_list = []
+        # if _old_students_list != learning_stream.students_list:
+        #     excluded_users_list.extend([user for user in _old_students_list if user not in learning_stream.students_list])
+        #
+        # if _old_curators_list != learning_stream.curators_list:
+        #     excluded_users_list.extend([user for user in _old_curators_list if user not in learning_stream.curators_list])
+        #
+        # if excluded_users_list != []:
+        #     user_service.exclusion_of_users_from_list(excluded_users_list, learning_stream.id)
 
-        user_manager_service.add_user_in_learning_stream(learning_stream.id, learning_stream.curators_list)
-        user_manager_service.add_user_in_learning_stream(learning_stream.id, learning_stream.students_list)
+    def get_learning_streams_list_by_login_user(self, _login_user, _role_user):
 
-        excluded_users_list = []
-        if _old_students_list != learning_stream.students_list:
-            excluded_users_list.extend([user for user in _old_students_list if user not in learning_stream.students_list])
+        learning_stream_manager = LearningStreamManager()
 
-        if _old_curators_list != learning_stream.curators_list:
-            excluded_users_list.extend([user for user in _old_curators_list if user not in learning_stream.curators_list])
-
-        if excluded_users_list != []:
-            user_manager_service.exclusion_of_users_from_list(excluded_users_list, learning_stream.id)
+        return learning_stream_manager.get_learning_streams_list_by_login_user(_login_user, _role_user)
