@@ -387,10 +387,12 @@ def user_manager():
 
                 if is_active == "True":
                     page_controller.activation(data[user_id]['login'])
+                    data[user_id]['active'] = True
                     error = "Пользователь успешно разблокирован!"
                 
                 else:
                     page_controller.deactivation(data[user_id]['login'])
+                    data[user_id]['active'] = False
                     error = "Пользователь успешно заблокирован!"
                     
             elif request.form.get(f"button_{user_id}") == "cancel":
