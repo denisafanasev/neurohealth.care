@@ -317,23 +317,6 @@
                 </div>
             </div>
         {% endfor %}
-        <div id="message" class="modal">
-            <div class="modal-content animate" style="width: 34%">
-                <div class="row modal-header">
-                    <h3 id="title_message" class="col modal-title">{% if _error_type == 'Successful' %}Успешно{% elif _error_type == 'Error' %}Ошибка{% endif %}</h3>
-                    <button style="text-align: right;" data-bs-dismiss="modal" class="btn btn-close" type="button" onclick="document.getElementById('message').style.display='none';"></button>
-                </div>
-                <div class="modal-body row d-flex align-items-stretch bd-highlight">
-                    <div class="col p-1 bd-highlight">
-                        <div class="card d-flex align-self-baseline" style="height: 100%;">
-                            <div class="card-header">
-                                <p style="font-family: 'Helvetica', 'Arial', sans-serif; color: #000000; font-size: larger" id="text_message"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
+        
     </div>
 {% endblock %}
