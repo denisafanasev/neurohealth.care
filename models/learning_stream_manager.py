@@ -36,16 +36,13 @@ class LearningStreamManager():
         else:
             learning_stream.date_end = datetime.today() + timedelta(days=1)
 
-        if _data_row.get('status') is not None:
-            learning_stream.status = _data_row.get('status')
-        else:
-            if datetime.now() <= learning_stream.date_end:
-                if datetime.now() >= learning_stream.date_start:
-                    learning_stream.status = "идет"
-                else:
-                    learning_stream.status = "запланирован"
+        if datetime.today() <= learning_stream.date_end + timedelta(days=1):
+            if datetime.today() >= learning_stream.date_start:
+                learning_stream.status = "идет"
             else:
-                learning_stream.status = "закончен"
+                learning_stream.status = "запланирован"
+        else:
+            learning_stream.status = "закончен"
 
         return learning_stream
 
@@ -67,7 +64,7 @@ class LearningStreamManager():
                             'date_start': learning_stream.date_start.strftime('%d/%m/%Y'),
                             "date_end": learning_stream.date_end.strftime('%d/%m/%Y'), "teacher": learning_stream.teacher,
                             "id_course": learning_stream.course, "curators_list": learning_stream.curators_list,
-                            "students_list": learning_stream.students_list, "status": learning_stream.status})
+                            "students_list": learning_stream.students_list})
 
         return learning_stream
 
@@ -124,8 +121,7 @@ class LearningStreamManager():
                                'date_start': learning_stream.date_start.strftime('%d/%m/%Y'),
                                "date_end": learning_stream.date_end.strftime('%d/%m/%Y'), "teacher": learning_stream.teacher,
                                "id_course": learning_stream.course, "curators_list": learning_stream.curators_list,
-                               "students_list": learning_stream.students_list, "status": learning_stream.status,
-                               }, 'id')
+                               "students_list": learning_stream.students_list}, 'id')
 
         return learning_stream
 

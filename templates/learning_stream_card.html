@@ -233,7 +233,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">#</th>
-                                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Имя пользователя</th>
+                                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -245,7 +245,7 @@
                                                                         {% if student['login'] in _learning_stream['students_list'] %}checked {% endif %}
                                                                         name="{{ student['login'] }}" type="checkbox" value="{{ student['login'] }}">
                                                             </td>
-                                                            <td>{{ student['name'] }}</td>
+                                                            <td>{{ student['login'] }}</td>
                                                         </tr>
                                                         {% endif %}
                                                     {% endfor %}
@@ -276,7 +276,7 @@
                                                 {% if _mode == "view" %} disabled {% endif %}>
                                                     <option selected disabled value="placeholder">Выберите преподавателя</option>
                                                     {% for teacher in _curators_list %}
-                                                        <option {% if teacher['login'] == _learning_stream['teacher'] %} selected {% endif %} value="{{ teacher['login'] }}">{{ teacher['name'] }}</option>
+                                                        <option {% if teacher['login'] == _learning_stream['teacher'] %} selected {% endif %} value="{{ teacher['login'] }}">{{ teacher['login'] }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
@@ -292,7 +292,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">#</th>
-                                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Имя пользователя</th>
+                                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -302,7 +302,7 @@
                                                                     <td><input {% if _mode == "view" %} disabled {% endif %}
                                                                             {% if curator['login'] in _learning_stream['curators_list'] %}checked {% endif %}
                                                                             name="{{ curator['login'] }}" type="checkbox" value="{{ curator['login'] }}"></td>
-                                                                    <td>{{ curator['name'] }}</td>
+                                                                    <td>{{ curator['login'] }}</td>
                                                                 </tr>
                                                             {% endif %}
                                                         {% endfor %}
