@@ -38,7 +38,7 @@ class EducationCoursePageController():
 
         return modules_list
 
-    def get_current_user(self):
+    def get_current_user(self, _id_course):
         """
         Возвращает данные текущего пользователя
 
@@ -46,13 +46,26 @@ class EducationCoursePageController():
             user(Dict): данные пользователя
         """
 
-        # TODO: из контроллера можно вызывать только свой сервис, а 
+        # TODO: из контроллера можно вызывать только свой сервис, а
         course_service = CourseService()
 
         user = course_service.get_current_user()
+        user_view = {
+            "login": user.login,
+            "role": user.role,
+            "active_education_module": user.active_education_module,
+            "education_module_expiration_date": user.education_module_expiration_date.strftime("%d/%m/%Y"),
+            "learning_stream": {}
+        }
 
-        return {"login": user.login, "role": user.role, "active_education_module": user.active_education_module,
-                "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y"))}
+        # if type(user.learning_stream_list) is not list:
+        #     user_view['learning_stream'] = {
+        #         "id": user.learning_stream_list.id,
+        #         "date_end": user.learning_stream_list.date_end.strftime("%d/%m/%Y"),
+        #         "status": user.learning_stream_list.status
+        #     }
+
+        return user_view
     
     def get_course_by_id(self, _id):
         """

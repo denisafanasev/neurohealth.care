@@ -2,6 +2,8 @@ from werkzeug.utils import secure_filename
 import os
 import config
 
+from models.users_file_manager import UsersFileManager
+
 class UploadService():
     """
     UploadService - класс бизнес-логики сервиса управления настройками приложения
@@ -12,14 +14,14 @@ class UploadService():
     def upload_files(self, _files_list, _user_login):
         """
         Загружает файл на сервер
-
         Args:
             _files_list(List): список файлов
             _user_login(String): логин пользователя, который отправил файлы
-
         Returns:
             List: список файлов
         """
+
+        user_files_manager = UsersFileManager()
 
         files = []
         for i_file in _files_list:
@@ -43,7 +45,11 @@ class UploadService():
             if name_file_user[0] == '.':
                 name_file_user = secure_filename(name_file_user)
 
-            files.append({"name_file_unique": user_file_unique, "name_file_user": name_file_user, "path": path})
+            files.append(user_file_unique)
             i_file.save(os.path.join(path, user_file_unique))
+
+            user_files_manager.save_users_file({"name_file_unique": user_file_unique, "name_file_user": name_file_user,
+                                                "path": path})
+
 
         return files

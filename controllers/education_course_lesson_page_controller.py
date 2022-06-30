@@ -36,13 +36,14 @@ class EducationCourseLessonPageController():
                 "link": module.lessons.link,
                 "materials": module.lessons.materials,
                 "text": module.lessons.text,
-                # "task": module.lessons.task
+                "task": module.lessons.task
             }
         }
 
         return lesson
 
-    def room_chat_entry(self, _id_lesson="", _id_course="", _login_user="", _id_room_chat=None):
+    def room_chat_entry(self, _id_lesson="", _id_course="", _login_user="", _id_room_chat=None,
+                        _id_learning_stream=None, _id_module=None):
         """
         Подключает пользователя к чату
 
@@ -57,7 +58,8 @@ class EducationCourseLessonPageController():
         """
 
         room_chat_service = RoomChatService()
-        room_chat = room_chat_service.room_chat_entry(_id_lesson, _id_course, _login_user, _id_room_chat)
+        room_chat = room_chat_service.room_chat_entry(_id_lesson, _id_course, _login_user, _id_room_chat,
+                                                      _id_learning_stream, _id_module)
 
         chat = {
             "id": room_chat.id,
@@ -117,9 +119,9 @@ class EducationCourseLessonPageController():
             Dict: пользователь
         """
 
-        user_service = UserProfileService()
+        course_service = CourseService()
 
-        user = user_service.get_current_user()
+        user = course_service.get_current_user()
 
         return {"login": user.login, "role": user.role, "active_education_module": user.active_education_module,
                 "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y"))}
@@ -163,3 +165,9 @@ class EducationCourseLessonPageController():
         course_formated["type"] = course.type
 
         return course_formated
+
+    def save_homework(self, _files_list, _id_room_chat):
+
+        course_service = CourseService()
+
+        course_service.save_homework(_files_list, _id_room_chat)

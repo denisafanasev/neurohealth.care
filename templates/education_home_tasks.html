@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+
+{% block main_block %}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+    <script src="{{ url_for('static' , filename="js/datatables.js")}}"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.1.4/css/rowGroup.dataTables.min.css">
+    <script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.1.4/js/dataTables.rowGroup.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/4.0.2/css/fixedColumns.dataTables.min.css">
+    <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/4.0.2/js/dataTables.fixedColumns.min.js"></script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // DataTables with Buttons
+            var datatablesButtons = $("#datatables-homeworks").DataTable({
+                responsive: true,
+                lengthChange: false,
+                scrollY: "500px",
+                {#scrollX: true,#}
+                scrollCollapse: true,
+                paging: false,
+                fixedHeader: true,
+                fixedColumns: true,
+                ordering: false,
+                order: [[1, 'asc']],
+                rowGroup: {
+                    dataSrc: 1
+                },
+                columnDefs: [
+                {
+                    "targets": [ 1 ],
+                    "visible": false,
+                    "searchable": false,
+
+                },
+                    {
+                        "width": "50%!important;"
+                    }]
+            });
+            {#datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");#}
+        });
+    </script>
+
+    <style>
+
+        table.dataTable thead .sorting,
+        table.dataTable thead .sorting_asc,
+        table.dataTable thead .sorting_desc {
+            background : none;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            overflow-y: scroll!important;
+        }
+
+        .pagination {
+            z-index: 0;
+        }
+
+
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            z-index: 99; /* Sit on top */
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+
+            margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+            border: gray;
+            width: 80%; /* Could be more or less, depending on screen size */
+            padding: 16px;
+        }
+
+        .modal-backdrop{
+            display: none;
+        }
+        /* The Close Button (x) */
+
+        .close:hover,
+        .close:focus {
+            color: red;
+            cursor: pointer;
+        }
+
+        /* Add Zoom Animation */
+        .animate {
+            -webkit-animation: animatezoom 0.6s;
+            animation: animatezoom 0.6s
+        }
+
+        @-webkit-keyframes animatezoom {
+            from {
+                -webkit-transform: scale(0)
+            }
+            to {
+                -webkit-transform: scale(1)
+            }
+        }
+
+        @keyframes animatezoom {
+            from {
+                transform: scale(0)
+            }
+            to {
+                transform: scale(1)
+            }
+        }
+
+        /* Change styles for span and cancel button on extra small screens */
+        @media screen and (max-width: 300px) {
+            span.psw {
+                display: block;
+                float: none;
+            }
+            .cancelbtn {
+                width: 100%;
+            }
+        }
+
+    </style>
+
+    <div class="container-fluid p-0">
+
+        <div class="mb-3">
+            <h1 class="h3 d-inline align-middle">Проверка домашних заданий</h1>
+        </div>
+
+        <form id="homeworks" name="homeworks" method="post" enctype="multipart/form-data">
+            <div class="row d-flex align-items-stretch bd-highlight">
+                <div class="p-2 bd-highlight">
+                    <div class="card d-flex align-self-baseline">
+                        <div class="card-header">
+                            <table id="datatables-homeworks" class="table table-striped dataTable no-footer dtr-inline cell-border"
+                                   role="grid" aria-describedby="datatables-buttons_info">
+                                <thead>
+                                    <tr role="row">
+{#                                        <th class="sorting" style="" tabindex="0" aria-controls="datatables-buttons"#}
+{#                                            aria-label="Position: activate to sort column ascending">Обучающий поток</th>#}
+                                        <th class="sorting" style="width:20%" tabindex="0" aria-controls="datatables-buttons"
+                                            aria-label="Position: activate to sort column ascending">Пользователь</th>
+                                        <th class="sorting" style="width:20%" tabindex="0" aria-controls="datatables-buttons"
+                                            aria-label="Position: activate to sort column ascending">Урок</th>
+                                        <th class="sorting" style="width:5%; text-align:center" tabindex="0" aria-controls="datatables-buttons"
+                                            aria-label="Position: activate to sort column ascending">Дата сдачи</th>
+                                        <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-buttons"
+                                            aria-label="Position: activate to sort column ascending">Статус</th>
+                                        <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-buttons"
+                                            aria-label="Position: activate to sort column ascending">Ответ</th>
+                                        <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-buttons"
+                                            aria-label="Position: activate to sort column ascending">Домашняя работа</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in _data %}
+                                    <tr>
+{#                                        <td>Обучающий поток(курс потока):{{ item['learning_stream']['name'] }}({{ item['course']['name'] }})</td>#}
+                                        <td>{{ item["user"]['name'] }}</td>
+                                        <td>{{ item['lesson']['name'] }}</td>
+                                        <td>{{ item['date_delivery'] }}</td>
+                                        <td>{{ item['homework_answer']['status'] }}</td>
+                                        {% if item['homework_answer']['answer'] %}
+                                            <td>Принято</td>
+                                        {% else %}
+                                            <td>Не принято</td>
+                                        {% endif %}
+                                        <td>
+                                            <a href="" data-bs-toggle="modal" data-bs-target="#homework_{{ item['id'] }}" onclick="document.getElementById('homework_{{ item['id'] }}').style.display='block';">
+                                                Открыть
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        {% for item in _data %}
+            <script>
+                // Get the modal
+                var homework_{{ item['id'] }} = document.getElementById('homework_{{ item['id'] }}');
+
+                window.onclick = function (event) {
+                    if (event.target === modal_{{ item['id'] }}) {
+                        homework_{{ item['id'] }}.style.display = "none";
+                    }
+                }
+            </script>
+            <div id="homework_{{ item['id'] }}" class="modal_{{ item['id'] }} modal">
+                <div class="modal-content animate" style="width: 20%">
+                    <h3 class="modal-title">Домашние задание</h3>
+                    <form id="homework_{{ item['id'] }}" name="homework_{{ item['id'] }}" method="post" enctype="multipart/form-data"
+                            class="was-validated">
+                        <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; ">
+                            <div class="card-header">
+                                <div class="mb-2">
+                                    <label class="form-label"><strong>Домашняя работа</strong></label>
+                                    {% for file in item['users_files_list'] %}
+                                        <a href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="mb-2">
+                                    <label class="form-label"><strong>Ответ</strong></label>
+                                    <div class="form-check">
+                                      <input class="form-check-input" name="answer" type="radio" value="True" id="answer_true">
+                                      <label class="form-check-label" for="answer_true">
+                                        Принято
+                                      </label>
+                                    </div>
+                                    <div class="form-check">
+                                      <input class="form-check-input"  name="answer" type="radio" value="False" id="answer_false">
+                                      <label class="form-check-label" for="answer_false">
+                                        Не принято
+                                      </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
+                            <div class="p-1" align="right">
+                                <button type="submit" name="button_{{ item['id'] }}" value="answer" class="btn btn-primary ">
+                                    Сохранить
+                                </button>
+                                <a onclick="document.getElementById('homework_{{ item['id'] }}').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
+                                    Отмена
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
