@@ -738,8 +738,8 @@ def education_course_lesson():
     course = page_controller.get_course_by_id(id_course)
 
     # тут проверяем, что пользователь подписан на курс
-    if user['role'] == 'user' and course['type'] == 'main' and int(id_module) > 1:
-        return redirect("price_list")
+    #if user['role'] == 'user' and course['type'] == 'main' and int(id_module) > 1:
+    #    return redirect("/price_list")
 
     if user['active_education_module'] == 'inactive':
         if int(id_module) != 1 and user['role'] != 'superuser':
