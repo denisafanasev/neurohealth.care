@@ -711,7 +711,7 @@ def education_course():
 
     if id_course is not None:
         course = page_controller.get_course_by_id(id_course)
-        data = page_controller.get_course_modules_list(id_course)
+        data = page_controller.get_course_modules_list(id_course, user['id'])
     else:
         return redirect("education_list_courses")
 
