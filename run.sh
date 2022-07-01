@@ -82,10 +82,10 @@ hdfs dfs -ls /user/cleverdata/data/incoming/
 hdfs dfs -copyToLocal /user/cleverdata/data/incoming/cid=4fd755f2-9075-4379-8640-12ee75c358ef/data_type=cookiesync/dt=2020-09-11/cookie-nc-events.1599845420642.avro
 
 # remote copy
-scp -r -i dafanasevdatalab.pem cs598_capstone_v1.2.zip ubuntu@54.201.50.127:/home/ubuntu/cs598
+scp -i ../../_aws/shaman_aws_key.pem ubuntu@app.neurohealth.care:/home/ubuntu/_exchange/prod_data_300622.zip
 
 # copy from remote
-scp dafanasev@dmc-stage-ph1:/home/dafanasev/cd_lab/data/cst_datasets/hotlog.cookie-sync-events.1592784001807.avro.zip .
+scp -i ../../_aws/shaman_aws_key.pem ubuntu@app.neurohealth.care:/home/ubuntu/_exchange/prod_data_300622.zip
 
 # setup cert to nginx
 https://marcosantonocito.medium.com/steps-to-install-a-go-daddy-ssl-certificate-on-nginx-on-ubuntu-14-04-ff942b9fd7ff
