@@ -42,6 +42,7 @@ class EducationCoursePageController():
 
         return modules_list
 
+    # TODO: во все внутрении модули, id пользователя должен приезжать из app.py
     def get_current_user(self):
         """
         Возвращает данные текущего пользователя
