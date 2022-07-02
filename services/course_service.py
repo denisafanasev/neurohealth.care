@@ -1,5 +1,6 @@
 from models.course_manager import CourseManager
 from services.action_service import ActionService
+from services.homework_service import HomeworkService
 from services.user_manager_service import UserManagerService
 from models.user_manager import UserManager
 from datetime import datetime
@@ -141,3 +142,11 @@ class CourseService():
                             return True
 
             return False
+
+    def save_homework(self, _files_list, _id_room_chat, ):
+
+        homework_service = HomeworkService()
+
+        login_user = self.get_current_user().login
+
+        homework_service.save_homework(_files_list, login_user, _id_room_chat)

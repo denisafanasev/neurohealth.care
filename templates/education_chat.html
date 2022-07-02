@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block main_block %}
+    <link href="https://cdn.quilljs.com/1.1.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.1.6/quill.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var quill = new Quill('#editor', {
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic'],
+                        ['link', 'blockquote', 'code-block'],
+                        [{list: 'ordered'}, {list: 'bullet'}]
+                    ]
+                },
+                theme: 'snow',
+
+            });
+
+            var form = document.getElementById('chat');
+            form.onsubmit = function () {
+                // Populate hidden form on submit
+                var about = document.querySelector('input[name=text]');
+                about.value = quill.root.innerHTML;
+                if (about.value === "<p><br></p>") {
+                    alert("Ошибка: не заполнено поле для отправки домашнего задания!")
+                    return false;
+                }
+            };
+        })
+    </script>
+
+    <style>
+    .position-relative{
+        margin: 1%;
+    }
+
+    .chat-messages {
+        display: list-item;
+        flex-direction: column;
+        overflow-y: scroll;
+        overflow-x: initial;
+        white-space: inherit;
+        height: 500px;
+        max-height: 500px;
+    }
+    </style>
+
+    <div class="container-fluid p-0">
+
+        <div class="mb-3">
+            <h1 class="h3 d-inline align-middle">Чат</h1>
+        </div>
+
+        <form id="chat" name="chat" method="post" enctype="multipart/form-data">
+            <div class="row d-flex align-items-stretch bd-highlight">
+                <div class="p-2 bd-highlight">
+                    <div class="card d-flex align-self-baseline">
+                        <div class="row d-flex align-items-stretch bd-highlight">
+                            <div class="col-12 p-2 bd-highlight">
+                                {% if _room_chat['message'] %}
+                                    <div class="border position-relative">
+                                        <div class="chat-messages p-4">
+                                            {% for i_message in _room_chat['message'] %}
+    {#                                                <div class="card border-top {% if _user["login"] != i_message['name_sender'] %} chat-message-left#}
+    {#                                                 {% else %} chat-message-right {% endif %} pb-4">#}
+    {#                                                    <div class="card-header">#}
+    {#                                                        <h3 class="card-title message">{{ i_message['name_sender'] }}</h3>#}
+    {#                                                    </div>#}
+    {#                                                    <div class="card-body  flex-shrink-1  rounded py-2 px-3 mr-3">#}
+    {#                                                        {{ i_message['text'] }}#}
+    {#                                                    </div>#}
+    {#                                                </div>#}
+
+                                                <div class="{% if _user["login"] == i_message['name_sender'] %}chat-message-right mb-4{% else %}chat-message-left pb-4{% endif %}">
+                                                    <div>
+                                                        <img src="{{ url_for('static', filename='img/avatars/149071.jpg') }}" class="rounded-circle me-1" width="40" height="40">
+                                                        <div class="text-muted small text-nowrap mt-2">{{ i_message['date_send'] }}</div>
+                                                    </div>
+                                                    <div class="flex-shrink-1 bg-light rounded py-2 px-3 me-3">
+                                                        <div class="font-weight-bold mb-1">{{ i_message['name_sender'] }}</div>
+                                                        {{ i_message['text'] }}
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-header">
+                            <div id="editor" style="z-index: 0"><p></p></div>
+                            <input type="hidden" id="hiddenInput" name="text">
+                        </div>
+                        <div class="card d-flex align-self-baseline" style="margin-left: auto">
+                            <div class="card-header">
+                                <button form="chat" type="submit" name="send" value="send" class="btn btn-primary">Отправить</button>
+                                <a href="{{ url_for('education_home_tasks') }}" class="btn btn-primary">Назад</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
