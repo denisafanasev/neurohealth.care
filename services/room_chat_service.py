@@ -8,7 +8,8 @@ class RoomChatService():
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def room_chat_entry(self, _id_lesson, _id_course, _login_user, _id_room_chat, _id_learning_stream, _id_module):
+    def room_chat_entry(self, _id_lesson=None, _id_course=None, _login_user='', _id_room_chat=None,
+                        _id_learning_stream=None, _id_module=None):
         """
         Подключает пользователя к чату
 
@@ -47,10 +48,33 @@ class RoomChatService():
         return room_chat_manager.add_message(_message, _room_chat_id)
 
     def get_room_chat(self, _id_room_chat):
+        """
+        Возвращает данные комнаты чата
+
+        Args:
+            _id_room_chat(Int): id чата
+
+        Returns:
+            RoomChat: чат
+        """
 
         room_chat_manager = RoomChatManager()
 
         return room_chat_manager.get_room_chat(_id_room_chat)
 
+    def get_current_user(self, _login_user=""):
+        """
+        Возвращает данные текущего пользователя
+
+        Args:
+            _login_user(String): логин пользователя
+
+        Returns:
+            user(Dict): данные пользователя
+        """
+
+        user_service = user_manager_service.UserManagerService()
+
+        return user_service.get_current_user(_login_user)
 
 

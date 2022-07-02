@@ -32,6 +32,7 @@ from controllers.education_course_page_controller import EducationCoursePageCont
 from controllers.education_course_lesson_page_controller import EducationCourseLessonPageController
 from controllers.download_page_controller import DownloadPageController
 from controllers.education_home_tasks_page_controller import EducationHomeTasksPageController
+from controllers.education_chat_page_controller import EducationChatPageController
 
 from error import UserManagerException
 
@@ -793,7 +794,7 @@ def education_course_lesson():
 @login_required
 def education_home_tasks():
     """
-    Пустая функция-заглушка
+    Проверка домашних работ и переход в чат с пользователями
 
     Returns:
         
@@ -824,6 +825,30 @@ def education_home_tasks():
 
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
+
+@app.route('/education_chat', methods=['GET', 'POST'])
+@login_required
+def education_chat():
+    """
+    Общение с пользователями, которые сдали домашнюю работу(только для кураторов)
+    """
+
+    page_controller = EducationChatPageController()
+    mpc = MainMenuPageController()
+    endpoint = "education_chat"
+
+    id_room_chat = request.args.get("id")
+
+    room_chat = page_controller.room_chat_entry(id_room_chat)
+    user = page_controller.get_current_user()
+
+    if request.method == "POST":
+        if request.form.get("send"):
+            text = request.form.get("text")
+            page_controller.add_message({"text": text}, id_room_chat)
+
+    return render_template('education_chat.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _room_chat=room_chat)
 
 
 @app.route('/corrections', methods=['GET', 'POST'])

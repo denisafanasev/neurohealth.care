@@ -162,6 +162,8 @@
                                             aria-label="Position: activate to sort column ascending">Ответ</th>
                                         <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-buttons"
                                             aria-label="Position: activate to sort column ascending">Домашняя работа</th>
+                                        <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-buttons"
+                                            aria-label="Position: activate to sort column ascending">Чат</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -180,6 +182,11 @@
                                         <td>
                                             <a href="" data-bs-toggle="modal" data-bs-target="#homework_{{ item['id'] }}" onclick="document.getElementById('homework_{{ item['id'] }}').style.display='block';">
                                                 Открыть
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="/education_chat?id={{ item['id_room_chat'] }}" >
+                                                Перейти
                                             </a>
                                         </td>
                                     </tr>
@@ -219,14 +226,14 @@
 
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Ответ</strong></label>
-                                    <div class="form-check">
-                                      <input class="form-check-input" name="answer" type="radio" value="True" id="answer_true">
+                                    <div class="">
+                                      <input  name="answer" type="radio" value="True" id="answer_true">
                                       <label class="form-check-label" for="answer_true">
                                         Принято
                                       </label>
                                     </div>
-                                    <div class="form-check">
-                                      <input class="form-check-input"  name="answer" type="radio" value="False" id="answer_false">
+                                    <div class="">
+                                      <input   name="answer" type="radio" value="False" id="answer_false">
                                       <label class="form-check-label" for="answer_false">
                                         Не принято
                                       </label>

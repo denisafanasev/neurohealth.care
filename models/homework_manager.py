@@ -31,6 +31,14 @@ class HomeworkManager():
         return homework
 
     def homework_answer_row_to_homework_answer(self, _data_row):
+        """
+        Преобразует структуру данных, в которой хранится информация о действиях пользователя в структуру HomeworkAnswer
+        Args:
+            _data_row(Dict): данные оценки домашнего задания
+
+        Returns:
+            HomeworkAnswer: оценка домашнего задания
+        """
 
         homework_answer = HomeworkAnswer(_id=_data_row['id'], _id_homework=_data_row['id_homework'],
                                          _answer=_data_row['answer'])
@@ -70,7 +78,10 @@ class HomeworkManager():
 
     def get_homeworks(self):
         """
+        Возвращает список домашних работ пользователей
 
+        Returns:
+            List: список домашних работ
         """
 
         data_store = DataStore("homeworks")
@@ -84,6 +95,12 @@ class HomeworkManager():
         return homework_list
 
     def create_homework_answer(self, _id_homework):
+        """
+        Создает оценку домашнего задания
+
+        Args:
+            _id_homework(Int): индетификатор домашнего задания
+        """
 
         data_store = DataStore("homework_answers")
 
@@ -100,6 +117,15 @@ class HomeworkManager():
                             "id_homework": homework_answer.id_homework})
 
     def get_homework_answer(self, _id_homework):
+        """
+        Возвращает оценку домашнего задания
+
+        Args:
+            _id_homework(Int): индетификатор домашнего задания
+
+        Returns:
+            HomeworkAnswer: оценка домашнего задания
+        """
 
         data_store = DataStore("homework_answers")
 
@@ -108,6 +134,13 @@ class HomeworkManager():
         return self.homework_answer_row_to_homework_answer(homework_answer)
 
     def change_homework_answer(self, _answer, _id_homework_answer):
+        """
+        Изменяет оценку домашнего задания
+
+        Args:
+            _answer(String): оценка
+            _id_homework_answer(Int): индетификатор оценки домашего задания
+        """
 
         data_store = DataStore("homework_answers")
 

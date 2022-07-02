@@ -285,16 +285,16 @@
                                     Домашнее задание
                                 </h4>
                             </div>
-                            {% if _user['role'] == "superuser" %}
-                                <div class="col">
-                                    <select class="form-select" onchange="this.form.submit();" name="user">
-                                            <option selected disabled value="">Выберите ученика</option>
-                                        {% for i_user in _user_list %}
-                                            <option value="{{ i_user }}">{{ i_user }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            {% endif %}
+
+{#                                <div class="col">#}
+{#                                    <select class="form-select" onchange="this.form.submit();" name="user">#}
+{#                                            <option selected disabled value="">Выберите ученика</option>#}
+{#                                        {% for i_user in _user_list %}#}
+{#                                            <option value="{{ i_user }}">{{ i_user }}</option>#}
+{#                                        {% endfor %}#}
+{#                                    </select>#}
+{#                                </div>#}
+
                         </div>
                     </div>
                     <div class="card-body">
@@ -306,6 +306,7 @@
                                         <p class="card-text">
                                             {{ _data['lesson']['task'] }}
                                         </p>
+                                    {% if _user['role'] != "superuser" %}
                                         {% if request.args.get('id_chat') != "none" %}
                                             <form method="post" enctype="multipart/form-data">
                                                 <div class="mb-2">
@@ -324,12 +325,15 @@
                                                 </div>
                                             </form>
                                         {% endif %}
+                                    {% endif %}
                                     </div>
+                                {% if _user['role'] != "superuser" %}
                                     <div class="card d-flex align-self-baseline" style="margin-left: auto">
                                         <div class="card-header">
                                             <button form="chat" type="submit" name="send" value="send" class="btn btn-primary">Отправить</button>
                                         </div>
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="row d-flex align-items-stretch bd-highlight">

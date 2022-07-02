@@ -75,21 +75,7 @@ class EducationCourseLessonPageController():
                     "id": i_message.id,
                     "text": Markup(i_message.text),
                     "name_sender": i_message.name_sender,
-                    "files": None
                 }
-                if i_message.files is not None:
-
-                    file_list = []
-                    for i_file in i_message.files:
-
-                        file = {
-                            "name_file_user": i_file.name_file_user,
-                            "name_file_unique": i_file.name_file_unique,
-                            "path": i_file.path
-                        }
-                        file_list.append(file)
-
-                    message["files"] = file_list
 
                 message_list.append(message)
 

@@ -1,8 +1,19 @@
 from services.homework_service import HomeworkService
 
 class EducationHomeTasksPageController():
+    """
+    EducationHomeTasksPageController - класс контроллера представления списка домашних работ, реализующий логику взаимодействия приложения с пользователем
+    Возвращает в слой отображения объекты в виде, пригодном для отображения в web странице и в соответствующем форматировании
+    Взаимодейтвует с классами слоя сервисов, передавая им данные и получая данные в объектах доменной модели
+    """
 
     def get_homeworks_list(self):
+        """
+        Возвращает список домашних работ пользователей
+
+        Returns:
+            List: список домашних работ
+        """
 
         homework_service = HomeworkService()
 
@@ -39,7 +50,8 @@ class EducationHomeTasksPageController():
                     "id": homework.homework_answer.id,
                     "answer": homework.homework_answer.answer,
                     "status": homework.homework_answer.status
-                }
+                },
+                "id_room_chat": room_chat.id
             }
 
             homework_list_view.append(homework_view)
@@ -47,6 +59,13 @@ class EducationHomeTasksPageController():
         return homework_list_view
 
     def change_homework_answer(self, _answer, _id_homework_answer):
+        """
+        Изменяет оценку домашнего задания
+
+        Args:
+            _answer(String): оценка
+            _id_homework_answer(Int): индетификатор оценки домашего задания
+        """
 
         homework_service = HomeworkService()
 
