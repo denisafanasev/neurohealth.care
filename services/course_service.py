@@ -90,6 +90,9 @@ class CourseService():
         user_service = user_manager_service.UserManagerService()
 
         user = user_service.get_current_user('')
+
+        # TODO: это надо переделать
+        _id_course = 1
         if _id_course is not None:
             for learning_stream in user.learning_stream_list:
                 if learning_stream.course == _id_course and learning_stream.status == "идет":
