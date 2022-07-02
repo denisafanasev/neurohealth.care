@@ -702,7 +702,7 @@ def education_course():
     id_course = request.args.get("id_course")
 
     if id_course is not None:
-        user = page_controller.get_current_user(int(id_course))
+        user = page_controller.get_current_user()
         course = page_controller.get_course_by_id(id_course)
         data = page_controller.get_course_modules_list(id_course, user['id'])
     else:
