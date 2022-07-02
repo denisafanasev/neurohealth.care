@@ -12,7 +12,7 @@ if str(pathlib.Path().resolve()).find("prod")!=-1:
 else:
     ENVIRONMENT = "dev"
 
-DATA_FOLDER = "../neurohealth.care.data."+ENVIRONMENT+"/"
+DATA_FOLDER = "../data/"
 
 # system settings
 THREADING_ENABLE = True
@@ -55,7 +55,8 @@ REFERENCE_POINT = [{"name_point": "от даты окончания", "value": "
 SUPERUSER_MENU = [
     {"module": "Центр управления", "name": "Пользователи", "endpoint": "user_manager", "icon": "users"},
     {"module": "Центр управления", "name": "Настройки", "endpoint": "age_range_list", "icon": "settings"},
-    {"module": "Центр управления", "name": "Домашние задания", "endpoint": "education_home_tasks", "icon": "edit"}
+    {"module": "Центр управления", "name": "Домашние задания", "endpoint": "education_home_tasks", "icon": "edit"},
+    {"module": "Центр управления", "name": "Обучающие потоки", "endpoint": "learning_streams", "icon": "crop"}
 ]
 
 EDUCATION_MENU = [
@@ -75,5 +76,5 @@ MAIN_MENU = [
 
 SETTINGS_MENU = [
     {"name": "Справочник оценочных значений", "endpoint": "estimated_values"},
-    {"name": "Справочник диапазонов возрастов", "endpoint": "age_range_list"}
+    {"name": "Справочник диапазонов возрастов", "endpoint": "age_range_list"},
 ]

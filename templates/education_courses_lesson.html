@@ -18,7 +18,7 @@
             theme: 'snow',
 
         });
-        var form = document.getElementById('chat');
+        var form = document.getElementById("chat");
         form.onsubmit = function () {
             // Populate hidden form on submit
             var about = document.querySelector('input[name=text]');
@@ -276,7 +276,7 @@
         </div>
 
         {% if _data['lesson']['task'] %}
-            <form method="post" enctype="multipart/form-data">
+
                 <div class="card border">
                     <div class="card-header">
                         <div class="row">
@@ -327,10 +327,10 @@
                                         {% endif %}
                                     {% endif %}
                                     </div>
-                                {% if _user['role'] != "superuser" %}
+                                {% if request.args.get('id_chat') != "none" %}
                                     <div class="card d-flex align-self-baseline" style="margin-left: auto">
                                         <div class="card-header">
-                                            <button form="chat" type="submit" name="send" value="send" class="btn btn-primary">Отправить</button>
+                                            <button type="submit" name="send" value="send" form="chat" class="btn btn-primary">Отправить</button>
                                         </div>
                                     </div>
                                     {% endif %}
@@ -366,7 +366,6 @@
                         </div>
                     </div>
                 </div>
-            </form>
         {% else %}
             <div class="card border">
                 <div class="card-header">

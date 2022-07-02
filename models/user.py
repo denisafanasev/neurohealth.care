@@ -29,7 +29,7 @@ class User(UserMixin):
 
     def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _active=True, _created_date="",
                  _education_module_expiration_date="", _probationers_number=DEFAULT_PROBATIONS_NUMBER, _token="",
-                 _email_confirmed=False):
+                 _email_confirmed=False, _learning_stream_list=[]):
         """
         Конструктор класса
 
@@ -73,6 +73,7 @@ class User(UserMixin):
                 self.education_module_expiration_date = _education_module_expiration_date
 
         self.probationers_number = _probationers_number
+        self.learning_stream_list = _learning_stream_list
     
     def is_active(self):
         """
