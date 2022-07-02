@@ -47,7 +47,8 @@ class UserProfileService():
 
         return user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date, _education_module_expiration_date):
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
+                    _education_module_expiration_date):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -65,7 +66,8 @@ class UserProfileService():
 
         ActionService().add_notifications(_login, "overwrite", '', "user_manager", _login)
 
-        return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _created_date, _education_module_expiration_date)
+        return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _created_date,
+                                        _education_module_expiration_date)
 
     def discharge_password(self, _login, _password, _password2):
         """
@@ -106,7 +108,7 @@ class UserProfileService():
         elif _active:
             return user_manager.deactivation(_login)
 
-    def get_current_user(self):
+    def get_current_user(self, _login_user):
         """
         Возвращает данные текущего пользователя
 
@@ -116,7 +118,10 @@ class UserProfileService():
 
         user_manager = UserManager()
 
-        return user_manager.get_user_by_id(user_manager.get_current_user_id())
+        if _login_user == "":
+            return user_manager.get_user_by_id(user_manager.get_current_user_id())
+        else:
+            return user_manager.get_user_by_login(_login_user)
 
     def access_extension(self, _period, _reference_point, _login):
         """

@@ -1,6 +1,6 @@
 from models.user_manager import UserManager
 from services.action_service import ActionService
-
+# from services.user_profile_service import UserProfileService
 
 class UserManagerService():
     """
@@ -41,9 +41,11 @@ class UserManagerService():
         user_manager = UserManager()
 
         if _login_user == "":
-            return user_manager.get_user_by_id(user_manager.get_current_user_id())
+            user = user_manager.get_user_by_id(user_manager.get_current_user_id())
         else:
-            return user_manager.get_user_by_login(_login_user)
+            user = user_manager.get_user_by_login(_login_user)
+
+        return user
 
     def get_users_profile(self, user_id):
         """
@@ -52,6 +54,7 @@ class UserManagerService():
         Returns:
             Dict: характеристики профиля пользователя
         """
+
         user_manager = UserManager()
         user = user_manager.get_user_by_id(user_id)
         return user
@@ -139,7 +142,7 @@ class UserManagerService():
 
         user_manager = UserManager()
         user_manager.activation(_login)
-       
+
         user_login = self.get_current_user('').login
         ActionService().add_notifications(_login, "overwrite", 'доступ', "user_manager", user_login)
 

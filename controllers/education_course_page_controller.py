@@ -42,7 +42,7 @@ class EducationCoursePageController():
 
         return modules_list
 
-    def get_current_user(self):
+    def get_current_user(self, _id_course):
         """
         Возвращает данные текущего пользователя
 
