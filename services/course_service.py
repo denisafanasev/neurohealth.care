@@ -1,10 +1,11 @@
 from models.course_manager import CourseManager
 from services.action_service import ActionService
 from services.homework_service import HomeworkService
-from services.user_manager_service import UserManagerService
 from models.user_manager import UserManager
 from datetime import datetime
 import config
+from services import user_manager_service
+from services.homework_service import HomeworkService
 class CourseService():
     """
     DownloadService - класс бизнес-логики сервиса управления настройками приложения
@@ -12,7 +13,7 @@ class CourseService():
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def get_course_modules_list(self, _id):
+    def get_course_modules_list(self, _id, _login_user):
         """
         Возвращает список модулей курса по id
 
@@ -25,7 +26,19 @@ class CourseService():
 
         course_manager = CourseManager()
 
-        return course_manager.get_course_modules_list(_id)
+        modules_list = course_manager.get_course_modules_list(_id)
+        #
+        # if user.learning_stream_list != []:
+        #     for id_learning_stream in user.learning_stream_list:
+        #         learning_stream = learning_stream_service.get_learning_stream(id_learning_stream)
+        #
+        #         if learning_stream.course == _id and learning_stream.status == "идет":
+        #             learning_stream.course = modules_list
+        #             course = learning_stream
+        #             break
+
+        return modules_list
+
 
     def get_lesson(self, _id, _id_course, _id_video):
         """
@@ -42,9 +55,8 @@ class CourseService():
 
         course_manager = CourseManager()
         action_service = ActionService()
-        user_service = UserManagerService()
 
-        login_user = user_service.get_current_user('').login
+        login_user = self.get_current_user('').login
         lesson = course_manager.get_lesson(_id, _id_course, _id_video)
 
         action_service.add_notifications(lesson, "view", '', "course_manager", login_user)
@@ -75,9 +87,15 @@ class CourseService():
             User: пользователь
         """
 
-        user_service = UserManagerService()
+        user_service = user_manager_service.UserManagerService()
 
-        return user_service.get_current_user('')
+        user = user_service.get_current_user('')
+        if _id_course is not None:
+            for learning_stream in user.learning_stream_list:
+                if learning_stream.course == _id_course and learning_stream.status == "идет":
+                    user.learning_stream_list = learning_stream
+
+        return user
 
     def get_course_by_id(self, _id):
         """

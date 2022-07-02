@@ -71,10 +71,10 @@ class RoomChatManager():
         elif _id_room_chat is None:
             room_chat = None
             for i_room_chat in room_chat_list:
-                # if i_room_chat.get("id_learning_stream") is not None:
-                #     if i_room_chat['id_learning_stream'] == _id_learning_stream or _id_module == 1:
-                room_chat = self.room_chat_row_to_room_chat(i_room_chat)
-                        # break
+                if i_room_chat.get("id_learning_stream") is not None:
+                    if i_room_chat['id_learning_stream'] == _id_learning_stream or _id_module == 1:
+                        room_chat = self.room_chat_row_to_room_chat(i_room_chat)
+                        break
         else:
             room_chat = self.room_chat_row_to_room_chat(room_chat_list[0])
 
@@ -156,17 +156,3 @@ class RoomChatManager():
         data_store_message.add_row({"id": message.id, "name_sender": message.name_sender, "text": message.text})
 
         data_store.update_messages(message.id, int(_id_room_chat))
-
-    def get_room_chat(self, _id_room_chat):
-
-        data_store = DataStore("room_chat")
-
-        chat = data_store.get_rows({"id": _id_room_chat})[0]
-        room_chat = self.room_chat_row_to_room_chat(chat)
-
-        id_list = room_chat.name.split("_")
-        room_chat.id_course = int(id_list[1])
-        room_chat.id_lesson = int(id_list[2])
-        room_chat.login_user = id_list[3]
-
-        return room_chat

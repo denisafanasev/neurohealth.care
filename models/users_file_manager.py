@@ -1,5 +1,3 @@
-
-
 from models.users_file import UsersFile
 from data_adapters.data_store import DataStore
 
