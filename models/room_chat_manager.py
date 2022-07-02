@@ -1,8 +1,6 @@
-import os
-import config
-
-from models.room_chat import RoomChat, Message, UserFile
+from models.room_chat import RoomChat, Message
 from data_adapters.data_store import DataStore
+from datetime import datetime
 
 class RoomChatManager():
 
@@ -19,6 +17,11 @@ class RoomChatManager():
 
         room_chat = RoomChat(_id=_room_chat["id"], _name=_room_chat["name"], _message=_room_chat["message"])
 
+        if _room_chat.get("id_learning_stream") is not None:
+            room_chat.id_learning_stream = _room_chat.get("id_learning_stream")
+        else:
+            room_chat.id_learning_stream = ""
+
         return room_chat
 
     def message_row_to_message(self, _message):
@@ -32,28 +35,16 @@ class RoomChatManager():
             Message: пользователь
         """
 
-        message = Message(_id=_message["id"], _name_sender=_message["name_sender"], _text=_message["text"],
-                          _files=_message["files"])
+        message = Message(_id=_message["id"], _name_sender=_message["name_sender"], _text=_message["text"])
+
+        if _message.get("date_send") is not None:
+            message.date_send = datetime.strptime(_message['date_end'], "%d/%m/%Y")
+        else:
+            message.date_send = datetime.today()
 
         return message
 
-    def file_row_to_file(self, _file):
-        """
-        Преобразует структуру данных, в которой хранится информация о файле в структуру File
-
-        Args:
-            _file (Dict): структура данных, которую возвращает дата адаптер
-
-        Returns:
-            UserFile: пользователь
-        """
-
-        file = UserFile(_name_file_user=_file["name_file_user"], _name_file_unique=_file["name_file_unique"],
-                        _path=_file["path"])
-
-        return file
-
-    def room_chat_entry(self, _id_lesson, _user, _id_course, _id_room_chat):
+    def room_chat_entry(self, _id_lesson, _user, _id_course, _id_room_chat, _id_learning_stream, _id_module):
         """
         Подключает пользователя к чату
 
@@ -62,6 +53,7 @@ class RoomChatManager():
             _user(User): данные пользователя
             _id_course(Int): индентификатор курса
             _id_room_chat(Int): индентификатор чата
+            _id_learning_stream(Int): индентификатор обучающего потока
         """
 
         data_store = DataStore("room_chat")
@@ -69,25 +61,33 @@ class RoomChatManager():
         if _id_room_chat is None:
             name_chat = "chat_{id_course}_{id_lesson}_{login_user}".format(
                 id_lesson=_id_lesson, login_user=_user.login, id_course=_id_course)
-            room_chat = data_store.get_rows({"name": name_chat})
+            room_chat_list = data_store.get_rows({"name": name_chat})
         else:
-            room_chat = data_store.get_rows({"id": int(_id_room_chat)})
-            name_chat = room_chat[0]["name"]
+            room_chat_list = data_store.get_rows({"id": int(_id_room_chat)})
+            name_chat = room_chat_list[0]["name"]
 
-        if room_chat == []:
-            if _user.role != "self_study":
-                room_chat = self.add_room_chat(name_chat)
-            else:
-                room_chat = None
+        if room_chat_list == []:
+            room_chat = self.add_room_chat(name_chat, _id_learning_stream)
+        elif _id_room_chat is None:
+            room_chat = None
+            for i_room_chat in room_chat_list:
+                # if i_room_chat.get("id_learning_stream") is not None:
+                #     if i_room_chat['id_learning_stream'] == _id_learning_stream or _id_module == 1:
+                room_chat = self.room_chat_row_to_room_chat(i_room_chat)
+                        # break
         else:
-            room_chat = self.room_chat_row_to_room_chat(room_chat[0])
-            if room_chat.message is not None:
-                message_list = self.get_messages(room_chat.message)
-                room_chat.message = message_list
+            room_chat = self.room_chat_row_to_room_chat(room_chat_list[0])
+
+        if room_chat is None:
+            room_chat = self.add_room_chat(name_chat, _id_learning_stream)
+
+        if room_chat.message is not None:
+            message_list = self.get_messages(room_chat.message)
+            room_chat.message = message_list
 
         return room_chat
 
-    def add_room_chat(self, _name_chat):
+    def add_room_chat(self, _name_chat, _id_learning_stream):
         """
         Создает новый чат
 
@@ -100,11 +100,13 @@ class RoomChatManager():
         room_chat = {
             "id": count_room_chat + 1,
             "name": _name_chat,
-            "message": []
+            "message": [],
+            "id_learning_stream": _id_learning_stream
         }
         room_chat = self.room_chat_row_to_room_chat(room_chat)
 
-        data_store.add_row({"id": room_chat.id, "name": room_chat.name, "message": []})
+        data_store.add_row({"id": room_chat.id, "name": room_chat.name, "message": [],
+                            "id_learning_stream": room_chat.id_learning_stream})
 
         return room_chat
 
@@ -123,30 +125,9 @@ class RoomChatManager():
             message = data_store_message.get_rows({"id": i_message})[0]
             message = self.message_row_to_message(message)
 
-            if message.files is not None:
-                files_list = self.get_files(message.files)
-                message.files = files_list
             message_list.append(message)
 
         return message_list
-
-    def get_files(self, _name_file_list):
-        """
-        Возвращает данные файлов из чата
-
-        Args:
-            _name_file_list(List): список уникальных имен файлов из чата
-        """
-
-        data_store_files = DataStore("files")
-        files_list = []
-
-        for i_file in _name_file_list:
-            file = data_store_files.get_rows({"name_file_unique": i_file})[0]
-            file = self.file_row_to_file(file)
-            files_list.append(file)
-
-        return files_list
 
     def add_message(self, _message, _id_room_chat):
         """
@@ -162,32 +143,30 @@ class RoomChatManager():
         amount = data_store_message.get_rows_count()
 
         _message["id"] = amount + 1
+        _message["send"] = datetime.today()
         message = self.message_row_to_message(_message)
 
-        if message.files is not None:
-            file_list = []
-            for i_file in message.files:
-                file = self.save_files(i_file)
-                file_list.append(file.name_file_unique)
-            message.files = file_list
+        # if message.files is not None:
+        #     file_list = []
+        #     for i_file in message.files:
+        #         file = self.save_files(i_file)
+        #         file_list.append(file.name_file_unique)
+        #     message.files = file_list
 
-        data_store_message.add_row({"id": message.id, "name_sender": message.name_sender, "text": message.text,
-                                    "files": message.files})
+        data_store_message.add_row({"id": message.id, "name_sender": message.name_sender, "text": message.text})
 
         data_store.update_messages(message.id, int(_id_room_chat))
 
+    def get_room_chat(self, _id_room_chat):
 
-    def save_files(self, _file):
-        """
-        Сохраняет данные файла
+        data_store = DataStore("room_chat")
 
-        Args:
-            _file(Dict): данные файла
-        """
+        chat = data_store.get_rows({"id": _id_room_chat})[0]
+        room_chat = self.room_chat_row_to_room_chat(chat)
 
-        data_store = DataStore("files")
+        id_list = room_chat.name.split("_")
+        room_chat.id_course = int(id_list[1])
+        room_chat.id_lesson = int(id_list[2])
+        room_chat.login_user = id_list[3]
 
-        file = self.file_row_to_file({"name_file_user": _file["name_file_user"], "name_file_unique": _file["name_file_unique"], "path": _file["path"]})
-        data_store.add_row({"name_file_user": file.name_file_user, "name_file_unique": file.name_file_unique, "path": file.path})
-
-        return file
+        return room_chat
