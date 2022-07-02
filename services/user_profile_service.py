@@ -1,6 +1,6 @@
 from models.user_manager import UserManager
 from services.action_service import ActionService
-
+from services.learning_stream_service import LearningStreamService
 
 class UserProfileService():
     """
@@ -110,10 +110,13 @@ class UserProfileService():
 
     def get_current_user(self, _login_user):
         """
-        Возвращает данные текущего пользователя
+        Возвращает модель User пользователя. Если _login_user = '', то возвращает модель User текущего пользователя
+
+        Args:
+            _login_user: логин пользователя
 
         Returns:
-            User: пользователь
+            user(User): модель User
         """
 
         user_manager = UserManager()
@@ -136,3 +139,23 @@ class UserProfileService():
         user_manager = UserManager()
 
         return user_manager.access_extension(_period, _reference_point, _login)
+
+    def get_learning_streams_users(self, _learning_stream_list):
+        """
+        Возвращает список обучающих потоков по id, в которых есть пользователь
+
+        Args:
+            _learning_stream_list(List): список id обучающих потоков
+
+        Returns:
+            (List): список обучающих потоков
+        """
+
+        learning_stream_service = LearningStreamService()
+
+        learning_stream_list = []
+        for learning_stream in _learning_stream_list:
+            learning_stream_list.append(learning_stream_service.get_learning_stream(learning_stream))
+
+        return learning_stream_list
+

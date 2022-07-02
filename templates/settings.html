@@ -53,8 +53,6 @@
             <div class="col">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Настройки</h5>
-
                         <div>
                             <a class="btn {% if _endpoint == "age_range_list" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for("age_range_list") }}" role="tab">
                                 Справочник диапазонов возрастов
@@ -62,11 +60,14 @@
                             <a class="btn {% if _endpoint == "estimated_values" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("estimated_values") }}" role="tab">
                                 Справочник оценочных значений
                             </a>
+                            <a style="width: 100%" class="btn {% if _endpoint == "learning_streams" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("learning_streams") }}" role="tab">
+                                Обучающие потоки
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-9">
+            <div class="col-sm-10">
                 <div class="tab-content">
                     <div id="example" class="tab-pane fade {% if _endpoint == "estimated_values" %} show active {% endif %}" id="{{ url_for("estimated_values") }}" role="tabpanel">
                         {% block estimated_values %}
@@ -75,6 +76,11 @@
 
                     <div class="tab-pane fade {% if _endpoint == "age_range_list" %} show active {% endif %}" id="{{ url_for("age_range_list") }}" role="tabpanel">
                         {% block age_range_list %}
+                        {% endblock %}
+                    </div>
+
+                    <div class="tab-pane fade {% if _endpoint == "learning_streams" %} show active {% endif %}" id="{{ url_for("learning_streams") }}" role="tabpanel">
+                        {% block learning_streams %}
                         {% endblock %}
                     </div>
                 </div>
