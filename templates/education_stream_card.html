@@ -36,11 +36,11 @@
 
         flatpickr(date_start, {
             dateFormat: "d/m/Y",
-            defaultDate: "{{ _learning_stream['date_start'] }}"
+            defaultDate: "{{ _education_stream['date_start'] }}"
         });
         flatpickr(date_end, {
             dateFormat: 'd/m/Y',
-            defaultDate: "{{ _learning_stream['date_end'] }}"
+            defaultDate: "{{ _education_stream['date_end'] }}"
         });
 
     })
@@ -206,7 +206,7 @@
                                             <div class="mb-2">
                                                 <label class="form-label"><strong>Название потока</strong></label>
                                                 <input id="name_stream" name="name" class="form-control" {% if _mode == "view" %} disabled {% endif %}
-                                                       {% if _mode == 'new' %}placeholder="Введите название потока.."{% else %} value="{{ _learning_stream['name'] }}"{% endif %}>
+                                                       {% if _mode == 'new' %}placeholder="Введите название потока.."{% else %} value="{{ _education_stream['name'] }}"{% endif %}>
                                             </div>
 
                                             <div class="mb-2">
@@ -215,7 +215,7 @@
                                                 {% if _mode == 'view' %} disabled {% endif %}>
                                                     <option selected disabled value="placeholder">Выберите курс..</option>
                                                     {% for course in _courses_list %}
-                                                        <option {% if course['id'] == _learning_stream['course']['id'] %} selected {% endif %}
+                                                        <option {% if course['id'] == _education_stream['course']['id'] %} selected {% endif %}
                                                                 value="{{ course['id'] }}">{{ course['name'] }}</option>
                                                     {% endfor %}
                                                 </select>
@@ -238,11 +238,11 @@
                                                     </thead>
                                                     <tbody>
                                                     {% for student in _students_list %}
-                                                        {% if _mode == 'new' or _mode == "view" and student['login'] in _learning_stream['students_list'] or _mode == 'edit' %}
+                                                        {% if _mode == 'new' or _mode == "view" and student['login'] in _education_stream['students_list'] or _mode == 'edit' %}
                                                         <tr class="even">
                                                             <td>
                                                                 <input {% if _mode == "view" %} disabled {% endif %}
-                                                                        {% if student['login'] in _learning_stream['students_list'] %}checked {% endif %}
+                                                                        {% if student['login'] in _education_stream['students_list'] %}checked {% endif %}
                                                                         name="{{ student['login'] }}" type="checkbox" value="{{ student['login'] }}">
                                                             </td>
                                                             <td>{{ student['login'] }}</td>
@@ -262,12 +262,12 @@
                                                 <div class="" style="display: inline-grid;float: left">
                                                     <label class="form-label"><strong>Дата старта</strong></label>
                                                     <input {% if _mode == 'view' %} disabled {% endif %} id="date_start" name="date_start" type="date" class="form-control"
-                                                           {% if _mode == "view" %}value="{{ _learning_stream['date_start'] }}"{% endif %}>
+                                                           {% if _mode == "view" %}value="{{ _education_stream['date_start'] }}"{% endif %}>
                                                 </div>
                                                 <div style="display:grid; justify-content: right">
                                                     <label class="form-label"><strong>Дата окончания</strong></label>
                                                     <input {% if _mode == 'view' %} disabled {% endif %} id="date_end" name="date_end" type="date" class="form-control"
-                                                           {% if _mode == "view" %}value="{{ _learning_stream['date_end'] }}"{% endif %}>
+                                                           {% if _mode == "view" %}value="{{ _education_stream['date_end'] }}"{% endif %}>
                                                 </div>
                                             </div>
                                             <div class="mb-2">
@@ -276,7 +276,7 @@
                                                 {% if _mode == "view" %} disabled {% endif %}>
                                                     <option selected disabled value="placeholder">Выберите преподавателя</option>
                                                     {% for teacher in _curators_list %}
-                                                        <option {% if teacher['login'] == _learning_stream['teacher'] %} selected {% endif %} value="{{ teacher['login'] }}">{{ teacher['login'] }}</option>
+                                                        <option {% if teacher['login'] == _education_stream['teacher'] %} selected {% endif %} value="{{ teacher['login'] }}">{{ teacher['login'] }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
@@ -297,10 +297,10 @@
                                                     </thead>
                                                     <tbody>
                                                         {% for curator in _curators_list %}
-                                                            {% if _mode == 'new' or _mode == "view" and curator['login'] in _learning_stream['curators_list'] or _mode == 'edit' %}
+                                                            {% if _mode == 'new' or _mode == "view" and curator['login'] in _education_stream['curators_list'] or _mode == 'edit' %}
                                                                 <tr>
                                                                     <td><input {% if _mode == "view" %} disabled {% endif %}
-                                                                            {% if curator['login'] in _learning_stream['curators_list'] %}checked {% endif %}
+                                                                            {% if curator['login'] in _education_stream['curators_list'] %}checked {% endif %}
                                                                             name="{{ curator['login'] }}" type="checkbox" value="{{ curator['login'] }}"></td>
                                                                     <td>{{ curator['login'] }}</td>
                                                                 </tr>
@@ -318,7 +318,7 @@
                                     <button type="submit" name="button" value="{% if _mode == 'new' %}new{% elif _mode == "view" %}edit{% else %}save{% endif %}" class="btn btn-primary ">
                                         {% if _mode == 'new' %}Создать{% elif _mode == "view" %}Редактировать{% else %}Сохранить{% endif %}
                                     </button>
-                                    <a href="{{ url_for('learning_streams') }}" class="btn btn-primary cancelbtn">
+                                    <a href="{{ url_for('education_streams') }}" class="btn btn-primary cancelbtn">
                                         Отмена
                                     </a>
                                 </div>

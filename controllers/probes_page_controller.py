@@ -45,7 +45,7 @@ class ProbesPageController():
 
         return probes
 
-    def is_probationers(self):
+    def is_probationers(self, _user_id):
         """
         Проверает, есть ли у пользователя тестируемые
 
@@ -55,4 +55,4 @@ class ProbesPageController():
 
         probationer_service = ProbationersService()
 
-        return probationer_service.is_probationers()
+        return probationer_service.is_probationers(_user_id)

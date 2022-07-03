@@ -1,3 +1,4 @@
+from services.main_page_service import MainPageService
 import utils.ada as ada
 from services.action_service import ActionService
 from services.user_manager_service import UserManagerService
@@ -19,7 +20,7 @@ class MainPageController():
 
         pass
 
-    def get_actions(self):
+    def get_actions(self, _user_id):
         """
         Возвращает список действий, сделанных авторизованным пользователем(если авторизованный пользователь админ,
         то возвращает список действий всех пользователей, которые есть в системе)
@@ -29,7 +30,7 @@ class MainPageController():
         """
 
         index_service = ActionService()
-        actions_list = index_service.get_actions()
+        actions_list = index_service.get_actions(_user_id)
         actions = []
 
         for i_action in actions_list:
@@ -46,7 +47,7 @@ class MainPageController():
 
         return actions
 
-    def get_current_user(self):
+    def get_user_view_by_user_id(self, _user_id):
         """
         Возвращает объект User по id пользователя
 
@@ -54,9 +55,12 @@ class MainPageController():
             _user_id   - Required  : id пользователя (Int)
         """
 
-        action_service = ActionService()
+        #action_service = ActionService()
+        #user = action_service.get_current_user()
 
-        user = action_service.get_current_user()
+        page_service = MainPageService()
+
+        user = page_service.get_user_by_id(_user_id)
         user_view = {}
 
         user_view['user_id'] = user.user_id
@@ -76,6 +80,18 @@ class MainPageController():
         return user_view
 
     def discharge_password(self, _login, _password, _password2, _current_password):
+        """
+        Функция изменения пароля пользователя
+
+        Args:
+            _login (_type_): логин пользователя
+            _password (_type_): новый пароль
+            _password2 (_type_): повтор нового пароля
+            _current_password (_type_): текущий пароль пользователя
+
+        Returns:
+            None: ничего не возвращает
+        """        
 
         user_service = UserManagerService()
 

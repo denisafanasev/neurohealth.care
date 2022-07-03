@@ -1,19 +1,20 @@
-from models.course_manager import CourseManager
+#TODO: передалать на использование менеджера и не сервиса
 from services.action_service import ActionService
-from services.homework_service import HomeworkService
 from models.user_manager import UserManager
+from models.course_manager import EducationCourseManager
+from models.education_stream_manager import EducationStreamManager
+
 from datetime import datetime
 import config
-from services import user_manager_service
-from services.homework_service import HomeworkService
-class CourseService():
+
+class EducationCourseService():
     """
     DownloadService - класс бизнес-логики сервиса управления настройками приложения
     Возвращает в слой отображения объекты в доменной модели
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def get_course_modules_list(self, _id, _login_user):
+    def get_course_modules_list(self, _id, _user_id):
         """
         Возвращает список модулей курса по id
 
@@ -24,28 +25,28 @@ class CourseService():
             modules_list(List): списко модулей курса
         """
 
-        course_manager = CourseManager()
+        course_manager = EducationCourseManager()
 
         modules_list = course_manager.get_course_modules_list(_id)
         #
-        # if user.learning_stream_list != []:
-        #     for id_learning_stream in user.learning_stream_list:
-        #         learning_stream = learning_stream_service.get_learning_stream(id_learning_stream)
+        # if user.education_stream_list != []:
+        #     for id_education_stream in user.education_stream_list:
+        #         education_stream = education_stream_service.get_education_stream(id_education_stream)
         #
-        #         if learning_stream.course == _id and learning_stream.status == "идет":
-        #             learning_stream.course = modules_list
-        #             course = learning_stream
+        #         if education_stream.course == _id and education_stream.status == "идет":
+        #             education_stream.course = modules_list
+        #             course = education_stream
         #             break
 
         return modules_list
 
 
-    def get_lesson(self, _id, _id_course, _id_video):
+    def get_lesson(self, _user_id, _lesson_id, _id_course, _id_video):
         """
         Возвращает данные урока
 
         Args:
-            _id(Int): индентификатор урока
+            _lesson_id(Int): индентификатор урока
             _id_course(Int): индентификатор курса
             _id_video(Int): индентификатор видео
 
@@ -53,11 +54,12 @@ class CourseService():
             Lesson: класс Lesson, обернутый в класс Module
         """
 
-        course_manager = CourseManager()
+        course_manager = EducationCourseManager()
+        user_manager = UserManager()
         action_service = ActionService()
 
-        login_user = self.get_current_user('').login
-        lesson = course_manager.get_lesson(_id, _id_course, _id_video)
+        login_user = user_manager.get_user_by_id(_user_id).login
+        lesson = course_manager.get_lesson(_lesson_id, _id_course, _id_video)
 
         action_service.add_notifications(lesson, "view", '', "course_manager", login_user)
 
@@ -71,12 +73,37 @@ class CourseService():
             courses(List): список курсов
         """
 
-        course_manager = CourseManager()
+        course_manager = EducationCourseManager()
 
         return course_manager.get_courses()
 
-    # TODO: во все внутрении модули, id пользователя должен приезжать из app.py
-    def get_current_user(self):
+    def get_user_by_id_and_course_id(self, _user_id, _course_id):
+        """
+        Возвращает объект User по id пользователя
+
+        Args:
+            _user_id   - Required  : id пользователя (Int)
+            _id_course - Required  : id курса (Int)
+
+        Returns:
+            User: пользователь
+        """
+
+        user_manager = UserManager()
+        education_stream_manager = EducationStreamManager()
+
+        user = user_manager.get_user_by_id(_user_id)
+
+        education_streams = education_stream_manager.get_education_streams_list_by_login_user(user.login, user.role)
+
+        if _course_id is not None:
+            for education_stream in education_streams:
+                if education_stream.course == _course_id and education_stream.status == "идет":
+                    user.education_stream_list = education_stream
+
+        return user
+    
+    def get_user_by_id(self, _user_id):
         """
         Возвращает объект User по id пользователя
 
@@ -87,14 +114,9 @@ class CourseService():
             User: пользователь
         """
 
-        user_service = user_manager_service.UserManagerService()
-
-        user = user_service.get_current_user('')
-        if _id_course is not None:
-            for learning_stream in user.learning_stream_list:
-                if learning_stream.course == _id_course and learning_stream.status == "идет":
-                    user.learning_stream_list = learning_stream
-
+        user_manager = UserManager()
+        user = user_manager.get_user_by_id(_user_id)
+        
         return user
 
     def get_course_by_id(self, _id):
@@ -108,7 +130,7 @@ class CourseService():
             course(Course): курс
         """
 
-        course_manager = CourseManager()
+        course_manager = EducationCourseManager()
 
         return course_manager.get_course_by_id(_id)
     
@@ -124,7 +146,7 @@ class CourseService():
         Returns:
             Boolean: доступен модуль для пользователя или нет
         """        
-        course_manager = CourseManager()
+        course_manager = EducationCourseManager()
         user_manager = UserManager()
 
         user = user_manager.get_user_by_id(_user_id)
@@ -168,3 +190,16 @@ class CourseService():
         login_user = self.get_current_user().login
 
         homework_service.save_homework(_files_list, login_user, _id_room_chat)
+    
+    def get_user_list(self, _user_id):
+        """
+        Возвращает список пользователей
+
+        Returns:
+            List: список пользователей с типом User
+        """
+
+        user_manager = UserManager()
+        users = user_manager.get_users(_user_id)
+
+        return users

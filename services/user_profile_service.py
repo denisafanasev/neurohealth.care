@@ -1,6 +1,6 @@
 from models.user_manager import UserManager
 from services.action_service import ActionService
-from services.learning_stream_service import LearningStreamService
+# from services.education_stream_service import EducationStreamService
 
 class UserProfileService():
     """
@@ -140,22 +140,22 @@ class UserProfileService():
 
         return user_manager.access_extension(_period, _reference_point, _login)
 
-    def get_learning_streams_users(self, _learning_stream_list):
+    def get_education_streams_users(self, _education_stream_list):
         """
         Возвращает список обучающих потоков по id, в которых есть пользователь
 
         Args:
-            _learning_stream_list(List): список id обучающих потоков
+            _education_stream_list(List): список id обучающих потоков
 
         Returns:
             (List): список обучающих потоков
         """
 
-        learning_stream_service = LearningStreamService()
+        education_stream_service = EducationStreamService()
 
-        learning_stream_list = []
-        for learning_stream in _learning_stream_list:
-            learning_stream_list.append(learning_stream_service.get_learning_stream(learning_stream))
+        education_stream_list = []
+        for education_stream in _education_stream_list:
+            education_stream_list.append(education_stream_service.get_education_stream(education_stream))
 
-        return learning_stream_list
+        return education_stream_list
 

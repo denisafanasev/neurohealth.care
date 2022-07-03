@@ -10,13 +10,15 @@ class MainMenuPageController():
     Взаимодейтвует с классами слоя сервисов, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def __init__(self):
+    user_id = None
+
+    def __init__(self, _user_id):
         """
         Constructor
         @params:
         """
 
-        pass
+        self.user_id = _user_id
 
     def get_main_menu(self):
         """
@@ -25,7 +27,7 @@ class MainMenuPageController():
         """
 
         main_menu_service = MainMenuService()
-        data = main_menu_service.get_data()
+        data = main_menu_service.get_data(self.user_id)
         menu = []
 
         main_menu = set()
@@ -56,5 +58,5 @@ class MainMenuPageController():
         """
 
         main_menu_service = MainMenuService()
-        active_menu_item = main_menu_service.get_active_menu_item_number(_endpoind)
+        active_menu_item = main_menu_service.get_active_menu_item_number(self.user_id, _endpoind)
         return active_menu_item

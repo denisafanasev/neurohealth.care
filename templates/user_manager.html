@@ -12,14 +12,14 @@
                 displayStart: {{ _num_page * 10 }},
                 responsive: true
             });
-            var learning_stream_table = $("#learning_stream_table").DataTable({
+            var education_stream_table = $("#education_stream_table").DataTable({
                 responsive: true,
                 lengthChange: !1,
                 pageLength: 5
 
             });
 
-            learning_stream_table.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
+            education_stream_table.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
             datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
             let message = document.getElementById('message');
 
@@ -267,7 +267,7 @@
                 var modal_extension_{{ item['user_id'] }} = document.getElementById('extension_{{ item['user_id'] }}');
                 var modal_status_{{ item['user_id'] }} = document.getElementById('status_{{ item['user_id'] }}');
                 var modal_discharge_{{ item['user_id'] }} = document.getElementById('discharge_{{ item['user_id'] }}');
-                var modal_learning_stream_{{ item['user_id'] }} = document.getElementById('learning_stream_{{ item['user_id'] }}');
+                var modal_education_stream_{{ item['user_id'] }} = document.getElementById('education_stream_{{ item['user_id'] }}');
                 // When the user clicks anywhere outside of the modal, close it
                 window.onclick = function (event) {
                     if (event.target === modal_{{ item['user_id'] }}) {
@@ -282,8 +282,8 @@
                     if (event.target === modal_discharge_{{ item['user_id'] }}) {
                         modal_discharge_{{ item['user_id'] }}.style.display = "none";
                     }
-                    if (event.target === modal_learning_stream_{{ item['user_id'] }}) {
-                        modal_learning_stream_{{ item['user_id'] }}.style.display = "none";
+                    if (event.target === modal_education_stream_{{ item['user_id'] }}) {
+                        modal_education_stream_{{ item['user_id'] }}.style.display = "none";
                     }
                 }
             </script>

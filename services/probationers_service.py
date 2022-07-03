@@ -1,5 +1,6 @@
 from models.probationer_manager import ProbationerManager
-from services.user_manager_service import UserManagerService
+from models.user_manager import UserManager
+# from services.user_manager_service import UserManagerService
 
 class ProbationersService():
     """
@@ -25,7 +26,7 @@ class ProbationersService():
 
         return probationers
 
-    def is_probationers(self):
+    def is_probationers(self, _user_id):
         """
         Проверает, есть ли у пользователя тестируемые
 
@@ -34,7 +35,7 @@ class ProbationersService():
         """
 
         probationer_manager = ProbationerManager()
-        user_manager_service = UserManagerService()
-        user_login = user_manager_service.get_current_user('').login
+        user_manager = UserManager()
+        user_login = user_manager.get_user_by_id(_user_id).login
 
         return probationer_manager.is_probationers(user_login)

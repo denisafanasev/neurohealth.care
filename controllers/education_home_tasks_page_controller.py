@@ -23,7 +23,7 @@ class EducationHomeTasksPageController():
             room_chat = homework_service.get_room_chat(homework.id_room_chat)
             course = homework_service.get_course(room_chat.id_course)
             lesson = homework_service.get_lesson(room_chat.id_lesson, room_chat.id_course)
-            # learning_stream = homework_service.get_learning_stream(room_chat.id_learning_stream)
+            # education_stream = homework_service.get_education_stream(room_chat.id_education_stream)
             user = homework_service.get_current_user(room_chat.login_user)
 
             homework_view = {
@@ -40,9 +40,9 @@ class EducationHomeTasksPageController():
                     "id": lesson.id,
                     "name": lesson.name
                 },
-                # "learning_stream": {
-                #     "id": learning_stream.id,
-                #     "name": learning_stream.name
+                # "education_stream": {
+                #     "id": education_stream.id,
+                #     "name": education_stream.name
                 # },
                 "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
                 "users_files_list": homework.users_files_list,

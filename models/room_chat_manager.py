@@ -17,10 +17,10 @@ class RoomChatManager():
 
         room_chat = RoomChat(_id=_room_chat["id"], _name=_room_chat["name"], _message=_room_chat["message"])
 
-        if _room_chat.get("id_learning_stream") is not None:
-            room_chat.id_learning_stream = _room_chat.get("id_learning_stream")
+        if _room_chat.get("id_education_stream") is not None:
+            room_chat.id_education_stream = _room_chat.get("id_education_stream")
         else:
-            room_chat.id_learning_stream = ""
+            room_chat.id_education_stream = ""
 
         return room_chat
 
@@ -44,7 +44,7 @@ class RoomChatManager():
 
         return message
 
-    def room_chat_entry(self, _id_lesson, _user, _id_course, _id_room_chat, _id_learning_stream, _id_module):
+    def room_chat_entry(self, _id_lesson, _user, _id_course, _id_room_chat, _id_education_stream, _id_module):
         """
         Подключает пользователя к чату
 
@@ -53,7 +53,7 @@ class RoomChatManager():
             _user(User): данные пользователя
             _id_course(Int): индентификатор курса
             _id_room_chat(Int): индентификатор чата
-            _id_learning_stream(Int): индентификатор обучающего потока
+            _id_education_stream(Int): индентификатор обучающего потока
         """
 
         data_store = DataStore("room_chat")
@@ -67,19 +67,19 @@ class RoomChatManager():
             name_chat = room_chat_list[0]["name"]
 
         if room_chat_list == []:
-            room_chat = self.add_room_chat(name_chat, _id_learning_stream)
+            room_chat = self.add_room_chat(name_chat, _id_education_stream)
         elif _id_room_chat is None:
             room_chat = None
             for i_room_chat in room_chat_list:
-                if i_room_chat.get("id_learning_stream") is not None:
-                    if i_room_chat['id_learning_stream'] == _id_learning_stream or _id_module == 1:
+                if i_room_chat.get("id_education_stream") is not None:
+                    if i_room_chat['id_education_stream'] == _id_education_stream or _id_module == 1:
                         room_chat = self.room_chat_row_to_room_chat(i_room_chat)
                         break
         else:
             room_chat = self.room_chat_row_to_room_chat(room_chat_list[0])
 
         if room_chat is None:
-            room_chat = self.add_room_chat(name_chat, _id_learning_stream)
+            room_chat = self.add_room_chat(name_chat, _id_education_stream)
 
         if room_chat.message is not None:
             message_list = self.get_messages(room_chat.message)
@@ -87,7 +87,7 @@ class RoomChatManager():
 
         return room_chat
 
-    def add_room_chat(self, _name_chat, _id_learning_stream):
+    def add_room_chat(self, _name_chat, _id_education_stream):
         """
         Создает новый чат
 
@@ -101,12 +101,12 @@ class RoomChatManager():
             "id": count_room_chat + 1,
             "name": _name_chat,
             "message": [],
-            "id_learning_stream": _id_learning_stream
+            "id_education_stream": _id_education_stream
         }
         room_chat = self.room_chat_row_to_room_chat(room_chat)
 
         data_store.add_row({"id": room_chat.id, "name": room_chat.name, "message": [],
-                            "id_learning_stream": room_chat.id_learning_stream})
+                            "id_education_stream": room_chat.id_education_stream})
 
         return room_chat
 

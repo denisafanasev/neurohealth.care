@@ -57,7 +57,7 @@ SUPERUSER_MENU = [
     {"module": "Центр управления", "name": "Пользователи", "endpoint": "user_manager", "icon": "users"},
     {"module": "Центр управления", "name": "Настройки", "endpoint": "age_range_list", "icon": "settings"},
     {"module": "Центр управления", "name": "Домашние задания", "endpoint": "education_home_tasks", "icon": "edit"},
-    {"module": "Центр управления", "name": "Обучающие потоки", "endpoint": "learning_streams", "icon": "crop"}
+    {"module": "Центр управления", "name": "Обучающие потоки", "endpoint": "education_streams", "icon": "crop"}
 ]
 
 EDUCATION_MENU = [
