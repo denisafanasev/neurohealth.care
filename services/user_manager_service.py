@@ -1,7 +1,6 @@
 from models.user_manager import UserManager
-from services.action_service import ActionService
-# from services.user_profile_service import UserProfileService
 from models.education_stream_manager import EducationStreamManager
+from models.action_manager import ActionManager
 
 class UserManagerService():
     """
@@ -63,7 +62,6 @@ class UserManagerService():
         """
 
         user_manager = UserManager()
-        # user_profile_service = UserProfileService()
         stream_manager = EducationStreamManager()
 
         user = user_manager.get_user_by_id(user_id)
@@ -80,7 +78,7 @@ class UserManagerService():
 
         return user
 
-    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number):
+    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _current_user_id):
         """
         Создает в системе суперпользователя
 
@@ -98,16 +96,18 @@ class UserManagerService():
         """
 
         user_manager = UserManager()
+        action_manager = ActionManager()
 
         error = user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
-        login_superuser = self.get_current_user('').login
+        login_superuser = user_manager.get_user_by_id(_current_user_id)
 
         if error is None:
-            ActionService().add_notifications(_login, "add", 'нового', "user_manager", login_superuser)
+            action_manager.add_notifications(_login, "add", 'нового', "user_manager", login_superuser)
 
         return error
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date, _education_module_expiration_date):
+    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
+                    _education_module_expiration_date, _current_user_id):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -122,16 +122,18 @@ class UserManagerService():
         """
 
         user_manager = UserManager()
+        action_manager = ActionManager()
 
         user = user_manager.change_user(_login, _name, _email, _role, _probationers_number, _created_date,
                                  _education_module_expiration_date)
-        login_superuser = self.get_current_user('').login
 
-        ActionService().add_notifications(_login, "overwrite", 'данные', "user_manager", login_superuser)
+        login_superuser = user_manager.get_user_by_id(_current_user_id).login
+
+        action_manager.add_notifications(_login, "overwrite", 'данные', "user_manager", login_superuser)
 
         return user
 
-    def discharge_password(self, _login, _password, _password2, _current_password=''):
+    def discharge_password(self, _login, _password, _password2, _current_user_id, _current_password=''):
         """
         Обновляет в системе пароль пользователя
 
@@ -145,15 +147,16 @@ class UserManagerService():
         """
 
         user_manager = UserManager()
+        action_manager = ActionManager()
 
         error = user_manager.discharge_password(_login, _password, _password2, _current_password)
-        login_superuser = self.get_current_user('').login
+        login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
-        ActionService().add_notifications(_login, "overwrite", 'пароль', "user_manager", login_superuser)
+        action_manager.add_notifications(_login, "overwrite", 'пароль', "user_manager", login_superuser)
 
         return error
 
-    def activation(self, _login):
+    def activation(self, _login, _current_user_id):
         """
         разблокировка пользователя
 
@@ -162,13 +165,15 @@ class UserManagerService():
         """
 
         user_manager = UserManager()
+        action_manager = ActionManager()
+
         user_manager.activation(_login)
 
-        user_login = self.get_current_user('').login
-        ActionService().add_notifications(_login, "overwrite", 'доступ', "user_manager", user_login)
+        login_superuser = user_manager.get_user_by_id(_current_user_id).login
+        action_manager.add_notifications(_login, "overwrite", 'доступ', "user_manager", login_superuser)
 
 
-    def deactivation(self, _login):
+    def deactivation(self, _login, _current_user_id):
         """
         Блокировка пользователя
 
@@ -177,15 +182,16 @@ class UserManagerService():
         """
 
         user_manager = UserManager()
-        user_manager.deactivation(_login)
+        action_manager = ActionManager()
 
-        user_login = self.get_current_user('').login
-        ActionService().add_notifications(_login, "overwrite", 'доступ', "user_manager", user_login)
+        active = user_manager.deactivation(_login)
 
+        login_superuser = user_manager.get_user_by_id(_current_user_id).login
+        action_manager.add_notifications(_login, "overwrite", 'доступ', "user_manager", login_superuser)
 
         return active
 
-    def get_current_user_role(self):
+    def get_current_user_role(self, _current_user_id):
         """
         Возвращает роль текущего пользователя
 
@@ -195,10 +201,10 @@ class UserManagerService():
 
         user_manager = UserManager()
 
-        return user_manager.get_user_by_id(user_manager.get_current_user_id()).role
+        return user_manager.get_user_by_id(_current_user_id).role
 
 
-    def access_extension(self, _period, _reference_point, _login):
+    def access_extension(self, _period, _reference_point, _login, _current_user_id):
         """
         Ппродление срока доступа пользователя к центру обучения
 
@@ -208,34 +214,9 @@ class UserManagerService():
             _login(String): логин пользователя, которому продлевают срок доступа
         """
         user_manager = UserManager()
+        action_manager = ActionManager()
 
         user_manager.access_extension(_period, _reference_point, _login)
-        login_superuser = self.get_current_user('').login
+        login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
-        ActionService().add_notifications(_login, "extended", 'срок доступа', "user_manager", login_superuser)
-
-    # def add_user_in_education_stream(self, _id_education_stream, _users_list):
-    #     """
-    #     Добавляет пользователей к обучающему потоку
-    #
-    #     Args:
-    #         _id_education_stream(Int): идентификатор обучающего потока
-    #         _users_list(List): список пользователей
-    #     """
-    #
-    #     user_manager = UserManager()
-    #
-    #     return user_manager.add_user_in_education_stream(_id_education_stream, _users_list)
-    #
-    # def exclusion_of_users_from_list(self, _excluded_users_list, _id_education_stream):
-    #     """
-    #     Исключает пользователей из обучающего потока
-    #
-    #     Args:
-    #         _id_education_stream(Int): идентификатор обучающего потока
-    #         _excluded_users_list(List): список пользователей
-    #     """
-    #
-    #     user_manager = UserManager()
-    #
-    #     user_manager.exclusion_of_users_from_list(_excluded_users_list, _id_education_stream)
+        action_manager.add_notifications(_login, "extended", 'срок доступа', "user_manager", login_superuser)

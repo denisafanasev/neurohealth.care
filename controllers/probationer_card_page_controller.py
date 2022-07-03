@@ -7,7 +7,7 @@ class ProbationerCardPageController():
         pass
 
     def create_probationers(self, _user_login, _name_probationer, _date_of_birth, _name_parent,
-                            _educational_institution, _contacts, _diagnoses, _reasons_for_contact):
+                            _educational_institution, _contacts, _diagnoses, _reasons_for_contact, _id_user):
         """
         Создает в системе тестируемого
 
@@ -26,7 +26,7 @@ class ProbationerCardPageController():
 
         probationer_card_service.create_probationer( _user_login, _name_probationer, _date_of_birth,
                                                     _name_parent, _educational_institution, _contacts, _diagnoses,
-                                                    _reasons_for_contact)
+                                                    _reasons_for_contact, _id_user)
 
     def get_probationer_card_view(self, probationer_id):
         """
@@ -62,7 +62,7 @@ class ProbationerCardPageController():
 
     def change_probationer(self, _probationer_id, _name_probationer, _date_of_birth, _name_parent,
                            _educational_institution,
-                           _contacts, _diagnoses, _reasons_for_contact):
+                           _contacts, _diagnoses, _reasons_for_contact, _id_user):
         """
         Обновляет информацию о тестируемом
 
@@ -73,7 +73,7 @@ class ProbationerCardPageController():
 
         return probationer_card_service.change_probationer(_probationer_id, _name_probationer, _date_of_birth, _name_parent,
                            _educational_institution,
-                           _contacts, _diagnoses, _reasons_for_contact)
+                           _contacts, _diagnoses, _reasons_for_contact, _id_user)
 
     def get_settings_probationer(self):
         """

@@ -1,7 +1,7 @@
 from models.probes_manager import ProbesManager
 from models.probationer_manager import ProbationerManager
-from services.action_service import ActionService
-# from services.user_manager_service import UserManagerService
+from models.action_manager import ActionManager
+from models.user_manager import UserManager
 
 
 class ProbeProfileService():
@@ -14,7 +14,7 @@ class ProbeProfileService():
     def init(self):
         pass
 
-    def get_probationers(self):
+    def get_probationers(self, _user_id):
         """
         Возвращает список тестируемых
 
@@ -23,10 +23,13 @@ class ProbeProfileService():
         """
 
         probationer_manager = ProbationerManager()
+        user_manager = UserManager()
 
-        return probationer_manager.get_probationers()
+        user = user_manager.get_user_by_id(_user_id)
 
-    def add_probe(self, _name_probationer, _probationer_id, _date_of_birth, _protocol_status):
+        return probationer_manager.get_probationers(user)
+
+    def add_probe(self, _name_probationer, _probationer_id, _date_of_birth, _protocol_status, _id_user):
         """
         Добавляет в базу данных пробу тестируемого
 
@@ -38,12 +41,13 @@ class ProbeProfileService():
         """
 
         probes_manager = ProbesManager()
-        user_service = UserManagerService()
+        user_manager = UserManager()
+        action_manager = ActionManager()
 
         probe_id = probes_manager.add_probe(_name_probationer, _probationer_id, _date_of_birth, _protocol_status)
-        login_user = user_service.get_current_user('').login
+        login_user = user_manager.get_user_by_id(_id_user).login
 
-        ActionService().add_notifications(f"пробы испытуемого № {_probationer_id}", "add", '', "probes_manager",
+        action_manager.add_notifications(f"пробы испытуемого № {_probationer_id}", "add", '', "probes_manager",
                                           login_user)
         return probe_id
 

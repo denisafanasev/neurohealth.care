@@ -54,7 +54,7 @@ class EstimatedValuesPageController():
         page_service = EstimatedValuesService()
         return page_service.get_age_ranges()
 
-    def overwrite(self, _id_file_name, _criteria):
+    def overwrite(self, _id_file_name, _criteria, _id_user):
         """
         Изменяет оценочные значения в тестах
 
@@ -65,4 +65,4 @@ class EstimatedValuesPageController():
 
         page_service = EstimatedValuesService()
 
-        return page_service.overwrite(_id_file_name, _criteria)
+        return page_service.overwrite(_id_file_name, _criteria, _id_user)

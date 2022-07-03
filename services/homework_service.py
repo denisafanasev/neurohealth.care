@@ -1,27 +1,11 @@
 from models.homework_manager import HomeworkManager
-# from services.upload_service import UploadService
-# from services.room_chat_service import RoomChatService
-# from services import education_course_service
-# from services import user_manager_service
+from models.room_chat_manager import RoomChatManager
+from models.course_manager import EducationCourseManager
+from models.education_stream_manager import EducationStreamManager
+from models.user_manager import UserManager
+
 
 class HomeworkService():
-
-    def save_homework(self, _homework, _login_user, _id_room_chat):
-        """
-        Сохраняет данные домашнего задания
-        Args:
-            _homework(Dict): данные сданной домашней работы
-            _id_room_chat(Int): индетификатор чата
-            _login_user(String):
-        """
-
-        homework_manager = HomeworkManager()
-        upload_service = UploadService()
-
-        homework_files_list = upload_service.upload_files(_homework, _login_user)
-        homework = homework_manager.create_homework(homework_files_list, _id_room_chat)
-
-        homework_manager.create_homework_answer(homework.id)
 
     def get_homeworks_list(self):
         """
@@ -45,9 +29,13 @@ class HomeworkService():
             RoomChat: чат
         """
 
-        room_chat_service = RoomChatService()
+        room_chat_manager = RoomChatManager()
 
-        return room_chat_service.get_room_chat(_id_room_chat=_id_room_chat)
+        room_chat = room_chat_manager.get_room_chat(_id_room_chat=_id_room_chat)
+        name_room_chat = room_chat.name.split("_")
+        id_dict = {"course": int(name_room_chat[1]), "lesson": int(name_room_chat[2]), "user": name_room_chat[3]}
+
+        return room_chat, id_dict
 
     def get_course(self, _id_course):
         """
@@ -58,9 +46,9 @@ class HomeworkService():
             Course: курс
         """
 
-        course_service_service = education_course_service.EducationCourseService()
+        course_manager = EducationCourseManager()
 
-        return course_service_service.get_course_by_id(_id_course)
+        return course_manager.get_course_by_id(_id_course)
 
     def get_lesson(self, _id_lesson, _id_course):
         """
@@ -72,9 +60,9 @@ class HomeworkService():
             Lesson: урок
         """
 
-        course_service_service = education_course_service.EducationCourseService()
+        course_manager = EducationCourseManager()
 
-        return course_service_service.get_lesson(_id_lesson, _id_course, 1)
+        return course_manager.get_lesson(_id_lesson, _id_course, 1)
 
     # def get_education_stream(self, _id_education_stream):
     #
@@ -82,18 +70,21 @@ class HomeworkService():
     #
     #     return stream_service.get_education_stream(_id_education_stream)
 
-    def get_current_user(self, _login_user):
+    def get_user(self, _user):
         """
         Возвращает данные текущего пользователя в системе
         Args:
-            _login_user(String): логин пользователя
+            _user(String): логин пользователя
         Returns:
             User: пользователь
         """
 
-        user_service = user_manager_service.UserManagerService()
+        user_manager = UserManager()
 
-        return user_service.get_current_user(_login_user)
+        if _user.isdigit():
+            return user_manager.get_user_by_id(int(_user))
+        else:
+            return user_manager.get_user_by_login(_user)
 
     def change_homework_answer(self, _answer, _id_homework_answer):
         """

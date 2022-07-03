@@ -4,7 +4,7 @@ import config
 
 from models.users_file_manager import UsersFileManager
 
-class UploadService():
+class UploadManager():
     """
     UploadService - класс бизнес-логики сервиса управления настройками приложения
     Возвращает в слой отображения объекты в доменной модели
@@ -24,6 +24,8 @@ class UploadService():
         user_files_manager = UsersFileManager()
 
         files = []
+        if _files_list[0].filename == "":
+            return files
         for i_file in _files_list:
 
             user_dir = "user_{}".format(_user_login)

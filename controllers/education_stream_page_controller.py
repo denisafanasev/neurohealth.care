@@ -51,11 +51,11 @@ class EducationStreamPageController():
 
         return students_list
 
-    def get_curators_list(self):
+    def get_curators_list(self, _user_id):
 
         education_stream_service = EducationStreamService()
 
-        curators = education_stream_service.get_curators_list()
+        curators = education_stream_service.get_curators_list(_user_id)
         curators_list = []
 
         for i_curator in curators:
@@ -68,11 +68,11 @@ class EducationStreamPageController():
 
         return curators_list
 
-    def get_courses_list(self):
+    def get_courses_list(self, _user_id):
 
         education_stream_service = EducationStreamService()
 
-        courses = education_stream_service.get_courses_list()
+        courses = education_stream_service.get_courses_list(_user_id)
         courses_list = []
 
         for i_course in courses:

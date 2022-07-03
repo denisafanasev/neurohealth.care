@@ -1,6 +1,7 @@
 from models.estimated_values_manager import EstimatedValuesManager
-from services.action_service import ActionService
-# from services.user_manager_service import UserManagerService
+from models.user_manager import UserManager
+from models.action_manager import ActionManager
+
 
 class EstimatedValuesService():
     """
@@ -39,7 +40,7 @@ class EstimatedValuesService():
 
         return estimated_values_manager.get_age_ranges()
 
-    def overwrite(self, _id_file_name, _criteria):
+    def overwrite(self, _id_file_name, _criteria, _id_user):
         """
         Изменяет оценочные значения в тестах
 
@@ -49,9 +50,10 @@ class EstimatedValuesService():
         """
 
         estimated_values_manager = EstimatedValuesManager()
-        user_service = UserManagerService()
+        user_manager = UserManager()
+        action_manager = ActionManager()
 
         file_name = estimated_values_manager.overwrite(_id_file_name, _criteria)
-        login_user = user_service.get_current_user('').login
+        login_user = user_manager.get_user_by_id(_id_user).login
 
-        ActionService().add_notifications(file_name, "overwrite", '', "estimated_values", login_user)
+        action_manager.add_notifications(file_name, "overwrite", '', "estimated_values", login_user)

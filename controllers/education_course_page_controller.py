@@ -20,7 +20,7 @@ class EducationCoursePageController():
 
         course_service = EducationCourseService()
 
-        education_stream = course_service.get_course_modules_list(_id, _user_id)
+        education_stream = course_service.get_course_modules_list(_id)
         # modules_list_view = {
         #     "id_education_stream": education_stream.id,
         #     "date_end": education_stream.date_end,

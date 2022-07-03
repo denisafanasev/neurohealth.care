@@ -15,16 +15,20 @@
                     ]
                 },
                 theme: 'snow',
-
             });
 
-            var form = document.getElementById('chat');
+            let message = document.getElementById('message');
+            let error_chat = "Ошибка: не заполнено поле для отправки сообщения в чат!";
+
+            var form = document.getElementById("chat");
             form.onsubmit = function () {
                 // Populate hidden form on submit
                 var about = document.querySelector('input[name=text]');
                 about.value = quill.root.innerHTML;
                 if (about.value === "<p><br></p>") {
-                    alert("Ошибка: не заполнено поле для отправки домашнего задания!")
+                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                    document.querySelector('p[id=text_message]').textContent = error_chat;
+                    message.style.display = 'block'
                     return false;
                 }
             };

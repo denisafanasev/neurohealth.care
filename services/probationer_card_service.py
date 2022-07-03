@@ -1,6 +1,7 @@
 from models.probationer_manager import ProbationerManager
-from services.action_service import ActionService
-# from services.user_manager_service import UserManagerService
+from models.action_manager import ActionManager
+from models.user_manager import UserManager
+
 
 class ProbationerCardService():
     """
@@ -13,7 +14,7 @@ class ProbationerCardService():
         pass
 
     def create_probationer(self, _user_login, _name_probationer, _date_of_birth, _name_parent,
-                 _educational_institution, _contacts, _diagnoses, _reasons_for_contact):
+                 _educational_institution, _contacts, _diagnoses, _reasons_for_contact, _id_user):
         """
         Создает в системе испытуемого
 
@@ -29,14 +30,15 @@ class ProbationerCardService():
         """
 
         probationer_manager = ProbationerManager()
-        user_service = UserManagerService()
+        user_service = UserManager()
+        action_manager = ActionManager()
 
         name_probationer = probationer_manager.create_probationer( _user_login, _name_probationer, _date_of_birth,
                                                _name_parent, _educational_institution, _contacts, _diagnoses,
                                                _reasons_for_contact)
-        login_user = user_service.get_current_user('').login
+        login_user = user_service.get_user_by_id(_id_user).login
 
-        ActionService().add_notifications(name_probationer, "add", 'нового', "probationer_manager", login_user)
+        action_manager.add_notifications(name_probationer, "add", 'нового', "probationer_manager", login_user)
 
     def get_probationer_card_view(self, probationer_id):
         """
@@ -51,7 +53,7 @@ class ProbationerCardService():
         return probationer_manager.get_probationer_by_id(probationer_id)
 
     def change_probationer(self, _probationer_id, _name_probationer, _date_of_birth, _name_parent,
-                           _educational_institution, _contacts, _diagnoses, _reasons_for_contact):
+                           _educational_institution, _contacts, _diagnoses, _reasons_for_contact, _id_user):
         """
         Записывает изменения данных тестируемого
 
@@ -67,11 +69,12 @@ class ProbationerCardService():
         """
 
         probationer_manager = ProbationerManager()
-        user_service = UserManagerService()
+        user_manager = UserManager()
+        action_manager = ActionManager()
 
         name_probationer = probationer_manager.change_probationer(_probationer_id, _name_probationer, _date_of_birth,
                             _name_parent, _educational_institution, _contacts, _diagnoses, _reasons_for_contact)
 
-        login_user = user_service.get_current_user('').login
+        login_user = user_manager.get_user_by_id(_id_user).login
 
-        ActionService().add_notifications(name_probationer, "overwrite", '', "probationer_manager", login_user)
+        action_manager.add_notifications(name_probationer, "overwrite", '', "probationer_manager", login_user)

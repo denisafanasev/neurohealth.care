@@ -29,7 +29,7 @@ class MainPageController():
             actions(List): список испытуемых
         """
 
-        index_service = ActionService()
+        index_service = MainPageService()
         actions_list = index_service.get_actions(_user_id)
         actions = []
 
@@ -55,9 +55,6 @@ class MainPageController():
             _user_id   - Required  : id пользователя (Int)
         """
 
-        #action_service = ActionService()
-        #user = action_service.get_current_user()
-
         page_service = MainPageService()
 
         user = page_service.get_user_by_id(_user_id)
@@ -79,7 +76,7 @@ class MainPageController():
 
         return user_view
 
-    def discharge_password(self, _login, _password, _password2, _current_password):
+    def discharge_password(self, _login, _password, _password2, _current_password, _current_user_id):
         """
         Функция изменения пароля пользователя
 
@@ -93,9 +90,9 @@ class MainPageController():
             None: ничего не возвращает
         """        
 
-        user_service = UserManagerService()
+        main_page_service = MainPageService()
 
         try:
-            user_service.discharge_password(_login, _password, _password2, _current_password)
+            main_page_service.discharge_password(_login, _password, _password2, _current_user_id,_current_password)
         except UserManagerException as error:
             return error

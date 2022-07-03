@@ -16,7 +16,7 @@ class HomeworkManager():
         """
 
         homework = Homework(_id=_data_row['id'], _id_room_chat=_data_row['id_room_chat'],
-                            _users_files_list=_data_row['users_files_list'])
+                            _users_files_list=_data_row['users_files_list'], _text=_data_row['text'])
 
         if _data_row.get("date_delivery") is not None:
             homework.date_delivery = datetime.strptime(_data_row['date_delivery'], "%d/%m/%Y")
@@ -52,7 +52,7 @@ class HomeworkManager():
 
         return homework_answer
 
-    def create_homework(self, _homework_files_list, _id_room_chat):
+    def create_homework(self, _homework_files_list, _id_room_chat, _text):
         """
         Сохраняет данные файла
         Args:
@@ -64,11 +64,12 @@ class HomeworkManager():
 
         row_count = data_store.get_rows_count()
 
-        homework = self.homework_row_to_homework({"id": row_count + 1, "id_room_chat": _id_room_chat,
-                                                  "users_files_list": _homework_files_list})
+        homework = self.homework_row_to_homework({"id": row_count + 1, "id_room_chat": int(_id_room_chat),
+                                                  "users_files_list": _homework_files_list, "text": _text})
 
         data_store.add_row({"id": homework.id, "id_room_chat": homework.id_room_chat,
-                            "users_files_list": homework.users_files_list, "date_delivery": homework.date_delivery.strftime("%d/%m/%Y")})
+                            "users_files_list": homework.users_files_list,
+                            "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"), "text": homework.text})
 
         return homework
 
@@ -85,6 +86,13 @@ class HomeworkManager():
         homework_list = []
         for homework in homeworks:
             homework['homework_answer'] = self.get_homework_answer(homework['id'])
+            if type(homework["id_room_chat"]) is str:
+                homework["id_room_chat"] = int(homework["id_room_chat"])
+                data_store.update_row({"id_room_chat": homework["id_room_chat"], "id": homework['id']}, "id")
+            if homework.get("text") is None:
+                data_store.update_row({"id": homework["id"], "text": ""}, "id")
+                homework['text'] = ""
+
             homework_list.append(self.homework_row_to_homework(homework))
 
         return homework_list

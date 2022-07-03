@@ -235,8 +235,8 @@ def user_manager():
     """
 
     page_controller = UserManagerPageController()
-    user_id = flask_login.current_user.user_id
-    mpc = MainMenuPageController(user_id)
+    current_user_id = flask_login.current_user.user_id
+    mpc = MainMenuPageController(current_user_id)
 
     # page_controller = UserProfilePageController()
 
@@ -245,7 +245,7 @@ def user_manager():
         return redirect("main_page")
 
     endpoint = request.endpoint
-    users_list = page_controller.get_users_list_view(user_id)
+    users_list = page_controller.get_users_list_view(current_user_id)
     user_id = ''
     # new_user = page_controller.get_users_profile_view(user_id)
     # new_user['user_id'] = 0
@@ -306,12 +306,12 @@ def user_manager():
 
                     error = page_controller.create_user(user["login"], user["name"], user["password"],
                                                         user["password2"], user["email"], user["role"],
-                                                        user["probationers_number"])
+                                                        user["probationers_number"], current_user_id)
 
                     data_edit = {key: value for key, value in data.items()}
 
                     if error is None:
-                        users_list = page_controller.get_users_list_view()
+                        users_list = page_controller.get_users_list_view(current_user_id)
                         mode[len(users_list)] = "view"
                         error = "Пользователь успешно сохранён!"
                         error_type[len(users_list)] = "Successful"
@@ -345,12 +345,12 @@ def user_manager():
 
                     error = page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
                                                 user["probationers_number"], user["created_date"],
-                                                user['education_module_expiration_date'])
+                                                user['education_module_expiration_date'], current_user_id)
 
                     # data[user_id] = page_controller.get_users_profile_view(user_id)
                     data_edit = data
                     data_edit[user_id] = user
-                    users_list = page_controller.get_users_list_view()
+                    users_list = page_controller.get_users_list_view(current_user_id)
                     mode[user_id] = "view"
                     error_type[user_id] = "Successful"
 
@@ -360,7 +360,7 @@ def user_manager():
                 user["password"] = request.form[f"password_{user_id}"]
                 user["password2"] = request.form[f"password2_{user_id}"]
 
-                error = page_controller.discharge_password(user["login"], user["password"], user["password2"])
+                error = page_controller.discharge_password(user["login"], user["password"], user["password2"], current_user_id)
 
                 mode[user_id] = "view"
 
@@ -371,7 +371,7 @@ def user_manager():
                 period = request.form[f"period_{user_id}"]
                 user_login = data[user_id]['login']
 
-                error = page_controller.access_extension(int(period), reference_point, user_login)
+                error = page_controller.access_extension(int(period), reference_point, user_login, current_user_id)
                 data_edit = data
                 data_edit[user_id] = page_controller.get_users_profile_view(user_id)
                 mode[user_id] = "view"
@@ -385,14 +385,12 @@ def user_manager():
                 is_active = request.form.get(f"is_active_{user_id}")
 
                 if is_active == "True":
-                    page_controller.activation(data[user_id]['login'])
+                    error = page_controller.activation(data[user_id]['login'], current_user_id)
                     data[user_id]['active'] = True
-                    error = "Пользователь успешно разблокирован!"
 
                 else:
-                    page_controller.deactivation(data[user_id]['login'])
+                    error = page_controller.deactivation(data[user_id]['login'], current_user_id)
                     data[user_id]['active'] = False
-                    error = "Пользователь успешно заблокирован!"
 
             elif request.form.get(f"button_{user_id}") == "cancel":
                 if user_id != 0:
@@ -401,7 +399,7 @@ def user_manager():
             else:
                 return redirect("user_manager")
 
-            users_list = page_controller.get_users_list_view(user_id)
+            users_list = page_controller.get_users_list_view(current_user_id)
 
     except exceptions.BadRequestKeyError:
         for i_id in users_list:
@@ -488,7 +486,7 @@ def user_profile():
 
                     error = page_controller.create_user(user["login"], user["name"], user["password"],
                                                         user["password2"], user["email"], user["role"],
-                                                        user["probationers_number"])
+                                                        user["probationers_number"], user_id)
 
                     if error is None:
                         mode = "view"
@@ -593,9 +591,10 @@ def main_page():
     """
 
     page_controller = MainPageController()
-    mpc = MainMenuPageController(flask_login.current_user.user_id)
+    user_id = flask_login.current_user.user_id
+    mpc = MainMenuPageController(user_id)
 
-    user = page_controller.get_user_view_by_user_id(flask_login.current_user.user_id)
+    user = page_controller.get_user_view_by_user_id(user_id)
     endpoint = request.endpoint
     error = None
     error_type = None
@@ -609,7 +608,7 @@ def main_page():
             password2 = request.form["password2"]
             current_password = request.form['current_password']
 
-            error = page_controller.discharge_password(user['login'], password, password2, current_password)
+            error = page_controller.discharge_password(user['login'], password, password2, current_password, user_id)
 
             if error is None:
                 error = "Пароль успешно изменен!"
@@ -749,18 +748,19 @@ def education_course_lesson():
         if int(id_module) > 1 and user['role'] != 'superuser':
             return redirect('/price_list')
 
-    data = page_controller.get_lesson(id_lesson, int(id_course), int(id_video))
+    data = page_controller.get_lesson(user_id, id_lesson, int(id_course), int(id_video))
 
     if data["lesson"].get("task") is not None:
         if id_room_chat is None:
             if user["role"] != "superuser":
                 if user['education_stream'].get("status") == "идет":
-                    id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module,
+                    id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module, _id_user=user_id,
                                                                    _id_education_stream=user['education_stream']['id'])["id"]
                     return redirect(
                         f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
                 elif user['active_education_module'] != "inactive":
-                    id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module)['id']
+                    id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module,
+                                                                   _id_user=user_id)['id']
                     return redirect(
                         f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
             return redirect(
@@ -775,14 +775,15 @@ def education_course_lesson():
     if request.method == "POST":
         if request.form.get("send"):
             text = request.form.get("text")
-            page_controller.add_message({"text": text}, id_room_chat)
+            page_controller.add_message({"text": text}, id_room_chat, user_id)
 
         elif request.form.get("button") == "homework":
             files = request.files.getlist("files")
-            page_controller.save_homework(files, id_room_chat)
+            text = request.form.get("text_homework")
+            page_controller.save_homework(files, id_room_chat, user_id, text)
         else:
             id_room_chat = page_controller.room_chat_entry(_id_lesson=id_lesson, _id_course=id_course,
-                                                           _login_user=request.form.get("user"))["id"]
+                                                           _id_user=user_id)["id"]
             return redirect(
                 f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
 
@@ -808,8 +809,9 @@ def education_home_tasks():
         
     """
 
+    user_id = flask_login.current_user.user_id
     page_controller = EducationHomeTasksPageController()
-    mpc = MainMenuPageController(flask_login.current_user.user_id)
+    mpc = MainMenuPageController(user_id)
     endpoint = request.endpoint
 
     data = page_controller.get_homeworks_list()
@@ -841,19 +843,20 @@ def education_chat():
     Общение с пользователями, которые сдали домашнюю работу(только для кураторов)
     """
 
+    user_id = flask_login.current_user.user_id
     page_controller = EducationChatPageController()
-    mpc = MainMenuPageController(flask_login.current_user.user_id)
+    mpc = MainMenuPageController(user_id)
     endpoint = "education_chat"
 
     id_room_chat = request.args.get("id")
 
-    room_chat = page_controller.room_chat_entry(id_room_chat)
-    user = page_controller.get_current_user()
+    room_chat = page_controller.room_chat_entry(id_room_chat, user_id)
+    user = page_controller.get_current_user(user_id)
 
     if request.method == "POST":
         if request.form.get("send"):
             text = request.form.get("text")
-            page_controller.add_message({"text": text}, id_room_chat)
+            room_chat['message'].append(page_controller.add_message({"text": text}, id_room_chat, user_id))
 
     return render_template('education_chat.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _room_chat=room_chat)
@@ -910,8 +913,10 @@ def probes():
 @app.route('/probe_profile', methods=['GET', 'POST'])
 @login_required
 def probe_profile():
+
+    user_id = flask_login.current_user.user_id
     page_controller = ProbeProfileController()
-    mpc = MainMenuPageController(flask_login.current_user.user_id)
+    mpc = MainMenuPageController(user_id)
 
     endpoint = "probes"
 
@@ -928,7 +933,7 @@ def probe_profile():
 
     if probationer_id is None:
         probationers.append({"name_probationer": "Выберите тестируемого"})
-        probationers.extend(page_controller.get_probationers())
+        probationers.extend(page_controller.get_probationers(user_id))
         mode = "selection_probationer"
     else:
         test_id = int(request.args.get("test_id"))
@@ -947,7 +952,7 @@ def probe_profile():
             probationer_id = probationer["probationer_id"]
             date_of_birth = probationer["date_of_birth"]
 
-            probe_id = page_controller.add_probe(name_probationer, probationer_id, date_of_birth)
+            probe_id = page_controller.add_probe(name_probationer, probationer_id, date_of_birth, user_id)
             return redirect("probe_profile?probationer_id={probationer_id}&probe_id={probe_id}&test_id=1".format(
                 probationer_id=probationer_id,
                 probe_id=probe_id
@@ -1036,7 +1041,7 @@ def probationers():
     num_page = 0
     
     user_login = UserProfilePageController().get_users_profile_view(user_id)['login']
-    probationers_list = page_controller.get_probationers_list_view()
+    probationers_list = page_controller.get_probationers_list_view(user_id)
 
     for i_probationer in probationers_list:
         if i_probationer is not None and not request.form.get(f"button_{i_probationer['probationer_id']}"):
@@ -1081,10 +1086,10 @@ def probationers():
                                                                 probationer["name_parent"],
                                                                 probationer["educational_institution"],
                                                                 probationer["contacts"], probationer["diagnoses"],
-                                                                probationer["reasons_for_contact"])
+                                                                probationer["reasons_for_contact"], user_id)
 
                     if error is None:
-                        probationers_list = page_controller.get_probationers_list_view()
+                        probationers_list = page_controller.get_probationers_list_view(user_id)
                         mode[len(probationers_list)] = "view"
                         error = "Испытуемый сохранён!"
                         error_type[len(probationers_list)] = "Successful"
@@ -1109,12 +1114,12 @@ def probationers():
                     probationer["reasons_for_contact"] = request.form[f"reasons_for_contact_{probationer_id}"]
 
                     profile_page_controller.change_probationer(probationer_id, probationer["name_probationer"],
-                                                       probationer["date_of_birth"], probationer["name_parent"],
-                                                       probationer["educational_institution"],
-                                                       probationer["contacts"],
-                                                       probationer["diagnoses"], probationer["reasons_for_contact"])
+                                                               probationer["date_of_birth"], probationer["name_parent"],
+                                                               probationer["educational_institution"],
+                                                               probationer["contacts"], probationer["diagnoses"],
+                                                               probationer["reasons_for_contact"], user_id)
 
-                    probationers_list = page_controller.get_probationers_list_view()
+                    probationers_list = page_controller.get_probationers_list_view(user_id)
                     data_edit = data
                     data_edit[probationer_id] = probationer
                     mode[probationer_id] = "view"
@@ -1276,8 +1281,9 @@ def estimated_values():
     Returns:
 
     """
+    user_id = flask_login.current_user.user_id
     page_controller = EstimatedValuesPageController()
-    mpc = MainMenuPageController(flask_login.current_user.user_id)
+    mpc = MainMenuPageController(user_id)
 
     if not flask_login.current_user.is_admin():
         return redirect("main_page")
@@ -1299,7 +1305,7 @@ def estimated_values():
             for i in range(1, 214):
                 criteria.append(request.form["{}_grade".format(i)])
 
-            page_controller.overwrite(id_file_name, criteria)
+            page_controller.overwrite(id_file_name, criteria, user_id)
             data = page_controller.get_assessments(id_file_name)
         else:
             return redirect("/settings/estimated_values?id={id}".format(id=id_file_name))

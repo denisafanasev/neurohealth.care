@@ -1,20 +1,24 @@
 #TODO: передалать на использование менеджера и не сервиса
-from services.action_service import ActionService
+from models.action_manager import ActionManager
+from models.room_chat_manager import RoomChatManager
 from models.user_manager import UserManager
 from models.course_manager import EducationCourseManager
 from models.education_stream_manager import EducationStreamManager
+from models.homework_manager import HomeworkManager
+from models.upload_manager import UploadManager
 
 from datetime import datetime
 import config
 
+
 class EducationCourseService():
     """
-    DownloadService - класс бизнес-логики сервиса управления настройками приложения
+    EducationCourseService - класс бизнес-логики сервиса управления настройками приложения
     Возвращает в слой отображения объекты в доменной модели
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def get_course_modules_list(self, _id, _user_id):
+    def get_course_modules_list(self, _id):
         """
         Возвращает список модулей курса по id
 
@@ -28,18 +32,8 @@ class EducationCourseService():
         course_manager = EducationCourseManager()
 
         modules_list = course_manager.get_course_modules_list(_id)
-        #
-        # if user.education_stream_list != []:
-        #     for id_education_stream in user.education_stream_list:
-        #         education_stream = education_stream_service.get_education_stream(id_education_stream)
-        #
-        #         if education_stream.course == _id and education_stream.status == "идет":
-        #             education_stream.course = modules_list
-        #             course = education_stream
-        #             break
 
         return modules_list
-
 
     def get_lesson(self, _user_id, _lesson_id, _id_course, _id_video):
         """
@@ -49,6 +43,7 @@ class EducationCourseService():
             _lesson_id(Int): индентификатор урока
             _id_course(Int): индентификатор курса
             _id_video(Int): индентификатор видео
+            _user_id(Int): индетификатор текущего пользователя в системе
 
         Return:
             Lesson: класс Lesson, обернутый в класс Module
@@ -56,12 +51,12 @@ class EducationCourseService():
 
         course_manager = EducationCourseManager()
         user_manager = UserManager()
-        action_service = ActionService()
+        action_manager = ActionManager()
 
         login_user = user_manager.get_user_by_id(_user_id).login
         lesson = course_manager.get_lesson(_lesson_id, _id_course, _id_video)
 
-        action_service.add_notifications(lesson, "view", '', "course_manager", login_user)
+        action_manager.add_notifications(lesson, "view", '', "course_manager", login_user)
 
         return lesson
     
@@ -93,7 +88,6 @@ class EducationCourseService():
         education_stream_manager = EducationStreamManager()
 
         user = user_manager.get_user_by_id(_user_id)
-
         education_streams = education_stream_manager.get_education_streams_list_by_login_user(user.login, user.role)
 
         if _course_id is not None:
@@ -183,17 +177,31 @@ class EducationCourseService():
 
             return False
 
-    def save_homework(self, _files_list, _id_room_chat, ):
+    def save_homework(self, _files_list, _id_room_chat, _current_user_id, _text):
+        """
+        Сохраняет домашнюю работу
 
-        homework_service = HomeworkService()
+        Args:
+            _files_list(List): список файлов, отправленных пользователем
+            _current_user_id(Int): ID текущего пользователя
+            _id_room_chat(Int): ID комнаты чата
+        """
 
-        login_user = self.get_current_user().login
+        homework_manager = HomeworkManager()
+        user_manager = UserManager()
+        upload_service = UploadManager()
 
-        homework_service.save_homework(_files_list, login_user, _id_room_chat)
+        login_user = user_manager.get_user_by_id(_current_user_id).login
+        homework_files_list = upload_service.upload_files(_files_list, login_user)
+        homework = homework_manager.create_homework(homework_files_list, _id_room_chat, _text)
+        homework_manager.create_homework_answer(homework.id)
     
     def get_user_list(self, _user_id):
         """
         Возвращает список пользователей
+
+        Args:
+            _user_id(Int): ID пользователя
 
         Returns:
             List: список пользователей с типом User
@@ -203,3 +211,41 @@ class EducationCourseService():
         users = user_manager.get_users(_user_id)
 
         return users
+
+    def room_chat_entry(self, _id_lesson, _id_course, _id_user, _id_room_chat, _id_education_stream, _id_module):
+        """
+        Подключает пользователя к чату
+
+        Args:
+            _id_lesson(Int): индентификатор урока
+            _id_user(User): ID пользователя
+            _id_course(Int): индентификатор курса
+            _id_room_chat(Int): индентификатор чата
+
+        Returns:
+            RoomChat: чат
+        """
+
+        room_chat_manager = RoomChatManager()
+        user_manager = UserManager()
+
+        user = user_manager.get_user_by_id(_id_user)
+
+        return room_chat_manager.room_chat_entry(_id_lesson, user, _id_course, _id_room_chat, _id_education_stream,
+                                                 _id_module)
+
+    def add_message(self, _message, _room_chat_id, _user_id):
+        """
+        Сохраняет сообщение
+
+        Args:
+            _message(Dict): данные сообщения
+            _room_chat_id(Int): индентификатор чата
+        """
+
+        room_chat_manager = RoomChatManager()
+        user_manager_service = UserManager()
+
+        _message["name_sender"] = user_manager_service.get_user_by_id(_user_id).login
+
+        return room_chat_manager.add_message(_message, _room_chat_id)

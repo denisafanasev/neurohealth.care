@@ -18,13 +18,43 @@
             theme: 'snow',
 
         });
+        var quill_homework = new Quill('#editor_homework', {
+            modules: {
+                toolbar: [
+                  ['bold', 'italic'],
+                  ['link', 'blockquote', 'code-block'],
+                  [{ list: 'ordered' }, { list: 'bullet' }]
+                ]
+              },
+            theme: 'snow',
+
+        });
+        let message = document.getElementById('message');
+        let error_chat = "Ошибка: не заполнено поле для отправки сообщения в чат!";
+        let error_homework = "Ошибка: не заполнено поле для отправки домашнего задания!";
+
         var form = document.getElementById("chat");
         form.onsubmit = function () {
             // Populate hidden form on submit
             var about = document.querySelector('input[name=text]');
             about.value = quill.root.innerHTML;
             if (about.value === "<p><br></p>") {
-                alert("Ошибка: не заполнено поле для отправки домашнего задания!")
+                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                document.querySelector('p[id=text_message]').textContent = error_chat;
+                message.style.display = 'block'
+                return false;
+            }
+        };
+
+        var form_homework = document.getElementById("homework");
+        form_homework.onsubmit = function () {
+            // Populate hidden form on submit
+            var about = document.querySelector('input[name=text_homework]');
+            about.value = quill_homework.root.innerHTML;
+            if (about.value === "<p><br></p>") {
+                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                document.querySelector('p[id=text_message]').textContent = error_homework;
+                message.style.display = 'block'
                 return false;
             }
         };
@@ -220,7 +250,7 @@
                                                 <i class="align-middle me-2 fas fa-fw fa-couch"></i>
                                             </td>
                                             <td>Домашнее задание</td>
-                                            <td class="d-none d-md-table-cell">Недоступно</td>
+                                            <td class="d-none d-md-table-cell">Доступно</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -308,9 +338,13 @@
                                         </p>
                                     {% if _user['role'] != "superuser" %}
                                         {% if request.args.get('id_chat') != "none" %}
-                                            <form method="post" enctype="multipart/form-data">
+                                            <form id="homework" method="post" enctype="multipart/form-data">
                                                 <div class="mb-2">
                                                     <label class="form-label" for="hometask">Сдача домашнего задания</label>
+                                                    <div class="mb-2">
+                                                        <div id="editor_homework" style="z-index: 0"><p></p></div>
+                                                        <input type="hidden" id="hiddenInput" name="text_homework">
+                                                    </div>
                                                     <div class="input-group">
                                                         <input id="hometask" type="file" multiple name="files" class="form-control">
                                                         <button id="button" class="btn btn-primary" name="button" type="submit" value="homework">Отправить</button>
@@ -348,13 +382,6 @@
                                                         </div>
                                                         <div class="card-body  flex-shrink-1  rounded py-2 px-3 mr-3">
                                                             {{ i_message['text'] }}
-                                                            {% if i_message['files'] %}
-                                                                <div class="row">
-                                                                    {% for i_file in i_message['files'] %}
-                                                                        <a href="/download?name_file={{ i_file['name_file_unique'] }}&dataset=chat">{{ i_file['name_file_user'] }}</a>
-                                                                    {% endfor %}
-                                                                </div>
-                                                            {% endif %}
                                                         </div>
                                                     </div>
                                                 {% endfor %}

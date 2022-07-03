@@ -12,7 +12,7 @@ class ProbeProfileController():
 
         pass
 
-    def get_probationers(self):
+    def get_probationers(self, _user_id):
         """
         Возвращает отформатированный список тестируемых
 
@@ -21,7 +21,7 @@ class ProbeProfileController():
         """
 
         probe_profile_service = ProbeProfileService()
-        probationers = probe_profile_service.get_probationers()
+        probationers = probe_profile_service.get_probationers(_user_id)
 
         users_list_view = []
 
@@ -36,14 +36,14 @@ class ProbeProfileController():
 
         return users_list_view
 
-    def add_probe(self, _name_probationer, _probationer_id, _date_of_birth, _protocol_status=""):
+    def add_probe(self, _name_probationer, _probationer_id, _date_of_birth, _id_user,_protocol_status=""):
         """
         Записывает в системе только что совершенное действие авторизованного пользователя
         """
 
         probe_profile_service = ProbeProfileService()
 
-        return probe_profile_service.add_probe(_name_probationer, _probationer_id, _date_of_birth, _protocol_status)
+        return probe_profile_service.add_probe(_name_probationer, _probationer_id, _date_of_birth, _protocol_status, _id_user)
 
     def get_probationer_card_view(self, probationer_id):
         """

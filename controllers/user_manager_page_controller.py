@@ -103,7 +103,7 @@ class UserManagerPageController():
 
         return user_view
 
-    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number):
+    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _current_user_id):
         """
         Создает в системе пользователя
 
@@ -124,12 +124,12 @@ class UserManagerPageController():
         user_manager_service = UserManagerService()
         try:
             user_manager_service.create_user(_login, _name, _password, _password2, _email, _role,
-                                            _probationers_number)
+                                            _probationers_number, _current_user_id)
         except UserManagerException as error:
             return error
 
     def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
-                    _education_module_expiration_date):
+                    _education_module_expiration_date, _current_user_id):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -146,13 +146,13 @@ class UserManagerPageController():
         user_manager_service = UserManagerService()
 
         user_manager_service.change_user(_login, _name, _email, _role, _probationers_number, _created_date,
-                                         _education_module_expiration_date)
+                                         _education_module_expiration_date, _current_user_id)
 
         error = "Изменения успешно сохранены!"
 
         return error
 
-    def discharge_password(self, _login, _password, _password2):
+    def discharge_password(self, _login, _password, _password2, _current_user_id):
         """
         Обновляет в системе пароль пользователя
 
@@ -167,12 +167,14 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
         try:
-            user_manager_service.discharge_password(_login, _password, _password2)
+            user_manager_service.discharge_password(_login, _password, _password2, _current_user_id)
         except UserManagerException as error:
 
             return error
 
-    def activation(self, _login):
+        return "Пароль успешно изменен!"
+
+    def activation(self, _login, _current_user_id):
         """
         разблокировка пользователя
 
@@ -185,9 +187,11 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
 
-        user_manager_service.activation(_login)
+        user_manager_service.activation(_login, _current_user_id)
+
+        return "Пользователь успешно разблокирован!"
     
-    def deactivation(self, _login):
+    def deactivation(self, _login, _current_user_id):
         """
         Блокировка пользователя
 
@@ -200,7 +204,9 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
 
-        user_manager_service.deactivation(_login)
+        user_manager_service.deactivation(_login, _current_user_id)
+
+        return "Пользователь успешно заблокирован!"
 
     def get_settings_user(self):
         """
@@ -219,7 +225,7 @@ class UserManagerPageController():
 
         return settings_user
 
-    def access_extension(self, _period, _reference_point, _login):
+    def access_extension(self, _period, _reference_point, _login, _current_user_id):
         """
         Продление доступа пользователя к центру обучения
 
@@ -231,7 +237,7 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
 
-        user_manager_service.access_extension(_period, _reference_point, _login)
+        user_manager_service.access_extension(_period, _reference_point, _login, _current_user_id)
         error = "Доступ пользователя к обучающей программе успешно изменен!"
 
         return error

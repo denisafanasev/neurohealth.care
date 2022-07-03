@@ -1,4 +1,7 @@
+from flask import Markup
+
 from services.homework_service import HomeworkService
+
 
 class EducationHomeTasksPageController():
     """
@@ -20,11 +23,11 @@ class EducationHomeTasksPageController():
         homework_list = homework_service.get_homeworks_list()
         homework_list_view = []
         for homework in homework_list:
-            room_chat = homework_service.get_room_chat(homework.id_room_chat)
-            course = homework_service.get_course(room_chat.id_course)
-            lesson = homework_service.get_lesson(room_chat.id_lesson, room_chat.id_course)
+            room_chat, id_dict = homework_service.get_room_chat(homework.id_room_chat)
+            course = homework_service.get_course(id_dict['course'])
+            lesson = homework_service.get_lesson(id_dict["lesson"], id_dict['course'])
             # education_stream = homework_service.get_education_stream(room_chat.id_education_stream)
-            user = homework_service.get_current_user(room_chat.login_user)
+            user = homework_service.get_user(id_dict["user"])
 
             homework_view = {
                 "id": homework.id,
@@ -51,7 +54,8 @@ class EducationHomeTasksPageController():
                     "answer": homework.homework_answer.answer,
                     "status": homework.homework_answer.status
                 },
-                "id_room_chat": room_chat.id
+                "id_room_chat": room_chat.id,
+                "text": Markup(homework.text)
             }
 
             homework_list_view.append(homework_view)
