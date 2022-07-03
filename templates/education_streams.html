@@ -56,7 +56,7 @@
                                 <div class="col-sm-12 col-md-6">
                                     <div class="dt-buttons btn-group flex-wrap">
                                         <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
-                                        href="{{ url_for('learning_stream_card') }}">
+                                        href="{{ url_for('education_stream_card') }}">
                                             <span>Добавить обучающий поток</span>
                                         </a>
                                     </div>
@@ -96,31 +96,31 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for learning_stream in _learning_streams_list %}
-                                                {% if learning_stream['id'] != 0 %}
+                                            {% for education_stream in _education_streams_list %}
+                                                {% if education_stream['id'] != 0 %}
                                                     <tr class="even">
-                                                        <td>{{ learning_stream['id'] }}</td>
+                                                        <td>{{ education_stream['id'] }}</td>
                                                         <td>
                                                             <div style="text-align: center; margin-right: 21%">
-                                                                <a href="/learning_stream_card?id={{ learning_stream['id'] }}">{{ learning_stream['name'] }}</a>
+                                                                <a href="/education_stream_card?id={{ education_stream['id'] }}">{{ education_stream['name'] }}</a>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <div style="text-align: center; margin-right: 14%">{{ learning_stream['teacher'] }}</div>
+                                                            <div style="text-align: center; margin-right: 14%">{{ education_stream['teacher'] }}</div>
                                                         </td>
-                                                        <td>{{ learning_stream['date_start'] }}</td>
-                                                        <td>{{ learning_stream['date_end'] }}</td>
+                                                        <td>{{ education_stream['date_start'] }}</td>
+                                                        <td>{{ education_stream['date_end'] }}</td>
                                                         <td>
-                                                            <div style="text-align: center; margin-right: 16%">{{ learning_stream['course']['name'] }}</div>
-                                                        </td>
-                                                        <td>
-                                                            <div style="text-align: center; margin-right: 21%">{{ learning_stream['count_curators'] }}</div>
+                                                            <div style="text-align: center; margin-right: 16%">{{ education_stream['course']['name'] }}</div>
                                                         </td>
                                                         <td>
-                                                            <div style="text-align: center; margin-right: 15%">{{ learning_stream['count_students'] }}</div>
+                                                            <div style="text-align: center; margin-right: 21%">{{ education_stream['count_curators'] }}</div>
                                                         </td>
                                                         <td>
-                                                            <div style="text-align: center; margin-right: 15%">{{ learning_stream['status'] }}</div>
+                                                            <div style="text-align: center; margin-right: 15%">{{ education_stream['count_students'] }}</div>
+                                                        </td>
+                                                        <td>
+                                                            <div style="text-align: center; margin-right: 15%">{{ education_stream['status'] }}</div>
                                                         </td>
                                                     </tr>
                                                 {% endif %}
@@ -134,19 +134,19 @@
                 </div>
             </div>
         </div>
-        {% for learning_stream in _learning_streams_list %}
+        {% for education_stream in _education_streams_list %}
             <script>
-                var modal_{{ learning_stream['id'] }} = document.getElementById('{{ learning_stream['id'] }}');
+                var modal_{{ education_stream['id'] }} = document.getElementById('{{ education_stream['id'] }}');
                 window.onclick = function (event) {
-                    if (event.target === modal_{{ learning_stream['id'] }}) {
-                        modal_{{ learning_stream['id'] }}.style.display = "none";
+                    if (event.target === modal_{{ education_stream['id'] }}) {
+                        modal_{{ education_stream['id'] }}.style.display = "none";
                     }
                 }
             </script>
-            <div id="{{ learning_stream['id'] }}" class="modal_{{ learning_stream['id'] }} modal">
+            <div id="{{ education_stream['id'] }}" class="modal_{{ education_stream['id'] }} modal">
             <div class="modal-content animate">
                 <h3 class="modal-title">Обучающий поток</h3>
-                <form id="discharge_user_{{ learning_stream['id'] }}" name="discharge_user_{{ learning_stream['id'] }}"
+                <form id="discharge_user_{{ education_stream['id'] }}" name="discharge_user_{{ education_stream['id'] }}"
                       method="post" enctype="multipart/form-data" class="was-validated">
                     <div class="row d-flex align-items-stretch bd-highlight">
                         <div style="margin-right: 5px" class="col p-1 bd-highlight border">
@@ -154,7 +154,7 @@
                                 <div class="card-header">
                                     <div class="mb-2">
                                         <label class="form-label"><strong>Название потока</strong></label>
-                                        <input id="name" required name="name_{{ learning_stream['id'] }}" class="form-control">
+                                        <input id="name" required name="name_{{ education_stream['id'] }}" class="form-control">
                                         <div class="invalid-feedback">
                                             Поле, обязательное для заполнения!
                                         </div>
@@ -162,7 +162,7 @@
 
                                     <div class="mb-2">
                                         <label class="form-label"><strong>Курс</strong></label>
-                                        <select id="course_list" name="course_list_{{ learning_stream['id'] }}" class="form-select">
+                                        <select id="course_list" name="course_list_{{ education_stream['id'] }}" class="form-select">
                                             {% for course in _courses_list %}
                                                 <option value="{{ course['id'] }}">{{ course['name'] }}</option>
                                             {% endfor %}
@@ -173,7 +173,7 @@
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label"><strong>Преподаватель</strong></label>
-                                        <select id="teacher" name="teacher_{{ learning_stream['id'] }}" class="form-select">
+                                        <select id="teacher" name="teacher_{{ education_stream['id'] }}" class="form-select">
                                             {% for teacher in _curators_list %}
                                                 <option value="{{ teacher['login'] }}">{{ teacher['name'] }}</option>
                                             {% endfor %}
@@ -204,7 +204,7 @@
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label"><strong>Кураторы</strong></label>
-                                        <select id="curators_list" name="curators_list_{{ learning_stream['id'] }}"
+                                        <select id="curators_list" name="curators_list_{{ education_stream['id'] }}"
                                                 style="overflow-y: scroll;" class="form-select choices-multiple" multiple="multiple">
                                             {% for curator in _curators_list %}
                                                 <option value="{{ curator['login'] }}">{{ curator['name'] }}</option>
@@ -216,7 +216,7 @@
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label"><strong>Ученики</strong></label>
-                                        <select id="students_list" name="students_list_{{ learning_stream['id'] }}"
+                                        <select id="students_list" name="students_list_{{ education_stream['id'] }}"
                                                 style="overflow-y: scroll;" class="form-select" multiple="multiple">
                                             {% for student in _students_list %}
                                                 <option value="{{ student['login'] }}">{{ student['name'] }}</option>
@@ -232,10 +232,10 @@
                     </div>
                     <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
                         <div class="p-1" align="right">
-                            <button type="submit" name="button_{{ learning_stream['id'] }}" value="discharge" class="btn btn-primary ">
+                            <button type="submit" name="button_{{ education_stream['id'] }}" value="discharge" class="btn btn-primary ">
                                 Сохранить
                             </button>
-                            <a onclick="document.getElementById('{{ learning_stream["id"] }}').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
+                            <a onclick="document.getElementById('{{ education_stream["id"] }}').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
                                 Отмена
                             </a>
                         </div>

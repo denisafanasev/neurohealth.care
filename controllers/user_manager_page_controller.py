@@ -19,7 +19,7 @@ class UserManagerPageController():
 
         pass
 
-    def get_users_list_view(self):
+    def get_users_list_view(self, _user_id):
         """
         Возвращает отформатированный список пользователей
 
@@ -28,7 +28,7 @@ class UserManagerPageController():
         """ 
 
         user_manager_service = UserManagerService()
-        users = user_manager_service.get_users()
+        users = user_manager_service.get_users(_user_id)
 
         users_list_view = []
         for user in users:
@@ -76,16 +76,16 @@ class UserManagerPageController():
 
             user_view['probationers_number'] = user.probationers_number
             user_view['token'] = user.token
-            user_view['learning_stream_list'] = []
+            user_view['education_stream_list'] = []
             if user.role == "user":
-                for learning_stream in user.learning_stream_list:
-                    user_view['learning_stream_list'].append({
-                        "name": learning_stream.name,
-                        "teacher": learning_stream.teacher,
-                        "date_start": learning_stream.date_start.strftime("%d/%m/%Y"),
-                        "date_end": learning_stream.date_end.strftime("%d/%m/%Y"),
-                        "course": learning_stream.course.name,
-                        "status": learning_stream.status
+                for education_stream in user.education_stream_list:
+                    user_view['education_stream_list'].append({
+                        "name": education_stream.name,
+                        "teacher": education_stream.teacher,
+                        "date_start": education_stream.date_start.strftime("%d/%m/%Y"),
+                        "date_end": education_stream.date_end.strftime("%d/%m/%Y"),
+                        "course": education_stream.course.name,
+                        "status": education_stream.status
                     })
 
             user_view['active'] = user.active

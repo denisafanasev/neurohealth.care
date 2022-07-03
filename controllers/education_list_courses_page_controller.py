@@ -1,4 +1,4 @@
-from services.course_service import CourseService
+from services.education_course_service import EducationCourseService
 
 class EducationListCoursesPageController():
 
@@ -10,7 +10,7 @@ class EducationListCoursesPageController():
             courses(List): список курсов
         """
 
-        course_service = CourseService()
+        course_service = EducationCourseService()
 
         courses = course_service.get_courses()
         courses_list = []
@@ -28,7 +28,25 @@ class EducationListCoursesPageController():
 
         return courses_list
     
-    def get_current_user(self):
+    def get_user_view_by_id_and_course_id(self, _user_id, _course_id):
+        """
+        Возвращает объект User по id пользователя
+
+        Args:
+            _user_id   - Required  : id пользователя (Int)
+            _course_id - Required  : id курса (Int)
+
+        Returns:
+            User: пользователь
+        """
+        course_service = EducationCourseService()
+
+        user = course_service.get_user_by_id_and_course_id(_user_id, _course_id)
+
+        return {"login": user.login, "role": user.role, "active_education_module": user.active_education_module,
+                "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y"))}
+    
+    def get_user_view_by_id(self, _user_id):
         """
         Возвращает объект User по id пользователя
 
@@ -38,9 +56,9 @@ class EducationListCoursesPageController():
         Returns:
             User: пользователь
         """
-        course_service = CourseService()
+        course_service = EducationCourseService()
 
-        user = course_service.get_current_user()
+        user = course_service.get_user_by_id(_user_id)
 
         return {"login": user.login, "role": user.role, "active_education_module": user.active_education_module,
                 "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y"))}

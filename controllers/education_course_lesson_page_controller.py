@@ -1,22 +1,23 @@
-from services.course_service import CourseService
+from services.education_course_service import EducationCourseService
 from services.room_chat_service import RoomChatService
 from flask import Markup
 
 class EducationCourseLessonPageController():
 
-    def get_lesson(self, _id, _id_course, _id_video=1):
+    def get_lesson(self, _user_id, _lesson_id, _id_course, _id_video=1):
         """
         Возвращает данные урока
 
         Args:
-            _id(Int): индентификатор урока
+            _user_id(Int): индентификатор пользователя
+            _lesson_id(Int): индентификатор урока
             _id_course(Int): индентификатор курса
             _id_video(Int): индентификатор видео
         """
 
-        course_service = CourseService()
+        course_service = EducationCourseService()
 
-        module = course_service.get_lesson(_id, _id_course, _id_video)
+        module = course_service.get_lesson(_user_id, _lesson_id, _id_course, _id_video)
         if module.lessons.task:
             module.lessons.task = Markup(module.lessons.task)
 
@@ -40,7 +41,7 @@ class EducationCourseLessonPageController():
 
         return lesson
 
-    def room_chat_entry(self, _id_lesson="", _id_course="", _login_user="", _id_room_chat=None, _id_learning_stream=None,
+    def room_chat_entry(self, _id_lesson="", _id_course="", _login_user="", _id_room_chat=None, _id_education_stream=None,
                         _id_module=None):
         """
         Подключает пользователя к чату
@@ -56,11 +57,11 @@ class EducationCourseLessonPageController():
         """
 
         room_chat_service = RoomChatService()
-        if _id_room_chat is None and _id_learning_stream is None:
-            _id_learning_stream = "subscription"
+        if _id_room_chat is None and _id_education_stream is None:
+            _id_education_stream = "subscription"
 
         room_chat = room_chat_service.room_chat_entry(_id_lesson, _id_course, _login_user, _id_room_chat,
-                                                      _id_learning_stream, _id_module)
+                                                      _id_education_stream, _id_module)
 
         chat = {
             "id": room_chat.id,
@@ -98,7 +99,7 @@ class EducationCourseLessonPageController():
 
         return room_chat_service.add_message(_message, _room_chat_id)
 
-    def get_current_user(self, _id_course):
+    def get_user_view_by_id_and_course_id(self, _user_id, _id_course):
         """
         Возвращает текущего пользователя
 
@@ -106,27 +107,27 @@ class EducationCourseLessonPageController():
             Dict: пользователь
         """
 
-        course_service = CourseService()
+        course_service = EducationCourseService()
 
-        user = course_service.get_current_user()
+        user = course_service.get_user_by_id(_user_id)
 
         user_view = {
             "login": user.login,
             "role": user.role,
             "active_education_module": user.active_education_module,
             "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y")),
-            "learning_stream": {}
+            "education_stream": {}
         }
-        if type(user.learning_stream_list) is not list:
-            user_view["learning_stream"] = {
-                "id": user.learning_stream_list.id,
-                "date_end": user.learning_stream_list.date_end,
-                "status": user.learning_stream_list.status
+        if type(user.education_stream_list) is not list:
+            user_view["education_stream"] = {
+                "id": user.education_stream_list.id,
+                "date_end": user.education_stream_list.date_end,
+                "status": user.education_stream_list.status
             }
 
         return user_view
 
-    def get_user_list(self):
+    def get_user_list(self, _user_id):
         """
         Возвращает список пользователей
 
@@ -134,8 +135,8 @@ class EducationCourseLessonPageController():
             List: список пользователей с типом User
         """
 
-        course_service = CourseService()
-        users = course_service.get_user_list()
+        course_service = EducationCourseService()
+        users = course_service.get_user_list(_user_id)
         user_list = []
 
         for i_user in users:
@@ -155,7 +156,7 @@ class EducationCourseLessonPageController():
             course(Dict): данные курса
         """
 
-        course_service = CourseService()
+        course_service = EducationCourseService()
         course = course_service.get_course_by_id(_id)
 
         course_formated = {}
@@ -168,6 +169,6 @@ class EducationCourseLessonPageController():
 
     def save_homework(self, _files_list, _id_room_chat):
 
-        course_service = CourseService()
+        course_service = EducationCourseService()
 
         course_service.save_homework(_files_list, _id_room_chat)

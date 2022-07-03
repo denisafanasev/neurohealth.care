@@ -74,7 +74,7 @@ class EducationChatPageController():
             "role": user.role,
             "active_education_module": user.active_education_module,
             "education_module_expiration_date": user.education_module_expiration_date.strftime("%d/%m/%Y"),
-            "learning_stream": {}
+            "education_stream": {}
         }
 
 

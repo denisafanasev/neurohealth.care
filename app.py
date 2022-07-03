@@ -1,4 +1,3 @@
-import datetime
 import logging
 from logging.handlers import RotatingFileHandler
 from flask import Flask, request, redirect, render_template, url_for, send_file
@@ -14,10 +13,11 @@ from werkzeug.utils import secure_filename
 
 from controllers.main_page_controller import MainPageController
 from controllers.main_menu_controller import MainMenuPageController
+
 from controllers.login_page_controller import LoginPageController
 from controllers.registration_page_controller import RegistrationPageController
-from controllers.user_manager_page_controller import UserManagerPageController
 
+from controllers.user_manager_page_controller import UserManagerPageController
 from controllers.corrections_page_controller import CorrectionsPageController
 from controllers.probes_page_controller import ProbesPageController
 from controllers.probe_profile_page_controller import ProbeProfileController
@@ -33,8 +33,8 @@ from controllers.education_course_lesson_page_controller import EducationCourseL
 from controllers.download_page_controller import DownloadPageController
 from controllers.education_home_tasks_page_controller import EducationHomeTasksPageController
 from controllers.education_chat_page_controller import EducationChatPageController
-from controllers.learning_stream_page_controller import LearningStreamPageController
-from controllers.learning_stream_profile_page_controller import LearningStreamProfilePageController
+from controllers.education_stream_page_controller import EducationStreamPageController
+from controllers.education_stream_profile_page_controller import EducationStreamProfilePageController
 
 from error import UserManagerException
 
@@ -235,7 +235,9 @@ def user_manager():
     """
 
     page_controller = UserManagerPageController()
-    mpc = MainMenuPageController()
+    user_id = flask_login.current_user.user_id
+    mpc = MainMenuPageController(user_id)
+
     # page_controller = UserProfilePageController()
 
     # страница доступна только администратору
@@ -243,7 +245,7 @@ def user_manager():
         return redirect("main_page")
 
     endpoint = request.endpoint
-    users_list = page_controller.get_users_list_view()
+    users_list = page_controller.get_users_list_view(user_id)
     user_id = ''
     # new_user = page_controller.get_users_profile_view(user_id)
     # new_user['user_id'] = 0
@@ -399,7 +401,7 @@ def user_manager():
             else:
                 return redirect("user_manager")
 
-            users_list = page_controller.get_users_list_view()
+            users_list = page_controller.get_users_list_view(user_id)
 
     except exceptions.BadRequestKeyError:
         for i_id in users_list:
@@ -427,7 +429,7 @@ def user_profile():
     """
 
     page_controller = UserProfilePageController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     endpoint = "user_manager"
     user_id = request.args.get('user_id')
@@ -591,9 +593,9 @@ def main_page():
     """
 
     page_controller = MainPageController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
-    user = page_controller.get_current_user()
+    user = page_controller.get_user_view_by_user_id(flask_login.current_user.user_id)
     endpoint = request.endpoint
     error = None
     error_type = None
@@ -617,7 +619,7 @@ def main_page():
 
     return render_template('main_page.html', view="main_page", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=page_controller.get_actions(), _user=user, _error=error, _error_type=error_type,
+                           _data=page_controller.get_actions(user["user_id"]), _user=user, _error=error, _error_type=error_type,
                            _password=password, _password2=password2)
 
 
@@ -632,7 +634,8 @@ def empty_function():
     """
 
     page_controller = None
-    mpc = MainMenuPageController()
+    user_id = flask_login.current_user.user_id
+    mpc = MainMenuPageController(user_id)
 
     endpoint = request.endpoint
 
@@ -650,9 +653,10 @@ def price_list():
         
     """
 
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     endpoint = 'education_list_courses'
+    user_id = flask_login.current_user.user_id
 
     return render_template('price_list.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data="")
@@ -668,9 +672,10 @@ def evolution_centre_dummy():
         
     """
 
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     endpoint = request.endpoint
+    user_id = flask_login.current_user.user_id
 
     return render_template('evolution_centre_dummy.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
@@ -681,11 +686,13 @@ def evolution_centre_dummy():
 @login_required
 def education_list_courses():
     page_controller = EducationListCoursesPageController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     endpoint = request.endpoint
+    user_id = flask_login.current_user.user_id
+
     data = page_controller.get_courses()
-    user = page_controller.get_current_user()
+    user = page_controller.get_user_view_by_id(user_id)
 
     return render_template('education_list_courses.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data, _user=user)
@@ -694,17 +701,19 @@ def education_list_courses():
 @app.route('/education_course', methods=['GET', 'POST'])
 @login_required
 def education_course():
+
     page_controller = EducationCoursePageController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     endpoint = 'education_list_courses'
-    
-    id_course = request.args.get("id_course")
 
-    if id_course is not None:
-        user = page_controller.get_current_user()
-        course = page_controller.get_course_by_id(id_course)
-        data = page_controller.get_course_modules_list(id_course, user['id'])
+    course_id = request.args.get("id_course")
+    user_id = flask_login.current_user.user_id #берем id пользователя, который находится в системе
+
+    if course_id is not None:
+        user = page_controller.get_user_view_for_course_by_id(user_id, course_id)
+        course = page_controller.get_course_by_id(course_id)
+        data = page_controller.get_course_modules_list(course_id, user_id)
     else:
         return redirect("education_list_courses")
 
@@ -717,7 +726,7 @@ def education_course():
 @login_required
 def education_course_lesson():
     page_controller = EducationCourseLessonPageController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     endpoint = 'education_list_courses'
 
@@ -726,8 +735,9 @@ def education_course_lesson():
     id_lesson = int(request.args.get("id_lesson"))
     id_video = request.args.get("id_video")
     id_room_chat = request.args.get("id_chat")
+    user_id = flask_login.current_user.user_id
 
-    user = page_controller.get_current_user(int(id_course))
+    user = page_controller.get_user_view_by_id_and_course_id(user_id, int(id_course))
     course = page_controller.get_course_by_id(id_course)
     user_list = None
 
@@ -735,7 +745,7 @@ def education_course_lesson():
     #if user['role'] == 'user' and course['type'] == 'main' and int(id_module) > 1:
     #    return redirect("/price_list")
 
-    if user['active_education_module'] == 'inactive' and user['learning_stream'].get('status') != "идет":
+    if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
         if int(id_module) > 1 and user['role'] != 'superuser':
             return redirect('/price_list')
 
@@ -744,9 +754,9 @@ def education_course_lesson():
     if data["lesson"].get("task") is not None:
         if id_room_chat is None:
             if user["role"] != "superuser":
-                if user['learning_stream'].get("status") == "идет":
+                if user['education_stream'].get("status") == "идет":
                     id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module,
-                                                                   _id_learning_stream=user['learning_stream']['id'])["id"]
+                                                                   _id_education_stream=user['education_stream']['id'])["id"]
                     return redirect(
                         f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
                 elif user['active_education_module'] != "inactive":
@@ -760,7 +770,7 @@ def education_course_lesson():
         id_video = 1
 
     if user["role"] == "superuser":
-        user_list = page_controller.get_user_list()
+        user_list = page_controller.get_user_list(user_id)
 
     if request.method == "POST":
         if request.form.get("send"):
@@ -799,7 +809,7 @@ def education_home_tasks():
     """
 
     page_controller = EducationHomeTasksPageController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
     endpoint = request.endpoint
 
     data = page_controller.get_homeworks_list()
@@ -832,7 +842,7 @@ def education_chat():
     """
 
     page_controller = EducationChatPageController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
     endpoint = "education_chat"
 
     id_room_chat = request.args.get("id")
@@ -860,7 +870,7 @@ def corrections():
     """
 
     page_controller = CorrectionsPageController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     endpoint = request.endpoint
 
@@ -883,7 +893,9 @@ def probes():
     """
 
     page_controller = ProbesPageController()
-    mpc = MainMenuPageController()
+
+    user_id = flask_login.current_user.user_id
+    mpc = MainMenuPageController(user_id)
 
     endpoint = "probes"
 
@@ -892,14 +904,14 @@ def probes():
 
     return render_template('protocols.html', view="probes", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=page_controller.get_probes(), _is_probationer=page_controller.is_probationers())
+                           _data=page_controller.get_probes(), _is_probationer=page_controller.is_probationers(user_id))
 
 
 @app.route('/probe_profile', methods=['GET', 'POST'])
 @login_required
 def probe_profile():
     page_controller = ProbeProfileController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     endpoint = "probes"
 
@@ -981,7 +993,7 @@ def results():
     """
 
     page_controller = ResultsPageController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     endpoint = "results"
 
@@ -1003,13 +1015,14 @@ def probationers():
         
     """
 
+    user_id = flask_login.current_user.user_id
     endpoint = "probationers"
 
     if not flask_login.current_user.is_admin():
         return redirect("evolution_centre_dummy")
 
     page_controller = ProbationersPageController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
     profile_page_controller = ProbationerCardPageController()
 
     probationer_id = request.args.get('probationer_id')
@@ -1021,7 +1034,7 @@ def probationers():
     data = {0: profile_page_controller.get_probationer_card_view('')}
     data[0]['probationer_id'] = 0
     num_page = 0
-    user_id = flask_login.current_user.user_id
+    
     user_login = UserProfilePageController().get_users_profile_view(user_id)['login']
     probationers_list = page_controller.get_probationers_list_view()
 
@@ -1142,7 +1155,7 @@ def probationer_card():
         return redirect("evolution_centre_dummy")
     
     page_controller = ProbationerCardPageController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     probationer_id = request.args.get('probationer_id')
     error = None
@@ -1241,7 +1254,7 @@ def age_range_list():
     """
 
     page_controller = AgeRangeListPageController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     if not flask_login.current_user.is_admin():
         return redirect("main_page")
@@ -1264,7 +1277,7 @@ def estimated_values():
 
     """
     page_controller = EstimatedValuesPageController()
-    mpc = MainMenuPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     if not flask_login.current_user.is_admin():
         return redirect("main_page")
@@ -1296,50 +1309,50 @@ def estimated_values():
                            _data=data, _ranges_age=page_controller.get_age_ranges(), _id_file_name=int(id_file_name),
                            _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
 
-@app.route('/learning_streams', methods=['GET', 'POST'])
+@app.route('/education_streams', methods=['GET', 'POST'])
 @login_required
-def learning_streams():
+def education_streams():
 
-    page_controller = LearningStreamPageController()
-    endpoint = "learning_streams"
-    mpc = MainMenuPageController()
+    page_controller = EducationStreamPageController()
+    endpoint = "education_streams"
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
-    learning_streams_list = page_controller.get_learning_streams_list()
+    education_streams_list = page_controller.get_education_streams_list()
 
-    return render_template('learning_streams.html', view="learning_streams", _menu=mpc.get_main_menu(),
+    return render_template('education_streams.html', view="education_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _learning_streams_list=learning_streams_list, _endpoint=endpoint)
+                           _education_streams_list=education_streams_list, _endpoint=endpoint)
 
-@app.route('/learning_stream_card', methods=['GET', 'POST'])
+@app.route('/education_stream_card', methods=['GET', 'POST'])
 @login_required
-def learning_stream_card():
+def education_stream_card():
 
-    page_controller = LearningStreamProfilePageController()
-    endpoint = "learning_streams"
-    mpc = MainMenuPageController()
+    page_controller = EducationStreamProfilePageController()
+    endpoint = "education_streams"
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     curators_list = page_controller.get_curators_list()
     students_list = page_controller.get_students_list()
     courses_list = page_controller.get_courses_list()
-    id_learning_stream = request.args.get('id')
+    id_education_stream = request.args.get('id')
     error = None
     error_type = None
 
-    if id_learning_stream is not None:
+    if id_education_stream is not None:
         if request.form.get('button') is None:
             mode = 'view'
         else:
             mode = 'edit'
 
-        id_learning_stream = int(id_learning_stream)
+        id_education_stream = int(id_education_stream)
     else:
         mode = 'new'
 
-    learning_stream = page_controller.get_learning_stream(id_learning_stream)
+    education_stream = page_controller.get_education_stream(id_education_stream)
 
     if request.method == 'POST':
         if request.form.get("button") == 'new':
-            learning_stream_edit = {
+            education_stream_edit = {
                 "name": request.form.get("name"),
                 "id_course": int(request.form.get("course")),
                 "curators_list": [i['login'] for i in curators_list if request.form.get(i['login']) is not None],
@@ -1349,21 +1362,21 @@ def learning_stream_card():
                 "date_end": request.form.get("date_end")
             }
 
-            if learning_stream_edit['teacher'] not in learning_stream['curators_list']:
-                learning_stream_edit['curators_list'].append(learning_stream_edit['teacher'])
+            if education_stream_edit['teacher'] not in education_stream['curators_list']:
+                education_stream_edit['curators_list'].append(education_stream_edit['teacher'])
 
-            id_learning_stream = page_controller.create_learning_stream(learning_stream_edit)
-            # learning_stream_edit['course'] = {"id": learning_stream_edit.pop("id_course")}
-            # learning_stream = learning_stream_edit
+            id_education_stream = page_controller.create_education_stream(education_stream_edit)
+            # education_stream_edit['course'] = {"id": education_stream_edit.pop("id_course")}
+            # education_stream = education_stream_edit
             # mode = "view"
-            return redirect(f"/learning_stream_card?id={id_learning_stream}")
+            return redirect(f"/education_stream_card?id={id_education_stream}")
 
         elif request.form.get('button') == 'edit':
             mode = "edit"
 
         elif request.form.get('button') == "save":
-            learning_stream_edit = {
-                "id": learning_stream['id'],
+            education_stream_edit = {
+                "id": education_stream['id'],
                 "name": request.form.get("name"),
                 "id_course": int(request.form.get("course")),
                 "curators_list": [i['login'] for i in curators_list if request.form.get(i['login']) is not None],
@@ -1373,16 +1386,16 @@ def learning_stream_card():
                 "date_end": request.form.get("date_end")
             }
 
-            page_controller.change_learning_stream(learning_stream_edit, learning_stream['students_list'],
-                                                   learning_stream["curators_list"])
+            page_controller.change_education_stream(education_stream_edit, education_stream['students_list'],
+                                                   education_stream["curators_list"])
             mode = "view"
-            learning_stream = page_controller.get_learning_stream(id_learning_stream)
+            education_stream = page_controller.get_education_stream(id_education_stream)
 
 
-    return render_template('learning_stream_card.html', view="learning_streams", _menu=mpc.get_main_menu(),
+    return render_template('education_stream_card.html', view="education_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _endpoint=endpoint,
                            _curators_list=curators_list, _students_list=students_list, _courses_list=courses_list,
-                           _mode=mode, _learning_stream=learning_stream)
+                           _mode=mode, _education_stream=education_stream)
 
 
 @app.route('/download', methods=['GET', 'POST'])

@@ -4,7 +4,7 @@ from models.course import Module, Lesson, CoursesList, Course
 import os
 import config
 
-class CourseManager():
+class EducationCourseManager():
 
     def lesson_row_to_lesson(self, _data_row):
         """

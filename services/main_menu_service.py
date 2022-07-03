@@ -16,7 +16,7 @@ class MainMenuService():
 
         pass
 
-    def get_data(self):
+    def get_data(self, _user_id):
         """
         Return main menu structure
         @params:
@@ -28,14 +28,14 @@ class MainMenuService():
 
         menu = menu + config.EDUCATION_MENU + config.EVOLUTION_MENU
 
-        curent_user_role = user_manager.get_user_role(user_manager.get_current_user_id())
+        curent_user_role = user_manager.get_user_role(_user_id)
 
         if curent_user_role == "superuser":
             menu = menu  + config.SUPERUSER_MENU
 
         return menu
 
-    def get_active_menu_item_number(self, _endpoint):
+    def get_active_menu_item_number(self, _user_id, _endpoint):
         """
         Return a number of _endpoind element in the menu
         @params:
@@ -43,7 +43,7 @@ class MainMenuService():
         """
 
         i = 0
-        menu = self.get_data()
+        menu = self.get_data(_user_id)
 
         for item in menu:
             if item['endpoint'] == _endpoint:

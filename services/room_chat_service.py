@@ -1,5 +1,5 @@
 from models.room_chat_manager import RoomChatManager
-from services import user_manager_service
+# from services import user_manager_service
 
 class RoomChatService():
     """
@@ -8,7 +8,7 @@ class RoomChatService():
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def room_chat_entry(self, _id_lesson, _id_course, _login_user, _id_room_chat, _id_learning_stream, _id_module):
+    def room_chat_entry(self, _id_lesson, _id_course, _login_user, _id_room_chat, _id_education_stream, _id_module):
         """
         Подключает пользователя к чату
 
@@ -27,7 +27,7 @@ class RoomChatService():
 
         user = user_service.get_current_user(_login_user)
 
-        return room_chat_manager.room_chat_entry(_id_lesson, user, _id_course, _id_room_chat, _id_learning_stream,
+        return room_chat_manager.room_chat_entry(_id_lesson, user, _id_course, _id_room_chat, _id_education_stream,
                                                  _id_module)
 
     def add_message(self, _message, _room_chat_id):

@@ -57,8 +57,8 @@
                                     {% if module_first %}
                                         Неограничен
                                     {% else %}
-                                        {% if _user['learning_stream']['date_end'] %}
-                                            {{ _user['learning_stream']['date_end'] }}
+                                        {% if _user['education_stream']['date_end'] %}
+                                            {{ _user['education_stream']['date_end'] }}
                                         {% else %}
                                             {{ _user['education_module_expiration_date'] }}
                                         {% endif %}

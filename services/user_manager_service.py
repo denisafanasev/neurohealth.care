@@ -1,7 +1,7 @@
 from models.user_manager import UserManager
 from services.action_service import ActionService
 # from services.user_profile_service import UserProfileService
-from services import learning_stream_service
+from models.education_stream_manager import EducationStreamManager
 
 class UserManagerService():
     """
@@ -13,7 +13,7 @@ class UserManagerService():
     def init(self):
         pass
 
-    def get_users(self):
+    def get_users(self, _user_id):
         """
         Возвращает список пользователей
 
@@ -24,11 +24,11 @@ class UserManagerService():
         users = []
 
         user_manager = UserManager()
-        users = user_manager.get_users()
+        users = user_manager.get_users(_user_id)
 
         return users
 
-    def get_current_user(self, _login_user):
+    def get_user_by_login(self, _login_user):
         """
         Возвращает модель User пользователя. Если _login_user = '', то возвращает модель User текущего пользователя
 
@@ -40,16 +40,16 @@ class UserManagerService():
         """
 
         user_manager = UserManager()
-        stream_service = learning_stream_service.LearningStreamService()
+        #stream_service = education_stream_service.EducationStreamService()
 
-        if _login_user == "":
-            user = user_manager.get_user_by_id(user_manager.get_current_user_id())
-        else:
-            user = user_manager.get_user_by_login(_login_user)
+        #if _login_user == "":
+        #    user = user_manager.get_user_by_id(user_manager.get_current_user_id())
+        #else:
+        
+        user = user_manager.get_user_by_login(_login_user)
 
-        if user is not None:
-
-            user.learning_stream_list = stream_service.get_learning_streams_list_by_login_user(user.login, user.role)
+        #if user is not None:
+        #    user.education_stream_list = stream_service.get_education_streams_list_by_login_user(user.login, user.role)
 
 
         return user
@@ -64,18 +64,19 @@ class UserManagerService():
 
         user_manager = UserManager()
         # user_profile_service = UserProfileService()
-        stream_service = learning_stream_service.LearningStreamService()
+        stream_manager = EducationStreamManager()
 
         user = user_manager.get_user_by_id(user_id)
 
         if user is not None:
             if user.role == "user":
-                learning_stream_list = []
-                for id_learning_stream in user.learning_stream_list:
-                    learning_stream_list.append(stream_service.get_learning_stream(id_learning_stream))
-                user.learning_stream_list = learning_stream_list
+                education_stream_list = []
+                for id_education_stream in user.education_stream_list:
+                    education_stream_list.append(
+                        stream_manager.get_education_stream(id_education_stream))
+                user.education_stream_list = education_stream_list
             else:
-                user.learning_stream_list = None
+                user.education_stream_list = None
 
         return user
 
@@ -213,28 +214,28 @@ class UserManagerService():
 
         ActionService().add_notifications(_login, "extended", 'срок доступа', "user_manager", login_superuser)
 
-    # def add_user_in_learning_stream(self, _id_learning_stream, _users_list):
+    # def add_user_in_education_stream(self, _id_education_stream, _users_list):
     #     """
     #     Добавляет пользователей к обучающему потоку
     #
     #     Args:
-    #         _id_learning_stream(Int): идентификатор обучающего потока
+    #         _id_education_stream(Int): идентификатор обучающего потока
     #         _users_list(List): список пользователей
     #     """
     #
     #     user_manager = UserManager()
     #
-    #     return user_manager.add_user_in_learning_stream(_id_learning_stream, _users_list)
+    #     return user_manager.add_user_in_education_stream(_id_education_stream, _users_list)
     #
-    # def exclusion_of_users_from_list(self, _excluded_users_list, _id_learning_stream):
+    # def exclusion_of_users_from_list(self, _excluded_users_list, _id_education_stream):
     #     """
     #     Исключает пользователей из обучающего потока
     #
     #     Args:
-    #         _id_learning_stream(Int): идентификатор обучающего потока
+    #         _id_education_stream(Int): идентификатор обучающего потока
     #         _excluded_users_list(List): список пользователей
     #     """
     #
     #     user_manager = UserManager()
     #
-    #     user_manager.exclusion_of_users_from_list(_excluded_users_list, _id_learning_stream)
+    #     user_manager.exclusion_of_users_from_list(_excluded_users_list, _id_education_stream)

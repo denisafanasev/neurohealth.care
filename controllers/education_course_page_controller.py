@@ -1,7 +1,10 @@
-from services.course_service import CourseService
+from services.education_course_service import EducationCourseService
 
 
 class EducationCoursePageController():
+    """
+    Сервис для страницы курса
+    """    
 
     def get_course_modules_list(self, _id, _user_id):
         """
@@ -15,16 +18,17 @@ class EducationCoursePageController():
             modules_list_view(List): список модулей курса
         """
 
-        course_service = CourseService()
+        course_service = EducationCourseService()
 
-        learning_stream = course_service.get_course_modules_list(_id, _login_user)
+        education_stream = course_service.get_course_modules_list(_id, _user_id)
         # modules_list_view = {
-        #     "id_learning_stream": learning_stream.id,
-        #     "date_end": learning_stream.date_end,
+        #     "id_education_stream": education_stream.id,
+        #     "date_end": education_stream.date_end,
         #     "modules_list": []
         # }
-        modules_list_view = []
-        for i_module in learning_stream:
+
+        modules_list = []
+        for i_module in education_stream:
             module = {}
             module["id"] = i_module.id
             module["name"] = i_module.name
@@ -46,32 +50,30 @@ class EducationCoursePageController():
 
         return modules_list
 
-    # TODO: во все внутрении модули, id пользователя должен приезжать из app.py
-    def get_current_user(self):
+    def get_user_view_for_course_by_id(self, _user_id, _id_course):
         """
-        Возвращает данные текущего пользователя
+        Возвращает представление текущего пользователя
 
         Returns:
             user(Dict): данные пользователя
         """
 
-        # TODO: из контроллера можно вызывать только свой сервис, а не всего приложения
-        course_service = CourseService()
+        course_service = EducationCourseService()
+        user = course_service.get_user_by_id_and_course_id(_user_id, _id_course)
 
-        user = course_service.get_current_user(_id_course)
         user_view = {
             "login": user.login,
             "role": user.role,
             "active_education_module": user.active_education_module,
             "education_module_expiration_date": user.education_module_expiration_date.strftime("%d/%m/%Y"),
-            "learning_stream": {}
+            "education_stream": {}
         }
 
-        if type(user.learning_stream_list) is not list:
-            user_view['learning_stream'] = {
-                "id": user.learning_stream_list.id,
-                "date_end": user.learning_stream_list.date_end.strftime("%d/%m/%Y"),
-                "status": user.learning_stream_list.status
+        if type(user.education_stream_list) is not list:
+            user_view['education_stream'] = {
+                "id": user.education_stream_list.id,
+                "date_end": user.education_stream_list.date_end.strftime("%d/%m/%Y"),
+                "status": user.education_stream_list.status
             }
 
         return user_view
@@ -87,7 +89,7 @@ class EducationCoursePageController():
             course(Dict): курс
         """
 
-        course_service = CourseService()
+        course_service = EducationCourseService()
         course = course_service.get_course_by_id(_id)
 
         course_formated = {}

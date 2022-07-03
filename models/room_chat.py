@@ -2,7 +2,7 @@
 
 class RoomChat():
 
-    def __init__(self, _id=None, _name='', _message=None, _id_learning_stream=None):
+    def __init__(self, _id=None, _name='', _message=None, _id_education_stream=None):
 
         self.id = _id
         self.name = _name
@@ -10,7 +10,7 @@ class RoomChat():
             self.message = None
         else:
             self.message = _message
-        self.id_learning_stream = _id_learning_stream
+        self.id_education_stream = _id_education_stream
 
 class Message():
 

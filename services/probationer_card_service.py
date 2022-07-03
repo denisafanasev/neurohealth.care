@@ -1,6 +1,6 @@
 from models.probationer_manager import ProbationerManager
 from services.action_service import ActionService
-from services.user_manager_service import UserManagerService
+# from services.user_manager_service import UserManagerService
 
 class ProbationerCardService():
     """

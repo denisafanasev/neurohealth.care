@@ -1,4 +1,5 @@
 from data_adapters.data_store import DataStore
+from models.user_manager import UserManager
 from models.action import Action
 from datetime import datetime, timedelta
 
@@ -84,7 +85,7 @@ class ActionManager():
         data_store.add_row({"id": action.id, "login": action.user_login, "action": action.action,
                             "comment_action": action.comment_action, "created_date": action.created_date.strftime("%d/%m/%Y %H:%M:%S")})
 
-    def get_actions(self):
+    def get_actions(self, _user_id):
         """
         Возвращает список действий, сделанных авторизованным пользователем(если авторизованный пользователь админ,
         то возвращает список действий всех пользователей, которые есть в системе)
@@ -94,10 +95,9 @@ class ActionManager():
         """
 
         data_store = DataStore("action")
-        from models.user_manager import UserManager
-
+    
         actions_list = data_store.get_rows()
-        user = UserManager().get_user_by_id(UserManager().get_current_user_id())
+        user = UserManager().get_user_by_id(_user_id)
 
         date = datetime.now()
         actions = []

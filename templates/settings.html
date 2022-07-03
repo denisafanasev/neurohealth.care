@@ -60,7 +60,7 @@
                             <a class="btn {% if _endpoint == "estimated_values" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("estimated_values") }}" role="tab">
                                 Справочник оценочных значений
                             </a>
-                            <a style="width: 100%" class="btn {% if _endpoint == "learning_streams" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("learning_streams") }}" role="tab">
+                            <a style="width: 100%" class="btn {% if _endpoint == "education_streams" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("education_streams") }}" role="tab">
                                 Обучающие потоки
                             </a>
                         </div>
@@ -79,8 +79,8 @@
                         {% endblock %}
                     </div>
 
-                    <div class="tab-pane fade {% if _endpoint == "learning_streams" %} show active {% endif %}" id="{{ url_for("learning_streams") }}" role="tabpanel">
-                        {% block learning_streams %}
+                    <div class="tab-pane fade {% if _endpoint == "education_streams" %} show active {% endif %}" id="{{ url_for("education_streams") }}" role="tabpanel">
+                        {% block education_streams %}
                         {% endblock %}
                     </div>
                 </div>

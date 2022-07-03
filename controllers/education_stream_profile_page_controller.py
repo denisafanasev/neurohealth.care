@@ -1,18 +1,18 @@
-from services.learning_stream_service import LearningStreamService
+from services.education_stream_service import EducationStreamService
 
-class LearningStreamProfilePageController():
+class EducationStreamProfilePageController():
 
-    def create_learning_stream(self, _learning_stream):
+    def create_education_stream(self, _education_stream):
         """
         Создает обучающий поток
 
         Args:
-            _learning_stream(Dict): обучающий поток
+            _education_stream(Dict): обучающий поток
         """
 
-        learning_stream_service = LearningStreamService()
+        education_stream_service = EducationStreamService()
 
-        return learning_stream_service.create_learning_stream(_learning_stream)
+        return education_stream_service.create_education_stream(_education_stream)
 
     def get_students_list(self):
         """
@@ -22,9 +22,9 @@ class LearningStreamProfilePageController():
             students_list(List): список пользователей
         """
 
-        learning_stream_service = LearningStreamService()
+        education_stream_service = EducationStreamService()
 
-        students = learning_stream_service.get_students_list()
+        students = education_stream_service.get_students_list()
         students_list = []
 
         for i_student in students:
@@ -45,9 +45,9 @@ class LearningStreamProfilePageController():
             curators_list(List): список пользователей
         """
 
-        learning_stream_service = LearningStreamService()
+        education_stream_service = EducationStreamService()
 
-        curators = learning_stream_service.get_curators_list()
+        curators = education_stream_service.get_curators_list()
         curators_list = []
 
         for i_curator in curators:
@@ -68,9 +68,9 @@ class LearningStreamProfilePageController():
             (List): список курсов
         """
 
-        learning_stream_service = LearningStreamService()
+        education_stream_service = EducationStreamService()
 
-        courses = learning_stream_service.get_courses_list()
+        courses = education_stream_service.get_courses_list()
         courses_list = []
 
         for i_course in courses:
@@ -83,7 +83,7 @@ class LearningStreamProfilePageController():
 
         return courses_list
 
-    def get_learning_stream(self, _id):
+    def get_education_stream(self, _id):
         """
         Возвращает обучающий поток по id
 
@@ -91,30 +91,30 @@ class LearningStreamProfilePageController():
             _id(Int): идентификатор обучающего потока
         """
 
-        learning_stream_service = LearningStreamService()
+        education_stream_service = EducationStreamService()
 
-        learning_stream = learning_stream_service.get_learning_stream(_id)
+        education_stream = education_stream_service.get_education_stream(_id)
 
-        if learning_stream is not None:
+        if education_stream is not None:
 
-            learning_stream_view = {
-                "id": learning_stream.id,
-                "name": learning_stream.name,
+            education_stream_view = {
+                "id": education_stream.id,
+                "name": education_stream.name,
                 "course": {
-                    "id": learning_stream.course.id,
-                    "name": learning_stream.course.name
+                    "id": education_stream.course.id,
+                    "name": education_stream.course.name
                 },
-                "date_start": learning_stream.date_start.strftime("%d/%m/%Y"),
-                "date_end": learning_stream.date_end.strftime("%d/%m/%Y"),
-                "curators_list": learning_stream.curators_list,
-                "students_list": learning_stream.students_list,
-                "count_curators": len(learning_stream.curators_list),
-                "count_students": len(learning_stream.students_list),
-                "teacher": learning_stream.teacher,
-                "status": learning_stream.status
+                "date_start": education_stream.date_start.strftime("%d/%m/%Y"),
+                "date_end": education_stream.date_end.strftime("%d/%m/%Y"),
+                "curators_list": education_stream.curators_list,
+                "students_list": education_stream.students_list,
+                "count_curators": len(education_stream.curators_list),
+                "count_students": len(education_stream.students_list),
+                "teacher": education_stream.teacher,
+                "status": education_stream.status
             }
         else:
-            learning_stream_view = {
+            education_stream_view = {
                 "id": 0,
                 "name": "Введите название потока..",
                 "course": "Выберить курс обучающего потока..",
@@ -125,20 +125,20 @@ class LearningStreamProfilePageController():
                 "teacher": "Выберите преподавателя обучающего потока..",
             }
 
-        return learning_stream_view
+        return education_stream_view
 
-    def change_learning_stream(self, _learning_stream, _old_students_list, _old_curators_list):
+    def change_education_stream(self, _education_stream, _old_students_list, _old_curators_list):
         """
         Изменяет данные обучающего потока
 
         Args:
-            _learning_stream(Dict): обучающий поток
+            _education_stream(Dict): обучающий поток
             _old_students_list(List): предыдущий список студентов
             _old_curators_list(List): предыдющий список кураторов
         """
 
-        learning_stream_service = LearningStreamService()
+        education_stream_service = EducationStreamService()
 
-        learning_stream_service.change_learning_stream(_learning_stream, _old_students_list, _old_curators_list)
+        education_stream_service.change_education_stream(_education_stream, _old_students_list, _old_curators_list)
 
-        _learning_stream['course'] = _learning_stream.pop("id_course")
+        _education_stream['course'] = _education_stream.pop("id_course")

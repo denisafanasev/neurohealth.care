@@ -1,6 +1,6 @@
 import calendar
 import hashlib
-import flask_login
+#import flask_login
 
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -147,10 +147,10 @@ class UserManager():
             else:
                 user.active_education_module = "active"
 
-        # if _data_row.get('learning_stream_list') is not None:
-        #      user.learning_stream_list = _data_row.get('learning_stream_list')
+        # if _data_row.get('education_stream_list') is not None:
+        #      user.education_stream_list = _data_row.get('education_stream_list')
         # else:
-        #     user.learning_stream_list = []
+        #     user.education_stream_list = []
 
         return user
 
@@ -269,7 +269,7 @@ class UserManager():
 
         return user
 
-    def get_users(self):
+    def get_users(self, _user_id):
         """
         Возвращает список пользователей в системе, в соответствии с ролью пользователя, который запрашивает список
 
@@ -291,17 +291,17 @@ class UserManager():
             # user = User(user_data.doc_id, user_data['login'], user_data['name'], user_data['email'], user_data['role'])
             user = self.user_row_to_user(user_data)
 
-            if self.get_user_role(self.get_current_user_id()) == "superuser":
+            if self.get_user_role(_user_id) == "superuser":
                 users.append(user)
             else:
-                if self.get_current_user_id() == user.user_id:
+                if self.get_user_by_id(_user_id) == user.user_id:
                     users.append(user)
 
         return users
 
     def is_there_users(self):
         """
-        Проверяем, есть ли в системе пользователи
+        Проверяем, есть ли в системе пользователи вообще
 
         Args:
             None
@@ -387,6 +387,7 @@ class UserManager():
 
         return
 
+    '''
     def get_current_user_id(self):
         """
         Возвращает id текущего авторизованного пользователя
@@ -401,8 +402,9 @@ class UserManager():
             id = flask_login.current_user.user_id
 
         return id
+    '''
 
-    def get_user_role(self, _id):
+    def get_user_role(self, _user_id):
         """
         Возвращает роль пользователя по id
 
@@ -412,9 +414,7 @@ class UserManager():
         Returns:
             String: роль пользователя
         """
-
-        user_id = self.get_current_user_id()
-        user = self.get_user_by_id(user_id)
+        user = self.get_user_by_id(_user_id)
         user_role = user.role
 
         return user_role
@@ -538,12 +538,12 @@ class UserManager():
         data_store.change_row(
             {"education_module_expiration_date": user.education_module_expiration_date, "login": user.login})
 
-    def add_user_in_learning_stream(self, _id_learning_stream, _users_list):
+    def add_user_in_education_stream(self, _id_education_stream, _users_list):
         """
         Добавляет пользователей к обучающему потоку
 
         Args:
-            _id_learning_stream(Int): идентификатор обучающего потока
+            _id_education_stream(Int): идентификатор обучающего потока
             _users_list(List): список пользователей
         """
 
@@ -552,16 +552,16 @@ class UserManager():
         for login_user in _users_list:
             user = self.get_user_by_login(login_user)
 
-            if _id_learning_stream not in user.learning_stream_list:
-                user.learning_stream_list.append(_id_learning_stream)
-                data_store.change_row({"learning_stream_list": user.learning_stream_list, "login": user.login})
+            if _id_education_stream not in user.education_stream_list:
+                user.education_stream_list.append(_id_education_stream)
+                data_store.change_row({"education_stream_list": user.education_stream_list, "login": user.login})
 
-    def exclusion_of_users_from_list(self, _excluded_users_list, _id_learning_stream):
+    def exclusion_of_users_from_list(self, _excluded_users_list, _id_education_stream):
         """
         Исключает пользователей из обучающего потока
 
         Args:
-            _id_learning_stream(Int): идентификатор обучающего потока
+            _id_education_stream(Int): идентификатор обучающего потока
             _excluded_users_list(List): список пользователей
         """
 
@@ -571,6 +571,6 @@ class UserManager():
 
             user = self.get_user_by_login(user_login)
 
-            user.learning_stream_list.remove(_id_learning_stream)
-            data_store.change_row({"learning_stream_list": user.learning_stream_list, "login": user.login})
+            user.education_stream_list.remove(_id_education_stream)
+            data_store.change_row({"education_stream_list": user.education_stream_list, "login": user.login})
 
