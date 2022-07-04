@@ -191,10 +191,13 @@ class EducationCourseLessonPageController():
             homework_view = {
                 "id": homework.id,
                 "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
+                "users_files_list": homework.users_files_list,
                 "homework_answer": {
                     "id": homework.homework_answer.id,
-                    "answer": homework.homework_answer.answer
-                }
+                    "answer": homework.homework_answer.answer,
+                    "status": homework.homework_answer.status
+                },
+                "text": Markup(homework.text)
             }
 
         return homework_view
