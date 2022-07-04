@@ -739,6 +739,7 @@ def education_course_lesson():
     user = page_controller.get_user_view_by_id_and_course_id(user_id, int(id_course))
     course = page_controller.get_course_by_id(id_course)
     user_list = None
+    homework = None
 
     # тут проверяем, что пользователь подписан на курс
     #if user['role'] == 'user' and course['type'] == 'main' and int(id_module) > 1:
@@ -797,11 +798,12 @@ def education_course_lesson():
         room_chat = None
     elif id_room_chat is not None:
         room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
+        homework = page_controller.get_homework(int(id_room_chat))
     else:
         room_chat = None
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _homework=homework,
                            _data=data, _room_chat=room_chat, _user_list=user_list, _user=user, _course_name=course['name'])
 
 
@@ -842,9 +844,9 @@ def education_home_tasks():
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
 
-@app.route('/education_chat', methods=['GET', 'POST'])
+@app.route('/education_home_task_profile', methods=['GET', 'POST'])
 @login_required
-def education_chat():
+def education_home_task_profile():
     """
     Общение с пользователями, которые сдали домашнюю работу(только для кураторов)
     """
@@ -852,20 +854,29 @@ def education_chat():
     user_id = flask_login.current_user.user_id
     page_controller = EducationChatPageController()
     mpc = MainMenuPageController(user_id)
-    endpoint = "education_chat"
+    endpoint = "education_home_tasks"
 
-    id_room_chat = request.args.get("id")
+    id_room_chat = request.args.get("id_chat")
+    id_homework = request.args.get("id_homework")
 
     room_chat = page_controller.room_chat_entry(id_room_chat, user_id)
+    homework = page_controller.get_homework(int(id_homework))
     user = page_controller.get_current_user(user_id)
 
     if request.method == "POST":
         if request.form.get("send"):
             text = request.form.get("text")
-            room_chat['message'].append(page_controller.add_message({"text": text}, id_room_chat, user_id))
+            if text is not None:
+                room_chat['message'].append(page_controller.add_message({"text": text}, id_room_chat, user_id))
 
-    return render_template('education_chat.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _room_chat=room_chat)
+        elif request.form.get("button") == "answer":
+            answer = request.form.get("answer")
+
+            page_controller.change_homework_answer(answer, homework['homework_answer']["id"])
+
+    return render_template('education_home_task_profile.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _room_chat=room_chat,
+                           _homework=homework)
 
 
 @app.route('/corrections', methods=['GET', 'POST'])

@@ -153,3 +153,32 @@ class HomeworkManager():
             homework_answer.answer = False
 
         data_store.update_row({"id": homework_answer.id, "answer": homework_answer.answer}, "id")
+
+    def get_homeworks_list_by_id_room_chat(self, _id_room_chat):
+
+        data_store = DataStore("homeworks")
+
+        homeworks_list = data_store.get_rows({"id_room_chat": _id_room_chat})
+        homeworks = []
+
+        for homework in homeworks_list:
+            homework['homework_answer'] = self.get_homework_answer(homework['id'])
+            if type(homework["id_room_chat"]) is str:
+                homework["id_room_chat"] = int(homework["id_room_chat"])
+                data_store.update_row({"id_room_chat": homework["id_room_chat"], "id": homework['id']}, "id")
+            if homework.get("text") is None:
+                data_store.update_row({"id": homework["id"], "text": ""}, "id")
+                homework['text'] = ""
+
+            homeworks.append(self.homework_row_to_homework(homework))
+
+        return homeworks
+
+    def get_homework_by_id(self, _id):
+
+        data_store = DataStore("homeworks")
+
+        homework = data_store.get_rows({"id": _id})[0]
+        homework['homework_answer'] = self.get_homework_answer(_id)
+
+        return self.homework_row_to_homework(homework)

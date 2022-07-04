@@ -40,8 +40,8 @@ class EducationHomeTasksPageController():
                     "name": course.name
                 },
                 "lesson": {
-                    "id": lesson.id,
-                    "name": lesson.name
+                    "id": lesson.lessons.id,
+                    "name": lesson.lessons.name
                 },
                 # "education_stream": {
                 #     "id": education_stream.id,

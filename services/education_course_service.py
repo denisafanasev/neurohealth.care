@@ -249,3 +249,23 @@ class EducationCourseService():
         _message["name_sender"] = user_manager_service.get_user_by_id(_user_id).login
 
         return room_chat_manager.add_message(_message, _room_chat_id)
+
+    def get_homeworks_list_by_id_room_chat(self, _id_room_chat):
+
+        homework_manager = HomeworkManager()
+
+        homework_list = homework_manager.get_homeworks_list_by_id_room_chat(_id_room_chat)
+        date = datetime.strptime("01/01/2000", "%d/%m/%Y")
+        if homework_list != []:
+            for homework in homework_list:
+                if homework.date_delivery >= date:
+                    date = homework.date_delivery
+                    last_homework = homework
+            #     if homework.homework_answer.answer and homework.homework_answer.answer is not None:
+            #         return homework
+            #
+            # for homework in homework_list:
+            #     if not homework.homework_answer.answer and homework.homework_answer.answer is not None:
+            #         return homework
+
+            return last_homework

@@ -174,3 +174,27 @@ class EducationCourseLessonPageController():
         course_service = EducationCourseService()
 
         course_service.save_homework(_files_list, _id_room_chat, _user_id, _text)
+
+    def get_homework(self, _id_room_chat):
+
+        course_service = EducationCourseService()
+
+        homework = course_service.get_homeworks_list_by_id_room_chat(_id_room_chat)
+        homework_view = None
+
+        if homework is not None:
+            if homework.homework_answer.answer:
+                homework.homework_answer.answer = "Принято"
+            else:
+                homework.homework_answer.answer = "Не принято"
+
+            homework_view = {
+                "id": homework.id,
+                "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
+                "homework_answer": {
+                    "id": homework.homework_answer.id,
+                    "answer": homework.homework_answer.answer
+                }
+            }
+
+        return homework_view

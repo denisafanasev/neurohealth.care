@@ -70,8 +70,8 @@
         overflow-y: scroll;
         overflow-x: initial;
         white-space: inherit;
-        height: 500px;
-        max-height: 500px;
+        height: 350px;
+        max-height: 350px;
     }
 
     .chat-message-left {
@@ -306,94 +306,105 @@
         </div>
 
         {% if _data['lesson']['task'] %}
+            <div class="card border">
+                <div class="card-body">
+                    <div class="row">
 
-                <div class="card border">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col">
-                                <h4>
-                                    Домашнее задание
-                                </h4>
-                            </div>
-
-{#                                <div class="col">#}
-{#                                    <select class="form-select" onchange="this.form.submit();" name="user">#}
-{#                                            <option selected disabled value="">Выберите ученика</option>#}
-{#                                        {% for i_user in _user_list %}#}
-{#                                            <option value="{{ i_user }}">{{ i_user }}</option>#}
-{#                                        {% endfor %}#}
-{#                                    </select>#}
-{#                                </div>#}
-
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-
-                            <div class="col-md-12 text-left">
-                                <div class="card py-1 py-md-1 border">
-                                    <div class="card-body">
-                                        <p class="card-text">
-                                            {{ _data['lesson']['task'] }}
-                                        </p>
-                                    {% if _user['role'] != "superuser" %}
-                                        {% if request.args.get('id_chat') != "none" %}
-                                            <form id="homework" method="post" enctype="multipart/form-data">
-                                                <div class="mb-2">
-                                                    <label class="form-label" for="hometask">Сдача домашнего задания</label>
-                                                    <div class="mb-2">
-                                                        <div id="editor_homework" style="z-index: 0"><p></p></div>
-                                                        <input type="hidden" id="hiddenInput" name="text_homework">
-                                                    </div>
-                                                    <div class="input-group">
-                                                        <input id="hometask" type="file" multiple name="files" class="form-control">
-                                                        <button id="button" class="btn btn-primary" name="button" type="submit" value="homework">Отправить</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                            <form id="chat" method="post" enctype="multipart/form-data">
-                                                <label class="form-label" for="editor">Чат</label>
-                                                <div class="mb-2">
-                                                    <div id="editor" style="z-index: 0"><p></p></div>
-                                                    <input type="hidden" id="hiddenInput" name="text">
-                                                </div>
-                                            </form>
-                                        {% endif %}
-                                    {% endif %}
-                                    </div>
-                                {% if request.args.get('id_chat') != "none" %}
-                                    <div class="card d-flex align-self-baseline" style="margin-left: auto">
-                                        <div class="card-header">
-                                            <button type="submit" name="send" value="send" form="chat" class="btn btn-primary">Отправить</button>
-                                        </div>
-                                    </div>
-                                    {% endif %}
+                        <div class="col-md-4 text-left">
+                            <div class="card py-1 py-md-1 border">
+                                <div class="card-header">
+                                    <h4 class="form-label">Домашние задание</h4>
                                 </div>
-                            </div>
-                            <div class="row d-flex align-items-stretch bd-highlight">
-                                <div class="col-12 p-2 bd-highlight">
-                                    {% if _room_chat['message'] %}
-                                        <div class="border position-relative">
-                                            <div class="card-group chat-messages p-4">
-                                                {% for i_message in _room_chat['message'] %}
-                                                    <div class="card border-top chat-message-left pb-4">
-                                                        <div class="card-header">
-                                                            <h3 class="card-title message">{{ i_message['name_sender'] }}</h3>
-                                                        </div>
-                                                        <div class="card-body  flex-shrink-1  rounded py-2 px-3 mr-3">
-                                                            {{ i_message['text'] }}
-                                                        </div>
-                                                    </div>
-                                                {% endfor %}
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        {{ _data['lesson']['task'] }}
+                                    </p>
+                                {% if _user['role'] != "superuser" %}
+                                    {% if _homework is not none %}
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:70%;">Статус домашнего задания</th>
+                                                    <th style="width:25%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Сдано: {{ _homework['date_delivery'] }}</td>
+                                                    <td class="d-none d-md-table-cell">{{ _homework['homework_answer']['answer'] }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    {% elif request.args.get('id_chat') != "none" %}
+                                        <form id="homework" method="post" enctype="multipart/form-data">
+                                            <div class="mb-2">
+                                                <label class="form-label" for="hometask">Ответ</label>
+                                                <div class="mb-2">
+                                                    <div id="editor_homework" style="z-index: 0"><p></p></div>
+                                                    <input type="hidden" id="hiddenInput" name="text_homework">
+                                                </div>
+                                                <input id="hometask" type="file" multiple name="files" class="form-control">
+                                                <div class="mb-2" align="right">
+                                                    <button id="button" class="btn btn-primary" name="button" type="submit" value="homework">Отправить</button>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </form>
                                     {% endif %}
+                                {% endif %}
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 text-left">
+                            <div class="card py-1 py-md-1 border">
+                                <div class="card-header">
+                                    <h4 class="form-label">Чат</h4>
+                                </div>
+                                <div class="card-body">
+                                {% if _room_chat['message'] %}
+                                    <div class="border position-relative">
+                                        <div class="chat-messages p-4">
+                                            {% for i_message in _room_chat['message'] %}
+                                                <div class="{% if _user["login"] == i_message['name_sender'] %}chat-message-right mb-4{% else %}chat-message-left pb-4{% endif %}">
+                                                    <div>
+                                                        <img src="{{ url_for('static', filename='img/avatars/149071.jpg') }}" class="rounded-circle me-1" width="40" height="40">
+                                                        <div class="text-muted small text-nowrap mt-2">{{ i_message['date_send'] }}</div>
+                                                    </div>
+                                                    <div class="flex-shrink-1 bg-light rounded py-2 px-3 me-3"
+                                                    style="{% if i_message['name_sender'] == _user['login'] %}background: #e8f1f3!important;{% else %} background: #efefef!important;{% endif %}">
+                                                        <div class="font-weight-bold mb-1">{{ i_message['name_sender'] }}</div>
+                                                        {{ i_message['text'] }}
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if _user['role'] != "superuser" %}
+                                    {% if request.args.get('id_chat') != "none" %}
+                                        <form id="chat" method="post" enctype="multipart/form-data">
+
+                                            <div class="mb-2">
+                                                <div id="editor" style="z-index: 0"><p></p></div>
+                                                <input type="hidden" id="hiddenInput" name="text">
+                                            </div>
+                                        </form>
+                                    {% endif %}
+                                {% endif %}
+                                </div>
+                            {% if request.args.get('id_chat') != "none" %}
+                                <div class="card d-flex align-self-baseline" style="margin-left: auto">
+                                    <div class="card-header">
+                                        <button type="submit" name="send" value="send" form="chat" class="btn btn-primary">Отправить</button>
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
-        {% else %}
+            </div>
+            </div>
+        {% elif not _data['available'] and _data['id_module'] != 1 %}
             <div class="card border">
                 <div class="card-header">
                     <div class="row">
@@ -418,6 +429,31 @@
                     </div>
                 </div>
             </div>
+        {% else %}
+            <div class="card border">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <h4>
+                                Домашнее задание
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 text-left">
+                            <div class="card py-1 py-md-1 border">
+                                <div class="card-body">
+                                    <div class="text-center">
+                                        <h2>Для данного урока нет домашнего задания</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         {% endif %}
-    </div>
+
 {% endblock %}
