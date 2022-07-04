@@ -74,7 +74,8 @@
         max-height: 350px;
     }
 
-    .chat-message-left {
+    .chat-message-left,
+    .chat-message-right{
         display: block;
         flex-shrink: 0;
         word-wrap: break-word;
@@ -235,6 +236,7 @@
                                             <th style="width:5%;"></th>
                                             <th style="width:70%;">Статус обучения</th>
                                             <th style="width:25%"></th>
+                                            <th style="width:25%"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -244,13 +246,15 @@
                                             </td>
                                             <td>Срок доступа</td>
                                             <td class="d-none d-md-table-cell">{{ _user['education_module_expiration_date'] }}</td>
+                                            <td></td>
                                         </tr>
                                         <tr>
                                             <td class="table-action">
                                                 <i class="align-middle me-2 fas fa-fw fa-couch"></i>
                                             </td>
                                             <td>Домашнее задание</td>
-                                            <td class="d-none d-md-table-cell">Доступно</td>
+                                            <td>Сдано: {{ _homework['date_delivery'] }}</td>
+                                            <td class="d-none d-md-table-cell">{{ _homework['homework_answer']['answer'] }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -310,7 +314,7 @@
                 <div class="card-body">
                     <div class="row">
 
-                        <div class="col-md-4 text-left">
+                        <div class="col-md-6 text-left">
                             <div class="card py-1 py-md-1 border">
                                 <div class="card-header">
                                     <h4 class="form-label">Домашние задание</h4>
@@ -320,21 +324,22 @@
                                         {{ _data['lesson']['task'] }}
                                     </p>
                                 {% if _user['role'] != "superuser" %}
+
+                                    <!-- Если домашняя работа сдана -->
+
                                     {% if _homework is not none %}
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th style="width:70%;">Статус домашнего задания</th>
-                                                    <th style="width:25%"></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Сдано: {{ _homework['date_delivery'] }}</td>
-                                                    <td class="d-none d-md-table-cell">{{ _homework['homework_answer']['answer'] }}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <h4>Ваш ответ</h4>
+                                        <div class="mb-1">
+                                            <div class="mb-2">
+                                                {{ _homework['text'] }}
+                                            </div>
+                                                {% for file in _homework['users_files_list'] %}
+                                                    <a href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
+                                                {% endfor %}
+                                        </div>
+
+                                    <!-- Если есть id комнаты чата, то значит есть и доступ к выполнению домашней работы -->
+
                                     {% elif request.args.get('id_chat') != "none" %}
                                         <form id="homework" method="post" enctype="multipart/form-data">
                                             <div class="mb-2">
@@ -350,28 +355,28 @@
                                             </div>
                                         </form>
                                     {% endif %}
+
                                 {% endif %}
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-8 text-left">
+
+                    <!-- Чат для общения с кураторами/преподавателями -->
+
+                        <div class="col-md-6 text-left">
                             <div class="card py-1 py-md-1 border">
                                 <div class="card-header">
                                     <h4 class="form-label">Чат</h4>
                                 </div>
                                 <div class="card-body">
                                 {% if _room_chat['message'] %}
-                                    <div class="border position-relative">
+                                    <div class="border position-relative mb-3">
                                         <div class="chat-messages p-4">
                                             {% for i_message in _room_chat['message'] %}
                                                 <div class="{% if _user["login"] == i_message['name_sender'] %}chat-message-right mb-4{% else %}chat-message-left pb-4{% endif %}">
-                                                    <div>
-                                                        <img src="{{ url_for('static', filename='img/avatars/149071.jpg') }}" class="rounded-circle me-1" width="40" height="40">
-                                                        <div class="text-muted small text-nowrap mt-2">{{ i_message['date_send'] }}</div>
-                                                    </div>
                                                     <div class="flex-shrink-1 bg-light rounded py-2 px-3 me-3"
                                                     style="{% if i_message['name_sender'] == _user['login'] %}background: #e8f1f3!important;{% else %} background: #efefef!important;{% endif %}">
-                                                        <div class="font-weight-bold mb-1">{{ i_message['name_sender'] }}</div>
+                                                        <div class="font-weight-bold mb-1"><strong>{{ i_message['name_sender'] }}</strong></div>
                                                         {{ i_message['text'] }}
                                                     </div>
                                                 </div>
@@ -382,27 +387,25 @@
                                 {% if _user['role'] != "superuser" %}
                                     {% if request.args.get('id_chat') != "none" %}
                                         <form id="chat" method="post" enctype="multipart/form-data">
-
-                                            <div class="mb-2">
+                                            <div>
                                                 <div id="editor" style="z-index: 0"><p></p></div>
                                                 <input type="hidden" id="hiddenInput" name="text">
                                             </div>
                                         </form>
                                     {% endif %}
                                 {% endif %}
-                                </div>
-                            {% if request.args.get('id_chat') != "none" %}
-                                <div class="card d-flex align-self-baseline" style="margin-left: auto">
-                                    <div class="card-header">
-                                        <button type="submit" name="send" value="send" form="chat" class="btn btn-primary">Отправить</button>
+                                {% if request.args.get('id_chat') != "none" %}
+                                    <div class="card d-flex align-self-baseline" style="float: right; margin-top: 2%">
+
+                                            <button type="submit" name="send" value="send" form="chat" class="btn btn-primary">Отправить</button>
+
                                     </div>
-                                </div>
                                 {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
             </div>
         {% elif not _data['available'] and _data['id_module'] != 1 %}
             <div class="card border">
@@ -455,5 +458,5 @@
                 </div>
             </div>
         {% endif %}
-
+    </div>
 {% endblock %}
