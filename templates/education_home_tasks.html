@@ -162,8 +162,6 @@
                                             aria-label="Position: activate to sort column ascending">Ответ</th>
                                         <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-buttons"
                                             aria-label="Position: activate to sort column ascending">Домашняя работа</th>
-                                        <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-buttons"
-                                            aria-label="Position: activate to sort column ascending">Чат</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -171,7 +169,7 @@
                                     <tr>
 {#                                        <td>Обучающий поток(курс потока):{{ item['education_stream']['name'] }}({{ item['course']['name'] }})</td>#}
                                         <td>{{ item["user"]['name'] }}</td>
-                                        <td>{{ item['lesson']['name'] }}</td>
+                                        <td>Урок: {{ item['lesson']['name'] }}</td>
                                         <td>{{ item['date_delivery'] }}</td>
                                         <td>{{ item['homework_answer']['status'] }}</td>
                                         {% if item['homework_answer']['answer'] %}
@@ -180,12 +178,7 @@
                                             <td>Не принято</td>
                                         {% endif %}
                                         <td>
-                                            <a href="" data-bs-toggle="modal" data-bs-target="#homework_{{ item['id'] }}" onclick="document.getElementById('homework_{{ item['id'] }}').style.display='block';">
-                                                Открыть
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <a href="/education_chat?id={{ item['id_room_chat'] }}" >
+                                            <a href="/education_home_task_profile?id_chat={{ item['id_room_chat'] }}&id_homework={{ item['id'] }}" >
                                                 Перейти
                                             </a>
                                         </td>
@@ -198,63 +191,5 @@
                 </div>
             </div>
         </form>
-
-        {% for item in _data %}
-            <script>
-                // Get the modal
-                var homework_{{ item['id'] }} = document.getElementById('homework_{{ item['id'] }}');
-
-                window.onclick = function (event) {
-                    if (event.target === modal_{{ item['id'] }}) {
-                        homework_{{ item['id'] }}.style.display = "none";
-                    }
-                }
-            </script>
-            <div id="homework_{{ item['id'] }}" class="modal_{{ item['id'] }} modal">
-                <div class="modal-content animate" style="width: 20%">
-                    <h3 class="modal-title">Домашние задание</h3>
-                    <form id="homework_{{ item['id'] }}" name="homework_{{ item['id'] }}" method="post" enctype="multipart/form-data"
-                            class="was-validated">
-                        <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; ">
-                            <div class="card-header">
-                                <div class="mb-2">
-                                    <label class="form-label"><strong>Домашняя работа</strong></label>
-                                    {{ item['text'] }}
-                                    {% for file in item['users_files_list'] %}
-                                        <a href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
-                                    {% endfor %}
-                                </div>
-
-                                <div class="mb-2">
-                                    <label class="form-label"><strong>Ответ</strong></label>
-                                    <div class="">
-                                      <input  name="answer" type="radio" value="True" id="answer_true">
-                                      <label class="form-check-label" for="answer_true">
-                                        Принято
-                                      </label>
-                                    </div>
-                                    <div class="">
-                                      <input   name="answer" type="radio" value="False" id="answer_false">
-                                      <label class="form-check-label" for="answer_false">
-                                        Не принято
-                                      </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
-                            <div class="p-1" align="right">
-                                <button type="submit" name="button_{{ item['id'] }}" value="answer" class="btn btn-primary ">
-                                    Сохранить
-                                </button>
-                                <a onclick="document.getElementById('homework_{{ item['id'] }}').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
-                                    Отмена
-                                </a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        {% endfor %}
     </div>
 {% endblock %}

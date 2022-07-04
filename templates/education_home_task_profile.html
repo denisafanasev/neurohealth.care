@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block main_block %}
+    <link href="https://cdn.quilljs.com/1.1.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.1.6/quill.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var quill = new Quill('#editor', {
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic'],
+                        ['link', 'blockquote', 'code-block'],
+                        [{list: 'ordered'}, {list: 'bullet'}]
+                    ]
+                },
+                theme: 'snow',
+            });
+
+            let message = document.getElementById('message');
+            let error_chat = "Ошибка: не заполнено поле для отправки сообщения в чат!";
+
+            var form = document.getElementById("chat");
+            form.onsubmit = function () {
+                // Populate hidden form on submit
+                var about = document.querySelector('input[name=text]');
+                about.value = quill.root.innerHTML;
+                if (about.value === "<p><br></p>") {
+                    document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                    document.querySelector('p[id=text_message]').textContent = error_chat;
+                    message.style.display = 'block'
+                    return false;
+                }
+            };
+        })
+    </script>
+
+    <style>
+    .position-relative{
+        margin: 1%;
+    }
+
+    .chat-messages {
+        display: list-item;
+        flex-direction: column;
+        overflow-y: scroll;
+        overflow-x: initial;
+        white-space: inherit;
+        height: 500px;
+        max-height: 500px;
+    }
+    </style>
+
+    <div class="container-fluid p-0">
+
+        <div class="mb-3">
+            <h1 class="h3 d-inline align-middle">Домашняя работа и чат</h1>
+        </div>
+
+        <div class="row d-flex align-items-stretch bd-highlight">
+            <div class="card d-flex align-self-baseline">
+                <div class="row d-flex align-items-stretch bd-highlight border">
+                    <div class="col-4 p-2 bd-highlight">
+                        <h4>Домашняя работа</h4>
+                        <div class="card d-flex align-self-baseline border" style="margin-left: auto">
+                            <div class="card-header">
+                                <form id="homework" name="homework" method="post" enctype="multipart/form-data" class="was-validated">
+                                    <div class="mb-2">
+                                        <div class="mb-2">
+                                            {{ _homework['text'] }}
+                                        </div>
+                                            {% for file in _homework['users_files_list'] %}
+                                                <a href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
+                                            {% endfor %}
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <label class="form-label"><strong>Ответ</strong></label>
+                                        <div class="">
+                                          <input  name="answer" type="radio" value="True" id="answer_true">
+                                          <label class="form-check-label" for="answer_true">
+                                            Принято
+                                          </label>
+                                        </div>
+                                        <div class="">
+                                          <input   name="answer" type="radio" value="False" id="answer_false">
+                                          <label class="form-check-label" for="answer_false">
+                                            Не принято
+                                          </label>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
+                            <div class="p-1" align="right">
+                                <button type="submit" form="homework" name="button" value="answer" class="btn btn-primary ">
+                                    Сохранить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-8 p-2 bd-highlight">
+                        <form id="chat" name="chat" method="post" enctype="multipart/form-data">
+                            <h4>Чат</h4>
+                            {% if _room_chat['message'] %}
+                                <div class="border position-relative">
+                                    <div class="chat-messages p-4">
+                                        {% for i_message in _room_chat['message'] %}
+                                            <div class="{% if _user["login"] == i_message['name_sender'] %}chat-message-right mb-4{% else %}chat-message-left pb-4{% endif %}">
+                                                <div>
+                                                    <img src="{{ url_for('static', filename='img/avatars/149071.jpg') }}" class="rounded-circle me-1" width="40" height="40">
+                                                    <div class="text-muted small text-nowrap mt-2">{{ i_message['date_send'] }}</div>
+                                                </div>
+                                                <div class="flex-shrink-1 bg-light rounded py-2 px-3 me-3"
+                                                style="{% if i_message['name_sender'] == _user['login'] %}background: #e8f1f3!important;{% else %} background: #efefef!important;{% endif %}">
+                                                    <div class="font-weight-bold mb-1">{{ i_message['name_sender'] }}</div>
+                                                    {{ i_message['text'] }}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                    <div class="card-header">
+                        <div id="editor" style="z-index: 0"><p></p></div>
+                        <input type="hidden" id="hiddenInput" name="text">
+                    </div>
+                        </form>
+                    <div class="card d-flex align-self-baseline" style="margin-left: auto">
+                        <div class="card-header" align="right">
+                            <button form="chat" type="submit" name="send" value="send" class="btn btn-primary">Отправить</button>
+                            <a href="{{ url_for('education_home_tasks') }}" class="btn btn-primary">Назад</a>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

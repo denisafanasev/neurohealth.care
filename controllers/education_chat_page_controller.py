@@ -1,6 +1,6 @@
 from flask import Markup
 
-from services.room_chat_service import RoomChatService
+from services.homework_service import HomeworkService
 
 class EducationChatPageController():
     """
@@ -20,9 +20,9 @@ class EducationChatPageController():
             Dict: чат
         """
 
-        room_chat_service = RoomChatService()
+        homework_service = HomeworkService()
 
-        room_chat = room_chat_service.room_chat_entry(_id_room_chat=_id_room_chat, _id_lesson=None, _id_course=None,
+        room_chat = homework_service.room_chat_entry(_id_room_chat=_id_room_chat, _id_lesson=None, _id_course=None,
                                                       _id_user=_id_user, _id_education_stream=None, _id_module=None)
 
         room_chat_view = {
@@ -55,9 +55,9 @@ class EducationChatPageController():
             _room_chat_id(Int): индентификатор чата
         """
 
-        room_chat_service = RoomChatService()
+        homework_service = HomeworkService()
 
-        message = room_chat_service.add_message(_message, _room_chat_id, _user_id)
+        message = homework_service.add_message(_message, _room_chat_id, _user_id)
         message_view = {
             "id": message.id,
             "text": Markup(message.text),
@@ -74,9 +74,9 @@ class EducationChatPageController():
             user(Dict): данные пользователя
         """
 
-        room_chat_service = RoomChatService()
+        homework_service = HomeworkService()
 
-        user = room_chat_service.get_user_by_id(_user_id)
+        user = homework_service.get_user_by_id(_user_id)
         user_view = {
             "login": user.login,
             "role": user.role,
@@ -85,5 +85,37 @@ class EducationChatPageController():
             "education_stream": {}
         }
 
-
         return user_view
+
+    def change_homework_answer(self, _answer, _id_homework_answer):
+        """
+        Изменяет оценку домашнего задания
+
+        Args:
+            _answer(String): оценка
+            _id_homework_answer(Int): индетификатор оценки домашего задания
+        """
+
+        homework_service = HomeworkService()
+
+        homework_service.change_homework_answer(_answer, _id_homework_answer)
+
+    def get_homework(self, _id_homework):
+
+        homework_service = HomeworkService()
+
+        homework = homework_service.get_homework_by_id(_id_homework)
+
+        homework_view = {
+            "id": homework.id,
+            "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
+            "users_files_list": homework.users_files_list,
+            "homework_answer": {
+                "id": homework.homework_answer.id,
+                "answer": homework.homework_answer.answer,
+                "status": homework.homework_answer.status
+            },
+            "text": Markup(homework.text)
+        }
+
+        return homework_view
