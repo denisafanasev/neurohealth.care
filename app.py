@@ -763,6 +763,12 @@ def education_course_lesson():
                                                                    _id_user=user_id)['id']
                     return redirect(
                         f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
+                elif data['available'] or data['id_module'] == 1:
+                    id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module,
+                                                                   _id_user=user_id)['id']
+                    return redirect(
+                        f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
+
             return redirect(
                 f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat=none")
 

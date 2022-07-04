@@ -165,14 +165,14 @@ class EducationCourseService():
 
             course_modules = course_manager.get_course_modules_list(_course_id)
 
-            for i in range(1, min(len(course_modules),2)):
-            
+            for i in range(1, min(len(course_modules), 2)):
+
                 if course_modules[i].id == _module_id:
                     with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
                         course_users_list = f.read().splitlines()
                     
                     for course_user in course_users_list:
-                        if course_user == user.login:
+                        if course_user.split()[0] == user.login:
                             return True
 
             return False

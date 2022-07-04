@@ -37,7 +37,8 @@ class EducationCourseLessonPageController():
                 "materials": module.lessons.materials,
                 "text": module.lessons.text,
                 "task": module.lessons.task
-            }
+            },
+            "available": course_service.is_course_module_avalable_for_user(_id_course, module.id, _user_id)
         }
 
         return lesson
