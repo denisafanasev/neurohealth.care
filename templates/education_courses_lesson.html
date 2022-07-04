@@ -248,6 +248,7 @@
                                             <td class="d-none d-md-table-cell">{{ _user['education_module_expiration_date'] }}</td>
                                             <td></td>
                                         </tr>
+                                        {% if _homework is not none %}
                                         <tr>
                                             <td class="table-action">
                                                 <i class="align-middle me-2 fas fa-fw fa-couch"></i>
@@ -256,6 +257,7 @@
                                             <td>Сдано: {{ _homework['date_delivery'] }}</td>
                                             <td class="d-none d-md-table-cell">{{ _homework['homework_answer']['answer'] }}</td>
                                         </tr>
+                                        {% endif %}
                                     </tbody>
                                 </table>
                             </div>

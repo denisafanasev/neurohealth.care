@@ -199,5 +199,15 @@ class EducationCourseLessonPageController():
                 },
                 "text": Markup(homework.text)
             }
+        '''
+        else:
+            homework_view = {
+                "id": "",
+                "date_delivery": "-",
+                "users_files_list": "",
+                "homework_answer": "не сдано",
+                "text": ""
+            }
+        '''
 
         return homework_view
