@@ -1,6 +1,5 @@
 from models.probationer_manager import ProbationerManager
 from models.user_manager import UserManager
-# from services.user_manager_service import UserManagerService
 
 class ProbationersService():
     """
@@ -12,7 +11,7 @@ class ProbationersService():
     def init(self):
         pass
 
-    def get_probationers_list_view(self):
+    def get_probationers_list_view(self, _user_id):
         """
         Возвращает список испытуемых
 
@@ -21,8 +20,11 @@ class ProbationersService():
         """
 
         probationer_manager = ProbationerManager()
+        user_manager = UserManager()
 
-        probationers = probationer_manager.get_probationers()
+        user = user_manager.get_user_by_id(_user_id)
+
+        probationers = probationer_manager.get_probationers(user)
 
         return probationers
 

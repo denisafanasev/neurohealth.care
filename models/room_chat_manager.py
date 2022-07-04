@@ -156,3 +156,22 @@ class RoomChatManager():
         data_store_message.add_row({"id": message.id, "name_sender": message.name_sender, "text": message.text})
 
         data_store.update_messages(message.id, int(_id_room_chat))
+
+        return message
+
+    def get_room_chat(self, _id_room_chat):
+        """
+        Возвращает данные комнаты чата
+
+        Args:
+            _id_room_chat(Int): ID комнаты чата
+
+        Return:
+            RoomChat: комната чата
+        """
+
+        data_store = DataStore("room_chat")
+
+        room_chat = data_store.get_rows({"id": _id_room_chat})[0]
+
+        return self.room_chat_row_to_room_chat(room_chat)

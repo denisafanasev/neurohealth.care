@@ -2,15 +2,16 @@ from data_adapters.data_store import DataStore
 from models.probationer import Probationer
 from datetime import datetime
 from error import ProbationerManagerException
-from models.user_manager import UserManager
-from services.action_service import ActionService
 
 
 class ProbationerManager():
 
-    def get_probationers(self):
+    def get_probationers(self, _user):
         """
         Возвращает список испытуемых
+
+        Args:
+            _user(User): пользователь
 
         Returns:
             probationers(List): список тестируемых
@@ -18,7 +19,6 @@ class ProbationerManager():
         probationers = []
 
         data_store = DataStore("probationers")
-        user_manager = UserManager()
 
         patients_list_data = data_store.get_rows()
 
@@ -33,9 +33,9 @@ class ProbationerManager():
 
             patient.date_of_birth = datetime.strptime(patients_data["date_of_birth"], "%d/%m/%Y").strftime("%d/%m/%Y")
 
-            if user_manager.get_user_role(user_manager.get_current_user_id()) == "superuser":
+            if _user.role == "superuser":
                 probationers.append(patient)
-            elif patient.user_login == user_manager.get_user_by_id(user_manager.get_current_user_id()).login:
+            elif patient.user_login == _user.login:
                 probationers.append(patient)
 
         return probationers

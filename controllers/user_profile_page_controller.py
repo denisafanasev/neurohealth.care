@@ -54,7 +54,7 @@ class UserProfilePageController():
 
         return user_view
 
-    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number):
+    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _user_id):
         """
         Создает в системе пользователя
 
@@ -75,7 +75,7 @@ class UserProfilePageController():
         user_profile_service = UserProfileService()
         try:
             user_profile_service.create_user(_login, _name, _password, _password2, _email, _role,
-                                            _probationers_number)
+                                            _probationers_number, _user_id)
         except UserManagerException as error:
             return error
 

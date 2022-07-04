@@ -17,7 +17,7 @@ class ProbationersPageController():
 
         pass
 
-    def get_probationers_list_view(self):
+    def get_probationers_list_view(self, _user_id):
         """
         Возвращает отформатированный список испытуемого
 
@@ -26,7 +26,7 @@ class ProbationersPageController():
         """
 
         probationers_service = ProbationersService()
-        probationers = probationers_service.get_probationers_list_view()
+        probationers = probationers_service.get_probationers_list_view(_user_id)
 
         users_list_view = []
         for probationer in probationers:

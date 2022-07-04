@@ -28,7 +28,7 @@ class ActionManager():
 
         return action
 
-    def add_notifications(self, _user, _name_place, _action, _action_place, _place):
+    def add_notifications(self, _place, _action, _action_place, _name_place, _user):
         """
         Процедура записи нового действия пользователя
 

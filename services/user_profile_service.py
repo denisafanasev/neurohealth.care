@@ -1,6 +1,7 @@
 from models.user_manager import UserManager
-from services.action_service import ActionService
-# from services.education_stream_service import EducationStreamService
+from models.action_manager import ActionManager
+from models.education_stream_manager import EducationStreamManager
+
 
 class UserProfileService():
     """
@@ -23,7 +24,7 @@ class UserProfileService():
         user = user_manager.get_user_by_id(user_id)
         return user
 
-    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number):
+    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _user_id):
         """
         Создает в системе суперпользователя
 
@@ -41,9 +42,11 @@ class UserProfileService():
         """
 
         user_manager = UserManager()
-        login_superuser = self.get_current_user().login
+        action_manager = ActionManager()
 
-        ActionService().add_notifications(_login, "add", '', "user_manager", login_superuser)
+        login_superuser = user_manager.get_user_by_id(_user_id).login
+
+        action_manager.add_notifications(_login, "add", '', "user_manager", login_superuser)
 
         return user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
 
@@ -63,8 +66,9 @@ class UserProfileService():
         """
 
         user_manager = UserManager()
+        action_manager = ActionManager()
 
-        ActionService().add_notifications(_login, "overwrite", '', "user_manager", _login)
+        action_manager.add_notifications(_login, "overwrite", '', "user_manager", _login)
 
         return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _created_date,
                                         _education_module_expiration_date)
@@ -83,10 +87,11 @@ class UserProfileService():
         """
 
         user_manager = UserManager()
+        action_manager = ActionManager()
 
         user_manager.discharge_password(_login, _password, _password2)
 
-        ActionService().add_notifications(_login, "overwrite", '', "user_manager", _login)
+        action_manager.add_notifications(_login, "overwrite", '', "user_manager", _login)
 
     def activation_deactivation(self, _login, _active):
         """
@@ -100,15 +105,16 @@ class UserProfileService():
         """
 
         user_manager = UserManager()
+        action_manager = ActionManager()
 
-        ActionService().add_notifications(_login, "overwrite", '', "user_manager", _login)
+        action_manager.add_notifications(_login, "overwrite", '', "user_manager", _login)
 
         if not _active:
             return user_manager.activation(_login)
         elif _active:
             return user_manager.deactivation(_login)
 
-    def get_current_user(self, _login_user):
+    def get_current_user(self, _login_user, _user_id):
         """
         Возвращает модель User пользователя. Если _login_user = '', то возвращает модель User текущего пользователя
 
@@ -122,7 +128,7 @@ class UserProfileService():
         user_manager = UserManager()
 
         if _login_user == "":
-            return user_manager.get_user_by_id(user_manager.get_current_user_id())
+            return user_manager.get_user_by_id(user_manager.get_user_by_id(_user_id))
         else:
             return user_manager.get_user_by_login(_login_user)
 
@@ -151,11 +157,11 @@ class UserProfileService():
             (List): список обучающих потоков
         """
 
-        education_stream_service = EducationStreamService()
+        education_stream_manager = EducationStreamManager()
 
         education_stream_list = []
         for education_stream in _education_stream_list:
-            education_stream_list.append(education_stream_service.get_education_stream(education_stream))
+            education_stream_list.append(education_stream_manager.get_education_stream(education_stream))
 
         return education_stream_list
 

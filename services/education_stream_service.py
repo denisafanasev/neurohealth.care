@@ -1,6 +1,7 @@
 # TODO: ну нельзя тут дргуие сервисы вызывать, можно только менеджеры
 from models.education_stream_manager import EducationStreamManager
 from models.user_manager import UserManager
+from models.course_manager import EducationCourseManager
 
 class EducationStreamService():
 
@@ -13,19 +14,20 @@ class EducationStreamService():
         """
 
         education_stream_manager = EducationStreamManager()
+        course_manager = EducationCourseManager()
 
         education_streams = education_stream_manager.get_education_streams_list()
         education_streams_list = []
 
         for i_education_stream in education_streams:
 
-            course = education_stream_manager.get_course_by_id(i_education_stream.course)
+            course = course_manager.get_course_by_id(i_education_stream.course)
             i_education_stream.course = course
             education_streams_list.append(i_education_stream)
 
         return education_streams_list
 
-    def get_students_list(self):
+    def get_students_list(self, _id_user):
         """
         Возвращает список пользователей с ролью user
 
@@ -35,7 +37,7 @@ class EducationStreamService():
 
         user_manager = UserManager()
 
-        users_list = user_manager.get_users()
+        users_list = user_manager.get_users(_id_user)
         students_list = []
 
         for user in users_list:
@@ -44,7 +46,7 @@ class EducationStreamService():
 
         return students_list
 
-    def get_curators_list(self):
+    def get_curators_list(self, _id_user):
         """
         Возвращает список пользователей с ролью superuser
 
@@ -52,9 +54,9 @@ class EducationStreamService():
             curators_list(List): список пользователей
         """
 
-        user_service = user_manager_service.UserManagerService()
+        user_manager = UserManager()
 
-        users_list = user_service.get_users()
+        users_list = user_manager.get_users(_id_user)
         curators_list = []
 
         for user in users_list:
@@ -63,7 +65,7 @@ class EducationStreamService():
 
         return curators_list
 
-    def get_courses_list(self):
+    def get_courses_list(self, _id_user):
         """
         Возвращает список курсов
 
@@ -71,7 +73,7 @@ class EducationStreamService():
             (List): список курсов
         """
 
-        course_service = EducationCourseService()
+        course_service = EducationCourseManager()
 
         return course_service.get_courses()
 
@@ -84,12 +86,12 @@ class EducationStreamService():
         """
 
         education_stream_manager = EducationStreamManager()
-        course_service = EducationCourseService()
+        course_manager = EducationCourseManager()
 
         education_stream = education_stream_manager.get_education_stream(_id)
 
         if education_stream is not None:
-            education_stream.course = course_service.get_course_by_id(education_stream.course)
+            education_stream.course = course_manager.get_course_by_id(education_stream.course)
 
         return education_stream
 
