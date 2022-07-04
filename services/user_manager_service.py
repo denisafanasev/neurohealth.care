@@ -99,7 +99,7 @@ class UserManagerService():
         action_manager = ActionManager()
 
         error = user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
-        login_superuser = user_manager.get_user_by_id(_current_user_id)
+        login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
         if error is None:
             action_manager.add_notifications(_login, "add", 'нового', "user_manager", login_superuser)
