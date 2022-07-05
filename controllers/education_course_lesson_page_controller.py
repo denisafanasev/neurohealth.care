@@ -179,7 +179,7 @@ class EducationCourseLessonPageController():
 
         course_service = EducationCourseService()
 
-        homework = course_service.get_homeworks_list_by_id_room_chat(_id_room_chat)
+        homework = course_service.get_last_homework_by_id_room_chat(_id_room_chat)
         homework_view = None
 
         if homework is not None:

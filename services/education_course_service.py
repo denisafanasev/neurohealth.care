@@ -165,9 +165,8 @@ class EducationCourseService():
 
             course_modules = course_manager.get_course_modules_list(_course_id)
 
-            for i in range(1, min(len(course_modules), 2)):
-
-                if course_modules[i].id == _module_id:
+            for i in range(1, min(len(course_modules), 3)):
+                if course_modules[i - 1].id == _module_id:
                     with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
                         course_users_list = f.read().splitlines()
                     
@@ -250,22 +249,29 @@ class EducationCourseService():
 
         return room_chat_manager.add_message(_message, _room_chat_id)
 
-    def get_homeworks_list_by_id_room_chat(self, _id_room_chat):
+    def get_last_homework_by_id_room_chat(self, _id_room_chat):
 
         homework_manager = HomeworkManager()
 
         homework_list = homework_manager.get_homeworks_list_by_id_room_chat(_id_room_chat)
         date = datetime.strptime("01/01/2000", "%d/%m/%Y")
+        last_homework = None
         if homework_list != []:
             for homework in homework_list:
                 if homework.date_delivery >= date:
                     date = homework.date_delivery
                     last_homework = homework
-            #     if homework.homework_answer.answer and homework.homework_answer.answer is not None:
-            #         return homework
-            #
-            # for homework in homework_list:
-            #     if not homework.homework_answer.answer and homework.homework_answer.answer is not None:
-            #         return homework
 
             return last_homework
+
+    def get_last_homework(self, _id_course, _id_lesson, _id_user):
+
+        user_manager = UserManager()
+        room_chat_manager = RoomChatManager()
+
+        user = user_manager.get_user_by_id(_id_user)
+        id_room_chat = room_chat_manager.room_chat_entry(_id_course=_id_course, _id_lesson=_id_lesson,
+                                                         _user=user, _id_room_chat=None, _id_module=None,
+                                                         _id_education_stream=None).id
+
+        return self.get_last_homework_by_id_room_chat(id_room_chat)
