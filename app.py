@@ -745,11 +745,12 @@ def education_course_lesson():
     #if user['role'] == 'user' and course['type'] == 'main' and int(id_module) > 1:
     #    return redirect("/price_list")
 
+    data = page_controller.get_lesson(user_id, id_lesson, int(id_course), int(id_video))
+
     if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
-        if int(id_module) > 1 and user['role'] != 'superuser':
+        if int(id_module) > 1 and user['role'] != 'superuser' and not data['available']:
             return redirect('/price_list')
 
-    data = page_controller.get_lesson(user_id, id_lesson, int(id_course), int(id_video))
 
     if data["lesson"].get("task") is not None:
         if id_room_chat is None:
@@ -759,16 +760,19 @@ def education_course_lesson():
                                                                    _id_education_stream=user['education_stream']['id'])["id"]
                     return redirect(
                         f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
-                elif user['active_education_module'] != "inactive":
+                elif user['active_education_module'] == "active":
                     id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module,
                                                                    _id_user=user_id)['id']
                     return redirect(
                         f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
-                elif data['available'] or data['id_module'] == 1:
+                elif data['available']:
                     id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module,
                                                                    _id_user=user_id)['id']
                     return redirect(
                         f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
+                elif not data['available']:
+                    return redirect(
+                        f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat=none")
 
             return redirect(
                 f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat=none")
@@ -861,7 +865,8 @@ def education_home_task_profile():
 
     room_chat = page_controller.room_chat_entry(id_room_chat, user_id)
     homework = page_controller.get_homework(int(id_homework))
-    user = page_controller.get_current_user(user_id)
+    user = page_controller.get_user_by_id(user_id)
+    data = page_controller.get_data(int(id_room_chat))
 
     if request.method == "POST":
         if request.form.get("send"):
@@ -872,11 +877,12 @@ def education_home_task_profile():
         elif request.form.get("button") == "answer":
             answer = request.form.get("answer")
 
-            page_controller.change_homework_answer(answer, homework['homework_answer']["id"])
+            homework['homework_answer']["answer"] = page_controller.change_homework_answer(answer, homework['homework_answer']["id"])
+            homework['homework_answer']["status"] = "проверено"
 
     return render_template('education_home_task_profile.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _room_chat=room_chat,
-                           _homework=homework)
+                           _homework=homework, _data=data)
 
 
 @app.route('/corrections', methods=['GET', 'POST'])

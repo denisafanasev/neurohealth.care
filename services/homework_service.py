@@ -151,8 +151,13 @@ class HomeworkService():
 
         return user_manager.get_user_by_id(_id_user)
 
-    def get_homework_by_id(self, _id_homework):
+    def get_homework(self, _id_homework):
 
         homework_manager = HomeworkManager()
+        course_manager = EducationCourseManager()
 
-        return homework_manager.get_homework_by_id(_id_homework)
+        homework = homework_manager.get_homework_by_id(_id_homework)
+        id_dict = self.get_room_chat(homework.id_room_chat)[1]
+        homework.lesson = course_manager.get_lesson(id_dict['lesson'], id_dict['course'])
+
+        return homework

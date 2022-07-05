@@ -21,11 +21,6 @@ class EducationCoursePageController():
         course_service = EducationCourseService()
 
         education_stream = course_service.get_course_modules_list(_id)
-        # modules_list_view = {
-        #     "id_education_stream": education_stream.id,
-        #     "date_end": education_stream.date_end,
-        #     "modules_list": []
-        # }
 
         modules_list = []
         for i_module in education_stream:
@@ -34,17 +29,36 @@ class EducationCoursePageController():
             module["name"] = i_module.name
             lesson_list = []
 
+            # проверим доступность модуля для пользователя
+            module["available"] = course_service.is_course_module_avalable_for_user(_id, i_module.id, _user_id)
+
             for i_lesson in i_module.lessons:
                 lesson = {
                     "id": i_lesson.id,
-                    "name": i_lesson.name
+                    "name": i_lesson.name,
+                    "homework_answer": None,
+                    "task": i_lesson.task
                 }
+
+                if ((module['available'] and i_module.id <= 2) or i_module.id == 1) and i_lesson.task is not None:
+                    last_homeworks = course_service.get_last_homework(_id, i_lesson.id, _user_id)
+                    if last_homeworks is not None:
+                        if last_homeworks.homework_answer.answer:
+                            last_homeworks.homework_answer.answer = "Принято"
+                        else:
+                            last_homeworks.homework_answer.answer = "Не принято"
+
+                        lesson['homework_answer'] = {
+                            "date_delivery": last_homeworks.date_delivery.strftime("%d/%m/%Y"),
+                            "status": last_homeworks.homework_answer.status,
+                            "answer": last_homeworks.homework_answer.answer
+                        }
+                else:
+                    lesson['homework_answer'] = False
+
                 lesson_list.append(lesson)
 
             module["lessons"] = lesson_list
-
-            # проверим доступность модуля для пользователя
-            module["available"] = course_service.is_course_module_avalable_for_user(_id, i_module.id, _user_id)
 
             modules_list.append(module)
 

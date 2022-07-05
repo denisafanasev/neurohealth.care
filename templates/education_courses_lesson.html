@@ -7,17 +7,6 @@
 
     <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var quill = new Quill('#editor', {
-            modules: {
-                toolbar: [
-                  ['bold', 'italic'],
-                  ['link', 'blockquote', 'code-block'],
-                  [{ list: 'ordered' }, { list: 'bullet' }]
-                ]
-              },
-            theme: 'snow',
-
-        });
         var quill_homework = new Quill('#editor_homework', {
             modules: {
                 toolbar: [
@@ -30,21 +19,7 @@
 
         });
         let message = document.getElementById('message');
-        let error_chat = "Ошибка: не заполнено поле для отправки сообщения в чат!";
         let error_homework = "Ошибка: не заполнено поле для отправки домашнего задания!";
-
-        var form = document.getElementById("chat");
-        form.onsubmit = function () {
-            // Populate hidden form on submit
-            var about = document.querySelector('input[name=text]');
-            about.value = quill.root.innerHTML;
-            if (about.value === "<p><br></p>") {
-                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                document.querySelector('p[id=text_message]').textContent = error_chat;
-                message.style.display = 'block'
-                return false;
-            }
-        };
 
         var form_homework = document.getElementById("homework");
         form_homework.onsubmit = function () {
@@ -64,68 +39,6 @@
 
     <style>
 
-    .chat-messages {
-        display: list-item;
-        flex-direction: column;
-        overflow-y: scroll;
-        overflow-x: initial;
-        white-space: inherit;
-        height: 350px;
-        max-height: 350px;
-    }
-
-    .chat-message-left,
-    .chat-message-right{
-        display: block;
-        flex-shrink: 0;
-        word-wrap: break-word;
-
-    }
-
-    .chat-message-left {
-        margin-right: auto;
-        text-align: left;
-    }
-
-    .chat-message-right {
-        flex-direction: row-reverse;
-        margin-left: auto;
-        text-align: right;
-    }
-    .py-3 {
-        padding-top: 1rem!important;
-        padding-bottom: 1rem!important;
-    }
-    .px-4 {
-        padding-right: 1.5rem!important;
-        padding-left: 1.5rem!important;
-    }
-    .flex-grow-0 {
-        flex-grow: 0!important;
-    }
-    .border-top {
-        border-top: 1px solid #dee2e6!important;
-    }
-    .card{
-        border: #0a0a0a;
-    }
-    .card-title {
-        color: #0a0a0a;
-    }
-    .card-body.chat-message-left {
-        font-size: 15px;
-        font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-
-    }
-    .responsive-iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      width: 100%;
-      height: 100%;
-    }
     .word {
         width: 35px;
     }
@@ -248,13 +161,17 @@
                                             <td></td>
                                             <td class="d-none d-md-table-cell">{{ _user['education_module_expiration_date'] }}</td>
                                         </tr>
-                                        <tr class="{% if _homework is none %} table-warning {% elif _homework['homework_answer']['status'] == "не проверено" %} table-success
-                                                    {% elif _homework['homework_answer']['answer'] == "Принято" %} table-success {% else %} table-danger {% endif %}">
+                                        <tr class="{% if _data['lesson']['task'] %}
+                                                    {% if _homework is none %} table-warning
+                                                    {% elif _homework['homework_answer']['status'] == "не проверено" %} table-success
+                                                    {% elif _homework['homework_answer']['answer'] == "Принято" %} table-success {% else %} table-danger {% endif %}
+                                                   {% else %} table-warning
+                                                   {% endif %}">
                                             <td class="table-action">
                                                 <i class="align-middle me-2 fas fa-fw fa-couch"></i>
                                             </td>
                                             <td>Домашнее задание</td>
-                                            <td>{% if _homework is not none %}Сдано: {{ _homework.get('date_delivery') }}{% else %}Не сдано{% endif %}</td>
+                                            <td>{% if _data["lesson"]['task'] %}{% if _homework is not none %}Сдано: {{ _homework.get('date_delivery') }}{% else %}Не сдано{% endif %}{% else %}Нет домашнего задания{% endif %}</td>
                                             <td class="d-none d-md-table-cell">{% if _homework is not none %}{% if _homework['homework_answer']['status'] == "не проверено" %}Не проверено{% elif _homework is not none %}{{ _homework['homework_answer']['answer'] }}{% endif %}{% endif %}</td>
                                         </tr>
 
@@ -316,18 +233,15 @@
                 <div class="card-body">
                     <div class="row">
 
-                        <div class="col-md-6 text-left">
+                        <div class="col-6 md-2 text-left">
                             <div class="card py-1 py-md-1 border">
                                 <div class="card-header">
                                     <h4 class="form-label">Домашние задание</h4>
-                                </div>
-                                <div class="card-body">
+
                                     <p class="card-text">
                                         {{ _data['lesson']['task'] }}
                                     </p>
                                 {% if _user['role'] != "superuser" %}
-
-                                    <!-- Если домашняя работа сдана -->
 
                                     <!-- Если есть id комнаты чата, то значит есть и доступ к выполнению домашней работы -->
 
@@ -339,8 +253,8 @@
                                                     <div id="editor_homework" style="z-index: 0"><p></p></div>
                                                     <input type="hidden" id="hiddenInput" name="text_homework">
                                                 </div>
-                                                <input id="hometask" type="file" multiple name="files" class="form-control">
-                                                <div class="mb-2" align="right">
+                                                <input id="hometask" size="2097152" type="file" multiple name="files" class="form-control mb-2">
+                                                <div class="" align="right">
                                                     <button id="button" class="btn btn-primary" name="button" type="submit" value="homework">Отправить</button>
                                                 </div>
                                             </div>
@@ -350,70 +264,58 @@
                                 {% endif %}
                                 </div>
                             </div>
-                            <div class="card py-1 py-md-1 border">
-                                <div class="card-header">
-                                    <h4 class="form-label">Ваш ответ</h4>
-                                    {% if _homework is not none %}
+                            {% if _homework is not none %}
+                                <div class="card py-1 py-md-1 border">
+                                    <div class="card-header">
+                                        <h4 class="form-label">Ваш ответ</h4>
                                         <div class="mb-1">
                                             <div class="mb-2">
                                                 {{ _homework['text'] }}
                                             </div>
-                                                {% for file in _homework['users_files_list'] %}
-                                                    <a href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
-                                                {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                    <!-- Чат для общения с кураторами/преподавателями -->
-
-                        <div class="col-md-6 text-left">
-                            <div class="card py-1 py-md-1 border">
-                                <div class="card-header">
-                                    <h4 class="form-label">Чат</h4>
-                                </div>
-                                <div class="card-body">
-                                {% if _room_chat['message'] %}
-                                    <div class="border position-relative mb-3">
-                                        <div class="chat-messages p-4">
-                                            {% for i_message in _room_chat['message'] %}
-                                                <div class="{% if _user["login"] == i_message['name_sender'] %}chat-message-right mb-4{% else %}chat-message-left pb-4{% endif %}">
-                                                    <div class="flex-shrink-1 bg-light rounded py-2 px-3 me-3"
-                                                    style="{% if i_message['name_sender'] == _user['login'] %}background: #e8f1f3!important;{% else %} background: #efefef!important;{% endif %}">
-                                                        <div class="font-weight-bold mb-1"><strong>{{ i_message['name_sender'] }}</strong></div>
-                                                        {{ i_message['text'] }}
-                                                    </div>
-                                                </div>
+                                            {% for file in _homework['users_files_list'] %}
+                                                <a href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
                                             {% endfor %}
                                         </div>
                                     </div>
-                                {% endif %}
-                                {% if _user['role'] != "superuser" %}
-                                    {% if request.args.get('id_chat') != "none" %}
-                                        <form id="chat" method="post" enctype="multipart/form-data">
-                                            <div>
-                                                <div id="editor" style="z-index: 0"><p></p></div>
-                                                <input type="hidden" id="hiddenInput" name="text">
-                                            </div>
-                                        </form>
-                                    {% endif %}
-                                {% endif %}
-                                {% if request.args.get('id_chat') != "none" %}
-                                    <div class="card d-flex align-self-baseline" style="float: right; margin-top: 2%">
-
-                                            <button type="submit" name="send" value="send" form="chat" class="btn btn-primary">Отправить</button>
-
-                                    </div>
-                                {% endif %}
                                 </div>
-                            </div>
+                            {% endif %}
                         </div>
+
+                    <!-- Чат для общения с кураторами/преподавателями -->
+                    {% if _user['role'] != "superuser" %}
+                        {% if request.args.get('id_chat') == "none"%}
+                             <div class="col card border">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h4>
+                                                Чат
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12 text-left">
+                                            <div class="card py-1 py-md-1">
+                                                <div class="card-body">
+                                                    <div class="text-center">
+                                                        <h2>Чат не доступен</h2>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                        {% else %}
+                            {% include "room_chat.html" %}
+                        {% endif %}
+                    {% endif %}
                     </div>
                 </div>
             </div>
-        {% elif not _data['available'] and _data['id_module'] != 1 %}
+        {% elif not _data['available']%}
             <div class="card border">
                 <div class="card-header">
                     <div class="row">
