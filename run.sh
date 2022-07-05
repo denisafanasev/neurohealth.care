@@ -86,7 +86,7 @@ hdfs dfs -copyToLocal /user/cleverdata/data/incoming/cid=4fd755f2-9075-4379-8640
 scp -i ../../_aws/shaman_aws_key.pem course_1.zip ubuntu@app.neurohealth.care:/home/ubuntu/_exchange/
 
 # copy from remote
-scp -i ../../_aws/shaman_aws_key.pem ubuntu@app.neurohealth.care:/home/ubuntu/_exchange/prod_data_300622.zip
+scp -i ../../_aws/shaman_aws_key.pem ubuntu@app.neurohealth.care:/home/ubuntu/_exchange/prod_data_300622.zip .
 
 # setup cert to nginx
 https://marcosantonocito.medium.com/steps-to-install-a-go-daddy-ssl-certificate-on-nginx-on-ubuntu-14-04-ff942b9fd7ff
