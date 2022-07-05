@@ -30,7 +30,7 @@ class EducationChatPageController():
             "message": []
         }
 
-        if room_chat.message != []:
+        if room_chat.message is not None:
             message_list = []
             for i_message in room_chat.message:
                 message = {

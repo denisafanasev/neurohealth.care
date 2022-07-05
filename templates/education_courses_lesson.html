@@ -234,8 +234,8 @@
                                     <thead>
                                         <tr>
                                             <th style="width:5%;"></th>
-                                            <th style="width:70%;">Статус обучения</th>
-                                            <th style="width:25%"></th>
+                                            <th style="width:25%;"></th>
+                                            <th style="width:45%">Статус обучения</th>
                                             <th style="width:25%"></th>
                                         </tr>
                                     </thead>
@@ -245,19 +245,19 @@
                                                 <i class="align-middle me-2 fas fa-fw fa-calendar-alt"></i>
                                             </td>
                                             <td>Срок доступа</td>
-                                            <td class="d-none d-md-table-cell">{{ _user['education_module_expiration_date'] }}</td>
                                             <td></td>
+                                            <td class="d-none d-md-table-cell">{{ _user['education_module_expiration_date'] }}</td>
                                         </tr>
-                                        {% if _homework is not none %}
-                                        <tr>
+                                        <tr class="{% if _homework is none %} table-warning {% elif _homework['homework_answer']['status'] == "не проверено" %} table-success
+                                                    {% elif _homework['homework_answer']['answer'] == "Принято" %} table-success {% else %} table-danger {% endif %}">
                                             <td class="table-action">
                                                 <i class="align-middle me-2 fas fa-fw fa-couch"></i>
                                             </td>
                                             <td>Домашнее задание</td>
-                                            <td>Сдано: {{ _homework['date_delivery'] }}</td>
-                                            <td class="d-none d-md-table-cell">{{ _homework['homework_answer']['answer'] }}</td>
+                                            <td>{% if _homework is not none %}Сдано: {{ _homework.get('date_delivery') }}{% else %}Не сдано{% endif %}</td>
+                                            <td class="d-none d-md-table-cell">{% if _homework is not none %}{% if _homework['homework_answer']['status'] == "не проверено" %}Не проверено{% elif _homework is not none %}{{ _homework['homework_answer']['answer'] }}{% endif %}{% endif %}</td>
                                         </tr>
-                                        {% endif %}
+
                                     </tbody>
                                 </table>
                             </div>
@@ -329,20 +329,9 @@
 
                                     <!-- Если домашняя работа сдана -->
 
-                                    {% if _homework is not none %}
-                                        <h4>Ваш ответ</h4>
-                                        <div class="mb-1">
-                                            <div class="mb-2">
-                                                {{ _homework['text'] }}
-                                            </div>
-                                                {% for file in _homework['users_files_list'] %}
-                                                    <a href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
-                                                {% endfor %}
-                                        </div>
-
                                     <!-- Если есть id комнаты чата, то значит есть и доступ к выполнению домашней работы -->
 
-                                    {% elif request.args.get('id_chat') != "none" %}
+                                    {% if request.args.get('id_chat') != "none" and _homework is none %}
                                         <form id="homework" method="post" enctype="multipart/form-data">
                                             <div class="mb-2">
                                                 <label class="form-label" for="hometask">Ответ</label>
@@ -359,6 +348,21 @@
                                     {% endif %}
 
                                 {% endif %}
+                                </div>
+                            </div>
+                            <div class="card py-1 py-md-1 border">
+                                <div class="card-header">
+                                    <h4 class="form-label">Ваш ответ</h4>
+                                    {% if _homework is not none %}
+                                        <div class="mb-1">
+                                            <div class="mb-2">
+                                                {{ _homework['text'] }}
+                                            </div>
+                                                {% for file in _homework['users_files_list'] %}
+                                                    <a href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
+                                                {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
