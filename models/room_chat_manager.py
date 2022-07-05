@@ -72,10 +72,12 @@ class RoomChatManager():
             room_chat = None
             for i_room_chat in room_chat_list:
                 if i_room_chat.get("id_education_stream") is not None:
-                    if i_room_chat['id_education_stream'] == _id_education_stream or _id_module == 1:
-                        room_chat = self.room_chat_row_to_room_chat(i_room_chat)
-                        break
-        else:
+
+                    room_chat = self.room_chat_row_to_room_chat(i_room_chat)
+                    break
+
+
+        if len(room_chat_list) == 1:
             room_chat = self.room_chat_row_to_room_chat(room_chat_list[0])
 
         if room_chat is None:

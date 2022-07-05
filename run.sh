@@ -77,7 +77,6 @@ conda install -c conda-forge uwsgi
 #conda install -c conda-forge flask-mail
 
 # hdfs test
-
 hdfs dfs -ls /user/cleverdata/data/incoming/
 hdfs dfs -copyToLocal /user/cleverdata/data/incoming/cid=4fd755f2-9075-4379-8640-12ee75c358ef/data_type=cookiesync/dt=2020-09-11/cookie-nc-events.1599845420642.avro
 

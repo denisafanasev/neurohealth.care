@@ -28,6 +28,11 @@ class EducationHomeTasksPageController():
             lesson = homework_service.get_lesson(id_dict["lesson"], id_dict['course'])
             # education_stream = homework_service.get_education_stream(room_chat.id_education_stream)
             user = homework_service.get_user(id_dict["user"])
+            if homework is not None:
+                if homework.homework_answer.answer:
+                    homework.homework_answer.answer = "Принято"
+                else:
+                    homework.homework_answer.answer = "Не принято"
 
             homework_view = {
                 "id": homework.id,

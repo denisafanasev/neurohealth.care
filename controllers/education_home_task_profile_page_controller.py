@@ -66,7 +66,7 @@ class EducationChatPageController():
         }
         return message_view
 
-    def get_current_user(self, _user_id):
+    def get_user_by_id(self, _user_id):
         """
         Возвращает данные текущего пользователя
 
@@ -100,11 +100,21 @@ class EducationChatPageController():
 
         homework_service.change_homework_answer(_answer, _id_homework_answer)
 
+        if _answer == "True":
+            return "Принято"
+        else:
+            return "Не принято"
+
     def get_homework(self, _id_homework):
 
         homework_service = HomeworkService()
 
-        homework = homework_service.get_homework_by_id(_id_homework)
+        homework = homework_service.get_homework(_id_homework)
+        if homework is not None:
+            if homework.homework_answer.answer:
+                homework.homework_answer.answer = "Принято"
+            else:
+                homework.homework_answer.answer = "Не принято"
 
         homework_view = {
             "id": homework.id,
@@ -119,3 +129,40 @@ class EducationChatPageController():
         }
 
         return homework_view
+
+    def get_data(self, _id_room_chat):
+
+        homework_service = HomeworkService()
+
+        id_dict = homework_service.get_room_chat(_id_room_chat)[1]
+        course = homework_service.get_course(id_dict['course'])
+        module = homework_service.get_lesson(id_dict['lesson'], id_dict['course'])
+        student = homework_service.get_user(id_dict['user'])
+
+        data = {
+            "user":
+                {
+                    "login": student.login,
+                    "name": student.name,
+                    "email": student.email,
+                },
+            "module":
+                {
+                    "id": module.id,
+                    "name": module.name,
+                    "lesson":
+                        {
+                            "id": module.lessons.id,
+                            "name": module.lessons.name,
+                            "task": Markup(module.lessons.task)
+                        }
+
+                },
+            "course":
+                {
+                    "id": course.id,
+                    "name": course.name
+                }
+        }
+
+        return data
