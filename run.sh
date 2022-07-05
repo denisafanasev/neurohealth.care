@@ -81,8 +81,9 @@ conda install -c conda-forge uwsgi
 hdfs dfs -ls /user/cleverdata/data/incoming/
 hdfs dfs -copyToLocal /user/cleverdata/data/incoming/cid=4fd755f2-9075-4379-8640-12ee75c358ef/data_type=cookiesync/dt=2020-09-11/cookie-nc-events.1599845420642.avro
 
-# remote copy
-scp -i ../../_aws/shaman_aws_key.pem ubuntu@app.neurohealth.care:/home/ubuntu/_exchange/prod_data_300622.zip
+# copy to remote server
+#scp -i ../../_aws/shaman_aws_key.pem ubuntu@app.neurohealth.care:/home/ubuntu/_exchange/prod_data_300622.zip
+scp -i ../../_aws/shaman_aws_key.pem course_1.zip ubuntu@app.neurohealth.care:/home/ubuntu/_exchange/
 
 # copy from remote
 scp -i ../../_aws/shaman_aws_key.pem ubuntu@app.neurohealth.care:/home/ubuntu/_exchange/prod_data_300622.zip
