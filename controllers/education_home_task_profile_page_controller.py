@@ -101,9 +101,13 @@ class EducationChatPageController():
         homework_service.change_homework_answer(_answer, _id_homework_answer)
 
         if _answer == "True":
-            return "Принято"
+            answer = "Принято"
+            error = "Домашняя работа принята"
         else:
-            return "Не принято"
+            answer = "Не принято"
+            error = "Домашняя работа не принята"
+
+        return answer, error, "Successful"
 
     def get_homework(self, _id_homework):
 
