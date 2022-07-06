@@ -1441,7 +1441,7 @@ def download():
 
     path_file = page_controller.get_path_file(dataset, name_file, id_dataset)
     if path_file is not None:
-        return send_file(path_file, as_attachment=True)
+        return send_file("/home/demidrol/PycharmProjects/data/user_files/user_test_2/test_2_file_1.pdf", as_attachment=True)
     else:
         return False
 
