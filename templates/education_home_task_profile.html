@@ -41,7 +41,7 @@
         </div>
 
         <div class="row d-flex align-items-stretch bd-highlight">
-            <div class=" d-flex align-self-baseline">
+            <div class="card d-flex align-self-baseline border-0" style="background: fixed;">
                 <div class="row d-flex align-items-stretch bd-highlight">
                     <div class="col-6 p-2 bd-highlight">
 
@@ -109,42 +109,7 @@
                             </div>
 
                     </div>
-{#                    <div class="col-6 p-2 bd-highlight">#}
-{#                        <form id="chat" name="chat" method="post" enctype="multipart/form-data">#}
-{#                            <h4>Чат</h4>#}
-{#                            {% if _room_chat['message'] %}#}
-{#                                <div class="border position-relative">#}
-{#                                    <div class="chat-messages p-4">#}
-{#                                        {% for i_message in _room_chat['message'] %}#}
-{#                                            <div class="{% if _user["login"] == i_message['name_sender'] %}chat-message-right mb-4{% else %}chat-message-left pb-4{% endif %}">#}
-{#                                                <div>#}
-{#                                                    <img src="{{ url_for('static', filename='img/avatars/149071.jpg') }}" class="rounded-circle me-1" width="40" height="40">#}
-{#                                                    <div class="text-muted small text-nowrap mt-2">{{ i_message['date_send'] }}</div>#}
-{#                                                </div>#}
-{#                                                <div class="flex-shrink-1 bg-light rounded py-2 px-3 me-3"#}
-{#                                                style="{% if i_message['name_sender'] == _user['login'] %}background: #e8f1f3!important;{% else %} background: #efefef!important;{% endif %}">#}
-{#                                                    <div class="font-weight-bold mb-1">{{ i_message['name_sender'] }}</div>#}
-{#                                                    {{ i_message['text'] }}#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                        {% endfor %}#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            {% endif %}#}
-{##}
-{#                            <div class="card-header">#}
-{#                                <div id="editor" style="z-index: 0"><p></p></div>#}
-{#                                <input type="hidden" id="hiddenInput" name="text">#}
-{#                            </div>#}
-{#                        </form>#}
-{#                        <div class="card d-flex align-self-baseline" style="margin-left: auto">#}
-{#                            <div class="card-header" align="right">#}
-{#                                <button form="chat" type="submit" name="send" value="send" class="btn btn-primary">Отправить</button>#}
-{#                                <a href="{{ url_for('education_home_tasks') }}" class="btn btn-primary">Назад</a>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-                {% include "room_chat.html" %}
+                    {% include "room_chat.html" %}
                 </div>
             </div>
         </div>
