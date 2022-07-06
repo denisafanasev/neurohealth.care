@@ -34,6 +34,12 @@ class HomeworkService():
         room_chat = room_chat_manager.get_room_chat(_id_room_chat=_id_room_chat)
         name_room_chat = room_chat.name.split("_")
         id_dict = {"course": int(name_room_chat[1]), "lesson": int(name_room_chat[2]), "user": name_room_chat[3]}
+        if len(name_room_chat) > 4:
+            for i in range(0, len(name_room_chat) - 3):
+                if i + 4 < len(name_room_chat):
+                    id_dict['user'] = "_".join([id_dict['user'], name_room_chat[i + 4]])
+                else:
+                    break
 
         return room_chat, id_dict
 

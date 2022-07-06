@@ -55,11 +55,15 @@
                                 <td>
                                     <a href="/education_course/lesson?id_course={{ id_course }}&id_lesson={{ i_lesson['id'] }}&id_module={{ i_course['id'] }}&id_video=1">Выполнить</a>
                                 </td>
-                                <td>
-                                    {% if i_lesson['task'] and i_lesson['homework_answer'] != false %}
-                                        {% if i_lesson['homework_answer'] is not none %}Сдано: {{ i_lesson['homework_answer'].get('date_delivery') }}
-                                        {% else %}Не сдано{% endif %}
-                                    {% else %}Нет домашнего задания{% endif %}
+                                <td style="text-align: center">
+                                    <div style="display: inline-block" class="badge{% if i_lesson['task'] and i_lesson['homework_answer'] != false %}
+                                            {% if i_lesson['homework_answer'] is not none %} bg-success {% else %} bg-warning {% endif %}
+                                        {% else %} bg-secondary {% endif %} text-light bg-gradient">
+                                                            {% if i_lesson['task'] and i_lesson['homework_answer'] != false %}
+                                                                {% if i_lesson['homework_answer'] is not none %}Сдано: {{ i_lesson['homework_answer'].get('date_delivery') }}
+                                                                {% else %}Не сдано{% endif %}
+                                                            {% else %}Нет домашнего задания{% endif %}
+                                    </div>
                                 </td>
                                 <td>
                                     <div class='badge {% if i_lesson['homework_answer']['answer'] == "Принято" %} bg-success

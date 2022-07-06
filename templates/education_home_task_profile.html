@@ -43,7 +43,7 @@
         <div class="row d-flex align-items-stretch bd-highlight">
             <div class="card d-flex align-self-baseline border-0" style="background: fixed;">
                 <div class="row d-flex align-items-stretch bd-highlight">
-                    <div class="col-6 p-2 bd-highlight">
+                    <div class="col-6 bd-highlight">
 
                             <div class="card d-flex align-self-baseline border p-4">
                                 <h4>Данные ученика</h4>
@@ -74,7 +74,7 @@
                                                 {{ _homework['text'] }}
                                             </div>
                                                 {% for file in _homework['users_files_list'] %}
-                                                    <a href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
+                                                    <a download href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
                                                 {% endfor %}
                                         </div>
 
