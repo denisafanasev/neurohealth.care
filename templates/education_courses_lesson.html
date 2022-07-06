@@ -146,10 +146,10 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th style="width:5%;"></th>
-                                            <th style="width:25%;"></th>
-                                            <th style="width:45%">Статус обучения</th>
-                                            <th style="width:25%"></th>
+                                            <th style="width:5%!important;"></th>
+                                            <th style="width:20%!important;"></th>
+                                            <th style="width:45%!important">Статус обучения</th>
+                                            <th style="width:30%!important"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -163,7 +163,7 @@
                                         </tr>
                                         <tr class="{% if _data['lesson']['task'] %}
                                                     {% if _homework is none %} table-warning
-                                                    {% elif _homework['homework_answer']['status'] == "не проверено" %} table-success
+                                                    {% elif _homework['homework_answer']['status'] == "не проверено" %} table-info
                                                     {% elif _homework['homework_answer']['answer'] == "Принято" %} table-success {% else %} table-danger {% endif %}
                                                    {% else %} table-warning
                                                    {% endif %}">
@@ -186,9 +186,9 @@
                                     <table class="table">
                                         <thead>
                                             <tr>
-                                                <th style="width:5%;"></th>
-                                                <th style="width:70%;">Дополнительные материалы</th>
-                                                <th style="width:25%"></th>
+                                                <th style="width:5%!important;"></th>
+                                                <th style="width:70%!important;">Дополнительные материалы</th>
+                                                <th style="width:25%!important"></th>
                                             </tr>
                                         </thead>
                                         <tbody>

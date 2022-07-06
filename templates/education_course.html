@@ -25,12 +25,12 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Статус</th>
-                            <th style="width:30%;">Наименование урока</th>
-                            <th style="width:15%">Ссылка</th>
-                            <th style="width:15%">Домашние задание</th>
-                            <th style="width:15%">Статус</th>
-                            <th class="d-none d-md-table-cell" style="width:15%">Срок доступа</th>
+                            <th style="width: 5%!important;"></th>
+                            <th style="width:40%!important;">Наименование урока</th>
+                            <th style="width:10%!important;">Ссылка</th>
+                            <th style="width:15%!important;">Домашние задание</th>
+                            <th style="width:10%!important;">Статус</th>
+                            <th class="d-none d-md-table-cell" style="width:15%!important;">Срок доступа</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -41,11 +41,7 @@
                             {% set module_first = false %}
                         {% endif %}
                         {% for i_lesson in i_course['lessons'] %}
-                        <tr class="{% if i_lesson['task'] %}
-                                        {% if i_lesson['homework_answer'] is none or _user['role'] == "superuser" %}
-                                        {% elif i_lesson['homework_answer']['status'] == "не проверено" %} table-success
-                                        {% elif i_lesson['homework_answer']['answer'] == "Принято" %} table-success {% else %} table-danger {% endif %}
-                                    {% endif %}">
+                        <tr>
                             {% if (module_first or i_course['available']) %}
                                 <td class="table-action">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -65,8 +61,14 @@
                                         {% else %}Не сдано{% endif %}
                                     {% else %}Нет домашнего задания{% endif %}
                                 </td>
-                                <td>{% if i_lesson['task'] is none %}<strong><hr></strong>{% elif i_lesson['homework_answer'] is not none %}{% if i_lesson['homework_answer']['status'] == "не проверено" %}Не проверено{% elif i_lesson['homework_answer']['answer'] is not none %}{{ i_lesson['homework_answer']['answer'] }}{% endif %}
-                                {% endif %}</td>
+                                <td>
+                                    <div class='badge {% if i_lesson['homework_answer']['answer'] == "Принято" %} bg-success
+                                    {% elif i_lesson['homework_answer']['status'] == "не проверено" %} bg-info
+                                    {% elif i_lesson['homework_answer']['answer'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>
+                                        {% if i_lesson['task'] is none %}<strong><hr></strong>{% elif i_lesson['homework_answer'] is not none %}{% if i_lesson['homework_answer']['status'] == "не проверено" %}Не проверено{% elif i_lesson['homework_answer']['answer'] is not none %}{{ i_lesson['homework_answer']['answer'] }}{% endif %}
+                                        {% endif %}
+                                    </div>
+                                </td>
                                 <td class="d-none d-md-table-cell">
                                     {% if module_first %}
                                         Неограничен

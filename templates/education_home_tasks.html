@@ -1,140 +1,60 @@
 {% extends 'base.html' %}
 
 {% block main_block %}
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+{#    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">#}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.1.4/css/rowGroup.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css">
+{#    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.2.0/css/rowGroup.bootstrap4.min.css">#}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedheader/3.2.4/css/fixedHeader.dataTables.min.css">
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-
     <script src="{{ url_for('static' , filename="js/datatables.js")}}"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.1.4/js/dataTables.rowGroup.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/4.0.2/js/dataTables.fixedColumns.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.2.4/js/dataTables.fixedHeader.min.js"></script>
 
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // DataTables with Buttons
-            var datatablesButtons = $("#datatables-homeworks").DataTable({
+            $("#datatables-homeworks").DataTable({
                 responsive: true,
                 lengthChange: false,
-                scrollY: "500px",
-                {#scrollX: true,#}
-                scrollCollapse: true,
-                paging: false,
-                fixedHeader: true,
-                fixedColumns: true,
+                {#scrollY: "500px",#}
+                {#scrollCollapse: true,#}
+                paging: true,
+                fixedHeader: false,
+                fixedColumns: false,
                 ordering: true,
-                orderMulti: [[0, 'asc'], [2, "asc"]],
+                orderMulti: true,
+                orderFixed: [[0, 'asc'], [2, "asc"]],
                 rowGroup: {
-                    dataSrc: 2
+                    dataSrc: 3
                 },
                 columnDefs: [
-                {
-                    "targets": [ 0 ],
-                    "visible": false,
-                    "searchable": false,
-
-                },
                     {
-                    "targets": [ 2 ],
-                    "visible": false,
-                    "searchable": false,
-
-                },
+                        "targets": [ 0 ],
+                        "visible": false,
+                        "searchable": false,
+                    },
                     {
-                        "width": "50%!important;"
-                    }]
+                        "targets": [ 3 ],
+                        "visible": false,
+                        "searchable": false,
+                    }
+                ]
             });
             {#datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");#}
         });
     </script>
 
     <style>
-
-        table.dataTable thead .sorting,
+    table.dataTable thead .sorting,
         table.dataTable thead .sorting_asc,
         table.dataTable thead .sorting_desc {
             background : none;
         }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            overflow-y: scroll!important;
-        }
-
-        .pagination {
-            z-index: 0;
-        }
-
-
-        /* The Modal (background) */
-        .modal {
-            display: none; /* Hidden by default */
-            z-index: 99; /* Sit on top */
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0, 0, 0); /* Fallback color */
-            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        /* Modal Content/Box */
-        .modal-content {
-
-            margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
-            border: gray;
-            width: 80%; /* Could be more or less, depending on screen size */
-            padding: 16px;
-        }
-
-        .modal-backdrop{
-            display: none;
-        }
-        /* The Close Button (x) */
-
-        .close:hover,
-        .close:focus {
-            color: red;
-            cursor: pointer;
-        }
-
-        /* Add Zoom Animation */
-        .animate {
-            -webkit-animation: animatezoom 0.6s;
-            animation: animatezoom 0.6s
-        }
-
-        @-webkit-keyframes animatezoom {
-            from {
-                -webkit-transform: scale(0)
-            }
-            to {
-                -webkit-transform: scale(1)
-            }
-        }
-
-        @keyframes animatezoom {
-            from {
-                transform: scale(0)
-            }
-            to {
-                transform: scale(1)
-            }
-        }
-
-        /* Change styles for span and cancel button on extra small screens */
-        @media screen and (max-width: 300px) {
-            span.psw {
-                display: block;
-                float: none;
-            }
-            .cancelbtn {
-                width: 100%;
-            }
-        }
-
     </style>
 
     <div class="container-fluid p-0">
@@ -148,37 +68,38 @@
                 <div class="p-2 bd-highlight">
                     <div class="card d-flex align-self-baseline">
                         <div class="card-header">
-                            <table id="datatables-homeworks" class="table dataTable no-footer cell-border"
+                            <table id="datatables-homeworks" class="table no-footer row-border order-column nowrap"
                                    aria-describedby="datatables-buttons_info">
                                 <thead>
-                                    <tr>
-                                        <th class="sorting" style="" tabindex="0" aria-controls="datatables-buttons"
-                                            aria-label="Position: activate to sort column ascending">#</th>
-                                        <th class="sorting" style="width:20%" tabindex="0" aria-controls="datatables-buttons"
-                                            aria-label="Position: activate to sort column ascending">Пользователь</th>
-                                        <th class="sorting" style="width:20%" tabindex="0" aria-controls="datatables-buttons"
-                                            aria-label="Position: activate to sort column ascending">Урок</th>
-                                        <th class="sorting" style="width:5%; text-align:center" tabindex="0" aria-controls="datatables-buttons"
-                                            aria-label="Position: activate to sort column ascending">Дата сдачи</th>
-                                        <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-buttons"
-                                            aria-label="Position: activate to sort column ascending">Статус</th>
-                                        <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-buttons"
-                                            aria-label="Position: activate to sort column ascending">Ответ</th>
-                                        <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-buttons"
-                                            aria-label="Position: activate to sort column ascending">Домашняя работа</th>
+                                    <tr role="row">
+                                        <th>#</th>
+                                        <th class="sorting" style="width:20%!important;" tabindex="0" aria-controls="datatables-homeworks"
+                                            aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Login</th>
+                                        <th class="sorting" style="width:20%!important;" tabindex="0" aria-controls="datatables-homeworks"
+                                            aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Имя</th>
+                                        <th>Урок</th>
+                                        <th class="sorting" style="width:10%!important;" tabindex="0" aria-controls="datatables-homeworks"
+                                            aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Дата сдачи</th>
+                                        <th class="sorting" style="width:5%!important;" tabindex="0" aria-controls="datatables-homeworks"
+                                            aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Статус</th>
+                                        <th class="sorting" style="width:10%!important;" tabindex="0" aria-controls="datatables-homeworks"
+                                            aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Ответ</th>
+                                        <th class="sorting" style="width:20%!important;" tabindex="0" aria-controls="datatables-homeworks"
+                                            aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Домашняя работа</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="table-bordered">
                                 {% for item in _data %}
-                                    <tr class="{% if item['homework_answer']['status'] == "не проверено" %} table-success {% elif item['homework_answer']['answer'] == "Принято" %} table-success {% else %} table-danger {% endif %}">
+                                    <tr>
 {#                                        <td>Обучающий поток(курс потока):{{ item['education_stream']['name'] }}({{ item['course']['name'] }})</td>#}
                                         <td>{{ item['lesson']['id'] }}</td>
+                                        <td>{{ item["user"]['login'] }}</td>
                                         <td>{{ item["user"]['name'] }}</td>
-                                        <td class="table-secondary">Урок: {{ item['lesson']['name'] }}</td>
+                                        <td>Урок: {{ item['lesson']['name'] }}</td>
                                         <td>{{ item['date_delivery'] }}</td>
-                                        <td>{{ item['homework_answer']['status'] }}</td>
-                                        <td>{{ item['homework_answer']['answer'] }}</td>
-                                        <td>
+                                        <td><div class='badge {% if item['homework_answer']['status'] == "не проверено" %} bg-info {% elif item['homework_answer']['status'] == "проверено" %} bg-success {% endif %} bg-gradient text-light'>{{ item['homework_answer']['status'] }}</div></td>
+                                        <td><div class='badge {% if item['homework_answer']['answer'] == "Принято" %} bg-success {% elif item['homework_answer']['answer'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>{{ item['homework_answer']['answer'] }}</div></td>
+                                        <td style="text-align: center">
                                             <a href="/education_home_task_profile?id_chat={{ item['id_room_chat'] }}&id_homework={{ item['id'] }}" >
                                                 Перейти
                                             </a>
