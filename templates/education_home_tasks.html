@@ -4,7 +4,7 @@
 {#    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">#}
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.1.4/css/rowGroup.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css">
-{#    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.2.0/css/rowGroup.bootstrap4.min.css">#}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.2.0/css/rowGroup.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedheader/3.2.4/css/fixedHeader.dataTables.min.css">
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="{{ url_for('static' , filename="js/datatables.js")}}"></script>
@@ -28,20 +28,15 @@
                 fixedColumns: false,
                 ordering: true,
                 orderMulti: true,
-                orderFixed: [[0, 'asc'], [2, "asc"]],
+                orderFixed: [[0, 'asc'], [3, "asc"], [4, "asc"]],
                 rowGroup: {
-                    dataSrc: 3
+                    dataSrc: [3, 4]
                 },
                 columnDefs: [
                     {
-                        "targets": [ 0 ],
+                        "targets": [ 0, 3, 4 ],
                         "visible": false,
-                        "searchable": false,
-                    },
-                    {
-                        "targets": [ 3 ],
-                        "visible": false,
-                        "searchable": false,
+                        "searchable": false
                     }
                 ]
             });
@@ -77,6 +72,7 @@
                                             aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Login</th>
                                         <th class="sorting" style="width:20%!important;" tabindex="0" aria-controls="datatables-homeworks"
                                             aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Имя</th>
+                                        <th>Модуль</th>
                                         <th>Урок</th>
                                         <th class="sorting" style="width:10%!important;" tabindex="0" aria-controls="datatables-homeworks"
                                             aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Дата сдачи</th>
@@ -95,6 +91,7 @@
                                         <td>{{ item['lesson']['id'] }}</td>
                                         <td>{{ item["user"]['login'] }}</td>
                                         <td>{{ item["user"]['name'] }}</td>
+                                        <td>{{ item['lesson']['module_name'] }}</td>
                                         <td>Урок: {{ item['lesson']['name'] }}</td>
                                         <td>{{ item['date_delivery'] }}</td>
                                         <td><div class='badge {% if item['homework_answer']['status'] == "не проверено" %} bg-info {% elif item['homework_answer']['status'] == "проверено" %} bg-success {% endif %} bg-gradient text-light'>{{ item['homework_answer']['status'] }}</div></td>
