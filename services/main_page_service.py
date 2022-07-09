@@ -49,7 +49,7 @@ class MainPageService():
         error = user_manager.discharge_password(_login, _password, _password2, _current_password)
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
-        action_manager.add_notifications(_login, "overwrite", 'пароль', "user_manager", login_superuser)
+        action_manager.add_notifications(_login, "изменил", 'пароль', "user_manager", login_superuser)
 
         return error
 

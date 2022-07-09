@@ -137,9 +137,8 @@
                                                         </a>
                                                     </div>
                                                 </td>
-                                                <td style="display: flex"><div style=" text-align: center; position: center; margin-right: 16%">{{ item['name'] }}</div></td>
-                                                <td style="display: flex;">
-                                                    <div class="col" style="text-align: center;position: center; margin-right: 16%;">{{ item['email'] }}</div></td>
+                                                <td>{{ item['name'] }}</td>
+                                                <td>{{ item['email'] }}</td>
                                                 <td>{{ item['created_date'] }}</td>
                                                 <td><a href="#" data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}"
                                                        onclick="document.getElementById('extension_{{ item['user_id'] }}').style.display='block';">{{ item['education_module_expiration_date'] }}</a></td>
@@ -224,7 +223,7 @@
 
         <div id="{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal">
             <div class="modal-content animate">
-                <h3 class="modal-title">{% if _mode[item['user_id']] == "view" %}Просмотр{% else %} Редактирование{% endif %} карточки пользователя</h3>
+                <h3 class="modal-title">{% if _mode[item['user_id']] == "view" %}Просмотр{% elif _mode[item['user_id']] == "new" %}Создание{% else %}Редактирование{% endif %} карточки пользователя</h3>
                 {% if _error_type[item['user_id']] == 'Error' %}
                     <div class="alert alert-danger alert-dismissible" role="alert">
                         <div class="alert-message">

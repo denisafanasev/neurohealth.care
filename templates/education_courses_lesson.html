@@ -32,11 +32,28 @@
                 message.style.display = 'block'
                 return false;
             }
+
+            return checkFileSize(document.getElementById('hometask'));
         };
     });
     </script>
 
-
+    <script>
+    function checkFileSize(elem) {
+        message = document.getElementById("message");
+        for (var i = 0; i <= elem.files.length - 1; i++)
+        {
+            var fsize = elem.files[i].size;
+            if (fsize > elem.getAttribute("size")){
+                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                document.querySelector('p[id=text_message]').textContent = "Превышен лимит одного из загруженных файлов";
+                message.style.display = 'block';
+                return false;
+            }
+        }
+        return true;
+    }
+    </script>
     <style>
 
     .word {
@@ -253,7 +270,7 @@
                                                     <div id="editor_homework" style="z-index: 0"><p></p></div>
                                                     <input type="hidden" id="hiddenInput" name="text_homework">
                                                 </div>
-                                                <input id="hometask" size="2097152" type="file" multiple name="files" class="form-control mb-2">
+                                                <input id="hometask" size="3145728" type="file" onchange="return checkFileSize(this);" multiple name="files" class="form-control mb-2">
                                                 <div class="" align="right">
                                                     <button id="button" class="btn btn-primary" name="button" type="submit" value="homework">Отправить</button>
                                                 </div>

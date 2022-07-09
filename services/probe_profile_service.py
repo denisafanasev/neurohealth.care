@@ -47,7 +47,7 @@ class ProbeProfileService():
         probe_id = probes_manager.add_probe(_name_probationer, _probationer_id, _date_of_birth, _protocol_status)
         login_user = user_manager.get_user_by_id(_id_user).login
 
-        action_manager.add_notifications(f"пробы испытуемого № {_probationer_id}", "add", '', "probes_manager",
+        action_manager.add_notifications(f"пробы испытуемого № {_probationer_id}", "добавил", '', "probes_manager",
                                           login_user)
         return probe_id
 

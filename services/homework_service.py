@@ -3,6 +3,7 @@ from models.room_chat_manager import RoomChatManager
 from models.course_manager import EducationCourseManager
 from models.education_stream_manager import EducationStreamManager
 from models.user_manager import UserManager
+from models.action_manager import ActionManager
 
 
 class HomeworkService():
@@ -92,17 +93,31 @@ class HomeworkService():
         else:
             return user_manager.get_user_by_login(_user)
 
-    def change_homework_answer(self, _answer, _id_homework_answer):
+    def change_homework_answer(self, _answer, _id_homework_answer, _user_id):
         """
         Изменяет оценку домашнего задания
         Args:
             _answer(String): оценка
-            _id_homework_answer(Int): индетификатор оценки домашего задания
+            _id_homework_answer(Int): ID оценки домашего задания
+            _user_id(Int): ID текущего пользователя
         """
 
         homework_manager = HomeworkManager()
+        action_manager = ActionManager()
+        user_manager = UserManager()
 
-        homework_manager.change_homework_answer(_answer, _id_homework_answer)
+        homework_answer = homework_manager.change_homework_answer(_answer, _id_homework_answer)
+        homework = homework_manager.get_homework_by_id(homework_answer.id_homework)
+        user = user_manager.get_user_by_id(_user_id)
+        id_dict = self.get_room_chat(homework.id_room_chat)[1]
+        lesson = self.get_lesson(id_dict['lesson'], id_dict['course'])
+        if homework_answer.answer:
+            action = "принял"
+        else:
+            action = "не принял"
+
+        action_manager.add_notifications(id_dict['user'], action, lesson.lessons.name, "homework_manager", user.login)
+
 
     def room_chat_entry(self, _id_lesson, _id_course, _id_user, _id_room_chat, _id_education_stream, _id_module):
         """

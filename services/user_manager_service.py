@@ -102,7 +102,7 @@ class UserManagerService():
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
         if error is None:
-            action_manager.add_notifications(_login, "add", 'нового', "user_manager", login_superuser)
+            action_manager.add_notifications(_login, "добавил", 'нового', "user_manager", login_superuser)
 
         return error
 
@@ -129,7 +129,7 @@ class UserManagerService():
 
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
-        action_manager.add_notifications(_login, "overwrite", 'данные', "user_manager", login_superuser)
+        action_manager.add_notifications(_login, "изменил", 'данные', "user_manager", login_superuser)
 
         return user
 
@@ -152,7 +152,7 @@ class UserManagerService():
         error = user_manager.discharge_password(_login, _password, _password2, _current_password)
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
-        action_manager.add_notifications(_login, "overwrite", 'пароль', "user_manager", login_superuser)
+        action_manager.add_notifications(_login, "изменил", 'пароль', "user_manager", login_superuser)
 
         return error
 
@@ -170,7 +170,7 @@ class UserManagerService():
         user_manager.activation(_login)
 
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
-        action_manager.add_notifications(_login, "overwrite", 'доступ', "user_manager", login_superuser)
+        action_manager.add_notifications(_login, "изменил", 'доступ', "user_manager", login_superuser)
 
 
     def deactivation(self, _login, _current_user_id):
@@ -187,7 +187,7 @@ class UserManagerService():
         active = user_manager.deactivation(_login)
 
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
-        action_manager.add_notifications(_login, "overwrite", 'доступ', "user_manager", login_superuser)
+        action_manager.add_notifications(_login, "изменил", 'доступ', "user_manager", login_superuser)
 
         return active
 
@@ -219,4 +219,4 @@ class UserManagerService():
         user_manager.access_extension(_period, _reference_point, _login)
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
-        action_manager.add_notifications(_login, "extended", 'срок доступа', "user_manager", login_superuser)
+        action_manager.add_notifications(_login, "продлил", 'срок доступа', "user_manager", login_superuser)

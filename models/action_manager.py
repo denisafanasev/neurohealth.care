@@ -42,18 +42,7 @@ class ActionManager():
 
         data_store = DataStore("action")
 
-
-        if _action == "overwrite":
-            _action = "изменил"
-        elif _action == "add":
-            _action = "добавил"
-        elif _action == "view":
-            _action = "посмотрел"
-        elif _action == 'extended':
-            _action = 'продлил'
-
         comment_action = ''
-
         if _name_place == "estimated_values":
             _name_place = "данные в файле"
             comment_action = f"для диапазона возрастов {_place}"
@@ -73,6 +62,13 @@ class ActionManager():
         elif _name_place == "course_manager":
             _name_place = "урок"
             comment_action = f"{_place.lessons.name[0:-2]} модуля {_place.lessons.id_module}"
+
+        elif _name_place == "homework_manager":
+            _name_place = "домашнюю работу"
+            if _place != "":
+                _name_place += f" пользователя {_place}"
+
+            comment_action = f"Урок {_action_place}"
 
         action = "{user} {action} {name_place}".format(
             user=_user,

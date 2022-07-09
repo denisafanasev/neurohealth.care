@@ -791,7 +791,7 @@ def education_course_lesson():
         elif request.form.get("button") == "homework":
             files = request.files.getlist("files")
             text = request.form.get("text_homework")
-            page_controller.save_homework(files, id_room_chat, user_id, text)
+            page_controller.save_homework(files, id_room_chat, user_id, text, id_lesson, id_course)
         else:
             id_room_chat = page_controller.room_chat_entry(_id_lesson=id_lesson, _id_course=id_course,
                                                            _id_user=user_id)["id"]
@@ -828,23 +828,6 @@ def education_home_tasks():
 
     data = page_controller.get_homeworks_list()
 
-    if request.method == "POST":
-        for i_homework in data:
-            id_homework = None
-            id_homework_answer = None
-            if request.form.get(f"button_{i_homework['id']}") is not None:
-                id_homework = i_homework['id']
-                id_homework_answer = i_homework['homework_answer']["id"]
-
-            if request.form.get(f"button_{id_homework}") == "answer":
-                answer = request.form.get("answer")
-                if answer == "True":
-                    page_controller.change_homework_answer(answer, id_homework_answer)
-                elif answer == "False":
-                    page_controller.change_homework_answer(answer, id_homework_answer)
-
-                data = page_controller.get_homeworks_list()
-
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
 
@@ -880,7 +863,8 @@ def education_home_task_profile():
             answer = request.form.get("answer")
 
             homework['homework_answer']["answer"], error, error_type = page_controller.change_homework_answer\
-                                                                        (answer, homework['homework_answer']["id"])
+                                                                        (answer, homework['homework_answer']["id"],
+                                                                         user_id)
             homework['homework_answer']["status"] = "проверено"
 
     return render_template('education_home_task_profile.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
