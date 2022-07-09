@@ -154,6 +154,8 @@ class HomeworkManager():
 
         data_store.update_row({"id": homework_answer.id, "answer": homework_answer.answer}, "id")
 
+        return homework_answer
+
     def get_homeworks_list_by_id_room_chat(self, _id_room_chat):
 
         data_store = DataStore("homeworks")

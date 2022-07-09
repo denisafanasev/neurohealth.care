@@ -38,7 +38,7 @@ class ProbationerCardService():
                                                _reasons_for_contact)
         login_user = user_service.get_user_by_id(_id_user).login
 
-        action_manager.add_notifications(name_probationer, "add", 'нового', "probationer_manager", login_user)
+        action_manager.add_notifications(name_probationer, "добавил", 'нового', "probationer_manager", login_user)
 
     def get_probationer_card_view(self, probationer_id):
         """
@@ -77,4 +77,4 @@ class ProbationerCardService():
 
         login_user = user_manager.get_user_by_id(_id_user).login
 
-        action_manager.add_notifications(name_probationer, "overwrite", '', "probationer_manager", login_user)
+        action_manager.add_notifications(name_probationer, "изменил", '', "probationer_manager", login_user)

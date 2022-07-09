@@ -56,7 +56,7 @@ class EducationCourseService():
         login_user = user_manager.get_user_by_id(_user_id).login
         lesson = course_manager.get_lesson(_lesson_id, _id_course, _id_video)
 
-        action_manager.add_notifications(lesson, "view", '', "course_manager", login_user)
+        action_manager.add_notifications(lesson, "посмотрел", '', "course_manager", login_user)
 
         return lesson
     
@@ -176,7 +176,7 @@ class EducationCourseService():
 
             return False
 
-    def save_homework(self, _files_list, _id_room_chat, _current_user_id, _text):
+    def save_homework(self, _files_list, _id_room_chat, _current_user_id, _text, _id_lesson, _id_course):
         """
         Сохраняет домашнюю работу
 
@@ -189,12 +189,17 @@ class EducationCourseService():
         homework_manager = HomeworkManager()
         user_manager = UserManager()
         upload_service = UploadManager()
+        action_manager = ActionManager()
+        course_manager = EducationCourseManager()
 
         login_user = user_manager.get_user_by_id(_current_user_id).login
         homework_files_list = upload_service.upload_files(_files_list, login_user)
         homework = homework_manager.create_homework(homework_files_list, _id_room_chat, _text)
+        lesson = course_manager.get_lesson(_id_lesson, _id_course)
+
         homework_manager.create_homework_answer(homework.id)
-    
+        action_manager.add_notifications("", "сдал", lesson.lessons.name, "homework_manager", login_user)
+
     def get_user_list(self, _user_id):
         """
         Возвращает список пользователей

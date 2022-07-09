@@ -87,7 +87,7 @@ class EducationChatPageController():
 
         return user_view
 
-    def change_homework_answer(self, _answer, _id_homework_answer):
+    def change_homework_answer(self, _answer, _id_homework_answer, _user_id):
         """
         Изменяет оценку домашнего задания
 
@@ -98,7 +98,7 @@ class EducationChatPageController():
 
         homework_service = HomeworkService()
 
-        homework_service.change_homework_answer(_answer, _id_homework_answer)
+        homework_service.change_homework_answer(_answer, _id_homework_answer, _user_id)
 
         if _answer == "True":
             answer = "Принято"

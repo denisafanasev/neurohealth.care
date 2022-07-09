@@ -169,11 +169,11 @@ class EducationCourseLessonPageController():
 
         return course_formated
 
-    def save_homework(self, _files_list, _id_room_chat, _user_id, _text):
+    def save_homework(self, _files_list, _id_room_chat, _user_id, _text, _id_lesson, _id_course):
 
         course_service = EducationCourseService()
 
-        course_service.save_homework(_files_list, _id_room_chat, _user_id, _text)
+        course_service.save_homework(_files_list, _id_room_chat, _user_id, _text, _id_lesson, _id_course)
 
     def get_homework(self, _id_room_chat):
 
