@@ -23,10 +23,15 @@ class EducationCoursePageController():
         education_stream = course_service.get_course_modules_list(_id)
 
         modules_list = []
+        module_order = 0
         for i_module in education_stream:
+
+            module_order += 1
+
             module = {}
             module["id"] = i_module.id
             module["name"] = i_module.name
+            module["order"] = module_order
             lesson_list = []
 
             # проверим доступность модуля для пользователя
@@ -40,7 +45,7 @@ class EducationCoursePageController():
                     "task": i_lesson.task
                 }
 
-                if ((module['available'] and i_module.id <= 2) or i_module.id == 1) and i_lesson.task is not None:
+                if ((module['available'] and module["order"] <= 3) or i_module.id == 1) and i_lesson.task is not None:
                     last_homeworks = course_service.get_last_homework(_id, i_lesson.id, _user_id)
                     if last_homeworks is not None:
                         if last_homeworks.homework_answer.answer:
