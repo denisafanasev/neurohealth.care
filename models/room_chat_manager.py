@@ -148,13 +148,6 @@ class RoomChatManager():
         _message["send"] = datetime.today()
         message = self.message_row_to_message(_message)
 
-        # if message.files is not None:
-        #     file_list = []
-        #     for i_file in message.files:
-        #         file = self.save_files(i_file)
-        #         file_list.append(file.name_file_unique)
-        #     message.files = file_list
-
         data_store_message.add_row({"id": message.id, "name_sender": message.name_sender, "text": message.text})
 
         data_store.update_messages(message.id, int(_id_room_chat))
