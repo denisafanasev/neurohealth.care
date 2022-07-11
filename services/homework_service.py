@@ -88,10 +88,7 @@ class HomeworkService():
 
         user_manager = UserManager()
 
-        if _user.isdigit():
-            return user_manager.get_user_by_id(int(_user))
-        else:
-            return user_manager.get_user_by_login(_user)
+        return user_manager.get_user_by_login(_user)
 
     def change_homework_answer(self, _answer, _id_homework_answer, _user_id):
         """
