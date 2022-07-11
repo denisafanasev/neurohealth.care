@@ -1,4 +1,3 @@
-#TODO: передалать на использование менеджера и не сервиса
 from models.action_manager import ActionManager
 from models.room_chat_manager import RoomChatManager
 from models.user_manager import UserManager
@@ -6,6 +5,7 @@ from models.course_manager import EducationCourseManager
 from models.education_stream_manager import EducationStreamManager
 from models.homework_manager import HomeworkManager
 from models.upload_manager import UploadManager
+from models.users_file_manager import UsersFileManager
 
 from datetime import datetime
 import config
@@ -257,6 +257,7 @@ class EducationCourseService():
     def get_last_homework_by_id_room_chat(self, _id_room_chat):
 
         homework_manager = HomeworkManager()
+        users_file_manager = UsersFileManager()
 
         homework_list = homework_manager.get_homeworks_list_by_id_room_chat(_id_room_chat)
         date = datetime.strptime("01/01/2000", "%d/%m/%Y")
@@ -266,6 +267,9 @@ class EducationCourseService():
                 if homework.date_delivery >= date:
                     date = homework.date_delivery
                     last_homework = homework
+
+            files = users_file_manager.get_size_files(last_homework.users_files_list)
+            last_homework.users_files_list = files
 
             return last_homework
 

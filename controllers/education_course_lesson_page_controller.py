@@ -191,7 +191,7 @@ class EducationCourseLessonPageController():
             homework_view = {
                 "id": homework.id,
                 "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
-                "users_files_list": homework.users_files_list,
+                "users_files_list": [],
                 "homework_answer": {
                     "id": homework.homework_answer.id,
                     "answer": homework.homework_answer.answer,
@@ -199,5 +199,14 @@ class EducationCourseLessonPageController():
                 },
                 "text": Markup(homework.text)
             }
+
+            for file in homework.users_files_list:
+                if file.size // 1048576 == 0:
+                    file_size = f"{round(file.size / 1024, 2)} кБ"
+                else:
+                    file_size = f"{round(file.size / 1048576, 2)} мБ"
+
+                homework_view['users_files_list'].append({"name_file_unique": file.name_file_unique,
+                                                          "size": file_size})
 
         return homework_view
