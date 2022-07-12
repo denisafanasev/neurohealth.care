@@ -178,29 +178,7 @@
                                             <td></td>
                                             <td class="d-none d-md-table-cell">{{ _user['education_module_expiration_date'] }}</td>
                                         </tr>
-                                        <tr>
-                                            <td class="table-action">
-                                                <i class="align-middle me-2 fas fa-fw fa-couch"></i>
-                                            </td>
-                                            <td>Домашнее задание</td>
-                                            <td>
-                                                <div  class="badge text-light {% if _data['lesson']['task'] or _user['role'] != "superuser" %}
-                                                    {% if _homework is none %} bg-warning
-                                                    {% elif _homework['homework_answer']['status'] == "не проверено" %} bg-success
-                                                    {% elif _homework['homework_answer']['answer'] == "Принято" %} bg-success {% else %} bg-danger {% endif %}
-                                                   {% elif _user['role'] != "superuser" %} bg-warning
-                                                   {% endif %}">
-                                                    {% if _data["lesson"]['task'] or _user['role'] != "superuser" %}{% if _homework is not none %}Сдано: {{ _homework.get('date_delivery') }}{% else %}Не сдано{% endif %}{% else %}Нет домашнего задания{% endif %}
-                                                </div>
-                                            </td>
-                                            <td class="d-none d-md-table-cell">
-                                                <div class='badge{% if _user['role'] != "superuser" %} {% if _homework['homework_answer']['answer'] == "Принято" %} bg-success
-                                                {% elif _homework['homework_answer']['status'] == "не проверено" %} bg-info
-                                                {% elif _homework['homework_answer']['answer'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light {% endif %}'>
-                                                    {% if _homework is not none or _user['role'] != "superuser" %}{% if _homework['homework_answer']['status'] == "не проверено" %}Не проверено{% elif _homework is not none %}{{ _homework['homework_answer']['answer'] }}{% endif %}{% endif %}
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        <!-- тут удаленный блок с ошибкой -->
 
                                     </tbody>
                                 </table>
