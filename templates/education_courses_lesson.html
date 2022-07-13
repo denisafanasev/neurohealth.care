@@ -178,8 +178,27 @@
                                             <td></td>
                                             <td class="d-none d-md-table-cell">{{ _user['education_module_expiration_date'] }}</td>
                                         </tr>
-                                        <!-- тут удаленный блок с ошибкой -->
-
+                                         <tr>
+                                         {% if _user['role'] != "superuser" and _data['lesson']['task'] %}
+                                            <td class="table-action">
+                                                <i class="align-middle me-2 fas fa-fw fa-couch"></i>
+                                            </td>
+                                            <td>Домашнее задание</td>
+                                            <td>
+                                                <div  class="badge text-light {% if _homework is none %} bg-warning {% else %} bg-success {% endif %}">
+                                                    {% if _homework is not none %}Сдано: {{ _homework.get('date_delivery') }}{% else %}Не сдано{% endif %}
+                                                </div>
+                                            </td>
+                                            <td class="d-none d-md-table-cell">
+                                                <div class='badge {% if _homework is none %}
+                                                {% elif _homework['homework_answer']['answer'] == "Принято" %} bg-success
+                                                {% elif _homework['homework_answer']['status'] == "не проверено" %} bg-info
+                                                {% elif _homework['homework_answer']['answer'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>
+                                                    {% if _homework is none %}{% elif _homework['homework_answer']['status'] == "не проверено" %}Не проверено{% elif _homework is not none %}{{ _homework['homework_answer']['answer'] }}{% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endif %}
                                     </tbody>
                                 </table>
                             </div>
@@ -339,31 +358,6 @@
                     </div>
                 </div>
             </div>
-        {% elif not _data['available']%}
-            <div class="card border">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <h4>
-                                Домашнее задание
-                            </h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12 text-left">
-                            <div class="card py-1 py-md-1 border">
-                                <div class="card-body">
-                                    <div class="text-center">
-                                        <h2>Выполнение домашней работы недоступно.</h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         {% else %}
             <div class="card border">
                 <div class="card-header">
@@ -381,7 +375,11 @@
                             <div class="card py-1 py-md-1 border">
                                 <div class="card-body">
                                     <div class="text-center">
-                                        <h2>Для данного урока нет домашнего задания</h2>
+                                        {% if not _data['lesson']['task']%}
+                                            <h2>Для данного урока нет домашнего задания</h2>
+                                        {% else %}
+                                            <h2>Выполнение домашней работы недоступно.</h2>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
