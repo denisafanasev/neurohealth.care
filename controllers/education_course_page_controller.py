@@ -47,7 +47,7 @@ class EducationCoursePageController():
                 }
 
                 if user_role != "superuser":
-                    if ((module['available'] and i_module.id <= 3) or i_module.id == 1) and i_lesson.task is not None:
+                    if ((module['available'] and i_module.id <= 4) or i_module.id == 1) and i_lesson.task is not None:
                         last_homeworks = course_service.get_last_homework(_id, i_lesson.id, _user_id)
                         if last_homeworks is not None:
                             if last_homeworks.homework_answer.answer:
