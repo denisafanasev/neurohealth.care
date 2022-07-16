@@ -179,11 +179,16 @@ class EducationCourseService():
     def save_homework(self, _files_list, _id_room_chat, _current_user_id, _text, _id_lesson, _id_course):
         """
         Сохраняет домашнюю работу
-
         Args:
-            _files_list(List): список файлов, отправленных пользователем
-            _current_user_id(Int): ID текущего пользователя
-            _id_room_chat(Int): ID комнаты чата
+            _homework_files_list(Dict): данные сданной домашней работы
+            _id_room_chat(Int): ID чата
+            _text(String): ответ на задание
+            _id_user(Int): ID пользователя
+            _id_course(Int): ID курса
+            _id_lesson(Int): ID урока
+
+        Return:
+            Homework: домашняя работа
         """
 
         homework_manager = HomeworkManager()
@@ -194,7 +199,8 @@ class EducationCourseService():
 
         login_user = user_manager.get_user_by_id(_current_user_id).login
         homework_files_list = upload_service.upload_files(_files_list, login_user)
-        homework = homework_manager.create_homework(homework_files_list, _id_room_chat, _text)
+        homework = homework_manager.create_homework(homework_files_list, _id_room_chat, _text, _current_user_id,
+                                                    _id_course, _id_lesson)
         lesson = course_manager.get_lesson(_id_lesson, _id_course)
 
         homework_manager.create_homework_answer(homework.id)
@@ -258,12 +264,30 @@ class EducationCourseService():
 
         homework_manager = HomeworkManager()
         users_file_manager = UsersFileManager()
+        room_chat_manager = RoomChatManager()
+        user_manager = UserManager()
 
         homework_list = homework_manager.get_homeworks_list_by_id_room_chat(_id_room_chat)
         date = datetime.strptime("01/01/2000", "%d/%m/%Y")
         last_homework = None
         if homework_list != []:
             for homework in homework_list:
+                if homework.id_user is None:
+                    room_chat = room_chat_manager.get_room_chat(_id_room_chat)
+                    name_room_chat = room_chat.name.split("_")
+                    id_dict = {"course": int(name_room_chat[1]), "lesson": int(name_room_chat[2]),
+                               "user": name_room_chat[3]}
+                    if len(name_room_chat) > 4:
+                        for i in range(0, len(name_room_chat) - 3):
+                            if i + 4 < len(name_room_chat):
+                                id_dict['user'] = "_".join([id_dict['user'], name_room_chat[i + 4]])
+                            else:
+                                break
+                    homework.id_user = user_manager.get_user_by_login(id_dict['user']).user_id
+                    homework.id_course = id_dict['course']
+                    homework.id_lesson = id_dict['lesson']
+                    homework = homework_manager.update_homework(homework)
+
                 if homework.date_delivery >= date:
                     date = homework.date_delivery
                     last_homework = homework

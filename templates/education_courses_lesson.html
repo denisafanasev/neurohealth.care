@@ -164,8 +164,8 @@
                                     <thead>
                                         <tr>
                                             <th style="width:10%"></th>
-                                            <th style="width:15%"></th>
-                                            <th style="width:45%">Статус обучения</th>
+                                            <th style="width:30%">Статус обучения</th>
+                                            <th style="width:30%"></th>
                                             <th style="width:30%"></th>
                                         </tr>
                                     </thead>
@@ -257,7 +257,7 @@
                 <div class="card-body">
                     <div class="row">
 
-                        <div class="col-6 md-2 text-left">
+                        <div class="col-7 md-2 text-left">
                             <div class="card py-1 py-md-1 border">
                                 <div class="card-header">
                                     <h4 class="form-label">Домашние задание</h4>
@@ -352,7 +352,9 @@
                                 </div>
                              </div>
                         {% else %}
+                            <div class="col-md-5 text-left">
                             {% include "room_chat.html" %}
+                            </div>
                         {% endif %}
                     {% endif %}
                     </div>

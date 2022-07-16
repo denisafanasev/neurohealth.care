@@ -849,7 +849,7 @@ def education_home_task_profile():
     room_chat = page_controller.room_chat_entry(id_room_chat, user_id)
     homework = page_controller.get_homework(int(id_homework))
     user = page_controller.get_user_by_id(user_id)
-    data = page_controller.get_data(int(id_room_chat))
+    data = page_controller.get_data(int(id_homework))
     error = None
     error_type = None
 

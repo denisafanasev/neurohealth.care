@@ -37,9 +37,28 @@
                         "targets": [ 0, 3, 4 ],
                         "visible": false,
                         "searchable": false
+                    },
+                    {
+                      "targets": 5,
+                      "sType": "date-uk"
                     }
                 ]
             });
+
+            jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+                "date-uk-pre": function ( a ) {
+                var ukDatea = a.split('/');
+                return (ukDatea[2] + ukDatea[1] + ukDatea[0]) * 1;
+                },
+
+                "date-uk-asc": function ( a, b ) {
+                return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+                },
+
+                "date-uk-desc": function ( a, b ) {
+                return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+                }
+            } );
             {#datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");#}
         });
     </script>
