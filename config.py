@@ -4,7 +4,7 @@ app configuration
 
 import pathlib
 
-VERSION = "1.1.5"
+VERSION = "1.1.6"
 APP_NAME = "NeuroHealth"
 
 if str(pathlib.Path().resolve()).find("prod")!=-1:
@@ -13,7 +13,7 @@ else:
     ENVIRONMENT = "dev"
 
 # DATA_FOLDER = "../data/"
-DATA_FOLDER = "../neurohealth.care.data."+ENVIRONMENT+"/"
+DATA_FOLDER = "../neurohealth.care.data." + ENVIRONMENT + "/"
 
 # system settings
 THREADING_ENABLE = True

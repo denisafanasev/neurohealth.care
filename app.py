@@ -37,8 +37,10 @@ from controllers.education_stream_page_controller import EducationStreamPageCont
 from controllers.education_stream_profile_page_controller import EducationStreamProfilePageController
 
 from error import UserManagerException
+from utils.enviroment_setup import set_ga_id
 
 import config
+from utils.enviroment_setup import set_ga_id
 
 sentry_sdk.init(
     dsn="https://216657f6678b4b1bb5136f6ff1a0d8ee@o1211898.ingest.sentry.io/6359936",
@@ -99,7 +101,11 @@ def inject_global_context():
         None
     """
 
-    return dict(app_version=config.VERSION, app_name=config.APP_NAME)
+    ga_id = set_ga_id()
+
+    return dict(app_version=config.VERSION,
+                app_name=config.APP_NAME,
+                GA_TRACKING_ID=ga_id)
 
 
 @login_manager.user_loader
