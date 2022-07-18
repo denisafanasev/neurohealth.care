@@ -26,6 +26,15 @@ class HomeworkManager():
         if _data_row.get("homework_answer") is not None:
             homework.homework_answer = _data_row['homework_answer']
 
+        if _data_row.get("id_user") is not None:
+            homework.id_user = _data_row['id_user']
+
+        if _data_row.get("id_course") is not None:
+            homework.id_course = _data_row['id_course']
+
+        if _data_row.get("id_lesson") is not None:
+            homework.id_lesson = _data_row['id_lesson']
+
         return homework
 
     def homework_answer_row_to_homework_answer(self, _data_row):
@@ -52,12 +61,19 @@ class HomeworkManager():
 
         return homework_answer
 
-    def create_homework(self, _homework_files_list, _id_room_chat, _text):
+    def create_homework(self, _homework_files_list, _id_room_chat, _text, _id_user, _id_course, _id_lesson):
         """
-        Сохраняет данные файла
+        Сохраняет домашнюю работу
         Args:
             _homework_files_list(Dict): данные сданной домашней работы
-            _id_room_chat(Int): индетификатор чата
+            _id_room_chat(Int): ID чата
+            _text(String): ответ на задание
+            _id_user(Int): ID пользователя
+            _id_course(Int): ID курса
+            _id_lesson(Int): ID урока
+
+        Return:
+            Homework: домашняя работа
         """
 
         data_store = DataStore("homeworks")
@@ -65,11 +81,13 @@ class HomeworkManager():
         row_count = data_store.get_rows_count()
 
         homework = self.homework_row_to_homework({"id": row_count + 1, "id_room_chat": int(_id_room_chat),
-                                                  "users_files_list": _homework_files_list, "text": _text})
+                                                  "users_files_list": _homework_files_list, "text": _text,
+                                                  "id_user": _id_user, "id_course": int(_id_course), "id_lesson": _id_lesson})
 
         data_store.add_row({"id": homework.id, "id_room_chat": homework.id_room_chat,
                             "users_files_list": homework.users_files_list,
-                            "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"), "text": homework.text})
+                            "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"), "text": homework.text,
+                            "id_user": homework.id_user, "id_course": homework.id_course, "id_lesson": homework.id_lesson})
 
         return homework
 
@@ -177,6 +195,15 @@ class HomeworkManager():
         return homeworks
 
     def get_homework_by_id(self, _id):
+        """
+        Возвращает домашнюю работу по ID
+
+        Args:
+            _id(Int): ID домашней работы
+
+        Return:
+            Homework: домашняя работа
+        """
 
         data_store = DataStore("homeworks")
 
@@ -184,3 +211,16 @@ class HomeworkManager():
         homework['homework_answer'] = self.get_homework_answer(_id)
 
         return self.homework_row_to_homework(homework)
+
+    def update_homework(self, _homework):
+        """
+        Обновление данных домашней работы
+
+        Args:
+            _homework(Homework): домашняя работа
+        """
+
+        data_store = DataStore("homeworks")
+
+        data_store.update_row({"id": _homework.id, "id_user": _homework.id_user, "id_course": _homework.id_course,
+                               "id_lesson": _homework.id_lesson}, "id")

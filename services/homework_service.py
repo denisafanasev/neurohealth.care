@@ -21,18 +21,20 @@ class HomeworkService():
 
         return homework_list
 
-    def get_room_chat(self, _id_room_chat):
+    def update_homework(self, _homework):
         """
         Возвращает данные комнаты чата
         Args:
-            _id_room_chat(Int): id чата
+            _homework(Homework): домашняя работа
         Returns:
             RoomChat: чат
         """
 
         room_chat_manager = RoomChatManager()
+        user_manager = UserManager()
+        homework_manager = HomeworkManager()
 
-        room_chat = room_chat_manager.get_room_chat(_id_room_chat=_id_room_chat)
+        room_chat = room_chat_manager.get_room_chat(_id_room_chat=_homework.id_room_chat)
         name_room_chat = room_chat.name.split("_")
         id_dict = {"course": int(name_room_chat[1]), "lesson": int(name_room_chat[2]), "user": name_room_chat[3]}
         if len(name_room_chat) > 4:
@@ -42,7 +44,12 @@ class HomeworkService():
                 else:
                     break
 
-        return room_chat, id_dict
+        _homework.id_course = id_dict['course']
+        _homework.id_lesson = id_dict['lesson']
+        _homework.id_user = user_manager.get_user_by_login(id_dict['user']).user_id
+        homework_manager.update_homework(_homework)
+
+        return _homework
 
     def get_course(self, _id_course):
         """
@@ -106,14 +113,15 @@ class HomeworkService():
         homework_answer = homework_manager.change_homework_answer(_answer, _id_homework_answer)
         homework = homework_manager.get_homework_by_id(homework_answer.id_homework)
         user = user_manager.get_user_by_id(_user_id)
-        id_dict = self.get_room_chat(homework.id_room_chat)[1]
-        lesson = self.get_lesson(id_dict['lesson'], id_dict['course'])
+        if homework.id_user is None:
+            homework = self.update_homework(homework)
+        lesson = self.get_lesson(homework.id_lesson, homework.id_course)
         if homework_answer.answer:
             action = "принял"
         else:
             action = "не принял"
 
-        action_manager.add_notifications(id_dict['user'], action, lesson.lessons.name, "homework_manager", user.login)
+        action_manager.add_notifications(homework.id_user, action, lesson.lessons.name, "homework_manager", user.login)
 
 
     def room_chat_entry(self, _id_lesson, _id_course, _id_user, _id_room_chat, _id_education_stream, _id_module):
@@ -175,7 +183,9 @@ class HomeworkService():
         course_manager = EducationCourseManager()
 
         homework = homework_manager.get_homework_by_id(_id_homework)
-        id_dict = self.get_room_chat(homework.id_room_chat)[1]
-        homework.lesson = course_manager.get_lesson(id_dict['lesson'], id_dict['course'])
+        if homework.id_user is None:
+            homework = self.update_homework(homework)
+
+        homework.lesson = course_manager.get_lesson(homework.id_lesson, homework.id_course)
 
         return homework

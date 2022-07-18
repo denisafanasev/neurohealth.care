@@ -134,14 +134,14 @@ class EducationChatPageController():
 
         return homework_view
 
-    def get_data(self, _id_room_chat):
+    def get_data(self, _id_homework):
 
         homework_service = HomeworkService()
 
-        id_dict = homework_service.get_room_chat(_id_room_chat)[1]
-        course = homework_service.get_course(id_dict['course'])
-        module = homework_service.get_lesson(id_dict['lesson'], id_dict['course'])
-        student = homework_service.get_user(id_dict['user'])
+        homework = homework_service.get_homework(_id_homework)
+        course = homework_service.get_course(homework.id_course)
+        module = homework_service.get_lesson(homework.id_lesson, homework.id_course)
+        student = homework_service.get_user_by_id(homework.id_user)
 
         data = {
             "user":
