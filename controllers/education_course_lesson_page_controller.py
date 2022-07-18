@@ -5,7 +5,7 @@ from services.education_course_service import EducationCourseService
 
 class EducationCourseLessonPageController():
 
-    def get_lesson(self, _user_id, _lesson_id, _id_course, _id_video=1):
+    def get_lesson(self, _user_id, _lesson_id, _id_course, _id_video=1, _id_room_chat=None):
         """
         Возвращает данные урока
 
@@ -18,7 +18,10 @@ class EducationCourseLessonPageController():
 
         course_service = EducationCourseService()
 
-        module = course_service.get_lesson(_user_id, _lesson_id, _id_course, _id_video)
+        if _id_room_chat is None:
+            module = course_service.get_lesson(_user_id, _lesson_id, _id_course, _id_video, "no id_room_chat")
+        else:
+            module = course_service.get_lesson(_user_id, _lesson_id, _id_course, _id_video)
         if module.lessons.task:
             module.lessons.task = Markup(module.lessons.task)
 
@@ -210,3 +213,41 @@ class EducationCourseLessonPageController():
                                                           "size": file_size})
 
         return homework_view
+
+    def get_neighboring_lessons(self, _user_id, _id_lesson, _id_course):
+        """
+        Возвращает данные соседних уроков текущего урока
+
+        Args:
+            _user_id(Int): ID текущего пользователя
+            _id_lesson(Int): ID текущего урока
+            _id_course(Int): ID текущего курса
+
+        Returns:
+            Dict: данные соседних уроков текущего урока
+        """
+        course_service = EducationCourseService()
+
+        next_lesson = course_service.get_lesson(_user_id, _id_lesson + 1, _id_course, 1, "neighboring_lessons")
+        previous_lesson = course_service.get_lesson(_user_id, _id_lesson - 1, _id_course, 1, "neighboring_lessons")
+
+        neighboring_lessons = {}
+        if next_lesson is not None:
+            neighboring_lessons["next_lesson"] = {
+                "id_course": _id_course,
+                "id_module": next_lesson.id,
+                "id": next_lesson.lessons.id
+            }
+        else:
+            neighboring_lessons["next_lesson"] = None
+
+        if previous_lesson is not None:
+            neighboring_lessons["previous_lesson"] = {
+                "id_course": _id_course,
+                "id_module": previous_lesson.id,
+                "id": previous_lesson.lessons.id
+            }
+        else:
+            neighboring_lessons["previous_lesson"] = None
+
+        return neighboring_lessons
