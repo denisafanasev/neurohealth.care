@@ -131,29 +131,31 @@ class EducationCourseManager():
         data_store_lessons = DataStore(f"course_{_id_course}/lessons")
         data_store_modules = DataStore(f"course_{_id_course}/modules")
 
-        lesson = data_store_lessons.get_rows({"id": _id})[0]
-        if not lesson.get("task"):
-            lesson["task"] = None
+        lesson = data_store_lessons.get_rows({"id": _id})
+        if lesson != []:
+            lesson = lesson[0]
+            if not lesson.get("task"):
+                lesson["task"] = None
 
-        if not lesson.get("text"):
-            lesson["text"] = None
+            if not lesson.get("text"):
+                lesson["text"] = None
 
-        link_list = []
-        if not lesson['link'] == "":
-            for i_video in lesson['link']:
-                if i_video['id'] == _id_video:
-                    link_list.append(i_video)
-                else:
-                    link_list.append({"id": i_video['id']})
-        else:
-            link_list = None
+            link_list = []
+            if not lesson['link'] == "":
+                for i_video in lesson['link']:
+                    if i_video['id'] == _id_video:
+                        link_list.append(i_video)
+                    else:
+                        link_list.append({"id": i_video['id']})
+            else:
+                link_list = None
 
-        lesson["link"] = link_list
+            lesson["link"] = link_list
 
-        module = data_store_modules.get_rows({"id": lesson["id_module"]})[0]
-        module["lessons"] = self.lesson_row_to_lesson(lesson)
+            module = data_store_modules.get_rows({"id": lesson["id_module"]})[0]
+            module["lessons"] = self.lesson_row_to_lesson(lesson)
 
-        return self.module_row_to_module(module)
+            return self.module_row_to_module(module)
 
     def get_courses(self):
         """

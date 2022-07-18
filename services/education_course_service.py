@@ -35,7 +35,7 @@ class EducationCourseService():
 
         return modules_list
 
-    def get_lesson(self, _user_id, _lesson_id, _id_course, _id_video):
+    def get_lesson(self, _user_id, _lesson_id, _id_course, _id_video, _type_lesson=None):
         """
         Возвращает данные урока
 
@@ -56,7 +56,8 @@ class EducationCourseService():
         login_user = user_manager.get_user_by_id(_user_id).login
         lesson = course_manager.get_lesson(_lesson_id, _id_course, _id_video)
 
-        action_manager.add_notifications(lesson, "посмотрел", '', "course_manager", login_user)
+        if lesson is not None and _type_lesson is None:
+            action_manager.add_notifications(lesson, "посмотрел", '', "course_manager", login_user)
 
         return lesson
     

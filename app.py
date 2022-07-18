@@ -745,7 +745,8 @@ def education_course_lesson():
     #if user['role'] == 'user' and course['type'] == 'main' and int(id_module) > 1:
     #    return redirect("/price_list")
 
-    data = page_controller.get_lesson(user_id, id_lesson, int(id_course), int(id_video))
+    data = page_controller.get_lesson(user_id, id_lesson, int(id_course), int(id_video), id_room_chat)
+    neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, id_course)
 
     if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
         if int(id_module) > 1 and user['role'] != 'superuser' and not data['available']:
@@ -792,6 +793,16 @@ def education_course_lesson():
             files = request.files.getlist("files")
             text = request.form.get("text_homework")
             page_controller.save_homework(files, id_room_chat, user_id, text, id_lesson, id_course)
+
+        # elif request.form.get("button") == "previous":
+        #     data = page_controller.get_lesson(user_id, id_lesson - 1, int(id_course), int(id_video))
+        #     return redirect(
+        #         f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson - 1}&id_module={data['id_module']}&id_video={id_video}&id_chat={id_room_chat}")
+        #
+        # elif request.form.get("button") == "previous":
+        #     return redirect(
+        #         f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson - 1}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
+
         else:
             id_room_chat = page_controller.room_chat_entry(_id_lesson=id_lesson, _id_course=id_course,
                                                            _id_user=user_id)["id"]
@@ -808,7 +819,8 @@ def education_course_lesson():
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _homework=homework,
-                           _data=data, _room_chat=room_chat, _user_list=user_list, _user=user, _course_name=course['name'])
+                           _data=data, _room_chat=room_chat, _user_list=user_list, _user=user, _course_name=course['name'],
+                           _neighboring_lessons=neighboring_lessons)
 
 
 @app.route('/education_home_tasks', methods=['GET', 'POST'])
