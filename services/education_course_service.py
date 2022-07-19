@@ -287,7 +287,7 @@ class EducationCourseService():
                     homework.id_user = user_manager.get_user_by_login(id_dict['user']).user_id
                     homework.id_course = id_dict['course']
                     homework.id_lesson = id_dict['lesson']
-                    homework = homework_manager.update_homework(homework)
+                    homework_manager.update_homework(homework)
 
                 if homework.date_delivery >= date:
                     date = homework.date_delivery
