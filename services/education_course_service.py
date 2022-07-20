@@ -309,3 +309,31 @@ class EducationCourseService():
                                                          _id_education_stream=None).id
 
         return self.get_last_homework_by_id_room_chat(id_room_chat)
+
+    def get_neighboring_lessons(self, _id_lesson, _id_course, _user_id):
+        """
+        Возвращает данные соседних уроков текущего урока
+
+        Args:
+            _user_id(Int): ID текущего пользователя
+            _id_lesson(Int): ID текущего урока
+            _id_course(Int): ID текущего курса
+
+        Returns:
+            Dict: данные соседних уроков текущего урока
+        """
+
+        course_manager = EducationCourseManager()
+
+        neighboring_lessons = course_manager.get_neighboring_lessons(_id_lesson, _id_course)
+        if neighboring_lessons['next_lesson'] is not None:
+            available = self.is_course_module_avalable_for_user(_id_course, neighboring_lessons['next_lesson'].id, _user_id)
+            if not available and neighboring_lessons['next_lesson'].id > 1:
+                neighboring_lessons['next_lesson'] = None
+
+        if neighboring_lessons['previous_lesson'] is not None:
+            available = self.is_course_module_avalable_for_user(_id_course, neighboring_lessons['previous_lesson'].id, _user_id)
+            if not available and neighboring_lessons['previous_lesson'].id > 1:
+                neighboring_lessons['previous_lesson'] = None
+
+        return neighboring_lessons

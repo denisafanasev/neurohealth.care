@@ -746,7 +746,7 @@ def education_course_lesson():
     #    return redirect("/price_list")
 
     data = page_controller.get_lesson(user_id, id_lesson, int(id_course), int(id_video), id_room_chat)
-    neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, id_course)
+    neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, int(id_course))
 
     if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
         if int(id_module) > 1 and user['role'] != 'superuser' and not data['available']:

@@ -228,26 +228,25 @@ class EducationCourseLessonPageController():
         """
         course_service = EducationCourseService()
 
-        next_lesson = course_service.get_lesson(_user_id, _id_lesson + 1, _id_course, 1, "neighboring_lessons")
-        previous_lesson = course_service.get_lesson(_user_id, _id_lesson - 1, _id_course, 1, "neighboring_lessons")
+        neighboring_lessons = course_service.get_neighboring_lessons(_id_lesson, _id_course, _user_id)
 
-        neighboring_lessons = {}
-        if next_lesson is not None:
-            neighboring_lessons["next_lesson"] = {
+        neighboring_lessons_view = {}
+        if neighboring_lessons['next_lesson'] is not None:
+            neighboring_lessons_view["next_lesson"] = {
                 "id_course": _id_course,
-                "id_module": next_lesson.id,
-                "id": next_lesson.lessons.id
+                "id_module": neighboring_lessons['next_lesson'].id,
+                "id": neighboring_lessons['next_lesson'].lessons.id
             }
         else:
-            neighboring_lessons["next_lesson"] = None
+            neighboring_lessons_view["next_lesson"] = None
 
-        if previous_lesson is not None:
-            neighboring_lessons["previous_lesson"] = {
+        if neighboring_lessons['previous_lesson'] is not None:
+            neighboring_lessons_view["previous_lesson"] = {
                 "id_course": _id_course,
-                "id_module": previous_lesson.id,
-                "id": previous_lesson.lessons.id
+                "id_module": neighboring_lessons['previous_lesson'].id,
+                "id": neighboring_lessons['previous_lesson'].lessons.id
             }
         else:
-            neighboring_lessons["previous_lesson"] = None
+            neighboring_lessons_view["previous_lesson"] = None
 
-        return neighboring_lessons
+        return neighboring_lessons_view

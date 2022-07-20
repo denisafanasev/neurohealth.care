@@ -17,8 +17,14 @@ class EducationCourseManager():
             Lesson: урок
         """
 
-        lesson = Lesson(_data_row["id"], _data_row["id_module"], _data_row["name"], _data_row["materials"],
-                        _data_row["link"], _data_row["text"], _data_row["task"])
+        lesson = Lesson(_id=_data_row["id"], _id_module=_data_row["id_module"], _name=_data_row["name"],
+                        _materials=_data_row["materials"], _link=_data_row['link'])
+
+        if _data_row.get("task") is not None:
+            lesson.task = _data_row['task']
+
+        if _data_row.get("text") is not None:
+            lesson.text = _data_row['text']
 
         return lesson
 
@@ -97,16 +103,7 @@ class EducationCourseManager():
             lessons_list = []
 
             for i_lesson in lessons:
-
-                if not i_lesson.get("task"):
-                    i_lesson["task"] = None
-
-                if not i_lesson.get("text"):
-                    i_lesson["text"] = None
-
                 lesson = self.lesson_row_to_lesson(i_lesson)
-
-
                 lessons_list.append(lesson)
 
             i_module["lessons"] = lessons_list
@@ -134,11 +131,6 @@ class EducationCourseManager():
         lesson = data_store_lessons.get_rows({"id": _id})
         if lesson != []:
             lesson = lesson[0]
-            if not lesson.get("task"):
-                lesson["task"] = None
-
-            if not lesson.get("text"):
-                lesson["text"] = None
 
             link_list = []
             if not lesson['link'] == "":
@@ -208,3 +200,41 @@ class EducationCourseManager():
             course = self.course_row_to_course(course_data)
 
         return course
+
+    def get_neighboring_lessons(self, _id_lesson, _id_course):
+        """
+        Возвращает данные соседних уроков текущего урока
+
+        Args:
+            _id_lesson(Int): ID текущего урока
+            _id_course(Int): ID текущего курса
+
+        Returns:
+            Dict: данные соседних уроков текущего урока
+        """
+
+        data_store_lessons = DataStore(f"course_{_id_course}/lessons")
+        data_store_modules = DataStore(f"course_{_id_course}/modules")
+
+        current_lesson = data_store_lessons.get_rows({"id": _id_lesson})[0]
+        lessons_list = data_store_lessons.get_rows()
+
+        index_current_lesson = lessons_list.index(current_lesson)
+        neighboring_lessons = {}
+        try:
+            next_lesson = lessons_list[index_current_lesson + 1]
+            module_next_lesson = data_store_modules.get_rows({"id": next_lesson["id_module"]})[0]
+            module_next_lesson["lessons"] = self.lesson_row_to_lesson(next_lesson)
+            neighboring_lessons['next_lesson'] = self.module_row_to_module(module_next_lesson)
+        except IndexError:
+            neighboring_lessons['next_lesson'] = None
+
+        if index_current_lesson - 1 >= 0:
+            previous_lesson = lessons_list[index_current_lesson - 1]
+            module_previous_lesson = data_store_modules.get_rows({"id": previous_lesson["id_module"]})[0]
+            module_previous_lesson["lessons"] = self.lesson_row_to_lesson(previous_lesson)
+            neighboring_lessons['previous_lesson'] = self.module_row_to_module(module_previous_lesson)
+        else:
+            neighboring_lessons['previous_lesson'] = None
+
+        return neighboring_lessons
