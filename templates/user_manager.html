@@ -10,7 +10,8 @@
             var datatablesButtons = $("#datatables-buttons").DataTable({
                 lengthChange: !1,
                 displayStart: {{ _num_page * 10 }},
-                responsive: true
+                responsive: true,
+                pageLength: 20
             });
             var education_stream_table = $("#education_stream_table").DataTable({
                 responsive: true,

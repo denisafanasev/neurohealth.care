@@ -1,4 +1,5 @@
 from models.user_manager import UserManager
+from models.action_manager import ActionManager
 from error import UserManagerException
 
 class LoginService():
@@ -38,6 +39,7 @@ class LoginService():
         """  
 
         user_manager = UserManager()
+        action_manager = ActionManager()
 
         user = user_manager.get_user(_login, _password)
 
@@ -48,6 +50,8 @@ class LoginService():
             
         if not user.active:
             raise UserManagerException("Данный пользователь заблокирован")
+        elif user.role != "superuser":
+            action_manager.add_notifications("", "зашел", "", "в систему", user.login)
 
         return user
     
