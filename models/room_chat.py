@@ -2,15 +2,13 @@
 
 class RoomChat():
 
-    def __init__(self, _id=None, _name='', _message=None, _id_education_stream=None):
+    def __init__(self, _id=None, _name='', _id_education_stream=None, _id_user=None, _id_lesson=None):
 
         self.id = _id
         self.name = _name
-        if _message == []:
-            self.message = None
-        else:
-            self.message = _message
         self.id_education_stream = _id_education_stream
+        self.id_user = _id_user
+        self.id_lesson = _id_lesson
 
 class Message():
 
