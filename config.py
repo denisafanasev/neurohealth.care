@@ -20,7 +20,7 @@ THREADING_ENABLE = True
 DEBUG = False
 LOG_FILE = "neuro_health.log"
 
-SECRET_KEY = 'my_secret_key'
+SECRET_KEY = 'my_secret_key_'
 SECURITY_PASSWORD_SALT = 'my_security_password_salt'
 
 # mail settings
