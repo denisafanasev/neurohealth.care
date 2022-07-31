@@ -4,6 +4,7 @@ from data_adapters.data_store import DataStore
 from models.course import Course, Lesson, Module
 from models.homework import Homework
 from models.room_chat import RoomChat, Message
+from  models.user import User
 import config
 
 
@@ -21,78 +22,128 @@ def conversion_module_data():
 
         modules_list = data_store_module.get_rows()
         for i_module in modules_list:
-            module = Module(_name=i_module['name'])
+            module = Module(_id=i_module['id'], _name=i_module['name'])
             if i_module.get("id_course") is None:
                 module.id_course = course.id
 
-            data_store_module_new.add_row({"id_course": module.id_course, "name": module.name})
+            id_modules_edit = data_store_module_new.add_row({"id_course": module.id_course, "name": module.name})
+
+            conversion_lessons_data(module, id_modules_edit)
 
     # Так как мы перенесли в новый файл данные модулей всех курсов, то удаляем старый файл
     # if os.path.isfile(config.DATA_FOLDER + f"course_{course['id']}/modules.json"):
     #     os.remove(config.DATA_FOLDER + f"course_{course['id']}/modules.json")
 
-def conversion_lessons_data():
+def conversion_lessons_data(_module, _id_module_edit):
     """
     Конвертация формата данных уроков курсов и перенос в новый файл
     """
-    data_store = DataStore('courses_list')
     data_store_lesson_new = DataStore("lessons")
-    data_store_chat = DataStore("room_chat")
-    data_store_homework = DataStore("homeworks")
+    data_store_lesson = DataStore(f"course_{_module.id_course}/lessons")
 
-    courses_list = data_store.get_rows()
-    for i_course in courses_list:
-        course = Course(_id=i_course['id'])
-        data_store_lesson = DataStore(f"course_{course.id}/lessons")
+    lessons_list = data_store_lesson.get_rows({"id_module": _module.id})
+    for i_lesson in lessons_list:
+        lesson = Lesson(_id=i_lesson['id'], _id_module=_id_module_edit, _name=i_lesson["name"],
+                        _materials=i_lesson['materials'], _link=i_lesson['link'])
+        if i_lesson.get("text") is not None:
+            lesson.text = i_lesson['text']
 
-        lessons_list = data_store_lesson.get_rows()
-        for i_lesson in lessons_list:
-            lesson = Lesson(_id=i_lesson['id'], _id_module=i_lesson['id_module'], _name=i_lesson["name"], _materials=i_lesson['materials'],
-                            _link=i_lesson['link'])
-            if i_lesson.get("text") is not None:
-                lesson.text = i_lesson['text']
+        if i_lesson.get("task") is not None:
+            lesson.task = i_lesson['task']
 
-            if i_lesson.get("task") is not None:
-                lesson.task = i_lesson['task']
+        id_lesson_edit = data_store_lesson_new.add_row({"id_module": lesson.id_module, "name": lesson.name,
+                                       "materials": lesson.materials, "link": lesson.link,
+                                       "text": lesson.text, "task": lesson.task})
 
-            lesson_edit = data_store_lesson_new.add_row({"id_module": lesson.id_module, "name": lesson.name,
-                                           "materials": lesson.materials, "link": lesson.link,
-                                           "text": lesson.text, "task": lesson.task})
+        # Так как у нас меняется ID у урока, то нужно найти все домашние задания, которые
+        # прикреплены к данному уроку(пока не продумал до конца, как лучше сделать)
+        conversion_homework_data(lesson.id, id_lesson_edit, _module.id_course)
 
-            # Так как у нас меняется ID у урока, то нужно найти все комнаты чатов и домашние задания, которые
-            # прикреплены к данному уроку(пока не продумал до конца, как лучше сделать)
-            # room_chat_list = data_store_chat.get_rows({"id_lesson": lesson.id})
-            # for i_room_chat in room_chat_list:
-            #     room_chat = RoomChat(_id=i_room_chat['id'], _name=i_room_chat['name'])
+    # Так как мы перенесли в новый файл данные уроков всех курсов, то удаляем старый файл
+    # if os.path.isfile(config.DATA_FOLDER + f"course_{course['id']}/lessons.json"):
+    #     os.remove(config.DATA_FOLDER + f"course_{course['id']}/lessons.json")
 
-        # Так как мы перенесли в новый файл данные уроков всех курсов, то удаляем старый файл
-        # if os.path.isfile(config.DATA_FOLDER + f"course_{course['id']}/lessons.json"):
-        #     os.remove(config.DATA_FOLDER + f"course_{course['id']}/lessons.json")
-
-def conversion_homework_data():
+def conversion_homework_data(_id_lesson, _id_lesson_edit, _id_course):
     """
     Конвертация формата данных домашних работ
     """
     data_store = DataStore("homeworks")
     data_store_answers = DataStore("homework_answers")
 
-    homework_list = data_store.get_rows()
-    for i_homework in homework_list:
-        homework = Homework(_id=i_homework['id'], _id_lesson=i_homework['id_lesson'])
-        if i_homework.get("status") is None:
+    homework_list = data_store.get_rows({"id_course": _id_course, "id_lesson": _id_lesson})
+    for homework_data in homework_list:
+        homework = Homework(_id=homework_data.doc_id, _id_lesson=homework_data['id_lesson'])
+        if homework_data.get("status") is None:
             homework_answer = data_store_answers.get_rows({"id_homework": homework.id})[0]
-            i_homework['status'] = homework_answer['answer']
+            homework.status = homework_answer['answer']
 
-            data_store.update_row({"id": i_homework})
+            data_store.update_row_by_doc_id({"status": homework.status}, homework.id)
 
-        if i_homework.get("id_room_chat") is not None:
-            data_store.delete_key_in_row("id_room_chat", "id", i_homework['id'])
+        if homework_data.get("id_room_chat") is not None:
+            conversion_room_chat_data(_id_lesson, _id_lesson_edit, homework_data['id_room_chat'])
+            data_store.delete_key_in_row("id_room_chat", "id", homework_data['id'])
 
-        if i_homework.get("id_course") is not None:
-            data_store.delete_key_in_row("id_course", "id", i_homework['id'])
+        if homework_data.get("id_course") is not None:
+            data_store.delete_key_in_row("id_course", "id", homework_data['id'])
+
+        data_store.delete_key_in_row("id", "id", homework_data['id'])
+
+def conversion_room_chat_data(_id_lesson, _id_lesson_edit, _id_room_chat):
+    """
+
+    """
+    data_store = DataStore("room_chat")
+    data_store_user = DataStore("users")
+
+    room_chats_list = data_store.get_rows({"id_room_chat": _id_room_chat})
+    for room_chat_data in room_chats_list:
+        room_chat = RoomChat(_id=room_chat_data.doc_id)
+        if room_chat_data.get("name") is not None:
+            id_list = room_chat_data['name'].split("_")
+            id_lesson = id_list[2]
+            login_user = id_list[3]
+            if len(id_list) > 4:
+                for i in range(4, len(id_list)):
+                    login_user = "_".join([login_user, id_list[i]])
+
+            user = data_store_user.get_rows({"login": login_user})[0]
+            room_chat.id_lesson = int(id_lesson)
+            room_chat.id_user = user.doc_id
+
+            data_store.update_row_by_doc_id({"id_lesson": room_chat.id_lesson, "id_user": room_chat.id_user}, room_chat.id)
+            data_store.delete_key_in_row("name", "id", room_chat.id)
+
+        if room_chat_data.get("message") is not None:
+            for id_message in room_chat_data["message"]:
+                conversion_message_data(id_message, room_chat.id)
+
+            data_store.delete_key_in_row("message", "id", room_chat.id)
+
+        data_store.delete_key_in_row("id", "id", room_chat_data['id'])
+
+def conversion_message_data(_id_message, _id_room_chat):
+    """
+
+    """
+
+    data_store = DataStore("message")
+    data_store_user = DataStore("users")
+
+    message_data = data_store.get_rows({"id": _id_message})[0]
+    message = Message(_id=message_data.doc_id, _id_room_chat=_id_room_chat)
+    if message_data.get("id_room_chat") is None:
+        data_store.update_row_by_doc_id({"id_room_chat": message.id_room_chat}, message.id)
+
+    if message_data.get("name_sender") is not None:
+        user = data_store_user.get_rows({"login": message_data['name_sender']})[0]
+        message.id_user = user.doc_id
+
+        data_store.update_row_by_doc_id({"id_user": message.id_user}, message.id)
+        data_store.delete_key_in_row("name_sender", "id", message.id)
+
+    data_store.delete_key_in_row("id", "id", _id_message)
 
 
 # Запуск функций для ковертации форматов данных
 conversion_module_data()
-conversion_lessons_data()
 

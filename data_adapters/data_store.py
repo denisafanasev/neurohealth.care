@@ -171,3 +171,7 @@ class DataStore():
         """
 
         self.data_store.update(delete(_key), where(_where) == _where_value)
+
+    def update_row_by_doc_id(self, _data_row, _doc_id):
+
+        self.data_store.update(_data_row, doc_ids=[_doc_id])
