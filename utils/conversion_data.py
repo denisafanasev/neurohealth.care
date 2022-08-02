@@ -105,17 +105,17 @@ def conversion_room_chat_data(_id_lesson, _id_lesson_edit, _id_course):
             room_chat_data = room_chat_data[0]
             room_chat = RoomChat(_id=room_chat_data['id'], _id_lesson=int(_id_lesson), _id_user=user.user_id)
 
-            data_store.update_row({"id_lesson": room_chat.id_lesson, "id_user": room_chat.id_user,
-                                   "id": room_chat.id}, "id")
+            id_room_chat = data_store.update_row({"id_lesson": room_chat.id_lesson, "id_user": room_chat.id_user,
+                                   "id": room_chat.id}, "id")[0]
             data_store.delete_key_in_row("name", "id", room_chat.id)
 
             if room_chat_data.get("message") is not None:
                 for id_message in room_chat_data["message"]:
                     conversion_message_data(id_message, room_chat_data.doc_id)
 
-                data_store.delete_key_in_row("message", "id", room_chat.id)
+            data_store.delete_key_in_row("message", "id", id_room_chat)
 
-            data_store.delete_key_in_row("id", "id", room_chat_data['id'])
+            data_store.delete_key_in_row("id", "id", room_chat.id)
 
 def conversion_message_data(_id_message, _id_room_chat):
     """
@@ -131,15 +131,12 @@ def conversion_message_data(_id_message, _id_room_chat):
         data_store.update_row_by_doc_id({"id_room_chat": message.id_room_chat}, message.id)
 
     if message_data.get("name_sender") is not None:
-        try:
-            user = data_store_user.get_rows({"login": message_data['name_sender']})[0]
+        user = data_store_user.get_rows({"login": message_data['name_sender']})[0]
 
-            message.id_user = user.doc_id
+        message.id_user = user.doc_id
 
-            data_store.update_row({"id_user": message.id_user, "id": message.id}, "id")
-            data_store.delete_key_in_row("name_sender", "id", message.id)
-        except:
-            print(message_data['name_sender'])
+        data_store.update_row({"id_user": message.id_user, "id": message.id}, "id")
+        data_store.delete_key_in_row("name_sender", "id", message.id)
 
     data_store.delete_key_in_row("id", "id", _id_message)
 
