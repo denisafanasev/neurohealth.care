@@ -117,7 +117,7 @@ class DataStore():
             _where(Dict): переменная для поиска нужно записи
         """
 
-        self.data_store.update(_data, where(_where) == _data[_where])
+        return self.data_store.update(_data, where(_where) == _data[_where])
 
     def change_probationer(self, _data):
         """
