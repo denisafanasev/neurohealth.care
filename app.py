@@ -787,8 +787,8 @@ def education_course_lesson():
     if id_video is None:
         id_video = 1
 
-    if user["role"] == "superuser":
-        user_list = page_controller.get_user_list(user_id)
+    # if user["role"] == "superuser":
+    #     user_list = page_controller.get_user_list(user_id)
 
     if request.method == "POST":
         if request.form.get("send"):

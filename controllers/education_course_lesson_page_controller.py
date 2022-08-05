@@ -1,6 +1,6 @@
 from flask import Markup
 
-from services.education_course_service import EducationCourseService
+from services.education_course_lesson_service import EducationCourseLessonService
 
 
 class EducationCourseLessonPageController():
@@ -16,7 +16,7 @@ class EducationCourseLessonPageController():
             _id_video(Int): индентификатор видео
         """
 
-        course_service = EducationCourseService()
+        course_service = EducationCourseLessonService()
 
         if _id_room_chat is None:
             module = course_service.get_lesson(_user_id, _lesson_id, _id_course, _id_video, "no id_room_chat")
@@ -61,7 +61,7 @@ class EducationCourseLessonPageController():
             chat(Dict): данные чата
         """
 
-        education_course_service = EducationCourseService()
+        education_course_service = EducationCourseLessonService()
         if _id_room_chat is None and _id_education_stream is None:
             _id_education_stream = "subscription"
 
@@ -100,7 +100,7 @@ class EducationCourseLessonPageController():
             _id_room_chat(Int): индентификатор чата
         """
 
-        education_course_service = EducationCourseService()
+        education_course_service = EducationCourseLessonService()
 
         return education_course_service.add_message(_message, _room_chat_id, _user_id)
 
@@ -112,7 +112,7 @@ class EducationCourseLessonPageController():
             Dict: пользователь
         """
 
-        course_service = EducationCourseService()
+        course_service = EducationCourseLessonService()
 
         user = course_service.get_user_by_id(_user_id)
 
@@ -131,24 +131,6 @@ class EducationCourseLessonPageController():
             }
 
         return user_view
-
-    def get_user_list(self, _user_id):
-        """
-        Возвращает список пользователей
-
-        Returns:
-            List: список пользователей с типом User
-        """
-
-        course_service = EducationCourseService()
-        users = course_service.get_user_list(_user_id)
-        user_list = []
-
-        for i_user in users:
-            if i_user.role == "user":
-                user_list.append(i_user.login)
-
-        return user_list
     
     def get_course_by_id(self, _id):
         """
@@ -161,7 +143,7 @@ class EducationCourseLessonPageController():
             course(Dict): данные курса
         """
 
-        course_service = EducationCourseService()
+        course_service = EducationCourseLessonService()
         course = course_service.get_course_by_id(_id)
 
         course_formated = {}
@@ -174,13 +156,13 @@ class EducationCourseLessonPageController():
 
     def save_homework(self, _files_list, _id_room_chat, _user_id, _text, _id_lesson, _id_course):
 
-        course_service = EducationCourseService()
+        course_service = EducationCourseLessonService()
 
         course_service.save_homework(_files_list, _id_room_chat, _user_id, _text, _id_lesson, _id_course)
 
     def get_homework(self, _id_room_chat):
 
-        course_service = EducationCourseService()
+        course_service = EducationCourseLessonService()
 
         homework = course_service.get_last_homework_by_id_room_chat(_id_room_chat)
         homework_view = None
@@ -226,7 +208,7 @@ class EducationCourseLessonPageController():
         Returns:
             Dict: данные соседних уроков текущего урока
         """
-        course_service = EducationCourseService()
+        course_service = EducationCourseLessonService()
 
         neighboring_lessons = course_service.get_neighboring_lessons(_id_lesson, _id_course, _user_id)
 

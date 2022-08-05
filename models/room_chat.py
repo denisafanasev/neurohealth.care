@@ -1,20 +1,18 @@
-
-
 class RoomChat():
-
+    """
+    Класс Комната Чата
+    """
     def __init__(self, _id=None, _id_education_stream=None, _id_user=None, _id_lesson=None):
+        """
+        Конструктор класса
 
+        Args:
+            _id(Int): ID комнаты чата
+            _id_user(Int): ID пользователя
+            _id_lesson(Int): ID урока
+            _id_education_stream(Int): ID обучающего потока
+        """
         self.id = _id
         self.id_education_stream = _id_education_stream
         self.id_user = _id_user
         self.id_lesson = _id_lesson
-
-class Message():
-
-    def __init__(self, _id=0, _id_user='', _text='', _date_send='', _id_room_chat=None):
-
-        self.id = _id
-        self.id_user = _id_user
-        self.text = _text
-        self.date_send = _date_send
-        self.id_room_chat = _id_room_chat

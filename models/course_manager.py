@@ -1,14 +1,22 @@
-from distutils.command.config import config
-from data_adapters.data_store import DataStore
-from models.course import Module, Lesson, CoursesList, Course
 import os
 import config
 
-class EducationCourseManager():
+from distutils.command.config import config
+from data_adapters.data_store import DataStore
+from models.course import Course
+from models.lesson import Lesson
+from models.module import Module
 
+
+class EducationCourseManager():
+    """
+    Класс модели управления курсами
+    Взаимодейтвует с модулем хранения данных, преобразую доменные структуры в объекты типа Dict
+    Вовзращает в слой бизнес-логики приложения объекты в доменных структурах
+    """
     def lesson_row_to_lesson(self, _data_row):
         """
-        Преобразует структуру данных, в которой хранится информация о уроке в структуру Lesson
+        Преобразует структуру данных, в которой хранится информация об уроке в структуру Lesson
 
         Args:
             _data_row (Dict): структура данных, которую возвращает дата адаптер
@@ -27,21 +35,6 @@ class EducationCourseManager():
             lesson.text = _data_row['text']
 
         return lesson
-
-    def courses_list_row_to_courses_list(self, _data_row):
-        """
-        Преобразует структуру данных, в которой хранится информация о уроке в структуру CoursesList
-
-        Args:
-            _data_row (Dict): структура данных, которую возвращает дата адаптер
-
-        Returns:
-            CoursesList: список курсов
-        """
-
-        courses_list = CoursesList(_data_row["id"], _data_row["name"], _data_row["description"], _data_row["image"], _data_row["type"])
-
-        return courses_list
 
     def module_row_to_module(self, _data_row):
         """
@@ -69,7 +62,7 @@ class EducationCourseManager():
             Lesson: урок
         """
 
-        course = Course(_data_row["id"], _data_row["name"], _data_row["description"], _data_row["type"])
+        course = Course(_data_row.doc_id, _data_row["name"], _data_row["description"], _data_row["type"])
 
         return course
 
@@ -88,7 +81,6 @@ class EducationCourseManager():
             data_store_module = DataStore(f"course_{_id}/modules")
             data_store_lessons = DataStore(f"course_{_id}/lessons")
         except FileNotFoundError:
-            # os.mkdir(f"data/course_{_id}")
             os.mkdir(config.DATA_FOLDER+"course_"+str(_id))
             data_store_module = DataStore(f"course_{_id}/modules")
             data_store_lessons = DataStore(f"course_{_id}/lessons")
@@ -175,7 +167,7 @@ class EducationCourseManager():
             except IndexError:
                 i_course['image'] = ""
 
-            courses.append(self.courses_list_row_to_courses_list(i_course))
+            courses.append(self.course_row_to_course(i_course))
 
         return courses
     

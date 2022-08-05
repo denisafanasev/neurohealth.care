@@ -1,4 +1,4 @@
-from services.education_course_service import EducationCourseService
+from services.education_list_courses_service import EducationListCoursesService
 
 class EducationListCoursesPageController():
 
@@ -10,7 +10,7 @@ class EducationListCoursesPageController():
             courses(List): список курсов
         """
 
-        course_service = EducationCourseService()
+        course_service = EducationListCoursesService()
 
         courses = course_service.get_courses()
         courses_list = []
@@ -39,7 +39,7 @@ class EducationListCoursesPageController():
         Returns:
             User: пользователь
         """
-        course_service = EducationCourseService()
+        course_service = EducationListCoursesService()
 
         user = course_service.get_user_by_id_and_course_id(_user_id, _course_id)
 
@@ -56,7 +56,7 @@ class EducationListCoursesPageController():
         Returns:
             User: пользователь
         """
-        course_service = EducationCourseService()
+        course_service = EducationListCoursesService()
 
         user = course_service.get_user_by_id(_user_id)
 

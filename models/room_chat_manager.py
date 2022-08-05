@@ -1,9 +1,14 @@
-from models.room_chat import RoomChat, Message
+from models.room_chat import RoomChat
+from models.message import Message
 from data_adapters.data_store import DataStore
 from datetime import datetime
 
 class RoomChatManager():
-
+    """
+    Класс модели управления комнатами чатов
+    Взаимодейтвует с модулем хранения данных, преобразую доменные структуры в объекты типа Dict
+    Вовзращает в слой бизнес-логики приложения объекты в доменных структурах
+    """
     def room_chat_row_to_room_chat(self, _room_chat):
         """
         Преобразует структуру данных, в которой хранится информация о чате в структуру RoomChat
@@ -15,7 +20,7 @@ class RoomChatManager():
             RoomChat: пользователь
         """
 
-        room_chat = RoomChat(_id=_room_chat["id"], _name=_room_chat["name"], _message=_room_chat["message"])
+        room_chat = RoomChat(_id=_room_chat.doc_id, _id_lesson=_room_chat['id_lesson'], _id_user=_room_chat["id_user"])
 
         if _room_chat.get("id_education_stream") is not None:
             room_chat.id_education_stream = _room_chat.get("id_education_stream")
@@ -35,7 +40,7 @@ class RoomChatManager():
             Message: пользователь
         """
 
-        message = Message(_id=_message["id"], _name_sender=_message["name_sender"], _text=_message["text"])
+        message = Message(_id=_message["id"], _name_sender=_message["id_user"], _text=_message["text"])
 
         if _message.get("date_send") is not None:
             message.date_send = datetime.strptime(_message['date_end'], "%d/%m/%Y")

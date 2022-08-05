@@ -2,10 +2,12 @@ import os
 from datetime import datetime
 
 from data_adapters.data_store import DataStore
-from models.course import Course, Lesson, Module
+from models.course import Course
+from models.module import Module
+from models.lesson import Lesson
 from models.homework import Homework
-from models.room_chat import RoomChat, Message
-from  models.user import User
+from models.room_chat import RoomChat
+from models.message import Message
 import config
 
 
@@ -183,7 +185,7 @@ def conversion_message_data(_id_message, _id_room_chat):
 
 def delete_id_key_in_lesson():
     """
-    Удаляет ключ ID у уроков, так как больше не нужен(поиск будет происходить будет по doc_id)
+    Удаляет ключ ID у уроков, так как больше не нужен(дальнейшие поиски будут по doc_id)
     """
     data_store = DataStore("lessons")
 
