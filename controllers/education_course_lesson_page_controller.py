@@ -161,6 +161,15 @@ class EducationCourseLessonPageController():
         course_service.save_homework(_files_list, _id_room_chat, _user_id, _text, _id_lesson, _id_course)
 
     def get_homework(self, _id_room_chat):
+        """
+        Возвращает данные домашней работы
+
+        Args:
+            _id_room_chat(Int): ID комнаты чата
+
+        Return:
+            Homework: домашняя работа
+        """
 
         course_service = EducationCourseLessonService()
 
@@ -211,16 +220,16 @@ class EducationCourseLessonPageController():
         course_service = EducationCourseLessonService()
 
         neighboring_lessons = course_service.get_neighboring_lessons(_id_lesson, _id_course, _user_id)
-
-        neighboring_lessons_view = {}
+        neighboring_lessons_view = {
+            "next_lesson": None,
+            "previous_lesson": None
+        }
         if neighboring_lessons['next_lesson'] is not None:
             neighboring_lessons_view["next_lesson"] = {
                 "id_course": _id_course,
                 "id_module": neighboring_lessons['next_lesson'].id,
                 "id": neighboring_lessons['next_lesson'].lessons.id
             }
-        else:
-            neighboring_lessons_view["next_lesson"] = None
 
         if neighboring_lessons['previous_lesson'] is not None:
             neighboring_lessons_view["previous_lesson"] = {
@@ -228,7 +237,5 @@ class EducationCourseLessonPageController():
                 "id_module": neighboring_lessons['previous_lesson'].id,
                 "id": neighboring_lessons['previous_lesson'].lessons.id
             }
-        else:
-            neighboring_lessons_view["previous_lesson"] = None
 
         return neighboring_lessons_view

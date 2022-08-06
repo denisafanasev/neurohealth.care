@@ -1,6 +1,6 @@
 from flask import Markup
 
-from services.homework_service import HomeworkService
+from services.homework_profile_service import HomeworkProfileService
 
 class EducationChatPageController():
     """
@@ -20,7 +20,7 @@ class EducationChatPageController():
             Dict: чат
         """
 
-        homework_service = HomeworkService()
+        homework_service = HomeworkProfileService()
 
         room_chat = homework_service.room_chat_entry(_id_room_chat=_id_room_chat, _id_lesson=None, _id_course=None,
                                                       _id_user=_id_user, _id_education_stream=None, _id_module=None)
@@ -55,7 +55,7 @@ class EducationChatPageController():
             _room_chat_id(Int): индентификатор чата
         """
 
-        homework_service = HomeworkService()
+        homework_service = HomeworkProfileService()
 
         message = homework_service.add_message(_message, _room_chat_id, _user_id)
         message_view = {
@@ -74,7 +74,7 @@ class EducationChatPageController():
             user(Dict): данные пользователя
         """
 
-        homework_service = HomeworkService()
+        homework_service = HomeworkProfileService()
 
         user = homework_service.get_user_by_id(_user_id)
         user_view = {
@@ -96,7 +96,7 @@ class EducationChatPageController():
             _id_homework_answer(Int): индетификатор оценки домашего задания
         """
 
-        homework_service = HomeworkService()
+        homework_service = HomeworkProfileService()
 
         homework_service.change_homework_answer(_answer, _id_homework_answer, _user_id)
 
@@ -111,7 +111,7 @@ class EducationChatPageController():
 
     def get_homework(self, _id_homework):
 
-        homework_service = HomeworkService()
+        homework_service = HomeworkProfileService()
 
         homework = homework_service.get_homework(_id_homework)
         if homework is not None:
@@ -136,7 +136,7 @@ class EducationChatPageController():
 
     def get_data(self, _id_homework):
 
-        homework_service = HomeworkService()
+        homework_service = HomeworkProfileService()
 
         homework = homework_service.get_homework(_id_homework)
         course = homework_service.get_course(homework.id_course)

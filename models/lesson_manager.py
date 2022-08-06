@@ -2,7 +2,7 @@ from data_adapters.data_store import DataStore
 from models.lesson import Lesson
 
 
-class LessonManager():
+class EducationLessonManager():
     """
     Класс модели управления уроками курсов
     Взаимодейтвует с модулем хранения данных, преобразую доменные структуры в объекты типа Dict
@@ -60,13 +60,12 @@ class LessonManager():
 
             return self.lesson_row_to_lesson(lesson)
 
-    def get_neighboring_lessons(self, _id_lesson, _id_course):
+    def get_neighboring_lessons(self, _id_lesson):
         """
         Возвращает данные соседних уроков текущего урока
 
         Args:
             _id_lesson(Int): ID текущего урока
-            _id_course(Int): ID текущего курса
 
         Returns:
             Dict: данные соседних уроков текущего урока

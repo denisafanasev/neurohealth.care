@@ -2,7 +2,7 @@ from data_adapters.data_store import DataStore
 from models.module import Module
 
 
-class ModuleManager():
+class EducationModuleManager():
     """
     Класс модели управления модулями курсов
     Взаимодейтвует с модулем хранения данных, преобразую доменные структуры в объекты типа Dict
@@ -42,3 +42,22 @@ class ModuleManager():
             modules_list.append(self.module_row_to_module(module))
 
         return modules_list
+
+    def get_module_by_id(self, _id):
+        """
+        Возвращает модуль по ID
+
+        Args:
+            _id(Int): ID модуля
+
+        Return:
+            Module: модуль
+        """
+
+        data_store = DataStore("modules")
+
+        module = data_store.get_row_by_id(_id)
+        if module is not None:
+            module = self.module_row_to_module(module)
+
+        return module

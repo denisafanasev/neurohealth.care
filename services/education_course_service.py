@@ -2,6 +2,7 @@ from models.action_manager import ActionManager
 from models.room_chat_manager import RoomChatManager
 from models.user_manager import UserManager
 from models.course_manager import EducationCourseManager
+from models.module_manager import EducationModuleManager
 from models.education_stream_manager import EducationStreamManager
 from models.homework_manager import HomeworkManager
 from models.upload_manager import UploadManager
@@ -29,9 +30,9 @@ class EducationCourseService():
             modules_list(List): списко модулей курса
         """
 
-        course_manager = EducationCourseManager()
+        module_manager = EducationModuleManager()
 
-        modules_list = course_manager.get_course_modules_list(_id)
+        modules_list = module_manager.get_course_modules_list(_id)
 
         return modules_list
 
@@ -104,6 +105,7 @@ class EducationCourseService():
             Boolean: доступен модуль для пользователя или нет
         """        
         course_manager = EducationCourseManager()
+        module_manager = EducationModuleManager()
         user_manager = UserManager()
 
         user = user_manager.get_user_by_id(_user_id)
@@ -126,7 +128,7 @@ class EducationCourseService():
 
             # TODO: это надо перенести в целевую модель проверки вхождения пользователя в обущающий поток   
 
-            course_modules = course_manager.get_course_modules_list(_course_id)
+            course_modules = module_manager.get_course_modules_list(_course_id)
 
             # проверяем, есть ли пользователь в списках участников второего потока
             for i in range(1, min(len(course_modules), 3)):

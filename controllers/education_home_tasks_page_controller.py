@@ -1,6 +1,6 @@
 from flask import Markup
 
-from services.homework_service import HomeworkService
+from services.homeworks_service import HomeworksService
 
 
 class EducationHomeTasksPageController():
@@ -18,7 +18,7 @@ class EducationHomeTasksPageController():
             List: список домашних работ
         """
 
-        homework_service = HomeworkService()
+        homework_service = HomeworksService()
 
         homework_list = homework_service.get_homeworks_list()
         homework_list_view = []

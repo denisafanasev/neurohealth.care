@@ -8,22 +8,24 @@ from models.room_chat_manager import RoomChatManager
 from models.upload_manager import UploadManager
 from models.user_manager import UserManager
 from models.users_file_manager import UsersFileManager
+from models.module_manager import EducationModuleManager
+from models.lesson_manager import EducationLessonManager
+from models.message_manager import MessageManager
 
 
 class EducationCourseLessonService():
     """
     EducationCourseLessonService - класс бизнес-логики сервиса управления настройками приложения.
-    Возвращает в слой отображения объекты в доменной модели
+    Возвращает в слой отображения объекты в доменной модели.
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def get_lesson(self, _user_id, _lesson_id, _id_course, _id_video, _type_lesson=None):
+    def get_lesson(self, _user_id, _lesson_id, _id_video, _type_lesson=None):
         """
         Возвращает данные урока
 
         Args:
             _lesson_id(Int): индентификатор урока
-            _id_course(Int): индентификатор курса
             _id_video(Int): индентификатор видео
             _user_id(Int): индетификатор текущего пользователя в системе
 
@@ -31,17 +33,20 @@ class EducationCourseLessonService():
             Lesson: класс Lesson, обернутый в класс Module
         """
 
-        course_manager = EducationCourseManager()
         user_manager = UserManager()
         action_manager = ActionManager()
+        module_manager = EducationModuleManager()
+        lesson_manager = EducationLessonManager()
 
         login_user = user_manager.get_user_by_id(_user_id).login
-        lesson = course_manager.get_lesson(_lesson_id, _id_course, _id_video)
+        lesson = lesson_manager.get_lesson(_lesson_id, _id_video)
+        module = module_manager.get_module_by_id(lesson.id_module)
+        module.lessons = lesson
 
         if lesson is not None and _type_lesson is None:
             action_manager.add_notifications(lesson, "посмотрел", '', "course_manager", login_user)
 
-        return lesson
+        return module
 
     def room_chat_entry(self, _id_lesson, _id_course, _id_user, _id_room_chat, _id_education_stream, _id_module):
         """
@@ -74,7 +79,7 @@ class EducationCourseLessonService():
             _room_chat_id(Int): индентификатор чата
         """
 
-        room_chat_manager = RoomChatManager()
+        room_chat_manager = MessageManager()
 
         _message["id_user"] = _user_id
 
@@ -130,16 +135,16 @@ class EducationCourseLessonService():
         user_manager = UserManager()
         upload_service = UploadManager()
         action_manager = ActionManager()
-        course_manager = EducationCourseManager()
+        lesson_manager = EducationLessonManager()
 
         login_user = user_manager.get_user_by_id(_current_user_id).login
         homework_files_list = upload_service.upload_files(_files_list, login_user)
         homework = homework_manager.create_homework(homework_files_list, _id_room_chat, _text, _current_user_id,
                                                     _id_course, _id_lesson)
-        lesson = course_manager.get_lesson(_id_lesson, _id_course)
+        lesson = lesson_manager.get_lesson(_id_lesson)
 
         homework_manager.create_homework_answer(homework.id)
-        action_manager.add_notifications("", "сдал", lesson.lessons.name, "homework_manager", login_user)
+        action_manager.add_notifications("", "сдал", lesson.name, "homework_manager", login_user)
 
     def get_last_homework_by_id_room_chat(self, _id_room_chat):
         """
@@ -195,9 +200,9 @@ class EducationCourseLessonService():
             Dict: данные соседних уроков текущего урока
         """
 
-        course_manager = EducationCourseManager()
+        lesson_manager = EducationLessonManager()
 
-        neighboring_lessons = course_manager.get_neighboring_lessons(_id_lesson, _id_course)
+        neighboring_lessons = lesson_manager.get_neighboring_lessons(_id_lesson)
         if neighboring_lessons['next_lesson'] is not None:
             available = self.is_course_module_avalable_for_user(_id_course, neighboring_lessons['next_lesson'].id, _user_id)
             if not available and neighboring_lessons['next_lesson'].id > 1:
@@ -223,6 +228,7 @@ class EducationCourseLessonService():
             Boolean: доступен модуль для пользователя или нет
         """
         course_manager = EducationCourseManager()
+        module_manager = EducationModuleManager()
         user_manager = UserManager()
 
         user = user_manager.get_user_by_id(_user_id)
@@ -245,7 +251,7 @@ class EducationCourseLessonService():
 
             # TODO: это надо перенести в целевую модель проверки вхождения пользователя в обущающий поток
 
-            course_modules = course_manager.get_course_modules_list(_course_id)
+            course_modules = module_manager.get_course_modules_list(_course_id)
 
             # проверяем, есть ли пользователь в списках участников второего потока
             for i in range(1, min(len(course_modules), 3)):
