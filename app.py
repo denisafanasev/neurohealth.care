@@ -33,8 +33,8 @@ from controllers.education_course_lesson_page_controller import EducationCourseL
 from controllers.download_page_controller import DownloadPageController
 from controllers.education_home_tasks_page_controller import EducationHomeTasksPageController
 from controllers.education_home_task_profile_page_controller import EducationChatPageController
+from controllers.education_streams_page_controller import EducationStreamsPageController
 from controllers.education_stream_page_controller import EducationStreamPageController
-from controllers.education_stream_profile_page_controller import EducationStreamProfilePageController
 
 from error import UserManagerException
 from utils.enviroment_setup import set_ga_id
@@ -1347,7 +1347,7 @@ def estimated_values():
 @login_required
 def education_streams():
 
-    page_controller = EducationStreamPageController()
+    page_controller = EducationStreamsPageController()
     endpoint = "education_streams"
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
@@ -1361,13 +1361,16 @@ def education_streams():
 @login_required
 def education_stream_card():
 
-    page_controller = EducationStreamProfilePageController()
+    page_controller = EducationStreamPageController()
     endpoint = "education_streams"
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
-    curators_list = page_controller.get_curators_list()
-    students_list = page_controller.get_students_list()
-    courses_list = page_controller.get_courses_list()
+    user_id = flask_login.current_user.user_id
+
+    curators_list = page_controller.get_curators_list(user_id)
+    students_list = page_controller.get_students_list(user_id)
+    courses_list = page_controller.get_courses_list(user_id)
+    
     id_education_stream = request.args.get('id')
     error = None
     error_type = None

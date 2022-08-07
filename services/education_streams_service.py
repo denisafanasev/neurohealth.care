@@ -3,10 +3,7 @@ from models.education_stream_manager import EducationStreamManager
 from models.user_manager import UserManager
 from models.course_manager import EducationCourseManager
 
-class EducationStreamService():
-    """
-    Класс сервиса карточки обучающего потока
-    """    
+class EducationStreamsService():
 
     def get_education_streams_list(self):
         """
@@ -111,6 +108,9 @@ class EducationStreamService():
         education_stream_manager = EducationStreamManager()
 
         education_stream = education_stream_manager.create_education_stream(_education_stream)
+
+        # user_service.add_user_in_education_stream(education_stream.id, education_stream.students_list)
+        # user_service.add_user_in_education_stream(education_stream.id, education_stream.curators_list)
 
         return education_stream.id
 
