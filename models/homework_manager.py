@@ -116,9 +116,9 @@ class HomeworkManager():
 
         return self.homework_row_to_homework(homework)
 
-    def change_status(self, _id_homework, _status):
+    def homework_answer_accepted(self, _id_homework):
         """
-        Меняет статус проверки домашней работы
+        Меняет статус проверки домашней работы на "Принято"
 
         Args:
             _id_homework(Int): ID домашней работы
@@ -131,6 +131,29 @@ class HomeworkManager():
 
         homework_data = data_store.get_row_by_id(_id_homework)
         homework = self.homework_row_to_homework(homework_data)
-        homework.status = _status
+        homework.status = True
 
         data_store.update_row_by_doc_id({"status": homework.status}, homework.id)
+
+        return homework
+
+    def homework_answer_no_accepted(self, _id_homework):
+        """
+        Меняет статус проверки домашней работы на "Не принято"
+
+        Args:
+            _id_homework(Int): ID домашней работы
+
+        Returns:
+            Boolean: новый статус домашней работы
+        """
+
+        data_store = DataStore("homeworks")
+
+        homework_data = data_store.get_row_by_id(_id_homework)
+        homework = self.homework_row_to_homework(homework_data)
+        homework.status = False
+
+        data_store.update_row_by_doc_id({"status": homework.status}, homework.id)
+
+        return homework

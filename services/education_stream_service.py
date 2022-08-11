@@ -1,4 +1,3 @@
-# TODO: ну нельзя тут дргуие сервисы вызывать, можно только менеджеры
 from models.education_stream_manager import EducationStreamManager
 from models.user_manager import UserManager
 from models.course_manager import EducationCourseManager

@@ -868,8 +868,8 @@ def education_home_task_profile():
     homework = page_controller.get_homework(int(id_homework))
     user = page_controller.get_user_by_id(user_id)
     data = page_controller.get_data(int(id_homework))
-    error = None
-    error_type = None
+    message = None
+    status_code = None
 
     if request.method == "POST":
         if request.form.get("send"):
@@ -879,15 +879,14 @@ def education_home_task_profile():
 
         elif request.form.get("button") == "answer":
             answer = request.form.get("answer")
-
-            homework['homework_answer']["answer"], error, error_type = page_controller.change_homework_answer\
-                                                                        (answer, homework['homework_answer']["id"],
-                                                                         user_id)
-            homework['homework_answer']["status"] = "проверено"
+            if answer == "True":
+                homework, message, status_code = page_controller.homework_answer_accepted(homework["id"], user_id)
+            elif answer == "False":
+                homework, message, status_code = page_controller.homework_answer_no_accepted(homework["id"], user_id)
 
     return render_template('education_home_task_profile.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _room_chat=room_chat,
-                           _homework=homework, _data=data, _error=error, _error_type=error_type)
+                           _homework=homework, _data=data, _error=message, _error_type=status_code)
 
 
 @app.route('/corrections', methods=['GET', 'POST'])

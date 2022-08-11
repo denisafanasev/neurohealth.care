@@ -7,17 +7,20 @@ from models.user_manager import UserManager
 
 
 class HomeworkProfileService():
-
-
+    """
+    HomeworkProfileService - класс бизнес-логики сервиса управления настройками приложения
+    Возвращает в слой отображения объекты в доменной модели
+    Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
+    """
     def room_chat_entry(self, _id_lesson, _id_course, _id_user, _id_room_chat, _id_education_stream, _id_module):
         """
         Подключает пользователя к чату
 
         Args:
-            _id_lesson(Int): индентификатор урока
+            _id_lesson(Int): ID урока
             _id_user(User): ID пользователя
-            _id_course(Int): индентификатор курса
-            _id_room_chat(Int): индентификатор чата
+            _id_course(Int): ID курса
+            _id_room_chat(Int): ID чата
 
         Returns:
             RoomChat: чат
@@ -37,13 +40,13 @@ class HomeworkProfileService():
 
         Args:
             _message(Dict): данные сообщения
-            _room_chat_id(Int): индентификатор чата
+            _room_chat_id(Int): ID чата
+            _user_id(Int): ID текущего пользователя
         """
 
         room_chat_manager = RoomChatManager()
-        user_manager = UserManager()
 
-        _message["name_sender"] = user_manager.get_user_by_id(_user_id).login
+        _message["id_user"] = _user_id
 
         return room_chat_manager.add_message(_message, _room_chat_id)
 
@@ -63,12 +66,12 @@ class HomeworkProfileService():
 
         return user_manager.get_user_by_id(_id_user)
 
-    def change_homework_answer(self, _answer, _id_homework_answer, _user_id):
+    def homework_answer_accepted(self, _id_homework, _user_id):
         """
-        Изменяет оценку домашнего задания
+        Меняет статус проверки домашней работы на "Принято"
+
         Args:
-            _answer(String): оценка
-            _id_homework_answer(Int): ID оценки домашего задания
+            _id_homework(Int): ID домашней работы
             _user_id(Int): ID текущего пользователя
         """
 
@@ -76,18 +79,33 @@ class HomeworkProfileService():
         action_manager = ActionManager()
         user_manager = UserManager()
 
-        homework_answer = homework_manager.change_homework_answer(_answer, _id_homework_answer)
-        homework = homework_manager.get_homework_by_id(homework_answer.id_homework)
+        homework = homework_manager.homework_answer_accepted(_id_homework)
         user = user_manager.get_user_by_id(_user_id)
-        if homework.id_user is None:
-            homework = self.update_homework(homework)
-        lesson = self.get_lesson(homework.id_lesson, homework.id_course)
-        if homework_answer.answer:
-            action = "принял"
-        else:
-            action = "не принял"
+        lesson = self.get_lesson(homework.id_lesson)
 
-        action_manager.add_notifications(homework.id_user, action, lesson.lessons.name, "homework_manager", user.login)
+        action_manager.add_notifications(homework.id_user, "принял", lesson.lessons.name, "homework_manager", user.login)
+
+        return homework
+
+    def homework_answer_no_accepted(self, _id_homework, _user_id):
+        """
+        Меняет статус проверки домашней работы на "Не принято"
+        Args:
+            _id_homework(Int): ID домашней работы
+            _user_id(Int): ID текущего пользователя
+        """
+
+        homework_manager = HomeworkManager()
+        action_manager = ActionManager()
+        user_manager = UserManager()
+
+        homework = homework_manager.homework_answer_no_accepted(_id_homework)
+        user = user_manager.get_user_by_id(_user_id)
+        lesson = self.get_lesson(homework.id_lesson)
+
+        action_manager.add_notifications(homework.id_user, "не принял", lesson.lessons.name, "homework_manager", user.login)
+
+        return homework
 
     def get_homework(self, _id_homework):
         """
@@ -103,9 +121,6 @@ class HomeworkProfileService():
         lesson_manager = EducationLessonManager()
 
         homework = homework_manager.get_homework_by_id(_id_homework)
-        if homework.id_user is None:
-            homework = self.update_homework(homework)
-
         homework.lesson = lesson_manager.get_lesson(homework.id_lesson)
 
         return homework
@@ -123,11 +138,10 @@ class HomeworkProfileService():
 
         return course_manager.get_course_by_id(_id_course)
 
-    def get_lesson(self, _id_lesson, _id_course):
+    def get_lesson(self, _id_lesson):
         """
         Возвращает данные урок
         Args:
-            _id_course(Int): id курса
             _id_lesson(Int): id урока
         Returns:
             Lesson: урок

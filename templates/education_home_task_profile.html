@@ -61,7 +61,7 @@
                                     <p><strong>Модуль: </strong>{{ _data['module']['name'] }}</p>
                                     <p><strong>Урок: </strong>{{ _data['module']['lesson']['name'] }}</p>
                                     <p class="task"><strong>Задание: </strong>{{ _data['module']['lesson']['task'] }}</p>
-                                    <p><strong>Статус: </strong>{% if _homework['homework_answer']["status"] == "проверено" %}{{ _homework['homework_answer']["answer"] }}{% else %}{{ _homework['homework_answer']["status"] }}{% endif %}</p>
+                                    <p><strong>Статус: </strong>{{ _homework["status"] }}</p>
                                 </div>
                             </div>
 

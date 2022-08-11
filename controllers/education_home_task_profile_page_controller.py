@@ -87,38 +87,31 @@ class EducationChatPageController():
 
         return user_view
 
-    def change_homework_answer(self, _answer, _id_homework_answer, _user_id):
+    def homework_answer_accepted(self, _id_homework, _user_id):
         """
-        Изменяет оценку домашнего задания
+        Меняет статус проверки домашней работы на "Принято"
 
         Args:
-            _answer(String): оценка
-            _id_homework_answer(Int): индетификатор оценки домашего задания
+            _id_homework(Int): ID домашней работы
+            _user_id(Int): ID текущего пользователя
+
+        Return:
+            homework_view(Dict): домашняя работа
+            message(String): сообщение к статус коду
+            status_code(String): сообщает об успешном изменении оценки
         """
 
         homework_service = HomeworkProfileService()
 
-        homework_service.change_homework_answer(_answer, _id_homework_answer, _user_id)
-
-        if _answer == "True":
-            answer = "Принято"
-            error = "Домашняя работа принята"
-        else:
-            answer = "Не принято"
-            error = "Домашняя работа не принята"
-
-        return answer, error, "Successful"
-
-    def get_homework(self, _id_homework):
-
-        homework_service = HomeworkProfileService()
-
-        homework = homework_service.get_homework(_id_homework)
+        homework = homework_service.homework_answer_accepted(_id_homework, _user_id)
+        message = "Домашняя работа принята"
         if homework is not None:
-            if homework.homework_answer.answer:
-                homework.homework_answer.answer = "Принято"
-            else:
-                homework.homework_answer.answer = "Не принято"
+            if homework.status is None:
+                homework.status = "не проверено"
+            elif homework.status:
+                homework.status = "Принято"
+            elif not homework.status:
+                homework.status = "Не принято"
 
         homework_view = {
             "id": homework.id,
@@ -132,15 +125,90 @@ class EducationChatPageController():
             "text": Markup(homework.text)
         }
 
+        return homework_view, message, "Successful"
+
+    def homework_answer_no_accepted(self, _id_homework, _user_id):
+        """
+        Меняет статус проверки домашней работы на "Принято"
+
+        Args:
+            _id_homework(Int): ID домашней работы
+            _user_id(Int): ID текущего пользователя
+
+        Return:
+            homework_view(Dict): домашняя работа
+            message(String): сообщение к статус коду
+            status_code(String): сообщает об успешном изменении оценки
+        """
+
+        homework_service = HomeworkProfileService()
+
+        homework = homework_service.homework_answer_accepted(_id_homework, _user_id)
+        message = "Домашняя работа принята"
+        if homework is not None:
+            if homework.status is None:
+                homework.status = "не проверено"
+            elif homework.status:
+                homework.status = "Принято"
+            elif not homework.status:
+                homework.status = "Не принято"
+
+        homework_view = {
+            "id": homework.id,
+            "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
+            "users_files_list": homework.users_files_list,
+            "status": homework.status,
+            "text": Markup(homework.text)
+        }
+
+        return homework_view, message, "Successful"
+
+    def get_homework(self, _id_homework):
+        """
+        Возвращает данные домашней работы
+
+        Args:
+            _id_homework(Int): ID домашней работы
+
+        Return:
+            Dict: данные домашней работы
+        """
+        homework_service = HomeworkProfileService()
+
+        homework = homework_service.get_homework(_id_homework)
+        if homework is not None:
+            if homework.status is None:
+                homework.status = "не проверено"
+            elif homework.status:
+                homework.status = "Принято"
+            elif not homework.status:
+                homework.status = "Не принято"
+
+        homework_view = {
+            "id": homework.id,
+            "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
+            "users_files_list": homework.users_files_list,
+            "status": homework.homework_answer.status,
+            "text": Markup(homework.text)
+        }
+
         return homework_view
 
     def get_data(self, _id_homework):
+        """
+        Возвращает данные, связанные с домашней работы
 
+        Args:
+            _id_homework(Int): ID домашней работы
+
+        Return:
+            Dict(User, Course, Module, Lesson): данные, связанные с домашней работы
+        """
         homework_service = HomeworkProfileService()
 
         homework = homework_service.get_homework(_id_homework)
         course = homework_service.get_course(homework.id_course)
-        module = homework_service.get_lesson(homework.id_lesson, homework.id_course)
+        module = homework_service.get_lesson(homework.id_lesson)
         student = homework_service.get_user_by_id(homework.id_user)
 
         data = {
@@ -160,7 +228,6 @@ class EducationChatPageController():
                             "name": module.lessons.name,
                             "task": Markup(module.lessons.task)
                         }
-
                 },
             "course":
                 {
