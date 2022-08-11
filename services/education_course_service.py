@@ -130,8 +130,8 @@ class EducationCourseService():
 
             course_modules = module_manager.get_course_modules_list(_course_id)
 
-            # проверяем, есть ли пользователь в списках участников второего потока
-            for i in range(1, min(len(course_modules), 3)):
+            # проверяем, есть ли пользователь в списках участников второго потока
+            for i in range(1, min(len(course_modules), 4)):
                 if course_modules[i - 1].id == _module_id:
                     with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
                         course_users_list = f.read().splitlines()
@@ -141,7 +141,7 @@ class EducationCourseService():
                             return True
 
             # проверяем, есть ли пользователь в спиках участкинов первого потока
-            for i in range(1, min(len(course_modules), 7)):
+            for i in range(1, min(len(course_modules) + 1, 9)):
                 if course_modules[i - 1].id == _module_id:
                     with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
                         course_users_list = f.read().splitlines()
