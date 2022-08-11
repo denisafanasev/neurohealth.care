@@ -73,7 +73,7 @@ class EducationStreamManager():
                             "curators_list": _education_stream['curators_list'],
                             "students_list": _education_stream['students_list']})
 
-        return education_stream
+        # return education_stream
 
     def get_education_streams_list(self):
         """
