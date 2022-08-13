@@ -26,12 +26,11 @@ class HomeworkManager():
 
         return homework
 
-    def create_homework(self, _homework_files_list, _id_room_chat, _text, _id_user, _id_course, _id_lesson):
+    def create_homework(self, _homework_files_list, _text, _id_user, _id_course, _id_lesson):
         """
         Сохраняет домашнюю работу
         Args:
             _homework_files_list(Dict): данные сданной домашней работы
-            _id_room_chat(Int): ID чата
             _text(String): ответ на задание
             _id_user(Int): ID пользователя
             _id_course(Int): ID курса
@@ -45,7 +44,8 @@ class HomeworkManager():
 
 
         homework = Homework(_users_files_list= _homework_files_list, _text=_text, _id_user=_id_user,
-                            _id_lesson=_id_lesson, _status=None)
+                            _id_lesson=_id_lesson, _status=None, _date_delivery=datetime.now())
+
 
         data_store.add_row({"users_files_list": homework.users_files_list,
                             "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"), "text": homework.text,

@@ -92,3 +92,22 @@ class EducationLessonManager():
             neighboring_lessons['previous_lesson'] = self.lesson_row_to_lesson(previous_lesson)
 
         return neighboring_lessons
+
+    def get_lessons_list_by_id_module(self, _id_module):
+        """
+        Возвращает список уроков, принадлежащих одному модулю
+
+        Args:
+            _id_module(Int): ID модуля
+
+        Return:
+            List: список уроков
+        """
+        data_store = DataStore("lessons")
+
+        lessons_data_list = data_store.get_rows({"id_module": _id_module})
+        lessons_list = []
+        for lesson_data in lessons_data_list:
+            lessons_list.append(self.lesson_row_to_lesson(lesson_data))
+
+        return lessons_list

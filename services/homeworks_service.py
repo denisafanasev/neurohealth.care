@@ -1,10 +1,9 @@
 from models.homework_manager import HomeworkManager
-from models.room_chat_manager import RoomChatManager
 from models.course_manager import EducationCourseManager
+from models.module_manager import EducationModuleManager
 from models.lesson_manager import EducationLessonManager
 from models.education_stream_manager import EducationStreamManager
 from models.user_manager import UserManager
-from models.action_manager import ActionManager
 
 
 class HomeworksService():
@@ -26,7 +25,7 @@ class HomeworksService():
 
         return homework_list
 
-    def get_course(self, _id_course):
+    def get_course(self, _id_lesson):
         """
         Возвращает данные курса
         Args:
@@ -36,22 +35,31 @@ class HomeworksService():
         """
 
         course_manager = EducationCourseManager()
+        module_manager = EducationModuleManager()
+        lesson_manager = EducationLessonManager()
 
-        return course_manager.get_course_by_id(_id_course)
+        lesson = lesson_manager.get_lesson(_id_lesson)
+        module = module_manager.get_module_by_id(lesson.id_module)
 
-    def get_lesson(self, _id_lesson, _id_course):
+        return course_manager.get_course_by_id(module.id_course)
+
+    def get_lesson(self, _id_lesson):
         """
-        Возвращает данные урок
+        Возвращает данные урока
         Args:
-            _id_course(Int): id курса
             _id_lesson(Int): id урока
         Returns:
             Lesson: урок
         """
 
         lesson_manager = EducationLessonManager()
+        module_manager = EducationModuleManager()
 
-        return lesson_manager.get_lesson(_id_lesson)
+        lesson = lesson_manager.get_lesson(_id_lesson)
+        module = module_manager.get_module_by_id(lesson.id_module)
+        module.lessons = lesson
+
+        return module
 
     # def get_education_stream(self, _id_education_stream):
     #

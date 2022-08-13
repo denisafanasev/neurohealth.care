@@ -191,10 +191,10 @@
                                             </td>
                                             <td class="d-none d-md-table-cell">
                                                 <div class='badge {% if _homework is none %}
-                                                {% elif _homework['homework_answer']['answer'] == "Принято" %} bg-success
-                                                {% elif _homework['homework_answer']['status'] == "не проверено" %} bg-info
-                                                {% elif _homework['homework_answer']['answer'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>
-                                                    {% if _homework is none %}{% elif _homework['homework_answer']['status'] == "не проверено" %}Не проверено{% elif _homework is not none %}{{ _homework['homework_answer']['answer'] }}{% endif %}
+                                                {% elif _homework['status'] == "Принято" %} bg-success
+                                                {% elif _homework['status'] == "не проверено" %} bg-info
+                                                {% elif _homework['status'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>
+                                                    {% if _homework is none %}{% elif _homework['status'] == "не проверено" %}Не проверено{% elif _homework is not none %}{{ _homework['status'] }}{% endif %}
                                                 </div>
                                             </td>
                                         </tr>

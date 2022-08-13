@@ -3,6 +3,7 @@ from models.room_chat_manager import RoomChatManager
 from models.user_manager import UserManager
 from models.course_manager import EducationCourseManager
 from models.module_manager import EducationModuleManager
+from models.lesson_manager import EducationLessonManager
 from models.education_stream_manager import EducationStreamManager
 from models.homework_manager import HomeworkManager
 from models.upload_manager import UploadManager
@@ -31,8 +32,11 @@ class EducationCourseService():
         """
 
         module_manager = EducationModuleManager()
+        lesson_manager = EducationLessonManager()
 
         modules_list = module_manager.get_course_modules_list(_id)
+        for module in modules_list:
+            module.lessons = lesson_manager.get_lessons_list_by_id_module(module.id)
 
         return modules_list
 

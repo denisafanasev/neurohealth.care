@@ -19,9 +19,9 @@ class EducationCourseLessonPageController():
         course_service = EducationCourseLessonService()
 
         if _id_room_chat is None:
-            module = course_service.get_lesson(_user_id, _lesson_id, _id_course, _id_video, "no id_room_chat")
+            module = course_service.get_lesson(_user_id, _lesson_id, _id_video)
         else:
-            module = course_service.get_lesson(_user_id, _lesson_id, _id_course, _id_video)
+            module = course_service.get_lesson(_user_id, _lesson_id, _id_video)
         if module.lessons.task:
             module.lessons.task = Markup(module.lessons.task)
 
@@ -155,17 +155,20 @@ class EducationCourseLessonPageController():
         return course_formated
 
     def save_homework(self, _files_list, _id_room_chat, _user_id, _text, _id_lesson, _id_course):
-
+        """
+        Сохраняет домашнюю работы
+        """
         course_service = EducationCourseLessonService()
 
         course_service.save_homework(_files_list, _id_room_chat, _user_id, _text, _id_lesson, _id_course)
 
-    def get_homework(self, _id_room_chat):
+    def get_last_homework(self, _id_lesson, _user_id):
         """
         Возвращает данные домашней работы
 
         Args:
-            _id_room_chat(Int): ID комнаты чата
+            _id_lesson(Int): ID урока
+            _user_id(Int): ID текущего пользователя
 
         Return:
             Homework: домашняя работа
@@ -173,27 +176,23 @@ class EducationCourseLessonPageController():
 
         course_service = EducationCourseLessonService()
 
-        homework = course_service.get_last_homework_by_id_room_chat(_id_room_chat)
+        homework = course_service.get_last_homework(_id_lesson, _user_id)
         homework_view = None
-
         if homework is not None:
-            if homework.homework_answer.answer:
-                homework.homework_answer.answer = "Принято"
+            if homework.status is None:
+                homework.status = "не проверенно"
+            elif homework.status:
+                homework.status = "Принято"
             else:
-                homework.homework_answer.answer = "Не принято"
+                homework.status = "Не принято"
 
             homework_view = {
                 "id": homework.id,
                 "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
                 "users_files_list": [],
-                "homework_answer": {
-                    "id": homework.homework_answer.id,
-                    "answer": homework.homework_answer.answer,
-                    "status": homework.homework_answer.status
-                },
+                "status": homework.status,
                 "text": Markup(homework.text)
             }
-
             for file in homework.users_files_list:
                 if file.size // 1048576 == 0:
                     file_size = f"{round(file.size / 1024, 2)} кБ"

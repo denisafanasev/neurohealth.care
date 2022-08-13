@@ -43,11 +43,11 @@ class EducationCourseManager():
 
         for i_course in courses_list:
             try:
-                data_store_course = DataStore(f"course_{i_course['id']}/settings")
+                data_store_course = DataStore(f"course_{i_course.doc_id}/settings")
             except FileNotFoundError:
                 # os.mkdir(f"data/course_{i_course['id']}")
-                os.mkdir(config.DATA_FOLDER+"course_"+str(i_course['id']))
-                data_store_course = DataStore(f"course_{i_course['id']}/settings")
+                os.mkdir(config.DATA_FOLDER+"course_"+str(i_course.doc_id))
+                data_store_course = DataStore(f"course_{i_course.doc_id}/settings")
 
             try:
                 i_course['image'] = data_store_course.get_rows()[0]["image"]
@@ -73,9 +73,7 @@ class EducationCourseManager():
 
         data_store = DataStore("courses_list")
         course_data = data_store.get_row_by_id(_id)
-
         if course_data is not None:
-
             course = self.course_row_to_course(course_data)
 
         return course

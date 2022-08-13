@@ -114,8 +114,8 @@
                                         <td>{{ item['lesson']['module_name'] }}</td>
                                         <td>Урок: {{ item['lesson']['name'] }}</td>
                                         <td>{{ item['date_delivery'] }}</td>
-                                        <td><div class='badge {% if item['homework_answer']['status'] == "не проверено" %} bg-info {% elif item['homework_answer']['status'] == "проверено" %} bg-success {% endif %} bg-gradient text-light'>{{ item['homework_answer']['status'] }}</div></td>
-                                        <td><div class='badge {% if item['homework_answer']['answer'] == "Принято" %} bg-success {% elif item['homework_answer']['answer'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>{{ item['homework_answer']['answer'] }}</div></td>
+                                        <td><div class='badge {% if item['status'] == "не проверено" %} bg-info {% elif item['status'] == "проверено" %} bg-success {% endif %} bg-gradient text-light'>{{ item['status'] }}</div></td>
+                                        <td><div class='badge {% if item['status'] == "Принято" %} bg-success {% elif item['status'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>{{ item['status'] }}</div></td>
                                         <td style="text-align: center">
                                             <a href="/education_home_task_profile?id_chat={{ item['id_room_chat'] }}&id_homework={{ item['id'] }}" >
                                                 Перейти

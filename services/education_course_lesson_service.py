@@ -20,14 +20,14 @@ class EducationCourseLessonService():
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def get_lesson(self, _user_id, _lesson_id, _id_video, _type_lesson=None):
+    def get_lesson(self, _user_id, _lesson_id, _id_video):
         """
         Возвращает данные урока
 
         Args:
-            _lesson_id(Int): индентификатор урока
-            _id_video(Int): индентификатор видео
-            _user_id(Int): индетификатор текущего пользователя в системе
+            _lesson_id(Int): ID урока
+            _id_video(Int): ID видео
+            _user_id(Int): ID текущего пользователя в системе
 
         Return:
             Lesson: класс Lesson, обернутый в класс Module
@@ -43,8 +43,8 @@ class EducationCourseLessonService():
         module = module_manager.get_module_by_id(lesson.id_module)
         module.lessons = lesson
 
-        if lesson is not None and _type_lesson is None:
-            action_manager.add_notifications(lesson, "посмотрел", '', "course_manager", login_user)
+        if lesson is not None:
+            action_manager.add_notifications(module, "посмотрел", '', "course_manager", login_user)
 
         return module
 
@@ -139,45 +139,30 @@ class EducationCourseLessonService():
 
         login_user = user_manager.get_user_by_id(_current_user_id).login
         homework_files_list = upload_service.upload_files(_files_list, login_user)
-        homework = homework_manager.create_homework(homework_files_list, _id_room_chat, _text, _current_user_id,
+        homework = homework_manager.create_homework(homework_files_list, _text, _current_user_id,
                                                     _id_course, _id_lesson)
         lesson = lesson_manager.get_lesson(_id_lesson)
 
-        homework_manager.create_homework_answer(homework.id)
         action_manager.add_notifications("", "сдал", lesson.name, "homework_manager", login_user)
 
-    def get_last_homework_by_id_room_chat(self, _id_room_chat):
+    def get_last_homework(self, _id_lesson, _user_id):
         """
         Возвращает последнюю сданную домашнюю работу по ID комнаты чата
         Args:
-            _id_room_chat(Int): ID комнаты чата
+            _id_lesson(Int): ID урока
+            _user_id(Int): ID пользователя
+
+        Return:
+            Homework: домашняя работа
         """
         homework_manager = HomeworkManager()
         users_file_manager = UsersFileManager()
-        room_chat_manager = RoomChatManager()
-        user_manager = UserManager()
 
-        homework_list = homework_manager.get_homeworks_list_by_id_room_chat(_id_room_chat)
+        homework_list = homework_manager.get_homeworks_list_by_id_lesson(_id_lesson, _user_id)
         date = datetime.strptime("01/01/2000", "%d/%m/%Y")
         last_homework = None
         if homework_list != []:
             for homework in homework_list:
-                if homework.id_user is None:
-                    room_chat = room_chat_manager.get_room_chat(_id_room_chat)
-                    name_room_chat = room_chat.name.split("_")
-                    id_dict = {"course": int(name_room_chat[1]), "lesson": int(name_room_chat[2]),
-                               "user": name_room_chat[3]}
-                    if len(name_room_chat) > 4:
-                        for i in range(0, len(name_room_chat) - 3):
-                            if i + 4 < len(name_room_chat):
-                                id_dict['user'] = "_".join([id_dict['user'], name_room_chat[i + 4]])
-                            else:
-                                break
-                    homework.id_user = user_manager.get_user_by_login(id_dict['user']).user_id
-                    homework.id_course = id_dict['course']
-                    homework.id_lesson = id_dict['lesson']
-                    homework_manager.update_homework(homework)
-
                 if homework.date_delivery >= date:
                     date = homework.date_delivery
                     last_homework = homework
@@ -201,16 +186,25 @@ class EducationCourseLessonService():
         """
 
         lesson_manager = EducationLessonManager()
+        module_manager = EducationModuleManager()
 
         neighboring_lessons = lesson_manager.get_neighboring_lessons(_id_lesson)
         if neighboring_lessons['next_lesson'] is not None:
-            available = self.is_course_module_avalable_for_user(_id_course, neighboring_lessons['next_lesson'].id, _user_id)
-            if not available and neighboring_lessons['next_lesson'].id > 1:
+            module = module_manager.get_module_by_id(neighboring_lessons['next_lesson'].id_module)
+            module.lessons = neighboring_lessons['next_lesson']
+            neighboring_lessons['next_lesson'] = module
+            available = self.is_course_module_avalable_for_user(_id_course,
+                                                                neighboring_lessons['next_lesson'].lessons.id, _user_id)
+            if not available and neighboring_lessons['next_lesson'].lessons.id > 1:
                 neighboring_lessons['next_lesson'] = None
 
         if neighboring_lessons['previous_lesson'] is not None:
-            available = self.is_course_module_avalable_for_user(_id_course, neighboring_lessons['previous_lesson'].id, _user_id)
-            if not available and neighboring_lessons['previous_lesson'].id > 1:
+            module = module_manager.get_module_by_id(neighboring_lessons['previous_lesson'].id_module)
+            module.lessons = neighboring_lessons['previous_lesson']
+            neighboring_lessons['previous_lesson'] = module
+            available = self.is_course_module_avalable_for_user(_id_course,
+                                                                neighboring_lessons['previous_lesson'].lessons.id, _user_id)
+            if not available and neighboring_lessons['previous_lesson'].lessons.id > 1:
                 neighboring_lessons['previous_lesson'] = None
 
         return neighboring_lessons

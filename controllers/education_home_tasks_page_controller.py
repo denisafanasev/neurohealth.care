@@ -23,18 +23,17 @@ class EducationHomeTasksPageController():
         homework_list = homework_service.get_homeworks_list()
         homework_list_view = []
         for homework in homework_list:
-            if homework.id_user is None:
-                homework = homework_service.update_homework(homework)
-
-            course = homework_service.get_course(homework.id_course)
-            lesson = homework_service.get_lesson(homework.id_lesson, homework.id_course)
+            lesson = homework_service.get_lesson(homework.id_lesson)
+            course = homework_service.get_course(homework.id_lesson)
             # education_stream = homework_service.get_education_stream(room_chat.id_education_stream)
             user = homework_service.get_user_by_id(homework.id_user)
             if homework is not None:
-                if homework.homework_answer.answer:
-                    homework.homework_answer.answer = "Принято"
+                if homework.status is None:
+                    homework.status = "не проверено"
+                elif homework.status:
+                    homework.status = "Принято"
                 else:
-                    homework.homework_answer.answer = "Не принято"
+                    homework.status = "Не принято"
 
             homework_view = {
                 "id": homework.id,
@@ -57,12 +56,7 @@ class EducationHomeTasksPageController():
                 # },
                 "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
                 "users_files_list": homework.users_files_list,
-                "homework_answer": {
-                    "id": homework.homework_answer.id,
-                    "answer": homework.homework_answer.answer,
-                    "status": homework.homework_answer.status
-                },
-                "id_room_chat": homework.id_room_chat,
+                "status": homework.status,
                 "text": Markup(homework.text)
             }
 
