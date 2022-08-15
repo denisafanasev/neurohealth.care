@@ -21,7 +21,8 @@ class MessageManager():
             Message: пользователь
         """
 
-        message = Message(_id=_message.doc_id, _text=_message["text"], _id_room_chat=_message['id_room_chat'])
+        message = Message(_id=_message.doc_id, _text=_message["text"], _id_room_chat=_message['id_room_chat'],
+                          _id_user=_message['id_user'])
 
         if _message.get("date_send") is not None:
             message.date_send = datetime.strptime(_message['date_end'], "%d/%m/%Y")
@@ -30,41 +31,42 @@ class MessageManager():
 
         return message
 
-    def get_messages(self, _id_message_list):
+    def get_messages(self, _id_room_chat):
         """
-        Возвращает все сообщения из чата
+        Возвращает все сообщения из чата по ID комнаты чата
 
         Args:
-            _id_message_list(List): список индентификаторов сообщений
+            _id_room_chat(Int): ID комнаты чата
+
+        Return:
+            List: список сообщений чата
         """
 
-        data_store_message = DataStore("message")
-        message_list = []
+        data_store = DataStore("message")
 
-        for i_message in _id_message_list:
-            message = data_store_message.get_rows({"id": i_message})[0]
-            message = self.message_row_to_message(message)
+        messages_data = data_store.get_rows({"id_room_chat": _id_room_chat})
+        message_list = []
+        for i_message in messages_data:
+            message = self.message_row_to_message(i_message)
 
             message_list.append(message)
 
         return message_list
 
-    def add_message(self, _message, _id_room_chat):
+    def add_message(self, _message):
         """
         Сохраняет сообщение
 
         Args:
             _message(Dict): данные сообщения
-            _id_room_chat(Int): индентификатор чата
         """
 
         data_store = DataStore("message")
-        amount = data_store.get_rows_count()
 
-        _message["id"] = amount + 1
         _message["date_send"] = datetime.today()
-        message = self.message_row_to_message(_message)
+        message = Message(_id_user=_message['id_user'], _id_room_chat=_message['id_room_chat'], _text=_message['text'])
 
-        data_store.add_row({"id": message.id, "text": message.text})
+        data_store.add_row({"text": message.text, "id_user": message.id_user,
+                            "id_room_chat": message.id_room_chat, "date_send": _message['date_send'].strftime("%d/%m/%Y")})
 
         return message

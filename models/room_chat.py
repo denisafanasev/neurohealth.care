@@ -10,9 +10,9 @@ class RoomChat():
             _id(Int): ID комнаты чата
             _id_user(Int): ID пользователя
             _id_lesson(Int): ID урока
-            _id_education_stream(Int): ID обучающего потока
+            # _id_education_stream(Int): ID обучающего потока
         """
         self.id = _id
-        self.id_education_stream = _id_education_stream
+        # self.id_education_stream = _id_education_stream
         self.id_user = _id_user
         self.id_lesson = _id_lesson

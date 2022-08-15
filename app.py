@@ -735,15 +735,14 @@ def education_course_lesson():
 
     endpoint = 'education_list_courses'
 
-    id_course = request.args.get("id_course")
-    id_module = int(request.args.get("id_module"))
     id_lesson = int(request.args.get("id_lesson"))
     id_video = request.args.get("id_video")
     id_room_chat = request.args.get("id_chat")
     user_id = flask_login.current_user.user_id
 
-    user = page_controller.get_user_view_by_id_and_course_id(user_id, int(id_course))
-    course = page_controller.get_course_by_id(id_course)
+    user = page_controller.get_user_view_by_id_and_course_id(user_id)
+    data = page_controller.get_lesson(user_id, id_lesson, int(id_video))
+    course = page_controller.get_course_by_id(data['id_course'])
     user_list = None
     homework = None
 
@@ -751,69 +750,53 @@ def education_course_lesson():
     #if user['role'] == 'user' and course['type'] == 'main' and int(id_module) > 1:
     #    return redirect("/price_list")
 
-    data = page_controller.get_lesson(user_id, id_lesson, int(id_course), int(id_video), id_room_chat)
-    neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, int(id_course))
+    neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
 
     if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
-        if int(id_module) > 1 and user['role'] != 'superuser' and not data['available']:
+        if data['id_module'] > 1 and user['role'] != 'superuser' and not data['available']:
             return redirect('/price_list')
 
 
-    # if data["lesson"].get("task") is not None:
-    #     if id_room_chat is None:
-    #         if user["role"] != "superuser":
-    #             if user['education_stream'].get("status") == "идет":
-    #                 id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module, _id_user=user_id,
-    #                                                                _id_education_stream=user['education_stream']['id'])["id"]
-    #                 return redirect(
-    #                     f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
-    #             elif user['active_education_module'] == "active":
-    #                 id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module,
-    #                                                                _id_user=user_id)['id']
-    #                 return redirect(
-    #                     f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
-    #             elif data['available']:
-    #                 id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module,
-    #                                                                _id_user=user_id)['id']
-    #                 return redirect(
-    #                     f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
-    #             elif not data['available']:
-    #                 return redirect(
-    #                     f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat=none")
-    #
-    #         return redirect(
-    #             f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat=none")
+    if data["lesson"].get("task") is not None:
+        if id_room_chat is None:
+            if user["role"] != "superuser":
+                if user['education_stream'].get("status") == "идет":
+                    id_room_chat = page_controller.room_chat_entry(id_lesson, _id_user=user_id,
+                                                                   _id_education_stream=user['education_stream']['id'])["id"]
+
+                elif user['active_education_module'] == "active":
+                    id_room_chat = page_controller.room_chat_entry(id_lesson, user_id)['id']
+
+                elif data['available']:
+                    id_room_chat = page_controller.room_chat_entry(id_lesson, user_id)['id']
+
+                # elif not data['available']:
+                #     return redirect(
+                #         f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
+
+                return redirect(
+                            f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
 
     if id_video is None:
         id_video = 1
 
-    # if user["role"] == "superuser":
-    #     user_list = page_controller.get_user_list(user_id)
-
     if request.method == "POST":
+        # сохраняем новое сообщение
         if request.form.get("send"):
             text = request.form.get("text")
-            page_controller.add_message({"text": text}, id_room_chat, user_id)
+            id_room_chat = page_controller.add_message({"text": text, "id_room_chat": id_room_chat,
+                                                            "id_user": user_id}, id_lesson)
 
+        # сохраняем домашнюю работу
         elif request.form.get("button") == "homework":
             files = request.files.getlist("files")
             text = request.form.get("text_homework")
-            page_controller.save_homework(files, id_room_chat, user_id, text, id_lesson, id_course)
-
-        # elif request.form.get("button") == "previous":
-        #     data = page_controller.get_lesson(user_id, id_lesson - 1, int(id_course), int(id_video))
-        #     return redirect(
-        #         f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson - 1}&id_module={data['id_module']}&id_video={id_video}&id_chat={id_room_chat}")
-        #
-        # elif request.form.get("button") == "previous":
-        #     return redirect(
-        #         f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson - 1}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
+            page_controller.save_homework(files, id_room_chat, user_id, text, id_lesson, data['id_course'])
 
         else:
-            id_room_chat = page_controller.room_chat_entry(_id_lesson=id_lesson, _id_course=id_course,
-                                                           _id_user=user_id)["id"]
+            id_room_chat = page_controller.room_chat_entry(_id_lesson=id_lesson, _id_user=user_id)["id"]
             return redirect(
-                f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
+                f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
 
     if id_room_chat == "none":
         room_chat = None

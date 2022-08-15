@@ -5,7 +5,7 @@ from services.education_course_lesson_service import EducationCourseLessonServic
 
 class EducationCourseLessonPageController():
 
-    def get_lesson(self, _user_id, _lesson_id, _id_course, _id_video=1, _id_room_chat=None):
+    def get_lesson(self, _user_id, _lesson_id, _id_video=1):
         """
         Возвращает данные урока
 
@@ -18,10 +18,8 @@ class EducationCourseLessonPageController():
 
         course_service = EducationCourseLessonService()
 
-        if _id_room_chat is None:
-            module = course_service.get_lesson(_user_id, _lesson_id, _id_video)
-        else:
-            module = course_service.get_lesson(_user_id, _lesson_id, _id_video)
+        module = course_service.get_lesson(_user_id, _lesson_id, _id_video)
+
         if module.lessons.task:
             module.lessons.task = Markup(module.lessons.task)
 
@@ -29,7 +27,7 @@ class EducationCourseLessonPageController():
             module.lessons.text = Markup(module.lessons.text)
 
         lesson = {
-            "id_course": _id_course,
+            "id_course": module.id_course,
             "id_module": module.id,
             "name": module.name,
             "lesson": {
@@ -41,20 +39,18 @@ class EducationCourseLessonPageController():
                 "text": module.lessons.text,
                 "task": module.lessons.task
             },
-            "available": course_service.is_course_module_avalable_for_user(_id_course, module.id, _user_id)
+            "available": course_service.is_course_module_avalable_for_user(module.id_course, module.id, _user_id)
         }
 
         return lesson
 
-    def room_chat_entry(self, _id_lesson="", _id_course="", _id_user="", _id_room_chat=None, _id_education_stream=None,
-                        _id_module=None):
+    def room_chat_entry(self, _id_lesson="", _id_user="", _id_room_chat=None, _id_education_stream=None):
         """
         Подключает пользователя к чату
 
         Args:
             _id_lesson(Int): индентификатор урока
             _login_user(User): данные пользователя
-            _id_course(Int): индентификатор курса
             _id_room_chat(Int): индентификатор чата
 
         Returns:
@@ -65,46 +61,46 @@ class EducationCourseLessonPageController():
         if _id_room_chat is None and _id_education_stream is None:
             _id_education_stream = "subscription"
 
-        room_chat = education_course_service.room_chat_entry(_id_lesson, _id_course, _id_user, _id_room_chat,
-                                                      _id_education_stream, _id_module)
+        room_chat = education_course_service.room_chat_entry(_id_lesson, _id_user)
+        if room_chat is not None:
+            chat = {
+                "id": room_chat.id,
+                "message": None
+            }
+            if room_chat.message is not None:
 
-        chat = {
-            "id": room_chat.id,
-            "name": room_chat.name,
-            "message": None
-        }
-        if room_chat.message is not None:
+                message_list = []
+                for i_message in room_chat.message:
 
-            message_list = []
-            for i_message in room_chat.message:
+                    message = {
+                        "id": i_message.id,
+                        "text": Markup(i_message.text),
+                        "name_sender": i_message.name_sender,
+                    }
 
-                message = {
-                    "id": i_message.id,
-                    "text": Markup(i_message.text),
-                    "name_sender": i_message.name_sender,
-                }
+                    message_list.append(message)
 
-                message_list.append(message)
+                chat["message"] = message_list
 
-            chat["message"] = message_list
-
-        return chat
+            return chat
 
 
-    def add_message(self, _message, _room_chat_id, _user_id):
+    def add_message(self, _message, _id_lesson):
         """
         Сохраняет сообщение
 
         Args:
             _message(Dict): данные сообщения
-            _id_room_chat(Int): индентификатор чата
+            _id_lesson(Int): ID урока
         """
 
         education_course_service = EducationCourseLessonService()
 
-        return education_course_service.add_message(_message, _room_chat_id, _user_id)
+        message = education_course_service.add_message(_message, _id_lesson)
+        return message.id_room_chat
 
-    def get_user_view_by_id_and_course_id(self, _user_id, _id_course):
+
+    def get_user_view_by_id_and_course_id(self, _user_id):
         """
         Возвращает текущего пользователя
 

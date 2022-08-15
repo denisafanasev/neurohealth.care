@@ -63,16 +63,3 @@ class EducationHomeTasksPageController():
             homework_list_view.append(homework_view)
 
         return homework_list_view
-
-    # def change_homework_answer(self, _answer, _id_homework_answer):
-    #     """
-    #     Изменяет оценку домашнего задания
-    #
-    #     Args:
-    #         _answer(String): оценка
-    #         _id_homework_answer(Int): индетификатор оценки домашего задания
-    #     """
-    #
-    #     homework_service = HomeworkService()
-    #
-    #     homework_service.change_homework_answer(_answer, _id_homework_answer)

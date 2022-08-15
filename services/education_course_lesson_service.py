@@ -48,42 +48,48 @@ class EducationCourseLessonService():
 
         return module
 
-    def room_chat_entry(self, _id_lesson, _id_course, _id_user, _id_room_chat, _id_education_stream, _id_module):
+    def room_chat_entry(self, _id_lesson, _id_user):
         """
         Подключает пользователя к чату
 
         Args:
-            _id_lesson(Int): индентификатор урока
+            _id_lesson(Int): ID урока
             _id_user(User): ID пользователя
-            _id_course(Int): индентификатор курса
-            _id_room_chat(Int): индентификатор чата
-
         Returns:
             RoomChat: чат
         """
 
         room_chat_manager = RoomChatManager()
-        user_manager = UserManager()
+        message_manager = MessageManager()
 
-        user = user_manager.get_user_by_id(_id_user)
+        room_chat = room_chat_manager.room_chat_entry(_id_lesson, _id_user)
+        if room_chat is not None:
+            room_chat.message = message_manager.get_messages(room_chat.id)
 
-        return room_chat_manager.room_chat_entry(_id_lesson, user, _id_course, _id_room_chat, _id_education_stream,
-                                                 _id_module)
+        return room_chat
 
-    def add_message(self, _message, _room_chat_id, _user_id):
+    def add_message(self, _message, _id_lesson):
         """
         Сохраняет сообщение
 
         Args:
-            _message(Dict): данные сообщения
-            _room_chat_id(Int): индентификатор чата
+            _message(Dict): текст сообщения
+            _id_lesson(Int): ID урока
+
+        Return:
+            Message: сообщение
         """
 
-        room_chat_manager = MessageManager()
+        message_manager = MessageManager()
+        room_chat_manager = RoomChatManager()
+        if _message['id_room_chat'] is None:
+            _message['id_room_chat'] = room_chat_manager.get_room_chat(_message['id_user'], _id_lesson).id
+            if _message['id_room_chat'] is None:
+                _message['id_room_chat'] = room_chat_manager.add_room_chat(_message['id_user'], _id_lesson).id
 
-        _message["id_user"] = _user_id
-
-        return room_chat_manager.add_message(_message, _room_chat_id)
+            return message_manager.add_message(_message)
+        else:
+            return message_manager.add_message(_message)
 
     def get_user_by_id(self, _user_id):
         """
@@ -139,7 +145,7 @@ class EducationCourseLessonService():
 
         login_user = user_manager.get_user_by_id(_current_user_id).login
         homework_files_list = upload_service.upload_files(_files_list, login_user)
-        homework = homework_manager.create_homework(homework_files_list, _text, _current_user_id,
+        homework_manager.create_homework(homework_files_list, _text, _current_user_id,
                                                     _id_course, _id_lesson)
         lesson = lesson_manager.get_lesson(_id_lesson)
 
