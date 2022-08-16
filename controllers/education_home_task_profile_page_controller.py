@@ -1,5 +1,6 @@
 from flask import Markup
 
+from models.user_manager import UserManager
 from services.homework_profile_service import HomeworkProfileService
 
 class EducationChatPageController():
@@ -22,8 +23,7 @@ class EducationChatPageController():
 
         homework_service = HomeworkProfileService()
 
-        room_chat = homework_service.room_chat_entry(_id_room_chat=_id_room_chat, _id_lesson=None, _id_course=None,
-                                                      _id_user=_id_user, _id_education_stream=None, _id_module=None)
+        room_chat = homework_service.room_chat_entry(_id_room_chat=_id_room_chat)
 
         room_chat_view = {
             "id": room_chat.id,
@@ -46,23 +46,29 @@ class EducationChatPageController():
 
         return room_chat_view
 
-    def add_message(self, _message, _room_chat_id, _user_id):
+    def add_message(self, _message, _id_lesson):
         """
         Сохраняет сообщение
 
         Args:
             _message(Dict): данные сообщения
-            _room_chat_id(Int): индентификатор чата
+            _room_chat_id(Integer): ID чата
+            _user_id(Integer): ID пользователя
+
+        Returns:
+            Dict: сообщение
         """
 
         homework_service = HomeworkProfileService()
+        user_manager = UserManager()
 
-        message = homework_service.add_message(_message, _room_chat_id, _user_id)
+        message = homework_service.add_message(_message, _id_lesson)
+        user = user_manager.get_user_by_id(message.id_user)
         message_view = {
             "id": message.id,
             "text": Markup(message.text),
-            "name_sender": message.name_sender,
-            "date_send": message.date_send.strftime("%d/%m/%Y")
+            "id_user": message.id_user,
+            "name": user.name
         }
         return message_view
 
@@ -186,9 +192,11 @@ class EducationChatPageController():
 
         homework_view = {
             "id": homework.id,
+            "id_lesson": homework.id_lesson,
+            "id_user": homework.id_user,
             "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
             "users_files_list": homework.users_files_list,
-            "status": homework.homework_answer.status,
+            "status": homework.status,
             "text": Markup(homework.text)
         }
 
@@ -207,16 +215,16 @@ class EducationChatPageController():
         homework_service = HomeworkProfileService()
 
         homework = homework_service.get_homework(_id_homework)
-        course = homework_service.get_course(homework.id_course)
         module = homework_service.get_lesson(homework.id_lesson)
-        student = homework_service.get_user_by_id(homework.id_user)
+        course = homework_service.get_course(module.id_course)
+        user = homework_service.get_user_by_id(homework.id_user)
 
         data = {
             "user":
                 {
-                    "login": student.login,
-                    "name": student.name,
-                    "email": student.email,
+                    "login": user.login,
+                    "name": user.name,
+                    "email": user.email,
                 },
             "module":
                 {

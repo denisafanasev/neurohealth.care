@@ -27,6 +27,7 @@ class EducationHomeTasksPageController():
             course = homework_service.get_course(homework.id_lesson)
             # education_stream = homework_service.get_education_stream(room_chat.id_education_stream)
             user = homework_service.get_user_by_id(homework.id_user)
+            room_chat = homework_service.get_room_chat(homework.id_lesson, homework.id_user)
             if homework is not None:
                 if homework.status is None:
                     homework.status = "не проверено"
@@ -59,6 +60,9 @@ class EducationHomeTasksPageController():
                 "status": homework.status,
                 "text": Markup(homework.text)
             }
+
+            if room_chat is not None:
+                homework_view['id_room_chat'] = room_chat.id
 
             homework_list_view.append(homework_view)
 

@@ -25,7 +25,7 @@ class MessageManager():
                           _id_user=_message['id_user'])
 
         if _message.get("date_send") is not None:
-            message.date_send = datetime.strptime(_message['date_end'], "%d/%m/%Y")
+            message.date_send = datetime.strptime(_message['date_send'], "%d/%m/%Y")
         else:
             message.date_send = datetime.today()
 

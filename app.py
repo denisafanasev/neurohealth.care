@@ -756,27 +756,6 @@ def education_course_lesson():
         if data['id_module'] > 1 and user['role'] != 'superuser' and not data['available']:
             return redirect('/price_list')
 
-
-    if data["lesson"].get("task") is not None:
-        if id_room_chat is None:
-            if user["role"] != "superuser":
-                if user['education_stream'].get("status") == "идет":
-                    id_room_chat = page_controller.room_chat_entry(id_lesson, _id_user=user_id,
-                                                                   _id_education_stream=user['education_stream']['id'])["id"]
-
-                elif user['active_education_module'] == "active":
-                    id_room_chat = page_controller.room_chat_entry(id_lesson, user_id)['id']
-
-                elif data['available']:
-                    id_room_chat = page_controller.room_chat_entry(id_lesson, user_id)['id']
-
-                # elif not data['available']:
-                #     return redirect(
-                #         f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
-
-                return redirect(
-                            f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
-
     if id_video is None:
         id_video = 1
 
@@ -784,8 +763,10 @@ def education_course_lesson():
         # сохраняем новое сообщение
         if request.form.get("send"):
             text = request.form.get("text")
-            id_room_chat = page_controller.add_message({"text": text, "id_room_chat": id_room_chat,
+            id_chat = page_controller.add_message({"text": text, "id_room_chat": int(id_room_chat),
                                                             "id_user": user_id}, id_lesson)
+            if id_room_chat is None:
+                return redirect(f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_chat}")
 
         # сохраняем домашнюю работу
         elif request.form.get("button") == "homework":
@@ -794,14 +775,12 @@ def education_course_lesson():
             page_controller.save_homework(files, id_room_chat, user_id, text, id_lesson, data['id_course'])
 
         else:
-            id_room_chat = page_controller.room_chat_entry(_id_lesson=id_lesson, _id_user=user_id)["id"]
+            id_room_chat = page_controller.get_room_chat(_id_lesson=id_lesson, _id_user=user_id)["id"]
             return redirect(
                 f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
 
-    if id_room_chat == "none":
-        room_chat = None
-    elif id_room_chat is not None:
-        room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
+    if id_room_chat is not None:
+        room_chat = page_controller.room_chat_entry(_id_room_chat=int(id_room_chat))
     else:
         room_chat = None
 
@@ -809,7 +788,7 @@ def education_course_lesson():
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _homework=homework,
-                           _data=data, _room_chat=room_chat, _user_list=user_list, _user=user, _course_name=course['name'],
+                           _data=data, _room_chat=room_chat, _user=user, _course_name=course['name'],
                            _neighboring_lessons=neighboring_lessons)
 
 
@@ -859,7 +838,8 @@ def education_home_task_profile():
         if request.form.get("send"):
             text = request.form.get("text")
             if text is not None:
-                room_chat['message'].append(page_controller.add_message({"text": text}, id_room_chat, user_id))
+                room_chat['message'].append(page_controller.add_message({"text": text, "id_room_chat": int(id_room_chat),
+                                                            "id_user": user_id}, homework['id_lesson']))
 
         elif request.form.get("button") == "answer":
             answer = request.form.get("answer")

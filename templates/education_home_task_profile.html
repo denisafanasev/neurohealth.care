@@ -78,7 +78,7 @@
                                                 {% endfor %}
                                         </div>
 
-                                    {% if _homework['homework_answer']['status'] == "не проверено" %}
+                                    {% if _homework['status'] == "не проверено" %}
                                         <div class="mb-0">
                                             <label class="form-label"><strong>Ответ</strong></label>
                                             <div class="">
@@ -97,7 +97,7 @@
                                     {% endif %}
                                     </form>
                                 </div>
-                            {% if _homework['homework_answer']['status'] == "не проверено" %}
+                            {% if _homework['status'] == "не проверено" %}
                                 <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto;">
                                     <div class="p-1" style="float: right">
                                         <button type="submit" form="homework" name="button" value="answer" class="btn btn-primary ">

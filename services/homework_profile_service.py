@@ -1,9 +1,11 @@
 from models.action_manager import ActionManager
 from models.homework_manager import HomeworkManager
 from models.course_manager import EducationCourseManager
+from models.module_manager import EducationModuleManager
 from models.lesson_manager import EducationLessonManager
 from models.room_chat_manager import RoomChatManager
 from models.user_manager import UserManager
+from models.message_manager import MessageManager
 
 
 class HomeworkProfileService():
@@ -12,14 +14,11 @@ class HomeworkProfileService():
     Возвращает в слой отображения объекты в доменной модели
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
-    def room_chat_entry(self, _id_lesson, _id_course, _id_user, _id_room_chat, _id_education_stream, _id_module):
+    def room_chat_entry(self, _id_room_chat):
         """
         Подключает пользователя к чату
 
         Args:
-            _id_lesson(Int): ID урока
-            _id_user(User): ID пользователя
-            _id_course(Int): ID курса
             _id_room_chat(Int): ID чата
 
         Returns:
@@ -27,14 +26,10 @@ class HomeworkProfileService():
         """
 
         room_chat_manager = RoomChatManager()
-        user_manager = UserManager()
 
-        user = user_manager.get_user_by_id(_id_user)
+        return room_chat_manager.room_chat_entry(_id_room_chat)
 
-        return room_chat_manager.room_chat_entry(_id_lesson, user, _id_course, _id_room_chat, _id_education_stream,
-                                                 _id_module)
-
-    def add_message(self, _message, _room_chat_id, _user_id):
+    def add_message(self, _message, _id_lesson):
         """
         Сохраняет сообщение
 
@@ -44,11 +39,17 @@ class HomeworkProfileService():
             _user_id(Int): ID текущего пользователя
         """
 
+        message_manager = MessageManager()
+
         room_chat_manager = RoomChatManager()
+        if _message['id_room_chat'] is None:
+            _message['id_room_chat'] = room_chat_manager.get_room_chat(_message['id_user'], _id_lesson).id
+            if _message['id_room_chat'] is None:
+                _message['id_room_chat'] = room_chat_manager.add_room_chat(_message['id_user'], _id_lesson).id
 
-        _message["id_user"] = _user_id
-
-        return room_chat_manager.add_message(_message, _room_chat_id)
+            return message_manager.add_message(_message)
+        else:
+            return message_manager.add_message(_message)
 
 
     def get_user_by_id(self, _id_user):
@@ -148,5 +149,10 @@ class HomeworkProfileService():
         """
 
         lesson_manager = EducationLessonManager()
+        module_manager = EducationModuleManager()
 
-        return lesson_manager.get_lesson(_id_lesson)
+        lesson = lesson_manager.get_lesson(_id_lesson)
+        module = module_manager.get_module_by_id(lesson.id_module)
+        module.lessons = lesson
+
+        return module

@@ -387,12 +387,12 @@
             <div class="row d-flex align-items-stretch bd-highlight">
                 <div class="col d-grid gap-2 d-md-flex justify-content-md-start m-2">
                     {% if _neighboring_lessons['previous_lesson'] is not none %}
-                        <a class="btn btn-primary" href="/education_course/lesson?id_course={{ _neighboring_lessons['previous_lesson']['id_course'] }}&id_lesson={{ _neighboring_lessons['previous_lesson']['id'] }}&id_module={{ _neighboring_lessons['previous_lesson']['id_module'] }}&id_video=1">Предыдущий урок</a>
+                        <a class="btn btn-primary" href="/education_course/lesson?id_lesson={{ _neighboring_lessons['previous_lesson']['id'] }}&id_video=1">Предыдущий урок</a>
                     {% endif %}
                 </div>
                 <div class="col d-grid gap-2 d-md-flex justify-content-md-end m-2">
                     {% if _neighboring_lessons['next_lesson'] is not none %}
-                        <a class="btn btn-primary" href="/education_course/lesson?id_course={{ _neighboring_lessons['next_lesson']['id_course'] }}&id_lesson={{ _neighboring_lessons['next_lesson']['id'] }}&id_module={{ _neighboring_lessons['next_lesson']['id_module'] }}&id_video=1">Следующий урок</a>
+                        <a class="btn btn-primary" href="/education_course/lesson?id_lesson={{ _neighboring_lessons['next_lesson']['id'] }}&id_video=1">Следующий урок</a>
                     {% endif %}
                 </div>
             </div>

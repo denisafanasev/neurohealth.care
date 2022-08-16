@@ -53,7 +53,11 @@
                                 </td>
                                 <td>{{ i_lesson['name'] }}</td>
                                 <td>
-                                    <a href="/education_course/lesson?id_course={{ id_course }}&id_lesson={{ i_lesson['id'] }}&id_module={{ i_course['id'] }}&id_video=1">Выполнить</a>
+                                {% if i_lesson['id_room_chat'] is not none %}
+                                    <a href="/education_course/lesson?id_lesson={{ i_lesson['id'] }}&id_video=1&id_chat={{ i_lesson['id_room_chat'] }}">Выполнить</a>
+                                {% else %}
+                                    <a href="/education_course/lesson?id_lesson={{ i_lesson['id'] }}&id_video=1">Выполнить</a>
+                                {% endif %}
                                 </td>
                                 <td style="text-align: center">
                                     <div style="display: inline-block" class="badge{% if i_lesson['task'] and i_lesson['homework_answer'] != false %}

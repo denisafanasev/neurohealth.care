@@ -60,6 +60,8 @@ class EducationCoursePageController():
                                 "status": last_homeworks.homework_answer.status,
                                 "answer": last_homeworks.homework_answer.answer
                             }
+
+                        lesson['id_room_chat'] = course_service.get_id_room_chat(i_lesson.id, _user_id)
                     else:
                         lesson['homework_answer'] = False
 

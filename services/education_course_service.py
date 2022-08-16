@@ -1,5 +1,6 @@
 from models.action_manager import ActionManager
 from models.room_chat_manager import RoomChatManager
+from models.message_manager import MessageManager
 from models.user_manager import UserManager
 from models.course_manager import EducationCourseManager
 from models.module_manager import EducationModuleManager
@@ -215,3 +216,20 @@ class EducationCourseService():
         #                                                  _id_education_stream=None).id
 
         return
+
+    def get_id_room_chat(self, _id_lesson, _id_user):
+        """
+        Возвращает ID комнаты чата
+
+        Args:
+            _id_lesson(Int): ID урока
+            _id_user(Int): ID текущего пользователя
+
+        Returns:
+            Int: ID комнаты чата
+        """
+        room_chat_manager = RoomChatManager()
+
+        room_chat = room_chat_manager.get_room_chat(_id_user, _id_lesson)
+        if room_chat is not None:
+            return room_chat.id

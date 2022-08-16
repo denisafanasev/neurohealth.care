@@ -48,13 +48,12 @@ class EducationCourseLessonService():
 
         return module
 
-    def room_chat_entry(self, _id_lesson, _id_user):
+    def room_chat_entry(self, _id_room_chat):
         """
         Подключает пользователя к чату
 
         Args:
-            _id_lesson(Int): ID урока
-            _id_user(User): ID пользователя
+            _id_room_chat(Integer): ID комнаты чата
         Returns:
             RoomChat: чат
         """
@@ -62,7 +61,7 @@ class EducationCourseLessonService():
         room_chat_manager = RoomChatManager()
         message_manager = MessageManager()
 
-        room_chat = room_chat_manager.room_chat_entry(_id_lesson, _id_user)
+        room_chat = room_chat_manager.room_chat_entry(_id_room_chat)
         if room_chat is not None:
             room_chat.message = message_manager.get_messages(room_chat.id)
 
@@ -74,7 +73,7 @@ class EducationCourseLessonService():
 
         Args:
             _message(Dict): текст сообщения
-            _id_lesson(Int): ID урока
+            _id_lesson(Integer): ID урока
 
         Return:
             Message: сообщение
@@ -112,7 +111,7 @@ class EducationCourseLessonService():
         Возвращает курс по id
 
         Args:
-            _id(Int): индентификатор курса
+            _id(Integer): индентификатор курса
 
         Returns:
             course(Course): курс
@@ -127,11 +126,11 @@ class EducationCourseLessonService():
         Сохраняет домашнюю работу
         Args:
             _files_list(Dict): данные сданной домашней работы
-            _id_room_chat(Int): ID чата
+            _id_room_chat(Integer): ID чата
             _text(String): ответ на задание
-            _current_user_id(Int): ID пользователя
-            _id_course(Int): ID курса
-            _id_lesson(Int): ID урока
+            _current_user_id(Integer): ID пользователя
+            _id_course(Integer): ID курса
+            _id_lesson(Integer): ID урока
 
         Return:
             Homework: домашняя работа
@@ -155,8 +154,8 @@ class EducationCourseLessonService():
         """
         Возвращает последнюю сданную домашнюю работу по ID комнаты чата
         Args:
-            _id_lesson(Int): ID урока
-            _user_id(Int): ID пользователя
+            _id_lesson(Integer): ID урока
+            _user_id(Integer): ID пользователя
 
         Return:
             Homework: домашняя работа
@@ -200,8 +199,8 @@ class EducationCourseLessonService():
             module.lessons = neighboring_lessons['next_lesson']
             neighboring_lessons['next_lesson'] = module
             available = self.is_course_module_avalable_for_user(_id_course,
-                                                                neighboring_lessons['next_lesson'].lessons.id, _user_id)
-            if not available and neighboring_lessons['next_lesson'].lessons.id > 1:
+                                                                neighboring_lessons['next_lesson'].id, _user_id)
+            if not available:
                 neighboring_lessons['next_lesson'] = None
 
         if neighboring_lessons['previous_lesson'] is not None:
@@ -209,7 +208,7 @@ class EducationCourseLessonService():
             module.lessons = neighboring_lessons['previous_lesson']
             neighboring_lessons['previous_lesson'] = module
             available = self.is_course_module_avalable_for_user(_id_course,
-                                                                neighboring_lessons['previous_lesson'].lessons.id, _user_id)
+                                                                neighboring_lessons['previous_lesson'].id, _user_id)
             if not available and neighboring_lessons['previous_lesson'].lessons.id > 1:
                 neighboring_lessons['previous_lesson'] = None
 
@@ -253,8 +252,8 @@ class EducationCourseLessonService():
 
             course_modules = module_manager.get_course_modules_list(_course_id)
 
-            # проверяем, есть ли пользователь в списках участников второего потока
-            for i in range(1, min(len(course_modules), 3)):
+            # проверяем, есть ли пользователь в списках участников второго потока
+            for i in range(1, min(len(course_modules), 5)):
                 if course_modules[i - 1].id == _module_id:
                     with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
                         course_users_list = f.read().splitlines()
@@ -263,8 +262,8 @@ class EducationCourseLessonService():
                         if course_user.split()[0] == user.login:
                             return True
 
-            # проверяем, есть ли пользователь в спиках участкинов первого потока
-            for i in range(1, min(len(course_modules), 7)):
+            # проверяем, есть ли пользователь в списках участников первого потока
+            for i in range(1, min(len(course_modules), 9)):
                 if course_modules[i - 1].id == _module_id:
                     with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
                         course_users_list = f.read().splitlines()
@@ -274,3 +273,23 @@ class EducationCourseLessonService():
                             return True
 
             return False
+
+    def get_room_chat(self, _id_lesson, _id_user):
+        """
+        Возвращает данные комнаты чата
+
+        Args:
+            _id_lesson(Integer): ID урока
+            _id_user(Integer): ID пользователя
+
+        Return:
+            RoomChat: комната чата
+        """
+        room_chat_manager = RoomChatManager()
+        message_manager = MessageManager()
+
+        room_chat = room_chat_manager.get_room_chat(_id_lesson, _id_user)
+        if room_chat is not None:
+            room_chat.message = message_manager.get_messages(room_chat.id)
+
+        return room_chat

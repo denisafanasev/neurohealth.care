@@ -4,6 +4,7 @@ from models.module_manager import EducationModuleManager
 from models.lesson_manager import EducationLessonManager
 from models.education_stream_manager import EducationStreamManager
 from models.user_manager import UserManager
+from models.room_chat_manager import RoomChatManager
 
 
 class HomeworksService():
@@ -82,3 +83,19 @@ class HomeworksService():
 
         return user_manager.get_user_by_id(_id_user)
 
+    def get_room_chat(self, _id_lesson, _id_user):
+        """
+        Возвращает данные комнаты чата
+
+        Args:
+            _id_lesson(Integer): ID
+            _id_user(Integer): ID
+
+        Returns:
+            RoomChat: комната чата
+        """
+        room_chat_manager = RoomChatManager()
+
+        room_chat = room_chat_manager.get_room_chat(_id_user, _id_lesson)
+        if room_chat is not None:
+            return room_chat

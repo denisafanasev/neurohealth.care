@@ -117,9 +117,15 @@
                                         <td><div class='badge {% if item['status'] == "не проверено" %} bg-info {% elif item['status'] == "проверено" %} bg-success {% endif %} bg-gradient text-light'>{{ item['status'] }}</div></td>
                                         <td><div class='badge {% if item['status'] == "Принято" %} bg-success {% elif item['status'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>{{ item['status'] }}</div></td>
                                         <td style="text-align: center">
-                                            <a href="/education_home_task_profile?id_chat={{ item['id_room_chat'] }}&id_homework={{ item['id'] }}" >
-                                                Перейти
-                                            </a>
+                                            {% if item.get("id_room_chat") is not none %}
+                                                <a href="/education_home_task_profile?id_chat={{ item['id_room_chat'] }}&id_homework={{ item['id'] }}" >
+                                                    Перейти
+                                                </a>
+                                            {% else %}
+                                                <a href="/education_home_task_profile?id_homework={{ item['id'] }}" >
+                                                    Перейти
+                                                </a>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}

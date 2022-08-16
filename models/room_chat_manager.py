@@ -29,7 +29,7 @@ class RoomChatManager():
 
         return room_chat
 
-    def room_chat_entry(self, _id_lesson, _id_user):
+    def room_chat_entry(self, _id_room_chat):
         """
         Подключает пользователя к чату
 
@@ -40,9 +40,9 @@ class RoomChatManager():
 
         data_store = DataStore("room_chat")
 
-        room_chat_data = data_store.get_rows({"id_user": _id_user, "id_lesson": _id_lesson})
-        if room_chat_data != []:
-            return self.room_chat_row_to_room_chat(room_chat_data[0])
+        room_chat_data = data_store.get_row_by_id(_id_room_chat)
+        if room_chat_data is not None:
+            return self.room_chat_row_to_room_chat(room_chat_data)
 
     def add_room_chat(self, _id_user, _id_lesson):
         """

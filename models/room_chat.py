@@ -16,3 +16,4 @@ class RoomChat():
         # self.id_education_stream = _id_education_stream
         self.id_user = _id_user
         self.id_lesson = _id_lesson
+        self.message = None
