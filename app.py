@@ -827,7 +827,6 @@ def education_home_task_profile():
     id_room_chat = request.args.get("id_chat")
     id_homework = request.args.get("id_homework")
 
-    room_chat = page_controller.room_chat_entry(id_room_chat, user_id)
     homework = page_controller.get_homework(int(id_homework))
     user = page_controller.get_user_by_id(user_id)
     data = page_controller.get_data(int(id_homework))
@@ -838,8 +837,8 @@ def education_home_task_profile():
         if request.form.get("send"):
             text = request.form.get("text")
             if text is not None:
-                room_chat['message'].append(page_controller.add_message({"text": text, "id_room_chat": int(id_room_chat),
-                                                            "id_user": user_id}, homework['id_lesson']))
+                page_controller.add_message({"text": text, "id_room_chat": int(id_room_chat), "id_user": user_id},
+                                            homework['id_lesson'])
 
         elif request.form.get("button") == "answer":
             answer = request.form.get("answer")
@@ -847,6 +846,8 @@ def education_home_task_profile():
                 homework, message, status_code = page_controller.homework_answer_accepted(homework["id"], user_id)
             elif answer == "False":
                 homework, message, status_code = page_controller.homework_answer_no_accepted(homework["id"], user_id)
+
+    room_chat = page_controller.room_chat_entry(int(id_room_chat), user_id)
 
     return render_template('education_home_task_profile.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _room_chat=room_chat,

@@ -60,20 +60,20 @@
                                 {% endif %}
                                 </td>
                                 <td style="text-align: center">
-                                    <div style="display: inline-block" class="badge{% if i_lesson['task'] and i_lesson['homework_answer'] != false %}
-                                            {% if i_lesson['homework_answer'] is not none %} bg-success {% else %} bg-warning {% endif %}
+                                    <div style="display: inline-block" class="badge{% if i_lesson['task'] and i_lesson['homework'] != false %}
+                                            {% if i_lesson['homework'] is not none %} bg-success {% else %} bg-warning {% endif %}
                                         {% else %} bg-secondary {% endif %} text-light bg-gradient">
-                                                            {% if i_lesson['task'] and i_lesson['homework_answer'] != false %}
-                                                                {% if i_lesson['homework_answer'] is not none %}Сдано: {{ i_lesson['homework_answer'].get('date_delivery') }}
+                                                            {% if i_lesson['task'] and i_lesson['homework'] != false %}
+                                                                {% if i_lesson['status'] is not none %}Сдано: {{ i_lesson['homework']['date_delivery'] }}
                                                                 {% else %}Не сдано{% endif %}
                                                             {% else %}Нет домашнего задания{% endif %}
                                     </div>
                                 </td>
                                 <td>
-                                    <div class='badge {% if i_lesson['homework_answer']['answer'] == "Принято" %} bg-success
-                                    {% elif i_lesson['homework_answer']['status'] == "не проверено" %} bg-info
-                                    {% elif i_lesson['homework_answer']['answer'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>
-                                        {% if i_lesson['task'] is none %}<strong><hr></strong>{% elif i_lesson['homework_answer'] is not none %}{% if i_lesson['homework_answer']['status'] == "не проверено" %}Не проверено{% elif i_lesson['homework_answer']['answer'] is not none %}{{ i_lesson['homework_answer']['answer'] }}{% endif %}
+                                    <div class='badge {% if i_lesson['homework']['status'] == "Принято" %} bg-success
+                                    {% elif i_lesson['homework']['status'] == "не проверено" %} bg-info
+                                    {% elif i_lesson['homework']['status'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>
+                                        {% if i_lesson['task'] is none %}<strong><hr></strong>{% elif i_lesson['homework']['status'] is not none %}{% if i_lesson['homework']['status'] == "не проверено" %}Не проверено{% elif i_lesson['homework']['status'] is not none %}{{ i_lesson['homework']['status'] }}{% endif %}
                                         {% endif %}
                                     </div>
                                 </td>

@@ -29,15 +29,15 @@ class EducationChatPageController():
             "id": room_chat.id,
             "message": []
         }
-
         if room_chat.message is not None:
             message_list = []
             for i_message in room_chat.message:
+                user = homework_service.get_user_by_id(i_message.id_user)
                 message = {
                     "id": i_message.id,
                     "text": Markup(i_message.text),
-                    "name_sender": i_message.name_sender,
-                    "date_send": i_message.date_send.strftime("%d/%m/%Y")
+                    "id_user": i_message.id_user,
+                    "name": user.name
                 }
 
                 message_list.append(message)
@@ -60,17 +60,8 @@ class EducationChatPageController():
         """
 
         homework_service = HomeworkProfileService()
-        user_manager = UserManager()
 
-        message = homework_service.add_message(_message, _id_lesson)
-        user = user_manager.get_user_by_id(message.id_user)
-        message_view = {
-            "id": message.id,
-            "text": Markup(message.text),
-            "id_user": message.id_user,
-            "name": user.name
-        }
-        return message_view
+        return homework_service.add_message(_message, _id_lesson)
 
     def get_user_by_id(self, _user_id):
         """
@@ -84,6 +75,7 @@ class EducationChatPageController():
 
         user = homework_service.get_user_by_id(_user_id)
         user_view = {
+            "user_id": user.user_id,
             "login": user.login,
             "role": user.role,
             "active_education_module": user.active_education_module,
@@ -123,11 +115,7 @@ class EducationChatPageController():
             "id": homework.id,
             "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
             "users_files_list": homework.users_files_list,
-            "homework_answer": {
-                "id": homework.homework_answer.id,
-                "answer": homework.homework_answer.answer,
-                "status": homework.homework_answer.status
-            },
+            "status": homework.status,
             "text": Markup(homework.text)
         }
 

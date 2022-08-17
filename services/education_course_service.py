@@ -157,49 +157,48 @@ class EducationCourseService():
 
             return False
 
-    # def get_last_homework_by_id_room_chat(self, _id_room_chat):
-    #
-    #     homework_manager = HomeworkManager()
-    #     users_file_manager = UsersFileManager()
-    #     room_chat_manager = RoomChatManager()
-    #     user_manager = UserManager()
-    #
-    #     homework_list = homework_manager.get_homeworks_list_by_id_room_chat(_id_room_chat)
-    #     date = datetime.strptime("01/01/2000", "%d/%m/%Y")
-    #     last_homework = None
-    #     if homework_list != []:
-    #         for homework in homework_list:
-    #             if homework.id_user is None:
-    #                 room_chat = room_chat_manager.get_room_chat(_id_room_chat)
-    #                 name_room_chat = room_chat.name.split("_")
-    #                 id_dict = {"course": int(name_room_chat[1]), "lesson": int(name_room_chat[2]),
-    #                            "user": name_room_chat[3]}
-    #                 if len(name_room_chat) > 4:
-    #                     for i in range(0, len(name_room_chat) - 3):
-    #                         if i + 4 < len(name_room_chat):
-    #                             id_dict['user'] = "_".join([id_dict['user'], name_room_chat[i + 4]])
-    #                         else:
-    #                             break
-    #                 homework.id_user = user_manager.get_user_by_login(id_dict['user']).user_id
-    #                 homework.id_course = id_dict['course']
-    #                 homework.id_lesson = id_dict['lesson']
-    #                 homework_manager.update_homework(homework)
-    #
-    #             if homework.date_delivery >= date:
-    #                 date = homework.date_delivery
-    #                 last_homework = homework
-    #
-    #         files = users_file_manager.get_size_files(last_homework.users_files_list)
-    #         last_homework.users_files_list = files
-    #
-    #         return last_homework
+    def get_last_homework_by_id_room_chat(self, _id_room_chat):
 
-    def get_last_homework(self, _id_course, _id_lesson, _id_user):
+        homework_manager = HomeworkManager()
+        users_file_manager = UsersFileManager()
+        room_chat_manager = RoomChatManager()
+        user_manager = UserManager()
+
+        homework_list = homework_manager.get_homeworks_list_by_id_room_chat(_id_room_chat)
+        date = datetime.strptime("01/01/2000", "%d/%m/%Y")
+        last_homework = None
+        if homework_list != []:
+            for homework in homework_list:
+                if homework.id_user is None:
+                    room_chat = room_chat_manager.get_room_chat(_id_room_chat)
+                    name_room_chat = room_chat.name.split("_")
+                    id_dict = {"course": int(name_room_chat[1]), "lesson": int(name_room_chat[2]),
+                               "user": name_room_chat[3]}
+                    if len(name_room_chat) > 4:
+                        for i in range(0, len(name_room_chat) - 3):
+                            if i + 4 < len(name_room_chat):
+                                id_dict['user'] = "_".join([id_dict['user'], name_room_chat[i + 4]])
+                            else:
+                                break
+                    homework.id_user = user_manager.get_user_by_login(id_dict['user']).user_id
+                    homework.id_course = id_dict['course']
+                    homework.id_lesson = id_dict['lesson']
+                    homework_manager.update_homework(homework)
+
+                if homework.date_delivery >= date:
+                    date = homework.date_delivery
+                    last_homework = homework
+
+            files = users_file_manager.get_size_files(last_homework.users_files_list)
+            last_homework.users_files_list = files
+
+            return last_homework
+
+    def get_last_homework(self, _id_lesson, _id_user):
         """
         Возвращает последнее сданное домашнюю работу по уроку
 
         Args:
-            _id_course(Int): ID курса
             _id_lesson(Int): ID урока
             _id_user(Int): ID пользователя
 
@@ -207,15 +206,22 @@ class EducationCourseService():
             Homework: домашняя работа
         """
 
-        user_manager = UserManager()
-        room_chat_manager = RoomChatManager()
+        homework_manager = HomeworkManager()
+        users_file_manager = UsersFileManager()
 
-        user = user_manager.get_user_by_id(_id_user)
-        # id_room_chat = room_chat_manager.room_chat_entry(_id_course=_id_course, _id_lesson=_id_lesson,
-        #                                                  _user=user, _id_room_chat=None, _id_module=None,
-        #                                                  _id_education_stream=None).id
+        homework_list = homework_manager.get_homeworks_list_by_id_lesson(_id_lesson, _id_user)
+        date = datetime.strptime("01/01/2000", "%d/%m/%Y")
+        last_homework = None
+        if homework_list != []:
+            for homework in homework_list:
+                if homework.date_delivery >= date:
+                    date = homework.date_delivery
+                    last_homework = homework
 
-        return
+            files = users_file_manager.get_size_files(last_homework.users_files_list)
+            last_homework.users_files_list = files
+
+            return last_homework
 
     def get_id_room_chat(self, _id_lesson, _id_user):
         """

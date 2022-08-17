@@ -26,8 +26,13 @@ class HomeworkProfileService():
         """
 
         room_chat_manager = RoomChatManager()
+        message_manager = MessageManager()
 
-        return room_chat_manager.room_chat_entry(_id_room_chat)
+        room_chat = room_chat_manager.room_chat_entry(_id_room_chat)
+        if room_chat is not None:
+            room_chat.message = message_manager.get_messages(_id_room_chat)
+
+        return room_chat
 
     def add_message(self, _message, _id_lesson):
         """
@@ -47,9 +52,7 @@ class HomeworkProfileService():
             if _message['id_room_chat'] is None:
                 _message['id_room_chat'] = room_chat_manager.add_room_chat(_message['id_user'], _id_lesson).id
 
-            return message_manager.add_message(_message)
-        else:
-            return message_manager.add_message(_message)
+        message_manager.add_message(_message)
 
 
     def get_user_by_id(self, _id_user):

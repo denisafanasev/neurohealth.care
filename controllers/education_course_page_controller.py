@@ -42,28 +42,29 @@ class EducationCoursePageController():
                 lesson = {
                     "id": i_lesson.id,
                     "name": i_lesson.name,
-                    "homework_answer": None,
+                    "homework": None,
                     "task": i_lesson.task
                 }
 
                 if user_role != "superuser":
                     if ((module['available'] and i_module.id <= 8) or i_module.id == 1) and i_lesson.task is not None:
-                        last_homeworks = course_service.get_last_homework(_id, i_lesson.id, _user_id)
+                        last_homeworks = course_service.get_last_homework(i_lesson.id, _user_id)
                         if last_homeworks is not None:
-                            if last_homeworks.homework_answer.answer:
-                                last_homeworks.homework_answer.answer = "Принято"
+                            if last_homeworks.status is None:
+                                last_homeworks.status = "не проверено"
+                            if last_homeworks.status:
+                                last_homeworks.status = "Принято"
                             else:
-                                last_homeworks.homework_answer.answer = "Не принято"
+                                last_homeworks.status = "Не принято"
 
-                            lesson['homework_answer'] = {
+                            lesson['homework'] = {
                                 "date_delivery": last_homeworks.date_delivery.strftime("%d/%m/%Y"),
-                                "status": last_homeworks.homework_answer.status,
-                                "answer": last_homeworks.homework_answer.answer
+                                "status": last_homeworks.status,
                             }
 
                         lesson['id_room_chat'] = course_service.get_id_room_chat(i_lesson.id, _user_id)
                     else:
-                        lesson['homework_answer'] = False
+                        lesson['homework'] = False
 
                 lesson_list.append(lesson)
 
