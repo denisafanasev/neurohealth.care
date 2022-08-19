@@ -53,28 +53,30 @@
                                 </td>
                                 <td>{{ i_lesson['name'] }}</td>
                                 <td>
-                                {% if i_lesson['id_room_chat'] is not none %}
+                                {% if i_lesson['id_room_chat'] is not none and _user['role'] != "superuser" %}
                                     <a href="/education_course/lesson?id_lesson={{ i_lesson['id'] }}&id_video=1&id_chat={{ i_lesson['id_room_chat'] }}">Выполнить</a>
                                 {% else %}
                                     <a href="/education_course/lesson?id_lesson={{ i_lesson['id'] }}&id_video=1">Выполнить</a>
                                 {% endif %}
                                 </td>
                                 <td style="text-align: center">
-                                    <div style="display: inline-block" class="badge{% if i_lesson['task'] and i_lesson['homework'] != false %}
+                                    <div style="display: inline-block" class="badge {% if i_lesson['task'] is not none %}
                                             {% if i_lesson['homework'] is not none %} bg-success {% else %} bg-warning {% endif %}
                                         {% else %} bg-secondary {% endif %} text-light bg-gradient">
-                                                            {% if i_lesson['task'] and i_lesson['homework'] != false %}
-                                                                {% if i_lesson['status'] is not none %}Сдано: {{ i_lesson['homework']['date_delivery'] }}
-                                                                {% else %}Не сдано{% endif %}
+                                                            {% if i_lesson['task'] is not none %}
+                                                                {% if i_lesson['homework'] is not none %}
+                                                                    Сдано: {{ i_lesson['homework']['date_delivery'] }}
+                                                                {% else %}
+                                                                    Не сдано
+                                                                {% endif %}
                                                             {% else %}Нет домашнего задания{% endif %}
                                     </div>
                                 </td>
                                 <td>
                                     <div class='badge {% if i_lesson['homework']['status'] == "Принято" %} bg-success
-                                    {% elif i_lesson['homework']['status'] == "не проверено" %} bg-info
+                                    {% elif i_lesson['homework']['status'] == "Не проверено" %} bg-info
                                     {% elif i_lesson['homework']['status'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>
-                                        {% if i_lesson['task'] is none %}<strong><hr></strong>{% elif i_lesson['homework']['status'] is not none %}{% if i_lesson['homework']['status'] == "не проверено" %}Не проверено{% elif i_lesson['homework']['status'] is not none %}{{ i_lesson['homework']['status'] }}{% endif %}
-                                        {% endif %}
+                                        {% if i_lesson['task'] is none %}<strong><hr></strong>{% elif i_lesson['homework']['status'] is not none %}{{ i_lesson['homework']['status'] }}{% endif %}
                                     </div>
                                 </td>
                                 <td class="d-none d-md-table-cell">

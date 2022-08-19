@@ -3,7 +3,7 @@ class Lesson():
     Класс урок
     """
 
-    def __init__(self, _id=None, _id_module=None, _name='', _materials=None, _link='', _text='', _task=''):
+    def __init__(self, _id=None, _id_module=None, _name='', _materials=None, _link='', _text=None, _task=None):
         """
         Конструктор класса
 

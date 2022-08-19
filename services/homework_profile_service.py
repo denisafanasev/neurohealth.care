@@ -14,7 +14,7 @@ class HomeworkProfileService():
     Возвращает в слой отображения объекты в доменной модели
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
-    def room_chat_entry(self, _id_room_chat):
+    def room_chat_entry(self, _id_room_chat, _id_user):
         """
         Подключает пользователя к чату
 
@@ -30,11 +30,11 @@ class HomeworkProfileService():
 
         room_chat = room_chat_manager.room_chat_entry(_id_room_chat)
         if room_chat is not None:
-            room_chat.message = message_manager.get_messages(_id_room_chat)
+            room_chat.message = message_manager.get_messages(_id_room_chat, _id_user)
 
         return room_chat
 
-    def add_message(self, _message, _id_lesson):
+    def add_message(self, _message, _id_lesson, _id_user):
         """
         Сохраняет сообщение
 
@@ -45,14 +45,16 @@ class HomeworkProfileService():
         """
 
         message_manager = MessageManager()
-
         room_chat_manager = RoomChatManager()
-        if _message['id_room_chat'] is None:
-            _message['id_room_chat'] = room_chat_manager.get_room_chat(_message['id_user'], _id_lesson).id
-            if _message['id_room_chat'] is None:
-                _message['id_room_chat'] = room_chat_manager.add_room_chat(_message['id_user'], _id_lesson).id
 
-        message_manager.add_message(_message)
+        if _message['id_room_chat'] is None:
+            room_chat = room_chat_manager.get_room_chat(_id_user, _id_lesson)
+            if room_chat is None:
+                _message['id_room_chat'] = room_chat_manager.add_room_chat(_id_user, _id_lesson).id
+            else:
+                _message['id_room_chat'] = room_chat.id
+
+        return message_manager.add_message(_message)
 
 
     def get_user_by_id(self, _id_user):

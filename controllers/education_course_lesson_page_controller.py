@@ -44,7 +44,7 @@ class EducationCourseLessonPageController():
 
         return lesson
 
-    def room_chat_entry(self, _id_room_chat=None, _id_education_stream=None):
+    def room_chat_entry(self, _id_room_chat=None, _id_education_stream=None, _id_user=None):
         """
         Подключает пользователя к чату
 
@@ -61,7 +61,7 @@ class EducationCourseLessonPageController():
         if _id_room_chat is None and _id_education_stream is None:
             _id_education_stream = "subscription"
 
-        room_chat = education_course_service.room_chat_entry(_id_room_chat)
+        room_chat = education_course_service.room_chat_entry(_id_room_chat, _id_user)
         if room_chat is not None:
             chat = {
                 "id": room_chat.id,
@@ -223,18 +223,26 @@ class EducationCourseLessonPageController():
             "previous_lesson": None
         }
         if neighboring_lessons['next_lesson'] is not None:
+            room_chat = course_service.get_room_chat(neighboring_lessons['next_lesson'].lessons.id, _user_id)
             neighboring_lessons_view["next_lesson"] = {
                 "id_course": _id_course,
                 "id_module": neighboring_lessons['next_lesson'].id,
-                "id": neighboring_lessons['next_lesson'].lessons.id
+                "id": neighboring_lessons['next_lesson'].lessons.id,
+                "id_room_chat": None
             }
+            if room_chat is not None:
+                neighboring_lessons_view['next_lesson']['id_room_chat'] = room_chat.id
 
         if neighboring_lessons['previous_lesson'] is not None:
+            room_chat = course_service.get_room_chat(neighboring_lessons['previous_lesson'].lessons.id, _user_id)
             neighboring_lessons_view["previous_lesson"] = {
                 "id_course": _id_course,
                 "id_module": neighboring_lessons['previous_lesson'].id,
-                "id": neighboring_lessons['previous_lesson'].lessons.id
+                "id": neighboring_lessons['previous_lesson'].lessons.id,
+                "id_room_chat": None
             }
+            if room_chat is not None:
+                neighboring_lessons_view['previous_lesson']['id_room_chat'] = room_chat.id
 
         return neighboring_lessons_view
 

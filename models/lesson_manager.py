@@ -22,10 +22,10 @@ class EducationLessonManager():
         lesson = Lesson(_id=_data_row.doc_id, _id_module=_data_row["id_module"], _name=_data_row["name"],
                         _materials=_data_row["materials"], _link=_data_row['link'])
 
-        if _data_row.get("task") is not None:
+        if _data_row.get("task") != "":
             lesson.task = _data_row['task']
 
-        if _data_row.get("text") is not None:
+        if _data_row.get("text") != "":
             lesson.text = _data_row['text']
 
         return lesson

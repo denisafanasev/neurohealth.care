@@ -23,7 +23,7 @@ class EducationChatPageController():
 
         homework_service = HomeworkProfileService()
 
-        room_chat = homework_service.room_chat_entry(_id_room_chat=_id_room_chat)
+        room_chat = homework_service.room_chat_entry(_id_room_chat=_id_room_chat, _id_user=_id_user)
 
         room_chat_view = {
             "id": room_chat.id,
@@ -46,7 +46,7 @@ class EducationChatPageController():
 
         return room_chat_view
 
-    def add_message(self, _message, _id_lesson):
+    def add_message(self, _message, _id_lesson, _id_user):
         """
         Сохраняет сообщение
 
@@ -61,7 +61,9 @@ class EducationChatPageController():
 
         homework_service = HomeworkProfileService()
 
-        return homework_service.add_message(_message, _id_lesson)
+        message = homework_service.add_message(_message, _id_lesson, _id_user)
+        if message is not None:
+            return message.id_room_chat
 
     def get_user_by_id(self, _user_id):
         """
@@ -210,6 +212,7 @@ class EducationChatPageController():
         data = {
             "user":
                 {
+                    "id": user.user_id,
                     "login": user.login,
                     "name": user.name,
                     "email": user.email,

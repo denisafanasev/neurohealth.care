@@ -51,8 +51,8 @@ class EducationCoursePageController():
                         last_homeworks = course_service.get_last_homework(i_lesson.id, _user_id)
                         if last_homeworks is not None:
                             if last_homeworks.status is None:
-                                last_homeworks.status = "не проверено"
-                            if last_homeworks.status:
+                                last_homeworks.status = "Не проверено"
+                            elif last_homeworks.status:
                                 last_homeworks.status = "Принято"
                             else:
                                 last_homeworks.status = "Не принято"
@@ -63,8 +63,6 @@ class EducationCoursePageController():
                             }
 
                         lesson['id_room_chat'] = course_service.get_id_room_chat(i_lesson.id, _user_id)
-                    else:
-                        lesson['homework'] = False
 
                 lesson_list.append(lesson)
 
@@ -92,7 +90,6 @@ class EducationCoursePageController():
             "education_module_expiration_date": user.education_module_expiration_date.strftime("%d/%m/%Y"),
             "education_stream": {}
         }
-
         if type(user.education_stream_list) is not list:
             user_view['education_stream'] = {
                 "id": user.education_stream_list.id,

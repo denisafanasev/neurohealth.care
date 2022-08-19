@@ -10,7 +10,7 @@ class EducationHomeTasksPageController():
     Взаимодейтвует с классами слоя сервисов, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def get_homeworks_list(self):
+    def get_homeworks_list(self, _id_current_user):
         """
         Возвращает список домашних работ пользователей
 
@@ -27,10 +27,10 @@ class EducationHomeTasksPageController():
             course = homework_service.get_course(homework.id_lesson)
             # education_stream = homework_service.get_education_stream(room_chat.id_education_stream)
             user = homework_service.get_user_by_id(homework.id_user)
-            room_chat = homework_service.get_room_chat(homework.id_lesson, homework.id_user)
+            room_chat = homework_service.get_room_chat(homework.id_lesson, homework.id_user, _id_current_user)
             if homework is not None:
                 if homework.status is None:
-                    homework.status = "не проверено"
+                    homework.status = "Не проверено"
                 elif homework.status:
                     homework.status = "Принято"
                 else:
@@ -63,6 +63,7 @@ class EducationHomeTasksPageController():
 
             if room_chat is not None:
                 homework_view['id_room_chat'] = room_chat.id
+                homework_view['unread_message_amount'] = room_chat.unread_message_amount
 
             homework_list_view.append(homework_view)
 

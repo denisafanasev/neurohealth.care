@@ -740,10 +740,13 @@ def education_course_lesson():
     id_room_chat = request.args.get("id_chat")
     user_id = flask_login.current_user.user_id
 
+    if id_room_chat == "None":
+        id_room_chat = None
+
     user = page_controller.get_user_view_by_id_and_course_id(user_id)
     data = page_controller.get_lesson(user_id, id_lesson, int(id_video))
     course = page_controller.get_course_by_id(data['id_course'])
-    user_list = None
+    room_chat = None
     homework = None
 
     # тут проверяем, что пользователь подписан на курс
@@ -751,7 +754,6 @@ def education_course_lesson():
     #    return redirect("/price_list")
 
     neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
-
     if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
         if data['id_module'] > 1 and user['role'] != 'superuser' and not data['available']:
             return redirect('/price_list')
@@ -763,7 +765,7 @@ def education_course_lesson():
         # сохраняем новое сообщение
         if request.form.get("send"):
             text = request.form.get("text")
-            id_chat = page_controller.add_message({"text": text, "id_room_chat": int(id_room_chat),
+            id_chat = page_controller.add_message({"text": text, "id_room_chat": id_room_chat,
                                                             "id_user": user_id}, id_lesson)
             if id_room_chat is None:
                 return redirect(f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_chat}")
@@ -778,11 +780,9 @@ def education_course_lesson():
             id_room_chat = page_controller.get_room_chat(_id_lesson=id_lesson, _id_user=user_id)["id"]
             return redirect(
                 f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
-
-    if id_room_chat is not None:
-        room_chat = page_controller.room_chat_entry(_id_room_chat=int(id_room_chat))
-    else:
-        room_chat = None
+    if user['role'] != "superuser":
+        if id_room_chat is not None:
+            room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat, _id_user=user_id)
 
     homework = page_controller.get_last_homework(id_lesson, user_id)
 
@@ -807,7 +807,7 @@ def education_home_tasks():
     mpc = MainMenuPageController(user_id)
     endpoint = request.endpoint
 
-    data = page_controller.get_homeworks_list()
+    data = page_controller.get_homeworks_list(user_id)
 
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
@@ -827,9 +827,13 @@ def education_home_task_profile():
     id_room_chat = request.args.get("id_chat")
     id_homework = request.args.get("id_homework")
 
+    if id_room_chat == "None":
+        id_room_chat = None
+
     homework = page_controller.get_homework(int(id_homework))
     user = page_controller.get_user_by_id(user_id)
     data = page_controller.get_data(int(id_homework))
+    room_chat = None
     message = None
     status_code = None
 
@@ -837,8 +841,12 @@ def education_home_task_profile():
         if request.form.get("send"):
             text = request.form.get("text")
             if text is not None:
-                page_controller.add_message({"text": text, "id_room_chat": int(id_room_chat), "id_user": user_id},
-                                            homework['id_lesson'])
+                id_chat = page_controller.add_message({"text": text, "id_room_chat": id_room_chat,
+                                                       "id_user": user_id}, data['module']['lesson']['id'],
+                                                      data['user']["id"])
+                if id_room_chat is None:
+                    return redirect(
+                        f"/education_home_task_profile?id_homework={homework['id']}&id_chat={id_chat}")
 
         elif request.form.get("button") == "answer":
             answer = request.form.get("answer")
@@ -847,7 +855,8 @@ def education_home_task_profile():
             elif answer == "False":
                 homework, message, status_code = page_controller.homework_answer_no_accepted(homework["id"], user_id)
 
-    room_chat = page_controller.room_chat_entry(int(id_room_chat), user_id)
+    if id_room_chat is not None:
+        room_chat = page_controller.room_chat_entry(int(id_room_chat), user_id)
 
     return render_template('education_home_task_profile.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _room_chat=room_chat,
