@@ -1,6 +1,7 @@
 name: nhc_dev
 channels:
   - conda-forge
+  - anaconda
   - defaults
 dependencies:
   - astroid=2.11.7
@@ -66,4 +67,6 @@ dependencies:
   - yaml=0.2.5
   - zipp=3.8.0
   - zlib=1.2.12
+  - pip:
+    - pyyaml==6.0
 prefix: /Users/shaman/opt/anaconda3/envs/nhc_dev
