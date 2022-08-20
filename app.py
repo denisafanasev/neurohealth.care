@@ -35,15 +35,14 @@ from controllers.education_home_tasks_page_controller import EducationHomeTasksP
 from controllers.education_home_task_profile_page_controller import EducationChatPageController
 from controllers.education_stream_page_controller import EducationStreamPageController
 from controllers.education_stream_profile_page_controller import EducationStreamProfilePageController
+from controllers.education_program_subscription_page_controller import EducationProgramSubscriptionPageController
 
 from error import UserManagerException
-from utils.enviroment_setup import set_ga_id
 
 import config
-from utils.enviroment_setup import set_ga_id
 
 sentry_sdk.init(
-    dsn="https://216657f6678b4b1bb5136f6ff1a0d8ee@o1211898.ingest.sentry.io/6359936",
+    dsn=config.sentry_dsn(),
     environment=config.ENVIRONMENT,
     integrations=[FlaskIntegration()],
 
@@ -52,12 +51,6 @@ sentry_sdk.init(
     # We recommend adjusting this value in production.
     traces_sample_rate=1.0
 )
-
-
-class Config(object):
-    DEBUG = config.DEBUG
-    LOG_FILE = config.LOG_FILE
-
 
 if config.DEBUG:
     logging.basicConfig(filename=config.LOG_FILE, level=logging.DEBUG,
@@ -73,7 +66,6 @@ logger.addHandler(handler)
 app = Flask(__name__)
 app.secret_key = 'super secret key'
 app.debug = config.DEBUG
-app.config.from_object(Config())
 
 login_manager = LoginManager()
 login_manager.login_view = "login"
@@ -95,17 +87,20 @@ def index():
 
 @app.context_processor
 def inject_global_context():
-    """инициализация глобальных переменных
+    """
+    инициализирует глобальные переменные
 
     Returns:
         None
     """
 
-    ga_id = set_ga_id()
+    ga_id = config.ga_id()
+    app_support_channel = config.app_support_channel()
 
     return dict(app_version=config.VERSION,
                 app_name=config.APP_NAME,
-                GA_TRACKING_ID=ga_id)
+                GA_TRACKING_ID=ga_id,
+                APP_SUPPORT_CHANNEL=app_support_channel)
 
 
 @login_manager.user_loader
@@ -127,7 +122,8 @@ def load_user(user_id):
 
 @app.route('/debug-sentry')
 def trigger_error():
-    """служебная процедура для sentry
+    """
+    служебная процедура для sentry
     """
 
     division_by_zero = 1 / 0
@@ -648,23 +644,27 @@ def empty_function():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data="")
 
 
-@app.route('/price_list', methods=['GET', 'POST'])
+@app.route('/education_program_subscription', methods=['GET', 'POST'])
 @login_required
-def price_list():
+def education_program_subscription():
     """
     Страница прайс листа и подписки на платформу
 
     Returns:
-        
+
     """
 
+    endpoint = 'education_list_courses'
+    page_controller = EducationProgramSubscriptionPageController()
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     endpoint = 'education_list_courses'
     user_id = flask_login.current_user.user_id
 
-    return render_template('price_list.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data="")
+    _data = page_controller.get_page_data(1)
+
+    return render_template('education_program_subscription.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=_data)
 
 
 @app.route('/evolution_centre_dummy', methods=['GET', 'POST'])
@@ -749,14 +749,14 @@ def education_course_lesson():
 
     # тут проверяем, что пользователь подписан на курс
     #if user['role'] == 'user' and course['type'] == 'main' and int(id_module) > 1:
-    #    return redirect("/price_list")
+    #    return redirect("/education_program_subscription")
 
     data = page_controller.get_lesson(user_id, id_lesson, int(id_course), int(id_video), id_room_chat)
     neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, int(id_course))
 
     if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
         if int(id_module) > 1 and user['role'] != 'superuser' and not data['available']:
-            return redirect('/price_list')
+            return redirect('/education_program_subscription')
 
 
     if data["lesson"].get("task") is not None:
