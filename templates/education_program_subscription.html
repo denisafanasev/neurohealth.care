@@ -5,10 +5,17 @@
     <h1 class="h3 mb-3">Оформите подписку для доступа к программе "Я - НейроМама"</h1>
     <div class="row justify-content-center mt-3 mb-2">
         <div class="col-md-10">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Внимание</h5>
-                    <p class="card-text">На текущий момент для оформления доступа необходимо обратиться в Telegram канал поддержки и оформить доступ в ручном режиме. Автоматическая подписка и проведение оплаты будут доступны в следующей версии платформы. <a href="{{ url_for('education_list_courses')}}">Вернуться к описанию программы</a></p>
+            <div class="alert alert-primary alert-outline alert-dismissible" role="alert">
+                <div class="alert-icon">
+                    <i class="far fa-fw fa-bell"></i>
+                </div>
+                <div class="alert-message">
+                    <strong>Внимание!</strong>
+                        Для оплаты доступа на форме оплаты необходимо указать ваш email, который был использован для
+                        регистрации на платформе. После получения оплаты мы откроем доступ в течении нескольких часов. <br>В случае каких-то
+                        вопросов или проблем, пожалуйста, обратитесь в <a href="{{ _data['support_channel_link'] }}" target="_blank">Telegram</a>
+                        канал поддержки и мы обязательно поможем. <a href="{{ url_for('education_list_courses')}}"><br>Вернуться к описанию
+                        программы</a>
                 </div>
             </div>
         </div>
@@ -18,7 +25,7 @@
             <div class="card text-center h-100">
                 <div class="card-body d-flex flex-column">
                     <div class="mb-5">
-                        <h4><strong>Самостоятельное обучение</strong></h4>
+                        <h4><strong>Подписка на дополнительные курсы программы для самостоятельного изучения</strong></h4>
                         <span class="display-5">999 р</span><br>
                         <span>/месяц</span>
                     </div>
@@ -34,17 +41,14 @@
                     <h6><strong>Планируется:</strong></h6>
                     <ul class="list-unstyled">
                         <li class="mb-2">
-                            ✓ Интенсив «Школа выживания при СДВГ»
-                        </li>
-                        <li class="mb-2">
-                            ✓ Интенсив «Познаю Пространство»
+                            ✓ Интенсив «Сенсомоторная коррекция»
                         </li>
                         <li class="mb-2">
                             ✓ Обзоры игр и пособий
                         </li>
                     </ul>
                     <div class="mt-auto">
-                        <a href="https://t.me/+uY-id1QeazJlMTAy" class="btn btn-lg btn-primary">Подписаться</a>
+                        <a href="{{ _data['subscription_payment_link'] }}" target="_blank" class="btn btn-lg btn-primary">Оплатить</a>
                     </div>
                 </div>
             </div>
@@ -53,8 +57,8 @@
             <div class="card text-center h-100">
                 <div class="card-body d-flex flex-column">
                     <div class="mb-4">
-                        <h3><strong>Обучающий курс</strong></h3>
-                        <span class="display-5">20 000 р</span> <br>
+                        <h3><strong>Основной курс в рамках образовательного потока обучения с преподавателем</strong></h3>
+                        <span class="display-5">28 000 р</span> <br>
                         <span>/2 месяца</span>
                     </div>
                     <h6><strong>Включает:</strong></h6>
@@ -89,13 +93,9 @@
                         <li class="mb-2">
                             ✓ Видеоконференции по материалам с кураторами и с автором курса
                         </li>
-                        <li class="mb-2">
-                            Продление обучения с обратной связью 10 000 - 1 месяц,
-                            Без обратной связи 1000р - месяц
-                        </li>
                     </ul>
                     <div class="mt-auto">
-                        <a href="https://t.me/+uY-id1QeazJlMTAy" class="btn btn-lg btn-primary">Подписаться</a>
+                        <a href="{{ _data['subscription_payment_link'] }}" target="_blank" class="btn btn-lg btn-primary">Записаться и внести предоплату</a>
                     </div>
                 </div>
             </div>

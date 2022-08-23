@@ -1,10 +1,10 @@
 """
 app configuration
 """
-
+import yaml
 import pathlib
 
-VERSION = "1.1.8"
+VERSION = "1.1.9"
 APP_NAME = "NeuroHealth"
 
 if str(pathlib.Path().resolve()).find("prod")!=-1:
@@ -14,6 +14,7 @@ else:
 
 # DATA_FOLDER = "../data/"
 DATA_FOLDER = "../neurohealth.care.data." + ENVIRONMENT + "/"
+CONFIG_FILE_NAME = "config.yaml"
 
 # system settings
 THREADING_ENABLE = True
@@ -79,3 +80,68 @@ SETTINGS_MENU = [
     {"name": "Справочник оценочных значений", "endpoint": "estimated_values"},
     {"name": "Справочник диапазонов возрастов", "endpoint": "age_range_list"},
 ]
+
+
+def ga_id() -> str:
+    """
+    Возвращает идентификатор GA из системного файла настроек
+
+    Returns:
+        String: идентификатор GA
+    """    
+
+    ga_id = "G-ХХХХХХХХХХ"
+
+    try:        
+        with open(DATA_FOLDER + CONFIG_FILE_NAME, "r") as f:
+            cfg = yaml.safe_load(f)
+        
+        ga_id = cfg['CONFIG']['ga_id']
+
+    except:
+        ga_id = "G-not-found"
+
+    return ga_id
+
+
+def sentry_dsn() -> str:
+    """
+    Возвращает идентификатор sentry из системного файла настроек
+
+    Returns:
+        String: идентификатор GA
+    """   
+
+    sentry_dsn = ""
+
+    try:        
+        with open(DATA_FOLDER + CONFIG_FILE_NAME, "r") as f:
+            cfg = yaml.safe_load(f)
+        
+        sentry_dsn = cfg['CONFIG']['sentry_dsn']
+
+    except:
+        sentry_dsn = "not-found"
+
+    return sentry_dsn
+
+def app_support_channel() -> str:
+    """
+    Возвращает ссылку на канал поддержки пользователей из системного файла настроек
+
+    Returns:
+        String: идентификатор GA
+    """   
+
+    user_support_channel = ""
+
+    try:        
+        with open(DATA_FOLDER + CONFIG_FILE_NAME, "r") as f:
+            cfg = yaml.safe_load(f)
+        
+        user_support_channel = cfg['CONFIG']['user_support_channel']
+
+    except:
+        user_support_channel = "not-found"
+
+    return user_support_channel
