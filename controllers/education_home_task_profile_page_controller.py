@@ -15,7 +15,8 @@ class EducationChatPageController():
         Подключает пользователя к чату
 
         Args:
-            _id_room_chat(Int): индентификатор чата
+            _id_room_chat(Integer): индентификатор чата
+            _id_user(Integer) ID пользователя
 
         Returns:
             Dict: чат
@@ -52,8 +53,8 @@ class EducationChatPageController():
 
         Args:
             _message(Dict): данные сообщения
-            _room_chat_id(Integer): ID чата
-            _user_id(Integer): ID пользователя
+            _id_lesson(Integer): ID урока
+            _id_user(Integer): ID пользователя
 
         Returns:
             Dict: сообщение
@@ -125,7 +126,7 @@ class EducationChatPageController():
 
     def homework_answer_no_accepted(self, _id_homework, _user_id):
         """
-        Меняет статус проверки домашней работы на "Принято"
+        Меняет статус проверки домашней работы на "Не принято"
 
         Args:
             _id_homework(Int): ID домашней работы
@@ -139,8 +140,8 @@ class EducationChatPageController():
 
         homework_service = HomeworkProfileService()
 
-        homework = homework_service.homework_answer_accepted(_id_homework, _user_id)
-        message = "Домашняя работа принята"
+        homework = homework_service.homework_answer_no_accepted(_id_homework, _user_id)
+        message = "Домашняя работа не принята"
         if homework is not None:
             if homework.status is None:
                 homework.status = "не проверено"

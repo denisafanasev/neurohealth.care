@@ -61,8 +61,10 @@ class EducationCoursePageController():
                                 "date_delivery": last_homeworks.date_delivery.strftime("%d/%m/%Y"),
                                 "status": last_homeworks.status,
                             }
-
-                        lesson['id_room_chat'] = course_service.get_id_room_chat(i_lesson.id, _user_id)
+                        room_chat = course_service.get_room_chat(i_lesson.id, _user_id)
+                        if room_chat is not None:
+                            lesson['id_room_chat'] = room_chat.id
+                            lesson['unread_message_amount'] = room_chat.unread_message_amount
 
                 lesson_list.append(lesson)
 

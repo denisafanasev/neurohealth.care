@@ -1,4 +1,3 @@
-from models.action_manager import ActionManager
 from models.room_chat_manager import RoomChatManager
 from models.message_manager import MessageManager
 from models.user_manager import UserManager
@@ -7,7 +6,6 @@ from models.module_manager import EducationModuleManager
 from models.lesson_manager import EducationLessonManager
 from models.education_stream_manager import EducationStreamManager
 from models.homework_manager import HomeworkManager
-from models.upload_manager import UploadManager
 from models.users_file_manager import UsersFileManager
 
 from datetime import datetime
@@ -87,7 +85,7 @@ class EducationCourseService():
         Возвращает курс по id
 
         Args:
-            _id(Int): индентификатор курса
+            _id(Integer): ID курса
 
         Returns:
             course(Course): курс
@@ -157,43 +155,6 @@ class EducationCourseService():
 
             return False
 
-    def get_last_homework_by_id_room_chat(self, _id_room_chat):
-
-        homework_manager = HomeworkManager()
-        users_file_manager = UsersFileManager()
-        room_chat_manager = RoomChatManager()
-        user_manager = UserManager()
-
-        homework_list = homework_manager.get_homeworks_list_by_id_room_chat(_id_room_chat)
-        date = datetime.strptime("01/01/2000", "%d/%m/%Y")
-        last_homework = None
-        if homework_list != []:
-            for homework in homework_list:
-                if homework.id_user is None:
-                    room_chat = room_chat_manager.get_room_chat(_id_room_chat)
-                    name_room_chat = room_chat.name.split("_")
-                    id_dict = {"course": int(name_room_chat[1]), "lesson": int(name_room_chat[2]),
-                               "user": name_room_chat[3]}
-                    if len(name_room_chat) > 4:
-                        for i in range(0, len(name_room_chat) - 3):
-                            if i + 4 < len(name_room_chat):
-                                id_dict['user'] = "_".join([id_dict['user'], name_room_chat[i + 4]])
-                            else:
-                                break
-                    homework.id_user = user_manager.get_user_by_login(id_dict['user']).user_id
-                    homework.id_course = id_dict['course']
-                    homework.id_lesson = id_dict['lesson']
-                    homework_manager.update_homework(homework)
-
-                if homework.date_delivery >= date:
-                    date = homework.date_delivery
-                    last_homework = homework
-
-            files = users_file_manager.get_size_files(last_homework.users_files_list)
-            last_homework.users_files_list = files
-
-            return last_homework
-
     def get_last_homework(self, _id_lesson, _id_user):
         """
         Возвращает последнее сданное домашнюю работу по уроку
@@ -213,6 +174,7 @@ class EducationCourseService():
         date = datetime.strptime("01/01/2000", "%d/%m/%Y")
         last_homework = None
         if homework_list != []:
+            # ищем домашнюю работу, которая была сдана позже всех по данному уроку
             for homework in homework_list:
                 if homework.date_delivery >= date:
                     date = homework.date_delivery
@@ -223,19 +185,22 @@ class EducationCourseService():
 
             return last_homework
 
-    def get_id_room_chat(self, _id_lesson, _id_user):
+    def get_room_chat(self, _id_lesson, _id_user):
         """
-        Возвращает ID комнаты чата
+        Возвращает данные комнаты чата
 
         Args:
             _id_lesson(Int): ID урока
             _id_user(Int): ID текущего пользователя
 
         Returns:
-            Int: ID комнаты чата
+            RoomChat: комната чата
         """
         room_chat_manager = RoomChatManager()
+        message_manager = MessageManager()
 
         room_chat = room_chat_manager.get_room_chat(_id_user, _id_lesson)
         if room_chat is not None:
-            return room_chat.id
+            room_chat.unread_message_amount = message_manager.get_unread_messages_amount(room_chat.id, _id_user)
+
+            return room_chat

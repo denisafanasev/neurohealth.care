@@ -43,8 +43,8 @@ class EducationCourseLessonService():
         module = module_manager.get_module_by_id(lesson.id_module)
         module.lessons = lesson
 
-        if lesson is not None:
-            action_manager.add_notifications(module, "посмотрел", '', "course_manager", login_user)
+        # if lesson is not None:
+        #     action_manager.add_notifications(module, "посмотрел", '', "course_manager", login_user)
 
         return module
 
@@ -103,6 +103,7 @@ class EducationCourseLessonService():
         """
 
         user_manager = UserManager()
+
         user = user_manager.get_user_by_id(_user_id)
 
         return user
@@ -195,6 +196,7 @@ class EducationCourseLessonService():
         module_manager = EducationModuleManager()
 
         neighboring_lessons = lesson_manager.get_neighboring_lessons(_id_lesson)
+        # если уроки найдены, то оборачиваем их в класс Module
         if neighboring_lessons['next_lesson'] is not None:
             module = module_manager.get_module_by_id(neighboring_lessons['next_lesson'].id_module)
             module.lessons = neighboring_lessons['next_lesson']

@@ -1,11 +1,15 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from models.homework import Homework
 from data_adapters.data_store import DataStore
 
 
 class HomeworkManager():
-
+    """
+    Класс модели управления домашними работами
+    Взаимодейтвует с модулем хранения данных, преобразую доменные структуры в объекты типа Dict
+    Вовзращает в слой бизнес-логики приложения объекты в доменных структурах
+    """
     def homework_row_to_homework(self, _data_row):
         """
         Преобразует структуру данных, в которой хранится информация о файле в структуру Homework
@@ -29,6 +33,7 @@ class HomeworkManager():
     def create_homework(self, _homework_files_list, _text, _id_user, _id_course, _id_lesson):
         """
         Сохраняет домашнюю работу
+
         Args:
             _homework_files_list(Dict): данные сданной домашней работы
             _text(String): ответ на задание
@@ -42,10 +47,8 @@ class HomeworkManager():
 
         data_store = DataStore("homeworks")
 
-
-        homework = Homework(_users_files_list= _homework_files_list, _text=_text, _id_user=_id_user,
+        homework = Homework(_users_files_list=_homework_files_list, _text=_text, _id_user=_id_user,
                             _id_lesson=_id_lesson, _status=None, _date_delivery=datetime.now())
-
 
         data_store.add_row({"users_files_list": homework.users_files_list,
                             "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"), "text": homework.text,
@@ -56,6 +59,7 @@ class HomeworkManager():
     def get_homeworks(self):
         """
         Возвращает список домашних работ пользователей
+
         Returns:
             List: список домашних работ
         """
@@ -66,7 +70,7 @@ class HomeworkManager():
         homework_list = []
         for homework in homeworks:
             if homework.get("text") is None:
-                data_store.update_row({"id": homework["id"], "text": ""}, "id")
+                data_store.update_row_by_doc_id({"text": ""}, homework.doc_id)
                 homework['text'] = ""
 
             homework_list.append(self.homework_row_to_homework(homework))
@@ -92,7 +96,7 @@ class HomeworkManager():
 
         for homework in homeworks_list:
             if homework.get("text") is None:
-                data_store.update_row({"id": homework["id"], "text": ""}, "id")
+                data_store.update_row_by_doc_id({"text": ""}, homework.doc_id)
                 homework['text'] = ""
 
             homeworks.append(self.homework_row_to_homework(homework))
@@ -124,18 +128,15 @@ class HomeworkManager():
             _id_homework(Int): ID домашней работы
 
         Returns:
-            Boolean: новый статус домашней работы
+            Homework: домашняя работа
         """
 
         data_store = DataStore("homeworks")
 
-        homework_data = data_store.get_row_by_id(_id_homework)
-        homework = self.homework_row_to_homework(homework_data)
-        homework.status = True
+        data_store.update_row_by_doc_id({"status": True}, _id_homework)
+        homework = data_store.get_row_by_id(_id_homework)
 
-        data_store.update_row_by_doc_id({"status": homework.status}, homework.id)
-
-        return homework
+        return self.homework_row_to_homework(homework)
 
     def homework_answer_no_accepted(self, _id_homework):
         """
@@ -145,15 +146,12 @@ class HomeworkManager():
             _id_homework(Int): ID домашней работы
 
         Returns:
-            Boolean: новый статус домашней работы
+            Homework: домашняя работа
         """
 
         data_store = DataStore("homeworks")
 
-        homework_data = data_store.get_row_by_id(_id_homework)
-        homework = self.homework_row_to_homework(homework_data)
-        homework.status = False
+        data_store.update_row_by_doc_id({"status": False}, _id_homework)
+        homework = data_store.get_row_by_id(_id_homework)
 
-        data_store.update_row_by_doc_id({"status": homework.status}, homework.id)
-
-        return homework
+        return self.homework_row_to_homework(homework)

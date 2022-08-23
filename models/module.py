@@ -8,9 +8,10 @@ class Module():
         Конструктор класса
 
         Args:
-            _id(Integer): id модуля
+            _id(Integer): ID модуля
             _name(String): название модуля
             _lessons(List): список уроков данного модуля
+            _id_course(Integer): ID курса
         """
 
         self.id = _id

@@ -31,6 +31,7 @@
                             <th style="width:15%!important;">Домашние задание</th>
                             <th style="width:10%!important;">Статус</th>
                             <th class="d-none d-md-table-cell" style="width:15%!important;">Срок доступа</th>
+                            <th style="width: 5%"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -105,6 +106,15 @@
                                 <td class="table-warning"><strong><hr></strong></td>
                                 <td class="d-none d-md-table-cell table-warning"><strong><hr></strong></td>
                             {% endif %}
+                            <td>
+                            {% if i_lesson['id_room_chat'] %}
+                                {% if i_lesson['unread_message_amount'] != 0 %}
+                                <div class="badge bg-danger float-end" style="text-align: left">
+                                    {{ i_lesson['unread_message_amount'] }}
+                                </div>
+                                {% endif %}
+                            {% endif %}
+                            </td>
 
                         </tr>
                         {% endfor %}

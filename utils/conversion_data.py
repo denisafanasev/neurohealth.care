@@ -109,6 +109,7 @@ def conversion_room_chat_data():
 
     room_chat_list = data_store.get_rows()
     for room_chat_data in room_chat_list:
+        # если есть у комнаты чата имя, то достаем из него нужную информацию, записываем ее отдельно и удаляем имя
         if room_chat_data.get("name"):
             ids_list = room_chat_data['name'].split("_")
             id_lesson = ids_list[2]
@@ -168,9 +169,9 @@ def conversion_message_data(_id_message, _id_room_chat):
                 message.id_user = user[0].doc_id
 
                 data_store.update_row({"id_user": message.id_user, "id": message.id}, "id")
+                data_store.delete_key_in_row("name_sender", "id", message.id)
 
-            data_store.delete_key_in_row("name_sender", "id", message.id)
-
+        # если нет даты отправки сообщения, то записываем сегодняшнюю дату
         if message_data[0].get("date_send") is None:
             message.date_send = datetime.now().strftime("%d/%m/%Y")
 
@@ -181,6 +182,8 @@ def conversion_message_data(_id_message, _id_room_chat):
         except:
             pass
 
+        data_store.update_row({"id": message.id, "read": message.read}, "id")
+        data_store.delete_key_in_row("viewed", "id", _id_message)
         data_store.delete_key_in_row("id", "id", _id_message)
 
 def delete_id_key_in_lesson():

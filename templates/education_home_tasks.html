@@ -2,27 +2,24 @@
 
 {% block main_block %}
 {#    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">#}
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.1.4/css/rowGroup.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.2.0/css/rowGroup.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedheader/3.2.4/css/fixedHeader.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.1.4/css/rowGroup.dataTables.min.css">
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="{{ url_for('static' , filename="js/datatables.js")}}"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.1.4/js/dataTables.rowGroup.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/4.0.2/js/dataTables.fixedColumns.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.2.4/js/dataTables.fixedHeader.min.js"></script>
 
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // DataTables with Buttons
             $("#datatables-homeworks").DataTable({
-                responsive: true,
+                responsive: false,
                 lengthChange: !1,
                 {#scrollY: "500px",#}
                 {#scrollCollapse: true,#}
+                scrollX: true,
                 paging: true,
                 fixedHeader: false,
                 fixedColumns: false,
@@ -60,16 +57,22 @@
                 return ((a < b) ? 1 : ((a > b) ? -1 : 0));
                 }
             } );
-            {#datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");#}
+
+            {#datatableshomeworks.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");#}
         });
     </script>
 
+{#    <style>#}
+{#    table.dataTable thead .sorting,#}
+{#        table.dataTable thead .sorting_asc,#}
+{#        table.dataTable thead .sorting_desc {#}
+{#            background : none;#}
+{#        }#}
+{#    </style>#}
     <style>
-    table.dataTable thead .sorting,
-        table.dataTable thead .sorting_asc,
-        table.dataTable thead .sorting_desc {
-            background : none;
-        }
+    .dataTables_scroll{
+        overflow: auto;
+    }
     </style>
 
     <div class="container-fluid p-0">
@@ -83,22 +86,22 @@
                 <div class="p-2 bd-highlight">
                     <div class="card d-flex align-self-baseline">
                         <div class="card-header">
-                            <table id="datatables-homeworks" class="table no-footer row-border order-column nowrap"
-                                   aria-describedby="datatables-buttons_info">
+                            <table id="datatables-homeworks" class="table dataTable no-footer nowrap"
+                                   aria-describedby="datatables-buttons_info" style="width: 100%">
                                 <thead>
                                     <tr role="row">
-                                        <th>#</th>
+                                        <th rowspan="1" colspan="1" style="width: 0">#</th>
                                         <th class="sorting" style="width:20%" tabindex="0" aria-controls="datatables-homeworks"
                                             aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Login</th>
                                         <th class="sorting" style="width:20%" tabindex="0" aria-controls="datatables-homeworks"
                                             aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Имя</th>
-                                        <th>Модуль</th>
-                                        <th>Урок</th>
-                                        <th class="sorting" style="width:10%" tabindex="0" aria-controls="datatables-homeworks"
+                                        <th rowspan="1" colspan="1" style="width: 5%">Модуль</th>
+                                        <th rowspan="1" colspan="1" style="width: 5%">Урок</th>
+                                        <th class="sorting" style="width:20%" tabindex="0" aria-controls="datatables-homeworks"
                                             aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Дата сдачи</th>
                                         <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
                                             aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Статус</th>
-                                        <th class="sorting" style="width:10%" tabindex="0" aria-controls="datatables-homeworks"
+                                        <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
                                             aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Ответ</th>
                                         <th class="sorting" style="width:20%; text-align: center" tabindex="0" aria-controls="datatables-homeworks"
                                             aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Домашняя работа</th>
@@ -133,15 +136,19 @@
                                                 </a>
                                             {% endif %}
                                         </td>
-                                        <td style="display: flex">
                                         {% if item['id_room_chat'] %}
                                             {% if item['unread_message_amount'] != 0 %}
-                                            <div class="badge bg-danger float-end" style="text-align: left">
-                                                {{ item['unread_message_amount'] }}
-                                            </div>
+                                                <td style="display: revert">
+                                                    <div class="badge bg-danger float-end" style="text-align: left">
+                                                        {{ item['unread_message_amount'] }}
+                                                    </div>
+                                                </td>
+                                                {% else %}
+                                                <td></td>
                                             {% endif %}
+                                        {% else %}
+                                            <td></td>
                                         {% endif %}
-                                        </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>

@@ -266,10 +266,10 @@
                                 </p>
                             {% if _user['role'] != "superuser" %}
 
-                                <!-- Если есть id комнаты чата, то значит есть и доступ к выполнению домашней работы -->
+                                <!--  -->
 
                                 {% if _data['available'] %}
-                                    {% if _homework is none or _homework.get('homework_answer')['status'] == "проверено" and _homework.get('homework_answer')['answer'] == "Не принято" %}
+                                    {% if _homework is none or _homework['status'] == "Не принято" %}
                                     <form id="homework" method="post" enctype="multipart/form-data">
                                         <div class="mb-2">
                                             <label class="form-label" for="hometask">Ответ</label>

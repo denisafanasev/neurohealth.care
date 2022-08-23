@@ -31,7 +31,7 @@ class HomeworksService():
         """
         Возвращает данные курса
         Args:
-            _id_course(Int): id курса
+            _id_lesson(Int): id урока
         Returns:
             Course: курс
         """
@@ -48,8 +48,10 @@ class HomeworksService():
     def get_lesson(self, _id_lesson):
         """
         Возвращает данные урока
+
         Args:
             _id_lesson(Int): id урока
+
         Returns:
             Lesson: урок
         """

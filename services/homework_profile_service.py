@@ -19,7 +19,8 @@ class HomeworkProfileService():
         Подключает пользователя к чату
 
         Args:
-            _id_room_chat(Int): ID чата
+            _id_room_chat(Integer): ID чата
+            _id_user(Integer): ID пользователя
 
         Returns:
             RoomChat: чат
@@ -40,8 +41,11 @@ class HomeworkProfileService():
 
         Args:
             _message(Dict): данные сообщения
-            _room_chat_id(Int): ID чата
-            _user_id(Int): ID текущего пользователя
+            _id_lesson(Int): ID урока
+            _id_user(Int): ID текущего пользователя
+
+        Returns:
+            Message: сообщение
         """
 
         message_manager = MessageManager()
@@ -55,7 +59,6 @@ class HomeworkProfileService():
                 _message['id_room_chat'] = room_chat.id
 
         return message_manager.add_message(_message)
-
 
     def get_user_by_id(self, _id_user):
         """
@@ -79,6 +82,9 @@ class HomeworkProfileService():
         Args:
             _id_homework(Int): ID домашней работы
             _user_id(Int): ID текущего пользователя
+
+        Return:
+            Homework: домашняя работа
         """
 
         homework_manager = HomeworkManager()
@@ -96,9 +102,13 @@ class HomeworkProfileService():
     def homework_answer_no_accepted(self, _id_homework, _user_id):
         """
         Меняет статус проверки домашней работы на "Не принято"
+
         Args:
             _id_homework(Int): ID домашней работы
             _user_id(Int): ID текущего пользователя
+
+        Return:
+            Homework: домашняя работа
         """
 
         homework_manager = HomeworkManager()
@@ -134,6 +144,7 @@ class HomeworkProfileService():
     def get_course(self, _id_course):
         """
         Возвращает данные курса
+
         Args:
             _id_course(Int): id курса
         Returns:
@@ -147,6 +158,7 @@ class HomeworkProfileService():
     def get_lesson(self, _id_lesson):
         """
         Возвращает данные урок
+        
         Args:
             _id_lesson(Int): id урока
         Returns:

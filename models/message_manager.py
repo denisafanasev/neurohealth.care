@@ -29,8 +29,8 @@ class MessageManager():
         else:
             message.date_send = datetime.today()
 
-        if _message.get("viewed") is not None:
-            message.viewed = _message['viewed']
+        if _message.get("read") is not None:
+            message.read = _message['read']
 
         return message
 
@@ -52,10 +52,11 @@ class MessageManager():
         message_list = []
         for i_message in messages_data:
             message = self.message_row_to_message(i_message)
-            if message.id_user != _id_user:
-                data_store.update_row_by_doc_id({"viewed": True}, i_message.doc_id)
-            else:
-                data_store.update_row_by_doc_id({"viewed": False}, i_message.doc_id)
+            if not message.read:
+                if message.id_user != _id_user:
+                    data_store.update_row_by_doc_id({"read": True}, message.id)
+                else:
+                    data_store.update_row_by_doc_id({"read": False}, message.id)
 
             message_list.append(message)
 
@@ -74,12 +75,13 @@ class MessageManager():
 
         data_store = DataStore("message")
 
-        _message["date_send"] = datetime.today()
-        message = Message(_id_user=_message['id_user'], _id_room_chat=int(_message['id_room_chat']), _text=_message['text'])
+        _message["date_send"] = datetime.now()
+        message = Message(_id_user=_message['id_user'], _id_room_chat=int(_message['id_room_chat']), _text=_message['text'],
+                          _date_send=_message['date_send'])
 
         data_store.add_row({"text": message.text, "id_user": message.id_user,
                             "id_room_chat": message.id_room_chat, "date_send": _message['date_send'].strftime("%d/%m/%Y"),
-                            "viewed": message.viewed})
+                            "read": message.read})
 
         return message
 
@@ -96,7 +98,7 @@ class MessageManager():
         """
         data_store = DataStore("message")
 
-        messages_data_list = data_store.get_rows({"viewed": False, "id_room_chat": _id_room_chat})
+        messages_data_list = data_store.get_rows({"read": False, "id_room_chat": _id_room_chat})
         amount = 0
         for message_data in messages_data_list:
             message = self.message_row_to_message(message_data)
