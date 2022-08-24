@@ -34,10 +34,11 @@ class EducationCourseService():
         lesson_manager = EducationLessonManager()
 
         modules_list = module_manager.get_course_modules_list(_id)
-        for module in modules_list:
-            module.lessons = lesson_manager.get_lessons_list_by_id_module(module.id)
+        if modules_list is not None:
+            for module in modules_list:
+                module.lessons = lesson_manager.get_lessons_list_by_id_module(module.id)
 
-        return modules_list
+            return modules_list
 
     def get_user_by_id_and_course_id(self, _user_id, _course_id):
         """
@@ -173,7 +174,7 @@ class EducationCourseService():
         homework_list = homework_manager.get_homeworks_list_by_id_lesson(_id_lesson, _id_user)
         date = datetime.strptime("01/01/2000", "%d/%m/%Y")
         last_homework = None
-        if homework_list != []:
+        if homework_list is not None:
             # ищем домашнюю работу, которая была сдана позже всех по данному уроку
             for homework in homework_list:
                 if homework.date_delivery >= date:

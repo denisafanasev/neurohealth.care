@@ -718,7 +718,7 @@ def education_course():
     if course_id is not None:
         user = page_controller.get_user_view_for_course_by_id(user_id, course_id)
         course = page_controller.get_course_by_id(course_id)
-        data = page_controller.get_course_modules_list(course_id, user_id)
+        data = page_controller.get_course_modules_list(int(course_id), user_id)
     else:
         return redirect("education_list_courses")
 
@@ -756,7 +756,7 @@ def education_course_lesson():
     neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
     if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
         if data['id_module'] > 1 and user['role'] != 'superuser' and not data['available']:
-            return redirect('/price_list')
+            return redirect('/education_program_subscription')
 
     if id_video is None:
         id_video = 1
@@ -765,8 +765,8 @@ def education_course_lesson():
         # сохраняем новое сообщение
         if request.form.get("send"):
             text = request.form.get("text")
-            id_chat = page_controller.add_message({"text": text, "id_room_chat": id_room_chat,
-                                                            "id_user": user_id}, id_lesson)
+            id_chat = page_controller.add_message({"text": text, "id_room_chat": id_room_chat, "id_user": user_id},
+                                                  id_lesson)
             if id_room_chat is None:
                 return redirect(f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_chat}")
 
@@ -780,6 +780,7 @@ def education_course_lesson():
             id_room_chat = page_controller.get_room_chat(_id_lesson=id_lesson, _id_user=user_id)["id"]
             return redirect(
                 f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}&id_chat={id_room_chat}")
+
     if user['role'] != "superuser":
         if id_room_chat is not None:
             room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat, _id_user=user_id)
@@ -807,7 +808,7 @@ def education_home_tasks():
     mpc = MainMenuPageController(user_id)
     endpoint = request.endpoint
 
-    data = page_controller.get_homeworks_list(user_id)
+    data = page_controller.get_courses_list(user_id)
 
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)

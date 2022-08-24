@@ -96,6 +96,9 @@ def conversion_homework_data(_id_lesson, _id_lesson_edit, _id_course):
         if homework_data.get("id_course") is not None:
             data_store.delete_key_in_row("id_course", "id", homework.id)
 
+        if homework_data.get("id_learning_stream") is not None:
+            data_store.delete_key_in_row("id_learning_stream", "id", homework.id)
+
         data_store.delete_key_in_row("id", "id", homework.id)
 
 
@@ -160,7 +163,7 @@ def conversion_message_data(_id_message, _id_room_chat):
     if message_data != []:
         message = Message(_id=message_data[0]['id'], _id_room_chat=_id_room_chat)
         if message_data[0].get("id_room_chat") is None:
-            data_store.update_row({"id_room_chat": message.id_room_chat, "id": message.id}, "id")
+            data_store.update_row({"id_room_chat": message.id_room_chat, "id": message.id, "read": False}, "id")
 
         # заменяет name_sender на id_user, если есть такой атрибут
         if message_data[0].get("name_sender") is not None:
@@ -183,7 +186,6 @@ def conversion_message_data(_id_message, _id_room_chat):
             pass
 
         data_store.update_row({"id": message.id, "read": message.read}, "id")
-        data_store.delete_key_in_row("viewed", "id", _id_message)
         data_store.delete_key_in_row("id", "id", _id_message)
 
 def delete_id_key_in_lesson():

@@ -3,7 +3,7 @@ class Course():
     Класс Курс
     """
 
-    def __init__(self, _id=None, _name='', _description='', _type='', _image=None):
+    def __init__(self, _id=None, _name='', _description='', _type='', _image=None, _modules=None):
         """
         Конструктор класса
 
@@ -19,3 +19,4 @@ class Course():
         self.description = _description
         self.type = _type
         self.image = _image
+        self.modules = _modules

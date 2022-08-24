@@ -101,7 +101,8 @@ class HomeworkManager():
 
             homeworks.append(self.homework_row_to_homework(homework))
 
-        return homeworks
+        if homeworks != []:
+            return homeworks
 
     def get_homework_by_id(self, _id):
         """
