@@ -324,7 +324,7 @@
                     </div>
 
                 <!-- Чат для общения с кураторами/преподавателями -->
-                    {% if request.args.get('id_chat') is none and _user['role'] == "superuser" %}
+                    {% if _user['role'] == "superuser" %}
                         <div class="col card border">
                             <div class="card-header">
                                 <div class="row">

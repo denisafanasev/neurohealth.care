@@ -43,6 +43,7 @@
         <div class="row d-flex align-items-stretch bd-highlight">
             <div class="card d-flex align-self-baseline border-0" style="background: fixed;">
                 <div class="row d-flex align-items-stretch bd-highlight">
+                {% if request.args.get("id_homework") is not none %}
                     <div class="col-md-6 bd-highlight">
 
                             <div class="card d-flex align-self-baseline border p-4">
@@ -107,9 +108,9 @@
                                 </div>
                             {% endif %}
                             </div>
-
                     </div>
-                <div class="col-md-6 text-left">
+                {% endif %}
+                <div class="{% if request.args.get("id_homework") is not none %}col-md-6 {% else %} col-md {% endif %} text-left">
                     {% include "room_chat.html" %}
                 </div>
                 </div>

@@ -7,6 +7,7 @@ from models.lesson_manager import EducationLessonManager
 from models.education_stream_manager import EducationStreamManager
 from models.homework_manager import HomeworkManager
 from models.users_file_manager import UsersFileManager
+from models.action_manager import ActionManager
 
 from datetime import datetime
 import config
@@ -205,3 +206,23 @@ class EducationCourseService():
             room_chat.unread_message_amount = message_manager.get_unread_messages_amount(room_chat.id, _id_user)
 
             return room_chat
+
+    def add_action(self, _id_lesson, _id_user):
+        """
+        Создает событие "Просмотр урока пользователем"
+
+        Args:
+            _id_lesson(Integer): ID урока
+            _id_user(Integer): ID текущего пользователя
+        """
+        lesson_manager = EducationLessonManager()
+        module_manager = EducationModuleManager()
+        user_manager = UserManager()
+        action_manager = ActionManager()
+
+        lesson = lesson_manager.get_lesson(_id_lesson)
+        module = module_manager.get_module_by_id(lesson.id_module)
+        user = user_manager.get_user_by_id(_id_user)
+        if user.role != "superuser":
+            if lesson is not None:
+                action_manager.add_notifications(module, "посмотрел", '', "course_manager", user.login)

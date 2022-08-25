@@ -129,3 +129,15 @@ class EducationCoursePageController():
             course_formated['type'] = None
 
         return course_formated
+
+    def add_action(self, _id_lesson, _id_user):
+        """
+        Создает событие "Просмотр урока пользователем"
+
+        Args:
+            _id_lesson(Integer): ID урока
+            _id_user(Integer): ID текущего пользователя
+        """
+        course_service = EducationCourseService()
+
+        course_service.add_action(_id_lesson, _id_user)

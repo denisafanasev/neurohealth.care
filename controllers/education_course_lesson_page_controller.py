@@ -98,9 +98,7 @@ class EducationCourseLessonPageController():
 
         education_course_service = EducationCourseLessonService()
 
-        message = education_course_service.add_message(_message, _id_lesson)
-        return message.id_room_chat
-
+        education_course_service.add_message(_message, _id_lesson)
 
     def get_user_view_by_id_and_course_id(self, _user_id):
         """
@@ -153,13 +151,13 @@ class EducationCourseLessonPageController():
 
         return course_formated
 
-    def save_homework(self, _files_list, _id_room_chat, _user_id, _text, _id_lesson, _id_course):
+    def save_homework(self, _files_list, _user_id, _text, _id_lesson, _id_course):
         """
         Сохраняет домашнюю работы
         """
         course_service = EducationCourseLessonService()
 
-        course_service.save_homework(_files_list, _id_room_chat, _user_id, _text, _id_lesson, _id_course)
+        course_service.save_homework(_files_list, _user_id, _text, _id_lesson, _id_course)
 
     def get_last_homework(self, _id_lesson, _user_id):
         """
@@ -260,12 +258,14 @@ class EducationCourseLessonPageController():
             }
             if room_chat.message is not None:
                 for message in room_chat.message:
+                    user = course_service.get_user_by_id(message.id_user)
                     room_chat_view['message'].append({
                         "id": message.id,
                         "id_room_chat": message.id_room_chat,
                         "id_user": message.id_user,
-                        "text": message.text,
+                        "name": user.name,
+                        "text": Markup(message.text),
                         "date_send": message.date_send
                     })
 
-        return room_chat_view
+            return room_chat_view

@@ -131,15 +131,9 @@
                                                 </td>
                                                 <td><div class='badge {% if homework['status'] == "Принято" %} bg-success {% elif homework['status'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>{{ homework['status'] }}</div></td>
                                                 <td style="text-align: center">
-                                                    {% if item.get("room_chat") is not none %}
-                                                        <a href="/education_home_task_profile?id_chat={{ item['room_chat']["id"] }}&id_homework={{ homework['id'] }}" >
-                                                            Перейти
-                                                        </a>
-                                                    {% else %}
-                                                        <a href="/education_home_task_profile?id_homework={{ homework['id'] }}" >
-                                                            Перейти
-                                                        </a>
-                                                    {% endif %}
+                                                    <a href="/education_home_task_profile?id_homework={{ homework['id'] }}" >
+                                                        Перейти
+                                                    </a>
                                                 </td>
                                                 {% if item['room_chat'] %}
                                                     {% if item['room_chat']['unread_message_amount'] != 0 %}
@@ -158,46 +152,40 @@
                                         {% endfor %}
                                     {% else %}
                                         <tr>
-        {#                                        <td>Обучающий поток(курс потока):{{ item['education_stream']['name'] }}({{ item['course']['name'] }})</td>#}
-                                                <td>{{ item['lesson']['id'] }}</td>
-                                                <td>{{ item["user"]['login'] }}</td>
-                                                <td>{{ item["user"]['name'] }}</td>
-                                                <td>{{ item['module']['id'] }}</td>
-                                                <td>{{ item['lesson']['id'] }}</td>
-                                                <td>{{ item['module']['name'] }}</td>
-                                                <td>Урок: {{ item['lesson']['name'] }}</td>
-                                                <td></td>
-                                                <td>
-                                                    <div class='badge bg-warning bg-gradient text-light'>
-                                                        Не сдано
-                                                    </div>
-                                                </td>
-                                                <td></td>
-                                                <td style="text-align: center">
-                                                    {% if item.get("room_chat") is not none %}
-                                                        <a href="/education_home_task_profile?id_chat={{ item['room_chat']["id"] }}" >
-                                                            Перейти
-                                                        </a>
+    {#                                        <td>Обучающий поток(курс потока):{{ item['education_stream']['name'] }}({{ item['course']['name'] }})</td>#}
+                                            <td>{{ item['lesson']['id'] }}</td>
+                                            <td>{{ item["user"]['login'] }}</td>
+                                            <td>{{ item["user"]['name'] }}</td>
+                                            <td>{{ item['module']['id'] }}</td>
+                                            <td>{{ item['lesson']['id'] }}</td>
+                                            <td>{{ item['module']['name'] }}</td>
+                                            <td>Урок: {{ item['lesson']['name'] }}</td>
+                                            <td></td>
+                                            <td>
+                                                <div class='badge bg-warning bg-gradient text-light'>
+                                                    Не сдано
+                                                </div>
+                                            </td>
+                                            <td></td>
+                                            <td style="text-align: center">
+                                                <a href="/education_home_task_profile?id_chat={{ item['room_chat']['id'] }}" >
+                                                    Перейти
+                                                </a>
+                                            </td>
+                                            {% if item['room_chat'] %}
+                                                {% if item['room_chat']['unread_message_amount'] != 0 %}
+                                                    <td style="display: revert">
+                                                        <div class="badge bg-danger float-end" style="text-align: left">
+                                                            {{ item['room_chat']['unread_message_amount'] }}
+                                                        </div>
+                                                    </td>
                                                     {% else %}
-                                                        <a href="/education_home_task_profile?id_chat=None" >
-                                                            Перейти
-                                                        </a>
-                                                    {% endif %}
-                                                </td>
-                                                {% if item['room_chat'] %}
-                                                    {% if item['room_chat']['unread_message_amount'] != 0 %}
-                                                        <td style="display: revert">
-                                                            <div class="badge bg-danger float-end" style="text-align: left">
-                                                                {{ item['room_chat']['unread_message_amount'] }}
-                                                            </div>
-                                                        </td>
-                                                        {% else %}
-                                                        <td></td>
-                                                    {% endif %}
-                                                {% else %}
                                                     <td></td>
                                                 {% endif %}
-                                            </tr>
+                                            {% else %}
+                                                <td></td>
+                                            {% endif %}
+                                        </tr>
                                     {% endif %}
                                 {% endfor %}
                                 </tbody>

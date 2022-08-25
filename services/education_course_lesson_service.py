@@ -32,19 +32,12 @@ class EducationCourseLessonService():
         Return:
             Lesson: класс Lesson, обернутый в класс Module
         """
-
-        user_manager = UserManager()
-        action_manager = ActionManager()
         module_manager = EducationModuleManager()
         lesson_manager = EducationLessonManager()
 
-        login_user = user_manager.get_user_by_id(_user_id).login
         lesson = lesson_manager.get_lesson(_lesson_id, _id_video)
         module = module_manager.get_module_by_id(lesson.id_module)
         module.lessons = lesson
-
-        # if lesson is not None:
-        #     action_manager.add_notifications(module, "посмотрел", '', "course_manager", login_user)
 
         return module
 
@@ -82,14 +75,13 @@ class EducationCourseLessonService():
         message_manager = MessageManager()
         room_chat_manager = RoomChatManager()
 
-        if _message['id_room_chat'] is None:
-            room_chat = room_chat_manager.get_room_chat(_message['id_user'], _id_lesson)
-            if room_chat is None:
-                _message['id_room_chat'] = room_chat_manager.add_room_chat(_message['id_user'], _id_lesson).id
-            else:
-                _message['id_room_chat'] = room_chat.id
+        room_chat = room_chat_manager.get_room_chat(_message['id_user'], _id_lesson)
+        if room_chat is None:
+            _message['id_room_chat'] = room_chat_manager.add_room_chat(_message['id_user'], _id_lesson).id
+        else:
+            _message['id_room_chat'] = room_chat.id
 
-        return message_manager.add_message(_message)
+        message_manager.add_message(_message)
 
     def get_user_by_id(self, _user_id):
         """
@@ -123,12 +115,11 @@ class EducationCourseLessonService():
 
         return course_manager.get_course_by_id(_id)
 
-    def save_homework(self, _files_list, _id_room_chat, _current_user_id, _text, _id_lesson, _id_course):
+    def save_homework(self, _files_list, _current_user_id, _text, _id_lesson, _id_course):
         """
         Сохраняет домашнюю работу
         Args:
             _files_list(Dict): данные сданной домашней работы
-            _id_room_chat(Integer): ID чата
             _text(String): ответ на задание
             _current_user_id(Integer): ID пользователя
             _id_course(Integer): ID курса
@@ -168,7 +159,7 @@ class EducationCourseLessonService():
         homework_list = homework_manager.get_homeworks_list_by_id_lesson(_id_lesson, _user_id)
         date = datetime.strptime("01/01/2000", "%d/%m/%Y")
         last_homework = None
-        if homework_list != []:
+        if homework_list is not None:
             for homework in homework_list:
                 if homework.date_delivery >= date:
                     date = homework.date_delivery

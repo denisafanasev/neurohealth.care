@@ -16,6 +16,7 @@
 
     {% if _data %}
         <h1 class="h3 mb-2">Список модулей курса "{{_course_name}}"</h1>
+        <form method="post">
         {% for i_course in _data %}
             <div class="card boarder">
                 <div class="card-header">
@@ -54,11 +55,7 @@
                                 </td>
                                 <td>{{ i_lesson['name'] }}</td>
                                 <td>
-                                {% if i_lesson['id_room_chat'] is not none and _user['role'] != "superuser" %}
-                                    <a href="/education_course/lesson?id_lesson={{ i_lesson['id'] }}&id_video=1&id_chat={{ i_lesson['id_room_chat'] }}">Выполнить</a>
-                                {% else %}
-                                    <a href="/education_course/lesson?id_lesson={{ i_lesson['id'] }}&id_video=1">Выполнить</a>
-                                {% endif %}
+                                    <button type="submit" class="btn btn-primary" name="button" value="{{ i_lesson['id'] }}">Выполнить</button>
                                 </td>
                                 <td style="text-align: center">
                                     <div style="display: inline-block" class="badge {% if i_lesson['task'] is not none %}
@@ -122,6 +119,7 @@
                 </table>
             </div>
         {% endfor %}
+        </form>
     {% else %}
         <div class="text-center">
             <h2>Данная страница недоступна из-за отсутсвия нужного файла.</h2>

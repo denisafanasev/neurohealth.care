@@ -51,12 +51,11 @@ class HomeworkProfileService():
         message_manager = MessageManager()
         room_chat_manager = RoomChatManager()
 
-        if _message['id_room_chat'] is None:
-            room_chat = room_chat_manager.get_room_chat(_id_user, _id_lesson)
-            if room_chat is None:
-                _message['id_room_chat'] = room_chat_manager.add_room_chat(_id_user, _id_lesson).id
-            else:
-                _message['id_room_chat'] = room_chat.id
+        room_chat = room_chat_manager.get_room_chat(_id_user, _id_lesson)
+        if room_chat is None:
+            _message['id_room_chat'] = room_chat_manager.add_room_chat(_id_user, _id_lesson).id
+        else:
+            _message['id_room_chat'] = room_chat.id
 
         return message_manager.add_message(_message)
 
@@ -173,3 +172,24 @@ class HomeworkProfileService():
         module.lessons = lesson
 
         return module
+
+    def get_room_chat(self, _id_lesson, _id_user, _id_current_user):
+        """
+        Возвращает данные чата по ID урока и пользователя
+
+        Args:
+            _id_lesson(Integer): ID урока
+            _id_user(Integer): ID пользователя
+            _id_current_user(Integer): ID текущего пользователя
+
+        Returns:
+            RoomChat: комната чата
+        """
+        room_chat_manager = RoomChatManager()
+        message_manager = MessageManager()
+
+        room_chat = room_chat_manager.get_room_chat(_id_user, _id_lesson)
+        if room_chat is not None:
+            room_chat.message = message_manager.get_messages(room_chat.id, _id_current_user)
+
+        return room_chat
