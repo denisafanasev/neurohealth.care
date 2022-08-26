@@ -35,11 +35,13 @@ def conversion_module_data():
             conversion_lessons_data(module, id_modules_edit)
 
         # Так как мы перенесли в новый файл данные модулей и уроков всех курсов, то удаляем старый файл
-        if os.path.isfile(config.DATA_FOLDER + f"course_{course.id}/modules.json"):
-            os.remove(config.DATA_FOLDER + f"course_{course.id}/modules.json")
+        # На всякий случай закомментировал
 
-        if os.path.isfile(config.DATA_FOLDER + f"course_{course.id}/lessons.json"):
-            os.remove(config.DATA_FOLDER + f"course_{course.id}/lessons.json")
+        # if os.path.isfile(config.DATA_FOLDER + f"course_{course.id}/modules.json"):
+        #     os.remove(config.DATA_FOLDER + f"course_{course.id}/modules.json")
+        #
+        # if os.path.isfile(config.DATA_FOLDER + f"course_{course.id}/lessons.json"):
+        #     os.remove(config.DATA_FOLDER + f"course_{course.id}/lessons.json")
 
 
 def conversion_lessons_data(_module, _id_module_edit):
