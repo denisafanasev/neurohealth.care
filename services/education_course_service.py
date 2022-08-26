@@ -15,7 +15,7 @@ import config
 
 class EducationCourseService():
     """
-    EducationCourseService - класс бизнес-логики сервиса управления настройками приложения
+    EducationCourseService - класс бизнес-логики сервиса управления настройками приложения.
     Возвращает в слой отображения объекты в доменной модели
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
@@ -25,10 +25,10 @@ class EducationCourseService():
         Возвращает список модулей курса по id
 
         Args:
-            _id(Int): индентификатор курса
+            _id(Int): ID курса
 
         Returns:
-            modules_list(List): списко модулей курса
+           List: список модулей курса
         """
 
         module_manager = EducationModuleManager()
@@ -174,6 +174,7 @@ class EducationCourseService():
 
         homework_list = homework_manager.get_homeworks_list_by_id_lesson(_id_lesson, _id_user)
         date = datetime.strptime("01/01/2000", "%d/%m/%Y")
+        date_first_homework = datetime.now()
         last_homework = None
         if homework_list is not None:
             # ищем домашнюю работу, которая была сдана позже всех по данному уроку
@@ -182,8 +183,14 @@ class EducationCourseService():
                     date = homework.date_delivery
                     last_homework = homework
 
+            # находим дату сдачи первой домашней работы, сданной пользователем, по уроку
+            for homework in homework_list:
+                if homework.date_delivery <= date_first_homework:
+                    date_first_homework = homework.date_delivery
+
             files = users_file_manager.get_size_files(last_homework.users_files_list)
             last_homework.users_files_list = files
+            last_homework.date_delivery = date_first_homework
 
             return last_homework
 
@@ -222,6 +229,7 @@ class EducationCourseService():
 
         lesson = lesson_manager.get_lesson(_id_lesson)
         module = module_manager.get_module_by_id(lesson.id_module)
+        module.lessons = lesson
         user = user_manager.get_user_by_id(_id_user)
         if user.role != "superuser":
             if lesson is not None:

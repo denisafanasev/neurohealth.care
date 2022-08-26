@@ -10,56 +10,55 @@ class EducationCourseLessonPageController():
         Возвращает данные урока
 
         Args:
-            _user_id(Int): индентификатор пользователя
-            _lesson_id(Int): индентификатор урока
-            _id_course(Int): индентификатор курса
-            _id_video(Int): индентификатор видео
+            _user_id(Int): ID пользователя
+            _lesson_id(Int): ID урока
+            _id_video(Int): ID видео
+
+        Returns:
+            Dict: данные урока
         """
 
         course_service = EducationCourseLessonService()
 
         module = course_service.get_lesson(_user_id, _lesson_id, _id_video)
+        if module is not None:
+            if module.lessons.task:
+                module.lessons.task = Markup(module.lessons.task)
 
-        if module.lessons.task:
-            module.lessons.task = Markup(module.lessons.task)
+            if module.lessons.text:
+                module.lessons.text = Markup(module.lessons.text)
 
-        if module.lessons.text:
-            module.lessons.text = Markup(module.lessons.text)
+            lesson = {
+                "id_course": module.id_course,
+                "id_module": module.id,
+                "name": module.name,
+                "lesson": {
+                    "id": module.lessons.id,
+                    "id_module": module.lessons.id_module,
+                    "name": module.lessons.name,
+                    "link": module.lessons.link,
+                    "materials": module.lessons.materials,
+                    "text": module.lessons.text,
+                    "task": module.lessons.task
+                },
+                "available": course_service.is_course_module_avalable_for_user(module.id_course, module.id, _user_id)
+            }
 
-        lesson = {
-            "id_course": module.id_course,
-            "id_module": module.id,
-            "name": module.name,
-            "lesson": {
-                "id": module.lessons.id,
-                "id_module": module.lessons.id_module,
-                "name": module.lessons.name,
-                "link": module.lessons.link,
-                "materials": module.lessons.materials,
-                "text": module.lessons.text,
-                "task": module.lessons.task
-            },
-            "available": course_service.is_course_module_avalable_for_user(module.id_course, module.id, _user_id)
-        }
+            return lesson
 
-        return lesson
-
-    def room_chat_entry(self, _id_room_chat=None, _id_education_stream=None, _id_user=None):
+    def room_chat_entry(self, _id_room_chat=None, _id_user=None):
         """
         Подключает пользователя к чату
 
         Args:
-            _id_lesson(Int): индентификатор урока
-            _login_user(User): данные пользователя
-            _id_room_chat(Int): индентификатор чата
+            _id_room_chat(Int): ID чата
+            _id_user(Int): ID пользователя
 
         Returns:
-            chat(Dict): данные чата
+            Dict: данные чата
         """
 
         education_course_service = EducationCourseLessonService()
-        if _id_room_chat is None and _id_education_stream is None:
-            _id_education_stream = "subscription"
 
         room_chat = education_course_service.room_chat_entry(_id_room_chat, _id_user)
         if room_chat is not None:
@@ -68,7 +67,6 @@ class EducationCourseLessonPageController():
                 "message": None
             }
             if room_chat.message is not None:
-
                 message_list = []
                 for i_message in room_chat.message:
                     # ищем данные пользователя, который отправил данное сообщения
@@ -86,7 +84,6 @@ class EducationCourseLessonPageController():
 
             return chat
 
-
     def add_message(self, _message, _id_lesson):
         """
         Сохраняет сообщение
@@ -103,6 +100,9 @@ class EducationCourseLessonPageController():
     def get_user_view_by_id_and_course_id(self, _user_id):
         """
         Возвращает текущего пользователя
+
+        Args:
+            _user_id(Int): ID текущего пользователя
 
         Returns:
             Dict: пользователь
@@ -134,10 +134,10 @@ class EducationCourseLessonPageController():
         Возвращает курс по id
 
         Args:
-            _id(Int): индентификатор курса
+            _id(Int): ID курса
 
         Returns:
-            course(Dict): данные курса
+            Dict: данные курса
         """
 
         course_service = EducationCourseLessonService()
@@ -151,17 +151,23 @@ class EducationCourseLessonPageController():
 
         return course_formated
 
-    def save_homework(self, _files_list, _user_id, _text, _id_lesson, _id_course):
+    def save_homework(self, _files_list, _user_id, _text, _id_lesson):
         """
         Сохраняет домашнюю работы
+
+        Args:
+            _files_list(List): список файлов, сданных вместе с домашней работой
+            _user_id(Int): ID пользователя
+            _text(String): текст домашней работы
+            _id_lesson(Int): ID урока
         """
         course_service = EducationCourseLessonService()
 
-        course_service.save_homework(_files_list, _user_id, _text, _id_lesson, _id_course)
+        course_service.save_homework(_files_list, _user_id, _text, _id_lesson)
 
     def get_last_homework(self, _id_lesson, _user_id):
         """
-        Возвращает данные домашней работы
+        Возвращает данные последней сданной домашней работы по уроку
 
         Args:
             _id_lesson(Int): ID урока
@@ -190,6 +196,7 @@ class EducationCourseLessonPageController():
                 "status": homework.status,
                 "text": Markup(homework.text)
             }
+            # переводим размер файлов, сданной вместе с домашней работой, из бит в кб или мб
             for file in homework.users_files_list:
                 if file.size // 1048576 == 0:
                     file_size = f"{round(file.size / 1024, 2)} кБ"
@@ -245,7 +252,16 @@ class EducationCourseLessonPageController():
         return neighboring_lessons_view
 
     def get_room_chat(self, _id_lesson, _id_user):
+        """
+        Возвращает данные комнаты чата по ID урока и пользователя
 
+        Args:
+            _id_lesson(Integer): ID урока
+            _id_user(Integer): ID текущего пользователя
+
+        Returns:
+            Dict: данные комнаты чата
+        """
         course_service = EducationCourseLessonService()
 
         room_chat = course_service.get_room_chat(_id_lesson, _id_user)

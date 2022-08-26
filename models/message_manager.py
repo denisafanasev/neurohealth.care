@@ -76,6 +76,10 @@ class MessageManager():
         data_store = DataStore("message")
 
         _message["date_send"] = datetime.now()
+        if "<p><br></p>" in _message['text']:
+            index = _message['text'].find("<p><br></p>")
+            _message['text'] = _message['text'][:index - 1] + _message['text'][index + 11:]
+
         message = Message(_id_user=_message['id_user'], _id_room_chat=int(_message['id_room_chat']), _text=_message['text'],
                           _date_send=_message['date_send'])
 

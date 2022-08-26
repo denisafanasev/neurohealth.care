@@ -90,11 +90,11 @@
     /* Добавить серый цвет фона при наведении курсора мыши */
     .pagination a:hover:not(.active) {background-color: #ddd;}
     </style>
-
+    {% if _data %}
     <h1 class="h3 mb-2">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/education_course?id_course={{ _data['id_course'] }}">Курс "{{ _course_name }}"</a></li>
+                <li class="breadcrumb-item"><a href="/education_course?id_course={{ _data['id_course'] }}">Курс "{{ _course['name'] }}"</a></li>
                 {% if _data['name'] != '' %}
                 <li class="breadcrumb-item">{{ _data['name'] }}</li>
                 {% endif %}
@@ -349,6 +349,31 @@
                                 </div>
                             </div>
                          </div>
+                    {% elif not _data['available']%}
+                        <div class="col card border">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col">
+                                        <h4>
+                                            Чат
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 text-left">
+                                        <div class="card py-1 py-md-1">
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <h2>Чат не доступен</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
                     {% else %}
                         <div class="col-md-5 text-left bd-highlight">
                             {% include "room_chat.html" %}
@@ -406,4 +431,9 @@
             </div>
         </div>
     </div>
+    {% else %}
+        <div class="text-center">
+            <h2>Данная страница недоступна из-за отсутствия нужного файла.</h2>
+        </div>
+    {% endif %}
 {% endblock %}

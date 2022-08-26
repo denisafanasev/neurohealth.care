@@ -9,13 +9,13 @@ class Homework():
         Конструктор класса
 
         Args:
-            _id(Integer): ID домашней работы
-            _users_files_list(List): список уникальных имен файлов домашне работы
-            _text(String): текст домашней работы
-            _id_user(Integer): ID пользователя
-            _id_lesson(Integer): ID урока
-            _status(Boolean): Принята/Не принята домашняя работа
-            _date_delivery(String): дата сдачи домашней работы
+            _id(Integer): ID домашней работы. Defaults to None
+            _users_files_list(List): список уникальных имен файлов домашне работы. Defaults to None
+            _text(String): текст домашней работы. Defaults to None
+            _id_user(Integer): ID пользователя. Defaults to None
+            _id_lesson(Integer): ID урока. Defaults to None
+            _status(Boolean): Принята/Не принята домашняя работа. Defaults to None
+            _date_delivery(String): дата сдачи домашней работы. Defaults to None
         """
 
         self.id = _id

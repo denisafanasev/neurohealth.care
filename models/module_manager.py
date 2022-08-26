@@ -10,13 +10,13 @@ class EducationModuleManager():
     """
     def module_row_to_module(self, _data_row):
         """
-        Преобразует структуру данных, в которой хранится информация о уроке в структуру Course
+        Преобразует структуру данных, в которой хранится информация об модуле курса в структуру Module
 
         Args:
             _data_row (Dict): структура данных, которую возвращает дата адаптер
 
         Returns:
-            Module: курс
+            Module: модуль курса
         """
 
         module = Module(_id=_data_row.doc_id, _name=_data_row["name"], _id_course=_data_row['id_course'])
@@ -31,10 +31,10 @@ class EducationModuleManager():
         Возвращает список модулей курса по id
 
         Args:
-            _id(Int): индентификатор курса
+            _id(Int): ID курса. Defaults to 1
 
         Returns:
-            modules_list(List): списко модулей курса
+            modules_list(List): список модулей курса
         """
 
         data_store_module = DataStore("modules")

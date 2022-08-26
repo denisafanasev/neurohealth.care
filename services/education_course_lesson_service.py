@@ -36,10 +36,11 @@ class EducationCourseLessonService():
         lesson_manager = EducationLessonManager()
 
         lesson = lesson_manager.get_lesson(_lesson_id, _id_video)
-        module = module_manager.get_module_by_id(lesson.id_module)
-        module.lessons = lesson
+        if lesson is not None:
+            module = module_manager.get_module_by_id(lesson.id_module)
+            module.lessons = lesson
 
-        return module
+            return module
 
     def room_chat_entry(self, _id_room_chat, _id_user):
         """
@@ -47,6 +48,7 @@ class EducationCourseLessonService():
 
         Args:
             _id_room_chat(Integer): ID комнаты чата
+            _id_user(Integer): ID текущего пользователя
         Returns:
             RoomChat: чат
         """
@@ -77,7 +79,7 @@ class EducationCourseLessonService():
 
         room_chat = room_chat_manager.get_room_chat(_message['id_user'], _id_lesson)
         if room_chat is None:
-            _message['id_room_chat'] = room_chat_manager.add_room_chat(_message['id_user'], _id_lesson).id
+            _message['id_room_chat'] = room_chat_manager.add_room_chat(_message['id_user'], _id_lesson)
         else:
             _message['id_room_chat'] = room_chat.id
 
@@ -108,21 +110,20 @@ class EducationCourseLessonService():
             _id(Integer): индентификатор курса
 
         Returns:
-            course(Course): курс
+            Course: курс
         """
 
         course_manager = EducationCourseManager()
 
         return course_manager.get_course_by_id(_id)
 
-    def save_homework(self, _files_list, _current_user_id, _text, _id_lesson, _id_course):
+    def save_homework(self, _files_list, _current_user_id, _text, _id_lesson):
         """
         Сохраняет домашнюю работу
         Args:
             _files_list(Dict): данные сданной домашней работы
             _text(String): ответ на задание
             _current_user_id(Integer): ID пользователя
-            _id_course(Integer): ID курса
             _id_lesson(Integer): ID урока
 
         Return:
@@ -137,8 +138,7 @@ class EducationCourseLessonService():
 
         login_user = user_manager.get_user_by_id(_current_user_id).login
         homework_files_list = upload_service.upload_files(_files_list, login_user)
-        homework_manager.create_homework(homework_files_list, _text, _current_user_id,
-                                                    _id_course, _id_lesson)
+        homework_manager.create_homework(homework_files_list, _text, _current_user_id, _id_lesson)
         lesson = lesson_manager.get_lesson(_id_lesson)
 
         action_manager.add_notifications("", "сдал", lesson.name, "homework_manager", login_user)
@@ -158,15 +158,23 @@ class EducationCourseLessonService():
 
         homework_list = homework_manager.get_homeworks_list_by_id_lesson(_id_lesson, _user_id)
         date = datetime.strptime("01/01/2000", "%d/%m/%Y")
+        date_first_homework = datetime.now()
         last_homework = None
         if homework_list is not None:
             for homework in homework_list:
+                # находим последнюю домашнюю работу, сданной пользователем, по уроку
                 if homework.date_delivery >= date:
                     date = homework.date_delivery
                     last_homework = homework
 
+                # находим дату сдачи первой домашней работы, сданной пользователем, по уроку
+            for homework in homework_list:
+                if homework.date_delivery <= date_first_homework:
+                    date_first_homework = homework.date_delivery
+
             files = users_file_manager.get_size_files(last_homework.users_files_list)
             last_homework.users_files_list = files
+            last_homework.date_delivery = date_first_homework
 
             return last_homework
 
@@ -247,7 +255,7 @@ class EducationCourseLessonService():
             course_modules = module_manager.get_course_modules_list(_course_id)
 
             # проверяем, есть ли пользователь в списках участников второго потока
-            for i in range(1, min(len(course_modules), 5)):
+            for i in range(1, min(len(course_modules), 6)):
                 if course_modules[i - 1].id == _module_id:
                     with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
                         course_users_list = f.read().splitlines()
@@ -257,7 +265,7 @@ class EducationCourseLessonService():
                             return True
 
             # проверяем, есть ли пользователь в списках участников первого потока
-            for i in range(1, min(len(course_modules), 9)):
+            for i in range(1, min(len(course_modules) + 1, 9)):
                 if course_modules[i - 1].id == _module_id:
                     with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
                         course_users_list = f.read().splitlines()

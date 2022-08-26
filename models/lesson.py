@@ -8,13 +8,13 @@ class Lesson():
         Конструктор класса
 
         Args:
-            _id(Integer): id урока
-            _id_module(Integer): id модуля
-            _name(String): название урока
-            _materials(List): список дополнительных материалов к уроку
-            _link(String): ссылка на видео для урока
-            _text(String): текст для урока
-            _task(String): задание к уроку
+            _id(Integer): id урока. Defaults to None
+            _id_module(Integer): id модуля. Defaults to None
+            _name(String): название урока. Defaults to ""
+            _materials(List): список дополнительных материалов к уроку. Defaults to None
+            _link(String): ссылка на видео для урока. Defaults to ""
+            _text(String): текст для урока. Defaults to None
+            _task(String): задание к уроку. Defaults to None
         """
 
         self.id = _id

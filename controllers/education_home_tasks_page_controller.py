@@ -5,7 +5,7 @@ from services.homeworks_service import HomeworksService
 
 class EducationHomeTasksPageController():
     """
-    EducationHomeTasksPageController - класс контроллера представления списка домашних работ, реализующий логику взаимодействия приложения с пользователем
+    EducationHomeTasksPageController - класс контроллера представления списка домашних работ, реализующий логику взаимодействия приложения с пользователем.
     Возвращает в слой отображения объекты в виде, пригодном для отображения в web странице и в соответствующем форматировании
     Взаимодейтвует с классами слоя сервисов, передавая им данные и получая данные в объектах доменной модели
     """
@@ -77,7 +77,7 @@ class EducationHomeTasksPageController():
             _id_current_user(Integer): ID текущего пользователя
 
         Returns:
-            List: данных
+            List: данные
         """
         homeworks_service = HomeworksService()
 

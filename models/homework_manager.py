@@ -12,7 +12,7 @@ class HomeworkManager():
     """
     def homework_row_to_homework(self, _data_row):
         """
-        Преобразует структуру данных, в которой хранится информация о файле в структуру Homework
+        Преобразует структуру данных, в которой хранится информация о домашней работе в структуру Homework
         Args:
             _data_row (Dict): структура данных, которую возвращает дата адаптер
         Returns:
@@ -30,7 +30,7 @@ class HomeworkManager():
 
         return homework
 
-    def create_homework(self, _homework_files_list, _text, _id_user, _id_course, _id_lesson):
+    def create_homework(self, _homework_files_list, _text, _id_user, _id_lesson):
         """
         Сохраняет домашнюю работу
 
@@ -38,7 +38,6 @@ class HomeworkManager():
             _homework_files_list(Dict): данные сданной домашней работы
             _text(String): ответ на задание
             _id_user(Int): ID пользователя
-            _id_course(Int): ID курса
             _id_lesson(Int): ID урока
 
         Return:
@@ -69,10 +68,6 @@ class HomeworkManager():
         homeworks = data_store.get_rows()
         homework_list = []
         for homework in homeworks:
-            if homework.get("text") is None:
-                data_store.update_row_by_doc_id({"text": ""}, homework.doc_id)
-                homework['text'] = ""
-
             homework_list.append(self.homework_row_to_homework(homework))
 
         return homework_list
@@ -82,8 +77,8 @@ class HomeworkManager():
         Возвращает список домашних работ по ID урока и ID пользователя
 
         Args:
-            _id_lesson(Int): ID
-            _id_user(Int): ID
+            _id_lesson(Int): ID урока
+            _id_user(Int): ID пользователя
 
         Return:
             List: список домашних работ
@@ -95,10 +90,6 @@ class HomeworkManager():
         homeworks = []
 
         for homework in homeworks_list:
-            if homework.get("text") is None:
-                data_store.update_row_by_doc_id({"text": ""}, homework.doc_id)
-                homework['text'] = ""
-
             homeworks.append(self.homework_row_to_homework(homework))
 
         if homeworks != []:
@@ -118,8 +109,8 @@ class HomeworkManager():
         data_store = DataStore("homeworks")
 
         homework = data_store.get_row_by_id(_id)
-
-        return self.homework_row_to_homework(homework)
+        if homework is not None:
+            return self.homework_row_to_homework(homework)
 
     def homework_answer_accepted(self, _id_homework):
         """

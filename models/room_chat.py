@@ -7,10 +7,10 @@ class RoomChat():
         Конструктор класса
 
         Args:
-            _id(Integer): ID комнаты чата
-            _id_user(Integer): ID пользователя
-            _id_lesson(Integer): ID урока
-            _unread_message_amount(Integer): количество непрочитанных сообщений в чате
+            _id(Integer): ID комнаты чата. Defaults to None
+            _id_user(Integer): ID пользователя. Defaults to None
+            _id_lesson(Integer): ID урока. Defaults to None
+            _unread_message_amount(Integer): количество непрочитанных сообщений в чате. Defaults to 0
         """
         self.id = _id
         self.id_user = _id_user

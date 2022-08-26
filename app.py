@@ -690,6 +690,12 @@ def evolution_centre_dummy():
 @app.route('/education_list_courses', methods=['GET', 'POST'])
 @login_required
 def education_list_courses():
+    """
+    Просмотр списка курсов
+
+    Returns:
+
+    """
     page_controller = EducationListCoursesPageController()
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
@@ -706,7 +712,12 @@ def education_list_courses():
 @app.route('/education_course', methods=['GET', 'POST'])
 @login_required
 def education_course():
+    """
+    Просмотр списка модулей и уроков курса
 
+    Returns:
+
+    """
     page_controller = EducationCoursePageController()
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
@@ -736,6 +747,12 @@ def education_course():
 @app.route('/education_course/lesson', methods=['GET', 'POST'])
 @login_required
 def education_course_lesson():
+    """
+    Просмотр урока, сдача домашней работы и чат для ощения с кураторами
+
+    Returns:
+
+    """
     page_controller = EducationCourseLessonPageController()
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
@@ -747,16 +764,22 @@ def education_course_lesson():
 
     user = page_controller.get_user_view_by_id_and_course_id(user_id)
     data = page_controller.get_lesson(user_id, id_lesson, int(id_video))
-    course = page_controller.get_course_by_id(data['id_course'])
+    homework = None
+    room_chat = None
+    course = None
+    neighboring_lessons = None
+    if data is not None:
+        course = page_controller.get_course_by_id(data['id_course'])
+
 
     # тут проверяем, что пользователь подписан на курс
     #if user['role'] == 'user' and course['type'] == 'main' and int(id_module) > 1:
     #    return redirect("/education_program_subscription")
 
-    neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
-    if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
-        if data['id_module'] > 1 and user['role'] != 'superuser' and not data['available']:
-            return redirect('/education_program_subscription')
+        neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
+        if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
+            if data['id_module'] > 1 and user['role'] != 'superuser' and not data['available']:
+                return redirect('/education_program_subscription')
 
     if id_video is None:
         id_video = 1
@@ -771,17 +794,17 @@ def education_course_lesson():
         elif request.form.get("button") == "homework":
             files = request.files.getlist("files")
             text = request.form.get("text_homework")
-            page_controller.save_homework(files, user_id, text, id_lesson, data['id_course'])
+            page_controller.save_homework(files, user_id, text, id_lesson)
 
         else:
             return redirect(f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}")
-
-    homework = page_controller.get_last_homework(id_lesson, user_id)
-    room_chat = page_controller.get_room_chat(id_lesson, user_id)
+        if data['available']:
+            homework = page_controller.get_last_homework(id_lesson, user_id)
+            room_chat = page_controller.get_room_chat(id_lesson, user_id)
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _homework=homework,
-                           _data=data, _room_chat=room_chat, _user=user, _course_name=course['name'],
+                           _data=data, _room_chat=room_chat, _user=user, _course=course,
                            _neighboring_lessons=neighboring_lessons)
 
 
@@ -820,16 +843,17 @@ def education_home_task_profile():
     id_room_chat = request.args.get("id_chat")
     id_homework = request.args.get("id_homework")
 
+    data = None
     if id_homework is not None:
         homework = page_controller.get_homework(int(id_homework))
-        data = page_controller.get_data_by_id_homework(int(id_homework))
-        room_chat = page_controller.get_room_chat_by_id_homework(id_homework, user_id)
+        if homework is not None:
+            data = page_controller.get_data_by_id_homework(int(id_homework))
     else:
         homework = None
         data = page_controller.get_data(id_room_chat, user_id)
-        room_chat = page_controller.room_chat_entry(id_room_chat, user_id)
 
     user = page_controller.get_user_by_id(user_id)
+    room_chat = None
     message = None
     status_code = None
 
@@ -837,8 +861,11 @@ def education_home_task_profile():
         if request.form.get("send"):
             text = request.form.get("text")
             if text is not None:
-                page_controller.add_message({"text": text, "id_user": user_id}, data['module']['lesson']['id'],
+                id_room_chat = page_controller.add_message({"text": text, "id_user": user_id}, data['module']['lesson']['id'],
                                                       data['user']["id"])
+
+            if id_homework is None:
+                return redirect(f"/education_home_task_profile?id_chat={ id_room_chat }")
 
         elif request.form.get("button") == "answer":
             answer = request.form.get("answer")
@@ -848,9 +875,10 @@ def education_home_task_profile():
                 homework, message, status_code = page_controller.homework_answer_no_accepted(homework["id"], user_id)
 
     if id_homework is not None:
-        room_chat = page_controller.get_room_chat_by_id_homework(id_homework, user_id)
+        if homework is not None:
+            room_chat = page_controller.get_room_chat_by_id_homework(int(id_homework), user_id)
     else:
-        room_chat = page_controller.room_chat_entry(id_room_chat, user_id)
+        room_chat = page_controller.room_chat_entry(int(id_room_chat), user_id)
 
     return render_template('education_home_task_profile.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _room_chat=room_chat,

@@ -5,7 +5,7 @@ from services.homework_profile_service import HomeworkProfileService
 
 class EducationChatPageController():
     """
-    EducationChatPageController - класс контроллера представления чата с пользователями, реализующий логику взаимодействия приложения с пользователем
+    EducationChatPageController - класс контроллера представления чата с пользователями, реализующий логику взаимодействия приложения с пользователем.
     Возвращает в слой отображения объекты в виде, пригодном для отображения в web странице и в соответствующем форматировании
     Взаимодейтвует с классами слоя сервисов, передавая им данные и получая данные в объектах доменной модели
     """
@@ -181,17 +181,17 @@ class EducationChatPageController():
             elif not homework.status:
                 homework.status = "Не принято"
 
-        homework_view = {
-            "id": homework.id,
-            "id_lesson": homework.id_lesson,
-            "id_user": homework.id_user,
-            "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
-            "users_files_list": homework.users_files_list,
-            "status": homework.status,
-            "text": Markup(homework.text)
-        }
+            homework_view = {
+                "id": homework.id,
+                "id_lesson": homework.id_lesson,
+                "id_user": homework.id_user,
+                "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
+                "users_files_list": homework.users_files_list,
+                "status": homework.status,
+                "text": Markup(homework.text)
+            }
 
-        return homework_view
+            return homework_view
 
     def get_data_by_id_homework(self, _id_homework):
         """
@@ -201,93 +201,126 @@ class EducationChatPageController():
             _id_homework(Int): ID домашней работы
 
         Return:
-            Dict(User, Course, Module, Lesson): данные, связанные с домашней работы
+            Dict: данные, связанные с домашней работы
         """
         homework_service = HomeworkProfileService()
 
         homework = homework_service.get_homework(_id_homework)
-        module = homework_service.get_lesson(homework.id_lesson)
-        course = homework_service.get_course(module.id_course)
-        user = homework_service.get_user_by_id(homework.id_user)
+        if homework is not None:
+            module = homework_service.get_lesson(homework.id_lesson)
+            course = homework_service.get_course(module.id_course)
+            user = homework_service.get_user_by_id(homework.id_user)
 
-        data = {
-            "user":
-                {
-                    "id": user.user_id,
-                    "login": user.login,
-                    "name": user.name,
-                    "email": user.email,
-                },
-            "module":
-                {
-                    "id": module.id,
-                    "name": module.name,
-                    "lesson":
-                        {
-                            "id": module.lessons.id,
-                            "name": module.lessons.name,
-                            "task": Markup(module.lessons.task)
-                        }
-                },
-            "course":
-                {
-                    "id": course.id,
-                    "name": course.name
-                }
-        }
+            data = {
+                "user":
+                    {
+                        "id": user.user_id,
+                        "login": user.login,
+                        "name": user.name,
+                        "email": user.email,
+                    },
+                "module":
+                    {
+                        "id": module.id,
+                        "name": module.name,
+                        "lesson":
+                            {
+                                "id": module.lessons.id,
+                                "name": module.lessons.name,
+                                "task": Markup(module.lessons.task)
+                            }
+                    },
+                "course":
+                    {
+                        "id": course.id,
+                        "name": course.name
+                    }
+            }
 
-        return data
+            return data
 
     def get_data(self, _id_room_chat, _id_user):
         """
         Возвращает данные, связанные с домашней работы
 
         Args:
-            _id_lesson(Integer): ID урока
+            _id_room_chat(Integer): ID комнаты чата
             _id_user(Integer): ID пользователя
 
         Return:
-            Dict(User, Course, Module, Lesson): данные, связанные с домашней работы
+            Dict: данные, связанные с домашней работы
         """
         homework_service = HomeworkProfileService()
 
         room_chat = homework_service.room_chat_entry(_id_room_chat, _id_user)
-        module = homework_service.get_lesson(room_chat.id_lesson)
-        course = homework_service.get_course(module.id_course)
-        user = homework_service.get_user_by_id(room_chat.id_user)
+        if room_chat is not None:
+            module = homework_service.get_lesson(room_chat.id_lesson)
+            course = homework_service.get_course(module.id_course)
+            user = homework_service.get_user_by_id(room_chat.id_user)
 
-        data = {
-            "user":
-                {
-                    "id": user.user_id,
-                    "login": user.login,
-                    "name": user.name,
-                    "email": user.email,
-                },
-            "module":
-                {
-                    "id": module.id,
-                    "name": module.name,
-                    "lesson":
-                        {
-                            "id": module.lessons.id,
-                            "name": module.lessons.name,
-                            "task": Markup(module.lessons.task)
-                        }
-                },
-            "course":
-                {
-                    "id": course.id,
-                    "name": course.name
-                }
-        }
+            data = {
+                "user":
+                    {
+                        "id": user.user_id,
+                        "login": user.login,
+                        "name": user.name,
+                        "email": user.email,
+                    },
+                "module":
+                    {
+                        "id": module.id,
+                        "name": module.name,
+                        "lesson":
+                            {
+                                "id": module.lessons.id,
+                                "name": module.lessons.name,
+                                "task": Markup(module.lessons.task)
+                            }
+                    },
+                "course":
+                    {
+                        "id": course.id,
+                        "name": course.name
+                    }
+            }
 
-        return data
+            return data
 
     def get_room_chat_by_id_homework(self, _id_homework, _id_current_user):
+        """
+        Возвращает данные комнаты чата по ID домашней работы
 
+        Args:
+            _id_homework(Int): ID домашней работы
+            _id_current_user(Int): ID текущего пользователя
+
+        Returns:
+            Dict: комната чата
+        """
         homework_service = HomeworkProfileService()
 
         homework = homework_service.get_homework(_id_homework)
         room_chat = homework_service.get_room_chat(homework.id_lesson, homework.id_user, _id_current_user)
+        if room_chat is not None:
+            room_chat_view = {
+                "id": room_chat.id,
+                "message": []
+            }
+            if room_chat.message is not None:
+                message_list = []
+                for i_message in room_chat.message:
+                    user = homework_service.get_user_by_id(i_message.id_user)
+                    message = {
+                        "id": i_message.id,
+                        "text": Markup(i_message.text),
+                        "id_user": i_message.id_user,
+                        "name": user.name
+                    }
+
+                    message_list.append(message)
+
+                room_chat_view["message"] = message_list
+
+            return room_chat_view
+
 

@@ -99,6 +99,9 @@ def conversion_homework_data(_id_lesson, _id_lesson_edit, _id_course):
         if homework_data.get("id_learning_stream") is not None:
             data_store.delete_key_in_row("id_learning_stream", "id", homework.id)
 
+        if homework_data.get("text") is None:
+            data_store.update_row({"text": "", "id": homework.id}, "id")
+
         data_store.delete_key_in_row("id", "id", homework.id)
 
 

@@ -16,7 +16,7 @@
     </script>
     <script>
         var modal_discharge = document.getElementById('discharge');
-        // When the user clicks anywhere outside of the modal, close it
+        // When the user clicks anywhere outside the modal, close it
         window.onclick = function (event) {
             if (event.target === modal_extension) {
                 modal_discharge.style.display = "none";
@@ -33,7 +33,7 @@
         font-size: 14px;
     }
     </style>
-
+    {% if _data %}
     <div class="container-fluid p-0">
 
         <div class="mb-3">
@@ -43,7 +43,6 @@
         <div class="row d-flex align-items-stretch bd-highlight">
             <div class="card d-flex align-self-baseline border-0" style="background: fixed;">
                 <div class="row d-flex align-items-stretch bd-highlight">
-                {% if request.args.get("id_homework") is not none %}
                     <div class="col-md-6 bd-highlight">
 
                             <div class="card d-flex align-self-baseline border p-4">
@@ -62,10 +61,13 @@
                                     <p><strong>Модуль: </strong>{{ _data['module']['name'] }}</p>
                                     <p><strong>Урок: </strong>{{ _data['module']['lesson']['name'] }}</p>
                                     <p class="task"><strong>Задание: </strong>{{ _data['module']['lesson']['task'] }}</p>
-                                    <p><strong>Статус: </strong>{{ _homework["status"] }}</p>
+                                    <p><strong>Статус: </strong>
+                                        {% if request.args.get("id_homework") is not none %}{{ _homework["status"] }}
+                                        {% else %}Не сдано{% endif %}
+                                    </p>
                                 </div>
                             </div>
-
+                        {% if request.args.get("id_homework") is not none %}
                             <div class="card d-flex align-self-baseline border p-4">
                                 <h4>Домашняя работа</h4>
                                 <div class="card-header">
@@ -108,9 +110,9 @@
                                 </div>
                             {% endif %}
                             </div>
+                        {% endif %}
                     </div>
-                {% endif %}
-                <div class="{% if request.args.get("id_homework") is not none %}col-md-6 {% else %} col-md {% endif %} text-left">
+                <div class="col-md-6 text-left">
                     {% include "room_chat.html" %}
                 </div>
                 </div>
@@ -118,4 +120,9 @@
         </div>
     {% include "message_form.html" %}
     </div>
+    {% else %}
+        <div class="text-center">
+            <h2>Данная страница недоступна из-за отсутствия нужных файлов.</h2>
+        </div>
+    {% endif %}
 {% endblock %}

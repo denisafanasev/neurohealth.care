@@ -1,5 +1,6 @@
 from services.education_list_courses_service import EducationListCoursesService
 
+
 class EducationListCoursesPageController():
 
     def get_courses(self):

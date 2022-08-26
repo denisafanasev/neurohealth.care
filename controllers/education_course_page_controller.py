@@ -11,11 +11,11 @@ class EducationCoursePageController():
         Возвращает список модулей курса по id
 
         Args:
-            _id(Int): индентификатор курса
-            _user_id(Int): индентификатор пользователя
+            _id(Int): ID курса
+            _user_id(Int): ID пользователя
 
         Returns:
-            modules_list_view(List): список модулей курса
+            List: список модулей курса
         """
 
         course_service = EducationCourseService()
@@ -81,7 +81,7 @@ class EducationCoursePageController():
         Возвращает представление текущего пользователя
 
         Returns:
-            user(Dict): данные пользователя
+            Dict: данные пользователя
         """
 
         course_service = EducationCourseService()
@@ -108,7 +108,7 @@ class EducationCoursePageController():
         Возвращает курс по id
 
         Args:
-            _id(Int): индентификатор курса
+            _id(Int): ID курса
 
         Returns:
             course(Dict): курс

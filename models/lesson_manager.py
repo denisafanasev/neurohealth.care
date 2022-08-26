@@ -10,7 +10,7 @@ class EducationLessonManager():
     """
     def lesson_row_to_lesson(self, _data_row):
         """
-        Преобразует структуру данных, в которой хранится информация о уроке в структуру Lesson
+        Преобразует структуру данных, в которой хранится информация об уроке в структуру Lesson
 
         Args:
             _data_row (Dict): структура данных, которую возвращает дата адаптер
@@ -35,11 +35,11 @@ class EducationLessonManager():
         Возвращает данные урока
 
         Args:
-            _id(Int): ID урока
-            _id_video(Int): ID видео
+            _id(Integer): ID урока
+            _id_video(Integer): ID видео. Defaults to 1
 
         Return:
-            Lesson: класс Lesson, обернутый в класс Module
+            Lesson: урок
         """
 
         data_store_lessons = DataStore("lessons")
@@ -68,19 +68,20 @@ class EducationLessonManager():
             _id_lesson(Int): ID текущего урока
 
         Returns:
-            Dict: данные соседних уроков текущего урока
+            Dict: словарь с соседними уроками текущего урока
         """
 
         data_store_lessons = DataStore("lessons")
 
         current_lesson = data_store_lessons.get_row_by_id(_id_lesson)
         lessons_list = data_store_lessons.get_rows()
-
+        # находим индекс, под которым храниться текущий урок
         index_current_lesson = lessons_list.index(current_lesson)
         neighboring_lessons = {
             "next_lesson": None,
             "previous_lesson": None
         }
+        # находим соседние уроки
         try:
             next_lesson = lessons_list[index_current_lesson + 1]
             neighboring_lessons['next_lesson'] = self.lesson_row_to_lesson(next_lesson)

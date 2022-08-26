@@ -11,13 +11,14 @@ from models.message_manager import MessageManager
 
 class HomeworksService():
     """
-    HomeworksService - класс бизнес-логики сервиса управления настройками приложения
+    HomeworksService - класс бизнес-логики сервиса управления настройками приложения.
     Возвращает в слой отображения объекты в доменной модели
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
     def get_homeworks_list(self):
         """
         Возвращает список домашних работ пользователей
+
         Returns:
             List: список домашних работ
         """
@@ -31,8 +32,10 @@ class HomeworksService():
     def get_course(self, _id_lesson):
         """
         Возвращает данные курса
+
         Args:
             _id_lesson(Int): id урока
+
         Returns:
             Course: курс
         """
@@ -94,6 +97,7 @@ class HomeworksService():
         Args:
             _id_lesson(Integer): ID урока
             _id_user(Integer): ID пользователя
+            _id_current_user(Integer): ID текущего пользователя
 
         Returns:
             RoomChat: комната чата
