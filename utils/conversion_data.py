@@ -148,6 +148,7 @@ def conversion_room_chat_data():
                 if room_chat_data.get("id_education_stream") is not None:
                     data_store.delete_key_in_row("id_education_stream", "id", room_chat.id)
 
+
                 data_store.delete_key_in_row("name", "id", room_chat.id)
                 data_store.delete_key_in_row("id", "id", room_chat.id)
 
@@ -204,8 +205,29 @@ def delete_id_key_in_lesson():
         if lesson_data.get("id") is not None:
             data_store.delete_key_in_row("id", "id", lesson_data['id'])
 
+def create_copy_data():
+    data_store_homework = DataStore("homeworks")
+    data_store_room_chat = DataStore("room_chat")
+    data_store_message = DataStore("message")
+    data_store_homework_copy = DataStore("homeworks_copy")
+    data_store_room_chat_copy = DataStore("room_chat_copy")
+    data_store_message_copy = DataStore("message_copy")
+
+    homework_list = data_store_homework.get_rows()
+    for homework in homework_list:
+        data_store_homework_copy.add_row(homework)
+
+    room_chat_list = data_store_room_chat.get_rows()
+    for room_chat in room_chat_list:
+        data_store_room_chat_copy.add_row(room_chat)
+
+    message_list = data_store_message.get_rows()
+    for message in message_list:
+        data_store_message_copy.add_row(message)
+
 
 # Запуск функций для конвертации форматов данных
+create_copy_data()
 conversion_module_data()
 conversion_room_chat_data()
 delete_id_key_in_lesson()
