@@ -6,9 +6,9 @@ from models.course_manager import EducationCourseManager
 class EducationStreamService():
     """
     Класс сервиса карточки обучающего потока
-    """    
+    """
 
-    def get_education_streams_list(self):
+    def get_education_streams(self):
         """
         Возвращает список обучающих потоков
 
@@ -19,7 +19,7 @@ class EducationStreamService():
         education_stream_manager = EducationStreamManager()
         course_manager = EducationCourseManager()
 
-        education_streams = education_stream_manager.get_education_streams_list()
+        education_streams = education_stream_manager.get_education_streams()
         education_streams_list = []
 
         for i_education_stream in education_streams:
@@ -110,9 +110,8 @@ class EducationStreamService():
         """
         education_stream_manager = EducationStreamManager()
 
-        education_stream = education_stream_manager.create_education_stream(_education_stream)
+        education_stream_manager.create_education_stream(_education_stream)
 
-        return education_stream.id
 
     def change_education_stream(self, _education_stream, _old_students_list, _old_curators_list):
         """
@@ -144,8 +143,8 @@ class EducationStreamService():
         # if excluded_users_list != []:
         #     user_service.exclusion_of_users_from_list(excluded_users_list, education_stream.id)
 
-    def get_education_streams_list_by_login_user(self, _login_user, _role_user):
+    def get_education_streams_by_login_user(self, _login_user, _role_user):
 
         education_stream_manager = EducationStreamManager()
 
-        return education_stream_manager.get_education_streams_list_by_login_user(_login_user, _role_user)
+        return education_stream_manager.get_education_streams_by_login_user(_login_user, _role_user)

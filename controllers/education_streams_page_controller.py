@@ -6,7 +6,7 @@ class EducationStreamsPageController():
     Класс страницы со списком обучающих потоков
     """    
 
-    def get_education_streams_list(self):
+    def get_education_streams(self):
         """
         возвращает отформатированный список обучающих потоков
 
@@ -16,7 +16,7 @@ class EducationStreamsPageController():
 
         education_stream_service = EducationStreamsService()
 
-        education_streams = education_stream_service.get_education_streams_list()
+        education_streams = education_stream_service.get_education_streams()
 
         education_streams_list = []
 

@@ -19,7 +19,7 @@ class EducationStreamManager():
             EducationStream: обучающий поток
         """
 
-        education_stream = EducationStream(_id=_data_row['id'], _name=_data_row['name'], _id_course=_data_row['id_course'],
+        education_stream = EducationStream(_id=_data_row.doc_id, _name=_data_row['name'], _id_course=_data_row['id_course'],
                                          _curators_list=_data_row['curators_list'], _students_list=_data_row['students_list'],
                                          _teacher=_data_row['teacher'])
 
@@ -59,11 +59,6 @@ class EducationStreamManager():
 
         data_store = DataStore("education_streams")
 
-        # rows = data_store.get_rows()
-        # _education_stream['id'] = max([i['id'] for i in rows]) + 1
-
-        #education_stream = self.education_stream_row_to_education_stream(_education_stream)
-
         # TODO: преобразовать логины пользователей в id
         data_store.add_row({'name': _education_stream['name'],
                             'date_start': _education_stream['date_start'],
@@ -73,9 +68,7 @@ class EducationStreamManager():
                             "curators_list": _education_stream['curators_list'],
                             "students_list": _education_stream['students_list']})
 
-        # return education_stream
-
-    def get_education_streams_list(self):
+    def get_education_streams(self):
         """
         Возвращает список обучающих потоков
 
@@ -132,7 +125,7 @@ class EducationStreamManager():
 
         return education_stream
 
-    def get_education_streams_list_by_login_user(self, _login_user, _role_user):
+    def get_education_streams_by_login_user(self, _login_user, _role_user):
 
         data_store = DataStore("education_streams")
 

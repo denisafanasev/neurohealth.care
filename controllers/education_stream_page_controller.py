@@ -131,9 +131,8 @@ class EducationStreamPageController():
         """
         education_stream_manager = EducationStreamService()
 
-        education_stream = education_stream_manager.create_education_stream(_education_stream)
+        education_stream_manager.create_education_stream(_education_stream)
 
-        return education_stream.id
 
     def change_education_stream(self, _education_stream, _old_students_list, _old_curators_list):
         """

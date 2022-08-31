@@ -89,7 +89,7 @@ class EducationCourseService():
         education_stream_manager = EducationStreamManager()
 
         user = user_manager.get_user_by_id(_user_id)
-        education_streams = education_stream_manager.get_education_streams_list_by_login_user(user.login, user.role)
+        education_streams = education_stream_manager.get_education_streams_by_login_user(user.login, user.role)
 
         if _course_id is not None:
             for education_stream in education_streams:

@@ -35,8 +35,6 @@ from controllers.education_home_tasks_page_controller import EducationHomeTasksP
 from controllers.education_home_task_profile_page_controller import EducationChatPageController
 from controllers.education_streams_page_controller import EducationStreamsPageController
 from controllers.education_stream_page_controller import EducationStreamPageController
-
-from controllers.education_stream_profile_page_controller import EducationStreamProfilePageController
 from controllers.education_program_subscription_page_controller import EducationProgramSubscriptionPageController
 
 from error import UserManagerException
@@ -1353,7 +1351,7 @@ def education_streams():
     endpoint = "education_streams"
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
-    education_streams_list = page_controller.get_education_streams_list()
+    education_streams_list = page_controller.get_education_streams()
 
     return render_template('education_streams.html', view="education_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
@@ -1363,8 +1361,9 @@ def education_streams():
 @login_required
 def education_stream_card():
 
-    page_controller = EducationStreamPageController()
     endpoint = "education_streams"
+
+    page_controller = EducationStreamPageController()
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     user_id = flask_login.current_user.user_id
@@ -1405,10 +1404,8 @@ def education_stream_card():
                 education_stream_edit['curators_list'].append(education_stream_edit['teacher'])
 
             id_education_stream = page_controller.create_education_stream(education_stream_edit)
-            # education_stream_edit['course'] = {"id": education_stream_edit.pop("id_course")}
-            # education_stream = education_stream_edit
-            # mode = "view"
-            return redirect(f"/education_stream_card?id={id_education_stream}")
+
+            return redirect("education_streams")
 
         elif request.form.get('button') == 'edit':
             mode = "edit"

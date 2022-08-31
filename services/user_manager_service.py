@@ -48,7 +48,7 @@ class UserManagerService():
         user = user_manager.get_user_by_login(_login_user)
 
         #if user is not None:
-        #    user.education_stream_list = stream_service.get_education_streams_list_by_login_user(user.login, user.role)
+        #    user.education_stream_list = stream_service.get_education_streams_by_login_user(user.login, user.role)
 
 
         return user
