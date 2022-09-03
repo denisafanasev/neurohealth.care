@@ -173,7 +173,7 @@ class EducationCourseService():
                         course_users_list = f.read().splitlines()
                     
                     for course_user in course_users_list:
-                        if course_user.split()[0] == user.login:
+                        if course_user.split()[0].lower() == user.login:
                             return True
 
             # проверяем, есть ли пользователь в списках участников второго потока
