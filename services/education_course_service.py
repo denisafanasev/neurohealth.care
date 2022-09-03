@@ -89,12 +89,13 @@ class EducationCourseService():
         education_stream_manager = EducationStreamManager()
 
         user = user_manager.get_user_by_id(_user_id)
-        education_streams = education_stream_manager.get_education_streams_by_login_user(user.login, user.role)
 
-        if _course_id is not None:
-            for education_stream in education_streams:
-                if education_stream.course == _course_id and education_stream.status == "идет":
-                    user.education_stream_list = education_stream
+        #education_streams = education_stream_manager.get_education_streams_list_by_login_user(user.login, user.role)
+
+        #if _course_id is not None:
+        #    for education_stream in education_streams:
+        #        if education_stream.course == _course_id and education_stream.status == "идет":
+        #            user.education_stream_list = education_stream
 
         return user
     
@@ -173,7 +174,7 @@ class EducationCourseService():
                         course_users_list = f.read().splitlines()
                     
                     for course_user in course_users_list:
-                        if course_user.split()[0] == user.login:
+                        if course_user.split()[0].lower() == user.login:
                             return True
 
             # проверяем, есть ли пользователь в списках участников второго потока
