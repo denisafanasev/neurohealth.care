@@ -139,13 +139,11 @@ class EducationStreamPageController():
         Изменяет данные обучающего потока
 
         Args:
-            _education_stream(Dict): обучающий поток
-            _old_students_list(List): предыдущий список студентов
-            _old_curators_list(List): предыдющий список кураторов
+            _education_stream(Dict): обновленные атрибуты обучающего потока
         """
 
         education_stream_service = EducationStreamService()
 
-        education_stream_service.change_education_stream(_education_stream, _old_students_list, _old_curators_list)
+        education_stream_service.change_education_stream(_education_stream)
 
         _education_stream['course'] = _education_stream.pop("id_course")

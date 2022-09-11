@@ -97,11 +97,11 @@ class EducationStreamManager():
 
         data_store = DataStore('education_streams')
 
-        education_stream = data_store.get_rows({"id": _id})
+        education_stream = data_store.get_row_by_id(_id)
 
         if education_stream != []:
 
-            return self.education_stream_row_to_education_stream(education_stream[0])
+            return self.education_stream_row_to_education_stream(education_stream)
         else:
             return None
 
@@ -115,13 +115,19 @@ class EducationStreamManager():
 
         data_store = DataStore('education_streams')
 
-        education_stream = self.education_stream_row_to_education_stream(_education_stream)
+        # education_stream = self.education_stream_row_to_education_stream(_education_stream)
 
-        data_store.update_row({'id': education_stream.id, "name": education_stream.name,
+        # создаем объект обучающего потока что бы отработать в нем логику установки атрибутов
+        education_stream = EducationStream(_id=_education_stream['id'], _name=_education_stream['name'], _id_course=_education_stream['id_course'],
+                                         _curators_list=_education_stream['curators_list'], _students_list=_education_stream['students_list'],
+                                         _teacher=_education_stream['teacher'])
+
+        # сохранение проводим из атрибутов объекта обучающего потока
+        data_store.update_row_by_id({"name": education_stream.name,
                                'date_start': education_stream.date_start.strftime('%d/%m/%Y'),
                                "date_end": education_stream.date_end.strftime('%d/%m/%Y'), "teacher": education_stream.teacher,
                                "id_course": education_stream.course, "curators_list": education_stream.curators_list,
-                               "students_list": education_stream.students_list}, 'id')
+                               "students_list": education_stream.students_list}, education_stream.id)
 
         return education_stream
 

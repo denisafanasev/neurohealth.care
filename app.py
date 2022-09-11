@@ -1367,10 +1367,6 @@ def education_stream_card():
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     user_id = flask_login.current_user.user_id
-
-    curators_list = page_controller.get_curators_list(user_id)
-    students_list = page_controller.get_students_list(user_id)
-    courses_list = page_controller.get_courses_list(user_id)
     
     id_education_stream = request.args.get('id')
     error = None
@@ -1385,6 +1381,10 @@ def education_stream_card():
         id_education_stream = int(id_education_stream)
     else:
         mode = 'new'
+    
+    curators_list = page_controller.get_curators_list(user_id)
+    students_list = page_controller.get_students_list(user_id)
+    courses_list = page_controller.get_courses_list(user_id)
 
     education_stream = page_controller.get_education_stream(id_education_stream)
 
@@ -1426,7 +1426,6 @@ def education_stream_card():
                                                    education_stream["curators_list"])
             mode = "view"
             education_stream = page_controller.get_education_stream(id_education_stream)
-
 
     return render_template('education_stream_card.html', view="education_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _endpoint=endpoint,

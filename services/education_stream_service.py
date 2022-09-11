@@ -113,7 +113,7 @@ class EducationStreamService():
         education_stream_manager.create_education_stream(_education_stream)
 
 
-    def change_education_stream(self, _education_stream, _old_students_list, _old_curators_list):
+    def change_education_stream(self, _education_stream):
         """
         Изменяет данные обучающего потока
 
@@ -127,21 +127,23 @@ class EducationStreamService():
 
         education_stream_manager.change_education_stream(_education_stream)
 
-        # if education_stream.teacher not in education_stream.curators_list:
-        #     education_stream.curators_list.append(education_stream.teacher)
-        #
-        # user_service.add_user_in_education_stream(education_stream.id, education_stream.curators_list)
-        # user_service.add_user_in_education_stream(education_stream.id, education_stream.students_list)
-        #
-        # excluded_users_list = []
-        # if _old_students_list != education_stream.students_list:
-        #     excluded_users_list.extend([user for user in _old_students_list if user not in education_stream.students_list])
-        #
-        # if _old_curators_list != education_stream.curators_list:
-        #     excluded_users_list.extend([user for user in _old_curators_list if user not in education_stream.curators_list])
-        #
-        # if excluded_users_list != []:
-        #     user_service.exclusion_of_users_from_list(excluded_users_list, education_stream.id)
+        '''
+        if education_stream.teacher not in education_stream.curators_list:
+            education_stream.curators_list.append(education_stream.teacher)
+        
+        user_service.add_user_in_education_stream(education_stream.id, education_stream.curators_list)
+        user_service.add_user_in_education_stream(education_stream.id, education_stream.students_list)
+    
+        excluded_users_list = []
+        if _old_students_list != education_stream.students_list:
+            excluded_users_list.extend([user for user in _old_students_list if user not in education_stream.students_list])
+        
+        if _old_curators_list != education_stream.curators_list:
+            excluded_users_list.extend([user for user in _old_curators_list if user not in education_stream.curators_list])
+        
+        if excluded_users_list != []:
+            user_service.exclusion_of_users_from_list(excluded_users_list, education_stream.id)
+        '''
 
     def get_education_streams_by_login_user(self, _login_user, _role_user):
 
