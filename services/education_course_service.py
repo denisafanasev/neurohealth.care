@@ -57,12 +57,12 @@ class EducationCourseService():
         education_stream_manager = EducationStreamManager()
 
         user = user_manager.get_user_by_id(_user_id)
-        education_streams = education_stream_manager.get_education_streams_list_by_login_user(user.login, user.role)
+        #education_streams = education_stream_manager.get_education_streams_list_by_login_user(user.login, user.role)
 
-        if _course_id is not None:
-            for education_stream in education_streams:
-                if education_stream.course == _course_id and education_stream.status == "идет":
-                    user.education_stream_list = education_stream
+        #if _course_id is not None:
+        #    for education_stream in education_streams:
+        #        if education_stream.course == _course_id and education_stream.status == "идет":
+        #            user.education_stream_list = education_stream
 
         return user
     
@@ -135,8 +135,18 @@ class EducationCourseService():
 
             course_modules = module_manager.get_course_modules_list(_course_id)
 
+            # проверяем, есть ли пользователь в списках участников третьего потока
+            for i in range(1, min(len(course_modules), 4)):
+                if course_modules[i - 1].id == _module_id:
+                    with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
+                        course_users_list = f.read().splitlines()
+                    
+                    for course_user in course_users_list:
+                        if course_user.split()[0].lower() == user.login:
+                            return True
+
             # проверяем, есть ли пользователь в списках участников второго потока
-            for i in range(1, min(len(course_modules), 6)):
+            for i in range(1, min(len(course_modules), 9)):
                 if course_modules[i - 1].id == _module_id:
                     with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
                         course_users_list = f.read().splitlines()
