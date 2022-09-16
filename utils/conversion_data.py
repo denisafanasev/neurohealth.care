@@ -148,7 +148,6 @@ def conversion_room_chat_data():
                 if room_chat_data.get("id_education_stream") is not None:
                     data_store.delete_key_in_row("id_education_stream", "id", room_chat.id)
 
-
                 data_store.delete_key_in_row("name", "id", room_chat.id)
                 data_store.delete_key_in_row("id", "id", room_chat.id)
 
@@ -194,6 +193,7 @@ def conversion_message_data(_id_message, _id_room_chat):
         data_store.update_row({"id": message.id, "read": message.read}, "id")
         data_store.delete_key_in_row("id", "id", _id_message)
 
+
 def delete_id_key_in_lesson():
     """
     Удаляет ключ ID у уроков, так как больше не нужен(дальнейшие поиски будут по doc_id)
@@ -204,6 +204,7 @@ def delete_id_key_in_lesson():
     for lesson_data in lessons_list:
         if lesson_data.get("id") is not None:
             data_store.delete_key_in_row("id", "id", lesson_data['id'])
+
 
 def create_copy_data():
     data_store_homework = DataStore("homeworks")

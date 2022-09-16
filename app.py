@@ -798,9 +798,10 @@ def education_course_lesson():
 
         else:
             return redirect(f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}")
-        if data['available']:
-            homework = page_controller.get_last_homework(id_lesson, user_id)
-            room_chat = page_controller.get_room_chat(id_lesson, user_id)
+
+    if data['available']:
+        homework = page_controller.get_last_homework(id_lesson, user_id)
+        room_chat = page_controller.get_room_chat(id_lesson, user_id)
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _homework=homework,

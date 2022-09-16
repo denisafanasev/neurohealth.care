@@ -4,7 +4,12 @@ from services.education_course_lesson_service import EducationCourseLessonServic
 
 
 class EducationCourseLessonPageController():
-
+    """
+    EducationCourseLessonPageController - класс контроллера представления просмотра урока, выполнения домашней работы и
+    общения в чате с кураторами.
+    Возвращает в слой отображения объекты в виде, пригодном для отображения в web странице и в соответсвующем форматировании
+    Взаимодейтвует с классами слоя сервисов, передавая им данные и получая данные в объектах доменной модели
+    """
     def get_lesson(self, _user_id, _lesson_id, _id_video=1):
         """
         Возвращает данные урока
