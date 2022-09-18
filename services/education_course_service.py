@@ -177,7 +177,7 @@ class EducationCourseService():
                             return True
 
             # проверяем, есть ли пользователь в списках участников второго потока
-            for i in range(1, min(len(course_modules), 9)):
+            for i in range(1, min(len(course_modules) + 1, 9)):
                 if course_modules[i - 1].id == _module_id:
                     with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
                         course_users_list = f.read().splitlines()
