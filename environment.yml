@@ -8,7 +8,7 @@ dependencies:
   - autopep8=1.6.0
   - blinker=1.4
   - brotlipy=0.7.0
-  - ca-certificates=2022.4.26
+  - ca-certificates=2022.07.19
   - certifi=2022.6.15
   - cffi=1.15.0
   - click=8.0.4
@@ -34,7 +34,7 @@ dependencies:
   - markupsafe=2.1.1
   - mccabe=0.7.0
   - ncurses=6.3
-  - openssl=1.1.1o
+  - openssl=1.1.1q
   - pcre=8.45
   - pip=22.1.2
   - platformdirs=2.4.0

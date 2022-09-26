@@ -1,44 +1,22 @@
+from datetime import datetime, timedelta
 from services.education_stream_service import EducationStreamService
 
-
 class EducationStreamPageController():
+    """
+    Класс страницы карточки обучающего потока
+    """    
 
-    def get_education_streams_list(self):
+    def get_students_list(self, _user_id):
+        """
+        Возвращает список пользователей с ролью user
 
-        education_stream_service = EducationStreamService()
-
-        education_streams = education_stream_service.get_education_streams_list()
-
-        education_streams_list = []
-
-        for i_education_stream in education_streams:
-
-            education_stream = {
-                "id": i_education_stream.id,
-                "name": i_education_stream.name,
-                "course": {
-                    "id": i_education_stream.course.id,
-                    "name": i_education_stream.course.name
-                },
-                "date_start": i_education_stream.date_start.strftime("%d/%m/%Y"),
-                "date_end": i_education_stream.date_end.strftime("%d/%m/%Y"),
-                "curators_list": i_education_stream.curators_list,
-                "students_list": i_education_stream.students_list,
-                "count_curators": len(i_education_stream.curators_list),
-                "count_students": len(i_education_stream.students_list),
-                "teacher": i_education_stream.teacher,
-                "status": i_education_stream.status
-            }
-
-            education_streams_list.append(education_stream)
-
-        return education_streams_list
-
-    def get_students_list(self):
+        Returns:
+            students_list(List): список пользователей
+        """
 
         education_stream_service = EducationStreamService()
 
-        students = education_stream_service.get_students_list()
+        students = education_stream_service.get_students_list(_user_id)
         students_list = []
 
         for i_student in students:
@@ -52,6 +30,12 @@ class EducationStreamPageController():
         return students_list
 
     def get_curators_list(self, _user_id):
+        """
+        Возвращает отформатированный список пользователей с ролью superuser
+
+        Returns:
+            [List]: список пользователей
+        """
 
         education_stream_service = EducationStreamService()
 
@@ -69,6 +53,12 @@ class EducationStreamPageController():
         return curators_list
 
     def get_courses_list(self, _user_id):
+        """
+        Возвращает список курсов
+
+        Returns:
+            (List): список курсов
+        """
 
         education_stream_service = EducationStreamService()
 
@@ -86,12 +76,19 @@ class EducationStreamPageController():
         return courses_list
 
     def get_education_stream(self, _id):
+        """
+        Возвращает представление обучающего потока по id
+
+        Args:
+            _id(Int): идентификатор обучающего потока
+        """
 
         education_stream_service = EducationStreamService()
 
         education_stream = education_stream_service.get_education_stream(_id)
 
         if education_stream is not None:
+
             education_stream_view = {
                 "id": education_stream.id,
                 "name": education_stream.name,
@@ -99,8 +96,8 @@ class EducationStreamPageController():
                     "id": education_stream.course.id,
                     "name": education_stream.course.name
                 },
-                "date_start": education_stream.date_start,
-                "date_end": education_stream.date_end,
+                "date_start": education_stream.date_start.strftime("%d/%m/%Y"),
+                "date_end": education_stream.date_end.strftime("%d/%m/%Y"),
                 "curators_list": education_stream.curators_list,
                 "students_list": education_stream.students_list,
                 "count_curators": len(education_stream.curators_list),
@@ -113,11 +110,40 @@ class EducationStreamPageController():
                 "id": 0,
                 "name": "Введите название потока..",
                 "course": "Выберить курс обучающего потока..",
-                "date_start": "Выберите дату начала обучающего потока..",
-                "date_end": "Выберите дату окончания обучающего потока..",
+                "date_start": datetime.today().strftime("%d/%m/%Y"),
+                "date_end": (datetime.today() + timedelta(days=60)).strftime("%d/%m/%Y"),
                 "curators_list": "Выберите кураторов обучающего потока..",
                 "students_list": "Выберите учащихся обучающего потока..",
                 "teacher": "Выберите преподавателя обучающего потока..",
             }
 
         return education_stream_view
+    
+    def create_education_stream(self, _education_stream):
+        """
+        Создает обучающий поток
+
+        Args:
+            _education_stream(Dict): обучающий поток
+
+        Returns:
+            id(Int): идентификатор обучающего потока
+        """
+        education_stream_manager = EducationStreamService()
+
+        education_stream_manager.create_education_stream(_education_stream)
+
+
+    def change_education_stream(self, _education_stream, _old_students_list, _old_curators_list):
+        """
+        Изменяет данные обучающего потока
+
+        Args:
+            _education_stream(Dict): обновленные атрибуты обучающего потока
+        """
+
+        education_stream_service = EducationStreamService()
+
+        education_stream_service.change_education_stream(_education_stream)
+
+        _education_stream['course'] = _education_stream.pop("id_course")

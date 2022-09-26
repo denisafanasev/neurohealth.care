@@ -538,6 +538,7 @@ class UserManager():
         data_store.change_row(
             {"education_module_expiration_date": user.education_module_expiration_date, "login": user.login})
 
+    '''
     def add_user_in_education_stream(self, _id_education_stream, _users_list):
         """
         Добавляет пользователей к обучающему потоку
@@ -574,3 +575,4 @@ class UserManager():
             user.education_stream_list.remove(_id_education_stream)
             data_store.change_row({"education_stream_list": user.education_stream_list, "login": user.login})
 
+'''

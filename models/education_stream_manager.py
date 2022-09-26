@@ -19,7 +19,7 @@ class EducationStreamManager():
             EducationStream: обучающий поток
         """
 
-        education_stream = EducationStream(_id=_data_row['id'], _name=_data_row['name'], _id_course=_data_row['id_course'],
+        education_stream = EducationStream(_id=_data_row.doc_id, _name=_data_row['name'], _id_course=_data_row['id_course'],
                                          _curators_list=_data_row['curators_list'], _students_list=_data_row['students_list'],
                                          _teacher=_data_row['teacher'])
 
@@ -59,19 +59,16 @@ class EducationStreamManager():
 
         data_store = DataStore("education_streams")
 
-        rows = data_store.get_rows()
-        _education_stream['id'] = max([i['id'] for i in rows]) + 1
-        education_stream = self.education_stream_row_to_education_stream(_education_stream)
+        # TODO: преобразовать логины пользователей в id
+        data_store.add_row({'name': _education_stream['name'],
+                            'date_start': _education_stream['date_start'],
+                            "date_end": _education_stream['date_end'],
+                            "teacher": _education_stream['teacher'],
+                            "id_course": _education_stream['id_course'],
+                            "curators_list": _education_stream['curators_list'],
+                            "students_list": _education_stream['students_list']})
 
-        data_store.add_row({'id': education_stream.id, 'name': education_stream.name,
-                            'date_start': education_stream.date_start.strftime('%d/%m/%Y'),
-                            "date_end": education_stream.date_end.strftime('%d/%m/%Y'), "teacher": education_stream.teacher,
-                            "id_course": education_stream.course, "curators_list": education_stream.curators_list,
-                            "students_list": education_stream.students_list})
-
-        return education_stream
-
-    def get_education_streams_list(self):
+    def get_education_streams(self):
         """
         Возвращает список обучающих потоков
 
@@ -100,11 +97,11 @@ class EducationStreamManager():
 
         data_store = DataStore('education_streams')
 
-        education_stream = data_store.get_rows({"id": _id})
+        education_stream = data_store.get_row_by_id(_id)
 
         if education_stream != []:
 
-            return self.education_stream_row_to_education_stream(education_stream[0])
+            return self.education_stream_row_to_education_stream(education_stream)
         else:
             return None
 
@@ -118,17 +115,23 @@ class EducationStreamManager():
 
         data_store = DataStore('education_streams')
 
-        education_stream = self.education_stream_row_to_education_stream(_education_stream)
+        # education_stream = self.education_stream_row_to_education_stream(_education_stream)
 
-        data_store.update_row({'id': education_stream.id, "name": education_stream.name,
+        # создаем объект обучающего потока что бы отработать в нем логику установки атрибутов
+        education_stream = EducationStream(_id=_education_stream['id'], _name=_education_stream['name'], _id_course=_education_stream['id_course'],
+                                         _curators_list=_education_stream['curators_list'], _students_list=_education_stream['students_list'],
+                                         _teacher=_education_stream['teacher'])
+
+        # сохранение проводим из атрибутов объекта обучающего потока
+        data_store.update_row_by_id({"name": education_stream.name,
                                'date_start': education_stream.date_start.strftime('%d/%m/%Y'),
                                "date_end": education_stream.date_end.strftime('%d/%m/%Y'), "teacher": education_stream.teacher,
                                "id_course": education_stream.course, "curators_list": education_stream.curators_list,
-                               "students_list": education_stream.students_list}, 'id')
+                               "students_list": education_stream.students_list}, education_stream.id)
 
         return education_stream
 
-    def get_education_streams_list_by_login_user(self, _login_user, _role_user):
+    def get_education_streams_by_login_user(self, _login_user, _role_user):
 
         data_store = DataStore("education_streams")
 

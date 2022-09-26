@@ -259,16 +259,29 @@
                                     <div class="card d-flex align-self-baseline" style="margin-left: auto; margin-right: auto; ">
                                         <div class="card-header">
                                             <div class="mb-4">
+
                                                 <div class="" style="display: inline-grid;float: left">
                                                     <label class="form-label"><strong>Дата старта</strong></label>
-                                                    <input {% if _mode == 'view' %} disabled {% endif %} id="date_start" name="date_start" type="date" class="form-control"
-                                                           {% if _mode == "view" %}value="{{ _education_stream['date_start'] }}"{% endif %}>
+
+                                                    <div class="input-group mb-3">
+                                                        <input {% if _mode=='view' %} disabled {% endif %} id="date_start" name="date_start" type="date" class="form-control" {%
+                                                            if _mode=="view" %}value="{{ _education_stream['date_start'] }}" {% endif %}>
+                                                        <button class="btn btn-secondary" type="button"> </button>
+                                                    </div>
+
+                                                    
                                                 </div>
                                                 <div style="display:grid; justify-content: right">
                                                     <label class="form-label"><strong>Дата окончания</strong></label>
-                                                    <input {% if _mode == 'view' %} disabled {% endif %} id="date_end" name="date_end" type="date" class="form-control"
-                                                           {% if _mode == "view" %}value="{{ _education_stream['date_end'] }}"{% endif %}>
+
+                                                    <div class="input-group mb-3">
+                                                        <input {% if _mode == 'view' %} disabled {% endif %} id="date_end" name="date_end" type="date" class="form-control"
+                                                            {% if _mode == "view" %}value="{{ _education_stream['date_end'] }}"{% endif %}>
+                                                        <button class="btn btn-secondary" type="button"> </button>
+                                                    </div>
+
                                                 </div>
+                                                
                                             </div>
                                             <div class="mb-2">
                                                 <label class="form-label"><strong>Преподаватель</strong></label>

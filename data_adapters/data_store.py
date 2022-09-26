@@ -98,47 +98,28 @@ class DataStore():
 
         self.data_store.update_multiple([(_data, where("login") == _data["login"])])
 
-    def discharge_password(self, _data):
-        """
-        Сброс пароля
-
-        Args:
-            _data (Dict): структура данных для записи
-        """
-
-        self.data_store.update({"password": _data["password"]}, where("login") == _data["login"])
-
     def update_row(self, _data, _where):
         """
         Обновление данных
 
         Args:
             _data(Dict): структура данных для записи
-            _where(Dict): переменная для поиска нужно записи
+            _where(Dict): переменная для поиска нужной записи
         """
 
-        return self.data_store.update(_data, where(_where) == _data[_where])
+        self.data_store.update(_data, where(_where) == _data[_where])
 
-    def change_probationer(self, _data):
+    def update_row_by_id(self, _data, _id):
         """
-        Обновление данных тестируемого
+        Обновление данных по id
 
         Args:
             _data(Dict): структура данных для записи
+            _id(Int): id записи
         """
 
-        self.data_store.update_multiple([(_data,
-                                           where("probationer_id") == int(_data["probationer_id"]))])
+        self.data_store.update(_data, doc_ids = [_id])
 
-    def update_action(self, _action, _login):
-        """
-        Обновление записей действий пользователей
-        Args:
-            _action(Dict): структура данных для записи
-            _login(Dict): переменная для поиска нужно записи
-        """
-
-        self.data_store.update(add("action", [_action]), where("login") == _login)
 
     def upsert_row(self, _data, _where):
         """
@@ -151,16 +132,6 @@ class DataStore():
 
         self.data_store.upsert(_data, where(_where) == _data[_where])
 
-    def update_messages(self, _message, _id):
-        """
-        Обновление записей действий пользователей
-        Args:
-            _message(Dict): структура данных для записи
-            _id(Int): переменная для поиска нужно записи
-        """
-
-        self.data_store.update(add("message", [_message]), where("id") == _id)
-
     def delete_key_in_row(self, _key, _where, _where_value):
         """
         Удаление ключа и значения из записи
@@ -172,6 +143,48 @@ class DataStore():
 
         self.data_store.update(delete(_key), where(_where) == _where_value)
 
-    def update_row_by_doc_id(self, _data_row, _doc_id):
 
-        self.data_store.update(_data_row, doc_ids=[_doc_id])
+    # TODO: убрать отсюда этот метод
+    def update_messages(self, _message, _id):
+        """
+        Обновление записей действий пользователей
+        Args:
+            _message(Dict): структура данных для записи
+            _id(Int): переменная для поиска нужно записи
+        """
+
+        self.data_store.update(add("message", [_message]), where("id") == _id)
+
+    # TODO: убрать отсюда этот метод
+    def update_action(self, _action, _login):
+        """
+        Обновление записей действий пользователей
+        Args:
+            _action(Dict): структура данных для записи
+            _login(Dict): переменная для поиска нужно записи
+        """
+
+        self.data_store.update(add("action", [_action]), where("login") == _login)
+
+    # TODO: убрать отсюда этот метод
+    def discharge_password(self, _data):
+        """
+        Сброс пароля
+
+        Args:
+            _data (Dict): структура данных для записи
+        """
+
+        self.data_store.update({"password": _data["password"]}, where("login") == _data["login"])
+
+    # TODO: убрать отсюда этот метод
+    def change_probationer(self, _data):
+        """
+        Обновление данных тестируемого
+
+        Args:
+            _data(Dict): структура данных для записи
+        """
+
+        self.data_store.update_multiple([(_data,
+                                           where("probationer_id") == int(_data["probationer_id"]))])
