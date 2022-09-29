@@ -54,9 +54,11 @@ class MessageManager():
             message = self.message_row_to_message(i_message)
             if not message.read:
                 if message.id_user != _id_user:
-                    data_store.update_row_by_doc_id({"read": True}, message.id)
+                    message.read = True
+                    data_store.update_row_by_id({"read": True}, message.id)
                 else:
-                    data_store.update_row_by_doc_id({"read": False}, message.id)
+                    message.read = False
+                    data_store.update_row_by_id({"read": False}, message.id)
 
             message_list.append(message)
 
@@ -76,12 +78,13 @@ class MessageManager():
         data_store = DataStore("message")
 
         _message["date_send"] = datetime.now()
+        # если в сообщениях есть такое сочетание, то оно удаляется для того, чтобы сократить расстояние между строчками
         if "<p><br></p>" in _message['text']:
             index = _message['text'].find("<p><br></p>")
             _message['text'] = _message['text'][:index - 1] + _message['text'][index + 11:]
 
-        message = Message(_id_user=_message['id_user'], _id_room_chat=int(_message['id_room_chat']), _text=_message['text'],
-                          _date_send=_message['date_send'])
+        message = Message(_id_user=_message['id_user'], _id_room_chat=int(_message['id_room_chat']),
+                          _text=_message['text'], _date_send=_message['date_send'])
 
         data_store.add_row({"text": message.text, "id_user": message.id_user,
                             "id_room_chat": message.id_room_chat, "date_send": _message['date_send'].strftime("%d/%m/%Y"),

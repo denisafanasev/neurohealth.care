@@ -24,7 +24,7 @@ class ProbationerManager():
 
         for patients_data in patients_list_data:
 
-            patient = self.probationer_row_to_probationer(patients_data["probationer_id"], patients_data["name_probationer"],
+            patient = self.probationer_row_to_probationer(patients_data.doc_id, patients_data["name_probationer"],
                                                         patients_data["name_parent"],
                                                         patients_data["educational_institution"],
                                                         patients_data["contacts"],
@@ -55,7 +55,7 @@ class ProbationerManager():
         patients_data = data_store.get_row_by_id(_probationer_id)
 
         if patients_data is not None:
-            patient = self.probationer_row_to_probationer(patients_data["probationer_id"], patients_data["name_probationer"],
+            patient = self.probationer_row_to_probationer(patients_data.doc_id, patients_data["name_probationer"],
                                                         patients_data["name_parent"], patients_data["educational_institution"],
                                                         patients_data["contacts"],
                                                         patients_data["diagnoses"], patients_data["reasons_for_contact"],
@@ -93,8 +93,6 @@ class ProbationerManager():
 
         # проверим наличие в структуре хранения необязательных атрибутов
 
-
-
         return probationer
 
     def create_probationer(self, _user_login, _name_probationer, _date_of_birth, _name_parent,
@@ -124,21 +122,19 @@ class ProbationerManager():
 
         # создаем новую запись
         data_store = DataStore("probationers")
-        probationer_id = data_store.get_rows_count() + 1
 
         # создаем новую запись
-        probationer = self.probationer_row_to_probationer(_probationer_id=probationer_id, _user_login=user_login,
-                                                          _name_probationer=name_probationer, _name_parent=name_parent,
-                                  _educational_institution=educational_institution, _contacts=contacts,
-                                  _diagnoses=diagnoses, _reasons_for_contact=reasons_for_contact)
+        probationer = Probationer(_user_login=user_login, _name_probationer=name_probationer,
+                                  _name_parent=name_parent, _educational_institution=educational_institution,
+                                  _contacts=contacts, _diagnoses=diagnoses, _reasons_for_contact=reasons_for_contact)
 
         probationer.date_of_birth = datetime.strptime(date_of_birth, "%Y-%m-%d").strftime("%d/%m/%Y")
 
-        probationer_data = {"probationer_id": probationer.probationer_id, "user_login":probationer.user_login,
-                            "name_probationer": probationer.name_probationer, "date_of_birth": probationer.date_of_birth,
-                            "name_parent": probationer.name_parent,
-                            "educational_institution": probationer.educational_institution, "contacts": probationer.contacts,
-                            "diagnoses": probationer.diagnoses, "reasons_for_contact": probationer.reasons_for_contact}
+        probationer_data = {"user_login":probationer.user_login, "name_probationer": probationer.name_probationer,
+                            "date_of_birth": probationer.date_of_birth, "name_parent": probationer.name_parent,
+                            "educational_institution": probationer.educational_institution,
+                            "contacts": probationer.contacts, "diagnoses": probationer.diagnoses,
+                            "reasons_for_contact": probationer.reasons_for_contact}
 
         data_store.add_row(probationer_data)
 
@@ -167,7 +163,7 @@ class ProbationerManager():
 
         probationer.date_of_birth = datetime.strptime(_date_of_birth, "%Y-%m-%d").strftime("%d/%m/%Y")
 
-        probationer_data = {"probationer_id": probationer.probationer_id, "name_probationer": probationer.name_probationer,
+        probationer_data = {"name_probationer": probationer.name_probationer,
                             "date_of_birth": probationer.date_of_birth, "name_parent": probationer.name_parent,
                             "educational_institution": probationer.educational_institution,
                             "contacts": probationer.contacts, "diagnoses": probationer.diagnoses,
@@ -175,7 +171,7 @@ class ProbationerManager():
 
         data = DataStore("probationers")
 
-        data.change_probationer(probationer_data)
+        data.update_row_by_id(probationer_data, probationer.probationer_id)
 
         return probationer.name_probationer
 

@@ -143,18 +143,6 @@ class DataStore():
 
         self.data_store.update(delete(_key), where(_where) == _where_value)
 
-
-    # TODO: убрать отсюда этот метод
-    def update_messages(self, _message, _id):
-        """
-        Обновление записей действий пользователей
-        Args:
-            _message(Dict): структура данных для записи
-            _id(Int): переменная для поиска нужно записи
-        """
-
-        self.data_store.update(add("message", [_message]), where("id") == _id)
-
     # TODO: убрать отсюда этот метод
     def update_action(self, _action, _login):
         """
@@ -176,15 +164,3 @@ class DataStore():
         """
 
         self.data_store.update({"password": _data["password"]}, where("login") == _data["login"])
-
-    # TODO: убрать отсюда этот метод
-    def change_probationer(self, _data):
-        """
-        Обновление данных тестируемого
-
-        Args:
-            _data(Dict): структура данных для записи
-        """
-
-        self.data_store.update_multiple([(_data,
-                                           where("probationer_id") == int(_data["probationer_id"]))])

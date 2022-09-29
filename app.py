@@ -1,6 +1,6 @@
 import logging
 from logging.handlers import RotatingFileHandler
-from flask import Flask, request, redirect, render_template, url_for, send_file
+from flask import Flask, request, redirect, render_template, url_for, send_file, abort
 from flask_login import LoginManager, login_required, login_user, logout_user
 import flask_login
 
@@ -757,13 +757,16 @@ def education_course_lesson():
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     endpoint = 'education_list_courses'
-
-    id_lesson = int(request.args.get("id_lesson"))
-    id_video = request.args.get("id_video")
     user_id = flask_login.current_user.user_id
 
+    try:
+        id_lesson = int(request.args.get("id_lesson"))
+        id_video = int(request.args.get("id_video"))
+    except ValueError:
+        abort(404)
+
     user = page_controller.get_user_view_by_id_and_course_id(user_id)
-    data = page_controller.get_lesson(user_id, id_lesson, int(id_video))
+    data = page_controller.get_lesson(user_id, id_lesson, id_video)
     homework = None
     room_chat = None
     course = None
