@@ -120,7 +120,6 @@ class DataStore():
 
         self.data_store.update(_data, doc_ids = [_id])
 
-
     def upsert_row(self, _data, _where):
         """
         Обновление данных
@@ -143,24 +142,3 @@ class DataStore():
 
         self.data_store.update(delete(_key), where(_where) == _where_value)
 
-    # TODO: убрать отсюда этот метод
-    def update_action(self, _action, _login):
-        """
-        Обновление записей действий пользователей
-        Args:
-            _action(Dict): структура данных для записи
-            _login(Dict): переменная для поиска нужно записи
-        """
-
-        self.data_store.update(add("action", [_action]), where("login") == _login)
-
-    # TODO: убрать отсюда этот метод
-    def discharge_password(self, _data):
-        """
-        Сброс пароля
-
-        Args:
-            _data (Dict): структура данных для записи
-        """
-
-        self.data_store.update({"password": _data["password"]}, where("login") == _data["login"])

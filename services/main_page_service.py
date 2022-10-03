@@ -30,14 +30,15 @@ class MainPageService():
 
         return user
 
-    def discharge_password(self, _login, _password, _password2, _current_user_id, _current_password=''):
+    def discharge_password(self, _user_id, _password, _password2, _current_password=''):
         """
         Обновляет в системе пароль пользователя
 
         Args:
-            _login (String): логин пользователя
+            _user_id (Integer): ID пользователя
             _password (String): пароль пользователя
             _password2 (String): контрольный ввод пароля пользователя
+            _current_password (String): текущий пароль пользователя. Defaults to ''
 
         Returns:
             String: ошибка при обновлении пароля пользователя
@@ -46,15 +47,28 @@ class MainPageService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        error = user_manager.discharge_password(_login, _password, _password2, _current_password)
-        login_superuser = user_manager.get_user_by_id(_current_user_id).login
+        error = user_manager.discharge_password(_user_id, _password, _password2, _current_password)
+        login_user = user_manager.get_user_by_id(_user_id).login
 
-        action_manager.add_notifications(_login, "изменил", 'пароль', "user_manager", login_superuser)
+        action_manager.add_notifications(login_user, "изменил", 'пароль', "user_manager", login_user)
 
         return error
 
     def get_actions(self, _user_id):
+        """
+        Возвращает список действий, сделанных авторизованным пользователем(если авторизованный пользователь админ,
+        то возвращает список действий всех пользователей, которые есть в системе)
+
+        Args:
+            _user_id(Integer): ID текущего пользователя
+
+        Returns:
+            actions(List): список испытуемых
+        """
 
         action_manager = ActionManager()
+        user_manager = UserManager()
 
-        return action_manager.get_actions(_user_id)
+        user = user_manager.get_user_by_id(_user_id)
+
+        return action_manager.get_actions(user)

@@ -328,7 +328,6 @@ def user_manager():
                     # new_user['user_id'] = 0
                     # users_list.append(new_user)
 
-
             elif request.form.get(f"button_{user_id}") == "edit":
                 if mode[user_id] == "view":
                     mode[user_id] = "edit"
@@ -362,7 +361,7 @@ def user_manager():
                 user["password"] = request.form[f"password_{user_id}"]
                 user["password2"] = request.form[f"password2_{user_id}"]
 
-                error = page_controller.discharge_password(user["login"], user["password"], user["password2"], current_user_id)
+                error = page_controller.discharge_password(user_id, user["password"], user["password2"], current_user_id)
 
                 mode[user_id] = "view"
 
@@ -610,7 +609,7 @@ def main_page():
             password2 = request.form["password2"]
             current_password = request.form['current_password']
 
-            error = page_controller.discharge_password(user['login'], password, password2, current_password, user_id)
+            error = page_controller.discharge_password(user_id, password, password2, current_password)
 
             if error is None:
                 error = "Пароль успешно изменен!"
