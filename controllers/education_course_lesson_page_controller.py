@@ -76,12 +76,15 @@ class EducationCourseLessonPageController():
                 for i_message in room_chat.message:
                     # ищем данные пользователя, который отправил данное сообщения
                     user = education_course_service.get_user_by_id(i_message.id_user)
-                    message = {
-                        "id": i_message.id,
-                        "text": Markup(i_message.text),
-                        "id_user": i_message.id_user,
-                        "name": user.name
-                    }
+                    try:
+                        message = {
+                            "id": i_message.id,
+                            "text": Markup(i_message.text),
+                            "id_user": i_message.id_user,
+                            "name": user.name
+                        }
+                    except AttributeError:
+                        continue
 
                     message_list.append(message)
 

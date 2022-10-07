@@ -125,7 +125,7 @@ class HomeworkManager():
 
         data_store = DataStore("homeworks")
 
-        data_store.update_row_by_doc_id({"status": True}, _id_homework)
+        data_store.update_row_by_id({"status": True}, _id_homework)
         homework = data_store.get_row_by_id(_id_homework)
 
         return self.homework_row_to_homework(homework)

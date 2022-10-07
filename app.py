@@ -760,9 +760,13 @@ def education_course_lesson():
 
     try:
         id_lesson = int(request.args.get("id_lesson"))
-        id_video = int(request.args.get("id_video"))
     except ValueError:
         abort(404)
+
+    try:
+        id_video = int(request.args.get("id_video"))
+    except ValueError:
+        return redirect('/education_course/lesson?id_lesson={id_lesson}&id_video=1'.format(id_lesson=id_lesson))
 
     user = page_controller.get_user_view_by_id_and_course_id(user_id)
     data = page_controller.get_lesson(user_id, id_lesson, id_video)
