@@ -76,15 +76,12 @@ class EducationCourseLessonPageController():
                 for i_message in room_chat.message:
                     # ищем данные пользователя, который отправил данное сообщения
                     user = education_course_service.get_user_by_id(i_message.id_user)
-                    try:
-                        message = {
-                            "id": i_message.id,
-                            "text": Markup(i_message.text),
-                            "id_user": i_message.id_user,
-                            "name": user.name
-                        }
-                    except AttributeError:
-                        continue
+                    message = {
+                        "id": i_message.id,
+                        "text": Markup(i_message.text),
+                        "id_user": i_message.id_user,
+                        "name": user.name
+                    }
 
                     message_list.append(message)
 
@@ -205,14 +202,17 @@ class EducationCourseLessonPageController():
                 "text": Markup(homework.text)
             }
             # переводим размер файлов, сданной вместе с домашней работой, из бит в кб или мб
-            for file in homework.users_files_list:
-                if file.size // 1048576 == 0:
-                    file_size = f"{round(file.size / 1024, 2)} кБ"
-                else:
-                    file_size = f"{round(file.size / 1048576, 2)} мБ"
+            if homework.users_files_list is not None:
+                for file in homework.users_files_list:
+                    if file.size // 1048576 == 0:
+                        file_size = f"{round(file.size / 1024, 2)} кБ"
+                    else:
+                        file_size = f"{round(file.size / 1048576, 2)} мБ"
 
-                homework_view['users_files_list'].append({"name_file_unique": file.name_file_unique,
-                                                          "size": file_size})
+                    homework_view['users_files_list'].append({"name_file_unique": file.name_file_unique,
+                                                              "size": file_size})
+            else:
+                homework_view['users_files_list'] = None
 
         return homework_view
 

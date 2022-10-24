@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 import config
@@ -254,10 +255,16 @@ class EducationCourseLessonService():
                             course_users_list = f.read().splitlines()
 
                         for course_user in course_users_list:
-                            if course_user.split()[0].lower() == user.login:
-                                return True
+                            try:
+                                if course_user.split()[0].lower() == user.login:
+                                    return True
+                            except IndexError:
+                                continue
 
                     except FileNotFoundError:
+                        if 'course_1' not in os.listdir(config.DATA_FOLDER):
+                            os.mkdir(config.DATA_FOLDER + 'course_1')
+
                         file = open(config.DATA_FOLDER + 'course_1/s4_users.txt', 'w')
                         file.close()
 
@@ -269,10 +276,16 @@ class EducationCourseLessonService():
                             course_users_list = f.read().splitlines()
 
                         for course_user in course_users_list:
-                            if course_user.split()[0].lower() == user.login:
-                                return True
+                            try:
+                                if course_user.split()[0].lower() == user.login:
+                                    return True
+                            except IndexError:
+                                continue
 
                     except FileNotFoundError:
+                        if 'course_1' not in os.listdir(config.DATA_FOLDER):
+                            os.mkdir(config.DATA_FOLDER + 'course_1')
+
                         file = open(config.DATA_FOLDER + 'course_1/s3_users.txt', 'w')
                         file.close()
 
@@ -284,10 +297,16 @@ class EducationCourseLessonService():
                             course_users_list = f.read().splitlines()
 
                         for course_user in course_users_list:
-                            if course_user.split()[0].lower() == user.login:
-                                return True
+                            try:
+                                if course_user.split()[0].lower() == user.login:
+                                    return True
+                            except IndexError:
+                                continue
 
                     except FileNotFoundError:
+                        if 'course_1' not in os.listdir(config.DATA_FOLDER):
+                            os.mkdir(config.DATA_FOLDER + 'course_1')
+
                         file = open(config.DATA_FOLDER + 'course_1/s2_users.txt', 'w')
                         file.close()
 

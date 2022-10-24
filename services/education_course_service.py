@@ -1,3 +1,5 @@
+import os
+
 from models.room_chat_manager import RoomChatManager
 from models.message_manager import MessageManager
 from models.user_manager import UserManager
@@ -144,8 +146,11 @@ class EducationCourseService():
                             course_users_list = f.read().splitlines()
 
                         for course_user in course_users_list:
-                            if course_user.split()[0].lower() == user.login:
-                                return True
+                            try:
+                                if course_user.split()[0].lower() == user.login:
+                                    return True
+                            except IndexError:
+                                continue
 
                     except FileNotFoundError:
                         file = open(config.DATA_FOLDER + 'course_1/s4_users.txt', 'w')
@@ -159,10 +164,16 @@ class EducationCourseService():
                             course_users_list = f.read().splitlines()
 
                         for course_user in course_users_list:
-                            if course_user.split()[0].lower() == user.login:
-                                return True
+                            try:
+                                if course_user.split()[0].lower() == user.login:
+                                    return True
+                            except IndexError:
+                                continue
 
                     except FileNotFoundError:
+                        if 'course_1' not in os.listdir(config.DATA_FOLDER):
+                            os.mkdir(config.DATA_FOLDER + 'course_1')
+
                         file = open(config.DATA_FOLDER + 'course_1/s3_users.txt', 'w')
                         file.close()
 
@@ -174,10 +185,16 @@ class EducationCourseService():
                             course_users_list = f.read().splitlines()
 
                         for course_user in course_users_list:
-                            if course_user.split()[0].lower() == user.login:
-                                return True
+                            try:
+                                if course_user.split()[0].lower() == user.login:
+                                    return True
+                            except IndexError:
+                                continue
 
                     except FileNotFoundError:
+                        if 'course_1' not in os.listdir(config.DATA_FOLDER):
+                            os.mkdir(config.DATA_FOLDER + 'course_1')
+
                         file = open(config.DATA_FOLDER + 'course_1/s2_users.txt', 'w')
                         file.close()
 
@@ -196,7 +213,6 @@ class EducationCourseService():
         """
 
         homework_manager = HomeworkManager()
-        users_file_manager = UsersFileManager()
 
         homework_list = homework_manager.get_homeworks_list_by_id_lesson(_id_lesson, _id_user)
         date = datetime.strptime("01/01/2000", "%d/%m/%Y")
@@ -214,8 +230,6 @@ class EducationCourseService():
                 if homework.date_delivery <= date_first_homework:
                     date_first_homework = homework.date_delivery
 
-            files = users_file_manager.get_size_files(last_homework.users_files_list)
-            last_homework.users_files_list = files
             last_homework.date_delivery = date_first_homework
 
             return last_homework

@@ -164,9 +164,9 @@
                     </a>
 
                     <div class="navbar-collapse collapse" style="justify-content: flex-end">
-                    
-                        <div>
-                            <span class="text-dark"><b>Имя пользователя:</b> {{ current_user.name }} <b>роль:</b> {{ current_user.role }}</span>
+
+                        <div class="p-2">
+                            <span class="text-dark"><b>Имя пользователя:</b> {{ current_user.name }}{% if current_user.role == 'superuser' %} <b>роль:</b> {{ current_user.role }}{% endif %}</span>
                         </div>
                         
                         <div class="btn-group">

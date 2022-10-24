@@ -76,9 +76,13 @@
                                             <div class="mb-2">
                                                 {{ _homework['text'] }}
                                             </div>
-                                                {% for file in _homework['users_files_list'] %}
-                                                    <a download href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
-                                                {% endfor %}
+                                                {% if not _homework['users_files_list'] %}
+                                                    <h4>Файлы ответа на задание не были найдены.</h4>
+                                                {% else %}
+                                                    {% for file in _homework['users_files_list'] %}
+                                                        <a download href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
+                                                    {% endfor %}
+                                                {% endif %}
                                         </div>
 
                                     {% if _homework['status'] == "не проверено" %}

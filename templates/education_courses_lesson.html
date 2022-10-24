@@ -297,7 +297,9 @@
                                         <div class="mb-2">
                                             <strong>Текст ответа:</strong> {{ _homework['text'] }}
                                         </div>
-                                    {% if _homework['users_files_list'] != [] %}
+                                    {% if not _homework['users_files_list'] %}
+                                        <h4>Файлы ответа на задание не были найдены.</h4>
+                                    {% elif _homework['users_files_list'] != [] %}
                                         <table class="table">
                                         <thead>
                                             <tr>
@@ -307,15 +309,16 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                                {% for file in _homework['users_files_list'] %}
-                                                    <tr>
-                                                        <td>{{ file['name_file_unique'] }}</td>
-                                                        <td>{{ file['size'] }}</td>
-                                                        <td><a href="/download?name_file={{ file['name_file_unique'] }}&dataset=chat">Файл</a></td>
-                                                    </tr>
-                                                {% endfor %}
+                                            {% for file in _homework['users_files_list'] %}
+                                                <tr>
+                                                    <td>{{ file['name_file_unique'] }}</td>
+                                                    <td>{{ file['size'] }}</td>
+                                                    <td><a href="/download?name_file={{ file['name_file_unique'] }}&dataset=chat">Файл</a></td>
+                                                </tr>
+                                            {% endfor %}
                                         </tbody>
                                         </table>
+
                                     {% endif %}
                                     </div>
                                 </div>

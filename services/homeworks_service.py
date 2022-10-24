@@ -1,3 +1,5 @@
+import os
+
 import config
 from models.homework_manager import HomeworkManager
 from models.course_manager import EducationCourseManager
@@ -15,6 +17,7 @@ class HomeworksService():
     Возвращает в слой отображения объекты в доменной модели
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
+
     def get_homeworks_list(self):
         """
         Возвращает список домашних работ пользователей
@@ -149,11 +152,27 @@ class HomeworksService():
         user_manager = UserManager()
 
         users_login_list = []
-        with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
-            users_login_list.extend(f.read().splitlines())
+        try:
+            with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
+                users_login_list.extend(f.read().splitlines())
 
-        with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
-            users_login_list.extend(f.read().splitlines())
+        except FileNotFoundError:
+            if 'course_1' not in os.listdir(config.DATA_FOLDER):
+                os.mkdir(config.DATA_FOLDER + 'course_1')
+
+            file = open(config.DATA_FOLDER + 'course_1/s2_users.txt', 'w')
+            file.close()
+
+        try:
+            with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
+                users_login_list.extend(f.read().splitlines())
+
+        except FileNotFoundError:
+            if 'course_1' not in os.listdir(config.DATA_FOLDER):
+                os.mkdir(config.DATA_FOLDER + 'course_1')
+
+            file = open(config.DATA_FOLDER + 'course_1/s1_users.txt', 'w')
+            file.close()
 
         users_list = []
         for user_login in users_login_list:

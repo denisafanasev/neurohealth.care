@@ -46,12 +46,16 @@ class UsersFileManager():
 
         file_list = []
         for name_file_unique in _files_list:
-            file = data_store.get_rows({"name_file_unique": name_file_unique})[0]
-            if file != []:
-               user_file = self.user_files_row_to_users_files(file)
-               user_file.size = os.path.getsize(os.path.join(user_file.path, user_file.name_file_unique))
-               file_list.append(user_file)
-            else:
-                continue
+            try:
+                file = data_store.get_rows({"name_file_unique": name_file_unique})[0]
+                if file:
+                   user_file = self.user_files_row_to_users_files(file)
+                   user_file.size = os.path.getsize(os.path.join(user_file.path, user_file.name_file_unique))
+                   file_list.append(user_file)
+                else:
+                    continue
+
+            except FileNotFoundError:
+                file_list = None
 
         return file_list

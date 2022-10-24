@@ -733,6 +733,7 @@ def education_course():
         return redirect("education_list_courses")
 
     if request.method == "POST":
+        # если пользователь переходит на страницу урока, то записываем данное действие в базу данных
         if request.form.get("button"):
             id_lesson = int(request.form['button'])
             page_controller.add_action(id_lesson, user_id)
@@ -1468,4 +1469,4 @@ def not_found(e):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=True)
