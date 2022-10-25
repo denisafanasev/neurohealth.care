@@ -35,4 +35,5 @@ class DownloadService():
         elif _name_dataset == "course":
             path_file = os.path.abspath(os.path.join(config.DATA_FOLDER, f"course_{_id}", "materials", _name_file))
 
-        return path_file
+        if os.path.exists(path_file):
+            return path_file

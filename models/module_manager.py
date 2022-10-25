@@ -40,7 +40,7 @@ class EducationModuleManager():
         data_store_module = DataStore("modules")
 
         modules = data_store_module.get_rows({"id_course": _id})
-        if modules != []:
+        if modules:
             modules_list = []
             for module in modules:
                 modules_list.append(self.module_row_to_module(module))

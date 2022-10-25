@@ -1,6 +1,7 @@
 from models.room_chat import RoomChat
 from data_adapters.data_store import DataStore
 
+
 class RoomChatManager():
     """
     Класс модели управления комнатами чатов
@@ -39,7 +40,7 @@ class RoomChatManager():
         if room_chat_data is not None:
             return self.room_chat_row_to_room_chat(room_chat_data)
 
-    def add_room_chat(self, _id_user, _id_lesson):
+    def add_room_chat(self, _id_user: int, _id_lesson: int):
         """
         Создает новый чат
 
@@ -74,5 +75,5 @@ class RoomChatManager():
         data_store = DataStore("room_chat")
 
         room_chat = data_store.get_rows({"id_user": _id_user, "id_lesson": _id_lesson})
-        if room_chat != []:
+        if room_chat:
             return self.room_chat_row_to_room_chat(room_chat[0])

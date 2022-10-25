@@ -80,8 +80,7 @@ class MessageManager():
         _message["date_send"] = datetime.now()
         # если в сообщениях есть такое сочетание, то оно удаляется для того, чтобы сократить расстояние между строчками
         if "<p><br></p>" in _message['text']:
-            index = _message['text'].find("<p><br></p>")
-            _message['text'] = _message['text'][:index - 1] + _message['text'][index + 11:]
+            _message['text'] = ''.join(_message['text'].split('<p><br></p>'))
 
         message = Message(_id_user=_message['id_user'], _id_room_chat=int(_message['id_room_chat']),
                           _text=_message['text'], _date_send=_message['date_send'])

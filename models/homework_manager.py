@@ -2,6 +2,7 @@ from datetime import datetime
 
 from models.homework import Homework
 from data_adapters.data_store import DataStore
+from error import HomeworkManagerException
 
 
 class HomeworkManager():
@@ -45,6 +46,10 @@ class HomeworkManager():
         """
 
         data_store = DataStore("homeworks")
+
+        # если в сообщениях есть такое сочетание, то оно удаляется для того, чтобы сократить расстояние между строчками
+        if "<p><br></p>" in _text:
+            _text = ''.join(_text.split('<p><br></p>'))
 
         homework = Homework(_users_files_list=_homework_files_list, _text=_text, _id_user=_id_user,
                             _id_lesson=_id_lesson, _status=None, _date_delivery=datetime.now())
@@ -143,7 +148,7 @@ class HomeworkManager():
 
         data_store = DataStore("homeworks")
 
-        data_store.update_row_by_doc_id({"status": False}, _id_homework)
+        data_store.update_row_by_id({"status": False}, _id_homework)
         homework = data_store.get_row_by_id(_id_homework)
 
         return self.homework_row_to_homework(homework)

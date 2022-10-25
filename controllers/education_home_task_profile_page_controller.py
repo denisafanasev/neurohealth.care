@@ -68,7 +68,6 @@ class EducationChatPageController():
         message = homework_service.add_message(_message, _id_lesson, _id_user)
         if message is not None:
             return message.id_room_chat
-
     def get_user_by_id(self, _user_id):
         """
         Возвращает данные текущего пользователя
@@ -303,30 +302,31 @@ class EducationChatPageController():
         homework_service = HomeworkProfileService()
 
         homework = homework_service.get_homework(_id_homework)
-        room_chat = homework_service.get_room_chat(homework.id_lesson, homework.id_user, _id_current_user)
-        if room_chat is not None:
-            room_chat_view = {
-                "id": room_chat.id,
-                "message": []
-            }
-            if room_chat.message is not None:
-                message_list = []
-                for i_message in room_chat.message:
-                    user = homework_service.get_user_by_id(i_message.id_user)
-                    try:
-                        message = {
-                            "id": i_message.id,
-                            "text": Markup(i_message.text),
-                            "id_user": i_message.id_user,
-                            "name": user.name
-                        }
-                    except AttributeError:
-                        continue
+        if homework is not None:
+            room_chat = homework_service.get_room_chat(homework.id_lesson, homework.id_user, _id_current_user)
+            if room_chat is not None:
+                room_chat_view = {
+                    "id": room_chat.id,
+                    "message": []
+                }
+                if room_chat.message is not None:
+                    message_list = []
+                    for i_message in room_chat.message:
+                        user = homework_service.get_user_by_id(i_message.id_user)
+                        try:
+                            message = {
+                                "id": i_message.id,
+                                "text": Markup(i_message.text),
+                                "id_user": i_message.id_user,
+                                "name": user.name
+                            }
+                        except AttributeError:
+                            continue
 
-                    message_list.append(message)
+                        message_list.append(message)
 
-                room_chat_view["message"] = message_list
+                    room_chat_view["message"] = message_list
 
-            return room_chat_view
+                return room_chat_view
 
 

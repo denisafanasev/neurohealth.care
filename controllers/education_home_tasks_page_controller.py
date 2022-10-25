@@ -72,14 +72,12 @@ class EducationHomeTasksPageController():
                                                     homework = {
                                                         "id": homework.id,
                                                         "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
-                                                        "users_files_list": homework.users_files_list,
                                                         "status": homework.status,
-                                                        "text": Markup(homework.text)
                                                     }
 
                                                     data['homework_list'].append(homework)
 
-                                            if room_chat is not None:
+                                            elif room_chat is not None:
                                                 data['room_chat'] = {
                                                     "id": room_chat.id,
                                                     "unread_message_amount": room_chat.unread_message_amount

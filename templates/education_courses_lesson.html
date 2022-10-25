@@ -256,7 +256,7 @@
             <div class="card-body">
                 <div class="row d-flex align-items-stretch bd-highlight">
 
-                    <div class="col-7 md-2 text-left bd-highlight">
+                    <div class="col-sm-7 md-2 text-left bd-highlight">
                         <div class="card py-1 py-md-1 border">
                             <div class="card-header">
                                 <h4 class="form-label">Домашние задание</h4>
@@ -297,9 +297,7 @@
                                         <div class="mb-2">
                                             <strong>Текст ответа:</strong> {{ _homework['text'] }}
                                         </div>
-                                    {% if not _homework['users_files_list'] %}
-                                        <h4>Файлы ответа на задание не были найдены.</h4>
-                                    {% elif _homework['users_files_list'] != [] %}
+                                    {% if _homework['users_files_list'] != [] %}
                                         <table class="table">
                                         <thead>
                                             <tr>
@@ -318,7 +316,6 @@
                                             {% endfor %}
                                         </tbody>
                                         </table>
-
                                     {% endif %}
                                     </div>
                                 </div>
