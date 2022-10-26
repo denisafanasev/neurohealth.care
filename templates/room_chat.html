@@ -85,48 +85,6 @@
     font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 
 }
-.responsive-iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-}
-.word {
-    width: 35px;
-}
-.pdf {
-    width: 30px;
-}
-.card-text{
-    margin-top: -1em;
-    margin-bottom: 0;
-    white-space: pre-line;
-    font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-    font-size: 14px;
-    color: #0a0a0a
-}
-    /* Ссылки для разбиения на страницы */
-.pagination a {
-  color: black;
-  float: left;
-  padding: 8px 16px;
-  text-decoration: none;
-  transition: background-color .3s;
-    margin: 0 4px;
-    text-align:center;
-}
-
-/* Стиль активной/текущей ссылки */
-.pagination a.active {
-  background-color: dodgerblue;
-  color: white;
-}
-
-/* Добавить серый цвет фона при наведении курсора мыши */
-.pagination a:hover:not(.active) {background-color: #ddd;}
 </style>
 
 <div class="card py-1 py-md-1 border">
@@ -134,33 +92,31 @@
         <h4 class="form-label">Чат</h4>
     </div>
     <div class="card-body">
-    {% if _room_chat['message'] %}
-        <div class="border position-relative mb-3">
-            <div class="chat-messages p-4">
-                {% for i_message in _room_chat['message'] %}
-                    <div class="{% if _user["user_id"] == i_message['id_user'] %}chat-message-right mb-4{% else %}chat-message-left pb-4{% endif %}">
-                        <div class="flex-shrink-1 bg-light rounded py-2 px-3 me-3"
-                        style="{% if i_message['name_sender'] == _user['login'] %}background: #e8f1f3!important;{% else %} background: #efefef!important;{% endif %}">
-                            <div class="font-weight-bold mb-1"><strong>{{ i_message['name'] }}</strong></div>
-                            {{ i_message['text'] }}
+        {% if _room_chat['message'] %}
+            <div class="border position-relative mb-3">
+                <div class="chat-messages p-4">
+                    {% for i_message in _room_chat['message'] %}
+                        <div class="{% if _user["user_id"] == i_message['id_user'] %}chat-message-right mb-4{% else %}chat-message-left pb-4{% endif %}">
+                            <div class="flex-shrink-1 bg-light rounded py-2 px-3 me-3"
+                            style="{% if i_message['name_sender'] == _user['login'] %}background: #e8f1f3!important;{% else %} background: #efefef!important;{% endif %}">
+                                <div class="font-weight-bold mb-1"><strong>{{ i_message['name'] }}</strong></div>
+                                {{ i_message['text'] }}
+                            </div>
                         </div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-    {% endif %}
+        {% endif %}
         {% if request.args.get('id_chat') != "none" %}
             <form id="chat" method="post" enctype="multipart/form-data">
-                <div>
-                    <div id="editor" style="z-index: 0"><p></p></div>
-                    <input type="hidden" id="hiddenInput" name="text">
-                </div>
+                <div id="editor" style="z-index: 0"><p></p></div>
+                <input type="hidden" id="hiddenInput" name="text">
             </form>
         {% endif %}
-    {% if request.args.get('id_chat') != "none" %}
-        <div class="card d-flex align-self-baseline" style="float: right; margin-top: 2%">
-            <button type="submit" name="send" value="send" form="chat" class="btn btn-primary">Отправить</button>
-        </div>
-    {% endif %}
+        {% if request.args.get('id_chat') != "none" %}
+            <div class="card d-flex align-self-baseline" style="float: right; margin-top: 2%">
+                <button type="submit" name="send" value="send" form="chat" class="btn btn-primary">Отправить</button>
+            </div>
+        {% endif %}
     </div>
 </div>

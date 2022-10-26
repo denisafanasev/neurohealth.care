@@ -12,6 +12,7 @@ from models.users_file_manager import UsersFileManager
 from models.module_manager import EducationModuleManager
 from models.lesson_manager import EducationLessonManager
 from models.message_manager import MessageManager
+from error import HomeworkManagerException, EducationCourseLessonServiceException
 
 
 class EducationCourseLessonService():
@@ -77,6 +78,17 @@ class EducationCourseLessonService():
 
         message_manager = MessageManager()
         room_chat_manager = RoomChatManager()
+        user_manager = UserManager()
+        lesson_manager = EducationLessonManager()
+
+        # проверка на наличие в базе данных пользователя и урока
+        user = user_manager.get_user_by_id(_message['id_user'])
+        if user is None:
+            raise EducationCourseLessonServiceException('Не удалось сохранить сообщение.')
+
+        lesson = lesson_manager.get_lesson(_id_lesson)
+        if lesson is None:
+            raise EducationCourseLessonServiceException('Не удалось сохранить сообщение.')
 
         room_chat = room_chat_manager.get_room_chat(_message['id_user'], _id_lesson)
         if room_chat is None:
@@ -137,16 +149,24 @@ class EducationCourseLessonService():
         action_manager = ActionManager()
         lesson_manager = EducationLessonManager()
 
-        login_user = user_manager.get_user_by_id(_current_user_id).login
-        homework_files_list = upload_service.upload_files(_files_list, login_user)
-        homework_manager.create_homework(homework_files_list, _text, _current_user_id, _id_lesson)
-        lesson = lesson_manager.get_lesson(_id_lesson)
+        # проверка на наличие в базе данных пользователя и урока
+        user = user_manager.get_user_by_id(_current_user_id)
+        if user is None:
+            raise HomeworkManagerException('Не удалось сохранить домашнюю работу.')
 
-        action_manager.add_notifications("", "сдал", lesson.name, "homework_manager", login_user)
+        lesson = lesson_manager.get_lesson(_id_lesson)
+        if lesson is None:
+            raise HomeworkManagerException('Не удалось сохранить домашнюю работу.')
+
+        homework_files_list = upload_service.upload_files(_files_list, user.login)
+        homework_manager.create_homework(homework_files_list, _text, _current_user_id, _id_lesson)
+
+        action_manager.add_notifications("", "сдал", lesson.name, "homework_manager", user.login)
 
     def get_last_homework(self, _id_lesson, _user_id):
         """
-        Возвращает последнюю сданную домашнюю работу по ID комнаты чата
+        Возвращает последнюю сданную домашнюю работу по ID комнаты чата.
+        Дата сдачи возвращается первой сданной домашней работы.
         Args:
             _id_lesson(Integer): ID урока
             _user_id(Integer): ID пользователя
@@ -162,17 +182,18 @@ class EducationCourseLessonService():
         date_first_homework = datetime.now()
         last_homework = None
         if homework_list is not None:
+            # находим последнюю домашнюю работу, сданной пользователем, по уроку
             for homework in homework_list:
-                # находим последнюю домашнюю работу, сданной пользователем, по уроку
                 if homework.date_delivery >= date:
                     date = homework.date_delivery
                     last_homework = homework
 
-                # находим дату сдачи первой домашней работы, сданной пользователем, по уроку
+            # находим дату сдачи первой домашней работы, сданной пользователем, по уроку
             for homework in homework_list:
                 if homework.date_delivery <= date_first_homework:
                     date_first_homework = homework.date_delivery
 
+            # записываем список файлов в домашней работе вместе с их размером
             files = users_file_manager.get_size_files(last_homework.users_files_list)
             last_homework.users_files_list = files
             last_homework.date_delivery = date_first_homework

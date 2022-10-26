@@ -7,6 +7,9 @@
     document.addEventListener("DOMContentLoaded", function () {
         var message = document.getElementById('message');
         {% if _error_type == "Error" %}
+            document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+            document.querySelector('p[id=text_message]').textContent = "{{ _error }}";
+            message.style.display = "block";
         {% elif _error_type == 'Successful' %}
             document.querySelector('h3[id=title_message]').textContent = 'Успешно';
             document.querySelector('p[id=text_message]').textContent = "{{ _error }}";
@@ -48,15 +51,20 @@
                             <div class="card d-flex align-self-baseline border p-4">
                                 <h4>Данные ученика</h4>
                                 <div class="card-header">
-                                    <p><strong>Login:</strong> {{ _data['user']['login'] }}</p>
-                                    <p><strong>Имя:</strong> {{ _data['user']['name'] }}</p>
-                                    <p><strong>Email:</strong> {{ _data['user']['email'] }}</p>
+                                    {% if _data['user'] is mapping %}
+                                        <p><strong>Login:</strong> {{ _data['user']['login'] }}</p>
+                                        <p><strong>Имя:</strong> {{ _data['user']['name'] }}</p>
+                                        <p><strong>Email:</strong> {{ _data['user']['email'] }}</p>
+                                    {% else %}
+                                        <p>{{ _data['user'] }}</p>
+                                    {% endif %}
                                 </div>
                             </div>
 
                             <div class="card d-flex align-self-baseline border p-4">
                                 <h4>Данные урока</h4>
                                 <div class="card-header">
+                                {% if _data['module'] is mapping %}
                                     <p><strong>Курс: </strong>{{ _data['course']['name'] }}</p>
                                     <p><strong>Модуль: </strong>{{ _data['module']['name'] }}</p>
                                     <p><strong>Урок: </strong>{{ _data['module']['lesson']['name'] }}</p>
@@ -65,6 +73,9 @@
                                         {% if request.args.get("id_homework") is not none %}{{ _homework["status"] }}
                                         {% else %}Не сдано{% endif %}
                                     </p>
+                                {% else %}
+                                    <p>{{ _data['module'] }}</p>
+                                {% endif %}
                                 </div>
                             </div>
                         {% if request.args.get("id_homework") is not none %}
@@ -76,13 +87,9 @@
                                             <div class="mb-2">
                                                 {{ _homework['text'] }}
                                             </div>
-                                                {% if not _homework['users_files_list'] %}
-                                                    <h4>Файлы ответа на задание не были найдены.</h4>
-                                                {% else %}
-                                                    {% for file in _homework['users_files_list'] %}
-                                                        <a download href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
-                                                    {% endfor %}
-                                                {% endif %}
+                                            {% for file in _homework['users_files_list'] %}
+                                                <a download href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
+                                            {% endfor %}
                                         </div>
 
                                     {% if _homework['status'] == "не проверено" %}

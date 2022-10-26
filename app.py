@@ -775,9 +775,10 @@ def education_course_lesson():
     room_chat = None
     course = None
     neighboring_lessons = None
+    message = None
+    status_code = None
     if data is not None:
         course = page_controller.get_course_by_id(data['id_course'])
-
 
         neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
         if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
@@ -791,13 +792,13 @@ def education_course_lesson():
         # сохраняем новое сообщение
         if request.form.get("send"):
             text = request.form.get("text")
-            page_controller.add_message({"text": text, "id_user": user_id}, id_lesson)
+            message, status_code = page_controller.add_message({"text": text, "id_user": user_id}, id_lesson)
 
         # сохраняем домашнюю работу
         elif request.form.get("button") == "homework":
             files = request.files.getlist("files")
             text = request.form.get("text_homework")
-            page_controller.save_homework(files, user_id, text, id_lesson)
+            message, status_code = page_controller.save_homework(files, user_id, text, id_lesson)
 
         else:
             return redirect(f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}")
@@ -809,8 +810,8 @@ def education_course_lesson():
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _homework=homework,
-                           _data=data, _room_chat=room_chat, _user=user, _course=course,
-                           _neighboring_lessons=neighboring_lessons)
+                           _data=data, _room_chat=room_chat, _user=user, _course=course, _error_message=message,
+                           _neighboring_lessons=neighboring_lessons, _error_type=status_code)
 
 
 @app.route('/education_home_tasks', methods=['GET', 'POST'])
@@ -826,6 +827,9 @@ def education_home_tasks():
     page_controller = EducationHomeTasksPageController()
     mpc = MainMenuPageController(user_id)
     endpoint = request.endpoint
+
+    if not flask_login.current_user.is_admin():
+        return redirect("main_page")
 
     data = page_controller.get_data(user_id)
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
@@ -846,16 +850,11 @@ def education_home_task_profile():
     mpc = MainMenuPageController(user_id)
     endpoint = "education_home_tasks"
 
-    try:
-        id_homework = int(request.args.get("id_homework"))
+    if not flask_login.current_user.is_admin():
+        return redirect("main_page")
 
-    except(ValueError, TypeError):
-        id_homework = None
-        try:
-            id_room_chat = int(request.args.get("id_chat"))
-
-        except(ValueError, TypeError):
-            id_room_chat = None
+    id_homework = request.args.get("id_homework")
+    id_room_chat = request.args.get("id_chat")
 
     data = None
     homework = None
@@ -864,7 +863,7 @@ def education_home_task_profile():
         if homework is not None:
             data = page_controller.get_data_by_id_homework(int(id_homework))
     elif id_room_chat is not None:
-        data = page_controller.get_data(id_room_chat, user_id)
+        data = page_controller.get_data_by_id_room_chat(id_room_chat, user_id)
 
     user = page_controller.get_user_by_id(user_id)
     room_chat = None
@@ -875,7 +874,7 @@ def education_home_task_profile():
         if request.form.get("send"):
             text = request.form.get("text")
             if text is not None:
-                id_room_chat = page_controller.add_message({"text": text, "id_user": user_id}, data['module']['lesson']['id'],
+                message, status_code = page_controller.add_message({"text": text, "id_user": user_id}, data['module']['lesson']['id'],
                                                       data['user']["id"])
 
         elif request.form.get("button") == "answer":

@@ -54,12 +54,34 @@
         return true;
     }
     </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var message = document.getElementById('message');
+        {% if _error_type == "Error" %}
+            document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+            document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";
+            message.style.display = "block";
+        {% endif %}
+        });
+    </script>
+    <script>
+        var modal_discharge = document.getElementById('discharge');
+        // When the user clicks anywhere outside the modal, close it
+        window.onclick = function (event) {
+            if (event.target === modal_extension) {
+                modal_discharge.style.display = "none";
+            }
+        }
+    </script>
     <style>
 
-    .word {
+    .word-icon {
         width: 35px;
     }
-    .pdf {
+    .pdf-icon {
+        width: 30px;
+    }
+    .img-icon {
         width: 30px;
     }
     .card-text{
@@ -157,7 +179,7 @@
                                 </div>
                             </div>
                         {% endif %}
-
+                        <!-- Информация об обучении пользователя -->
                         <div class="card py-1 py-md-1 border">
                             <div class="card-body">
                                 <table class="table">
@@ -203,7 +225,7 @@
                                 </table>
                             </div>
                         </div>
-
+                        <!--Дополнительные материалы урока  -->
                         {% if _data['lesson']['materials'] %}
                             <div class="card py-1 py-md-1 border">
                                 <div class="card-body">
@@ -221,8 +243,8 @@
                                             {% set name_file = i_materials.split('/')[-1].split('.')[0] %}
                                             <tr>
                                                 <td class="table-action">
-                                                    <img class="{% if type == 'doc' or type == "docx" %}word{% else %}pdf{% endif %}"
-                                                         src="{% if type == 'doc' or type == "docx" %}/static/img/icons/icon_word.png{% else %}/static/img/icons/icon_pdf.png{% endif %}">
+                                                    <img class="{% if type == 'doc' or type == "docx" %}word-icon{% elif type == 'jpg' %}img-icon{% else %}pdf-icon{% endif %}"
+                                                         src="{% if type == 'doc' or type == "docx" %}/static/img/icons/icon_word.png{% elif type == 'jpg' %}/static/img/icons/icon-img.png{% else %}/static/img/icons/icon_pdf.png{% endif %}">
                                                 </td>
                                                 <td style="word-break: break-all;">{{ name_file }}</td>
                                                 <td>
@@ -251,6 +273,7 @@
                 </div>
             </div>
         </div>
+        <!-- Задание по уроку -->
         <div class="card border">
         {% if _data['lesson']['task'] %}
             <div class="card-body">
@@ -264,10 +287,8 @@
                                 <p class="card-text">
                                     {{ _data['lesson']['task'] }}
                                 </p>
+                            <!-- Сдача домашней работы, если пользователя не superuser -->
                             {% if _user['role'] != "superuser" %}
-
-                                <!--  -->
-
                                 {% if _data['available'] %}
                                     {% if _homework is none or _homework['status'] == "Не принято" %}
                                     <form id="homework" method="post" enctype="multipart/form-data">
@@ -289,6 +310,7 @@
                             {% endif %}
                             </div>
                         </div>
+                    <!-- Ответ пользователя на задание -->
                         {% if _homework is not none %}
                             <div class="card py-1 py-md-1 border">
                                 <div class="card-header">

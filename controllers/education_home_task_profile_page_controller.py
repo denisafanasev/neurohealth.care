@@ -1,6 +1,6 @@
 from flask import Markup
 
-from models.user_manager import UserManager
+from error import HomeworkManagerException, EducationCourseLessonServiceException, HomeworkProfileServiceException
 from services.homework_profile_service import HomeworkProfileService
 
 class EducationChatPageController():
@@ -65,9 +65,15 @@ class EducationChatPageController():
 
         homework_service = HomeworkProfileService()
 
-        message = homework_service.add_message(_message, _id_lesson, _id_user)
-        if message is not None:
-            return message.id_room_chat
+        try:
+            message = homework_service.add_message(_message, _id_lesson, _id_user)
+
+            if message is not None:
+                return message.id_room_chat, None
+
+        except HomeworkProfileServiceException as error:
+            return error, 'Error'
+
     def get_user_by_id(self, _user_id):
         """
         Возвращает данные текущего пользователя
@@ -209,39 +215,48 @@ class EducationChatPageController():
 
         homework = homework_service.get_homework(_id_homework)
         if homework is not None:
-            module = homework_service.get_lesson(homework.id_lesson)
-            course = homework_service.get_course(module.id_course)
-            user = homework_service.get_user_by_id(homework.id_user)
+            data = {}
+            try:
+                module = homework_service.get_lesson(homework.id_lesson)
+                course = homework_service.get_course(module.id_course)
 
-            data = {
-                "user":
-                    {
-                        "id": user.user_id,
-                        "login": user.login,
-                        "name": user.name,
-                        "email": user.email,
-                    },
-                "module":
-                    {
-                        "id": module.id,
-                        "name": module.name,
-                        "lesson":
-                            {
-                                "id": module.lessons.id,
-                                "name": module.lessons.name,
-                                "task": Markup(module.lessons.task)
-                            }
-                    },
-                "course":
-                    {
-                        "id": course.id,
-                        "name": course.name
-                    }
-            }
+                data["module"] = {
+                    "id": module.id,
+                    "name": module.name,
+                    "lesson":
+                        {
+                            "id": module.lessons.id,
+                            "name": module.lessons.name,
+                            "task": Markup(module.lessons.task)
+                        }
+                }
+
+                data["course"] = {
+                    "id": course.id,
+                    "name": course.name
+                }
+            except HomeworkProfileServiceException as error:
+                data['course'] = error
+                data['module'] = error
+
+            except TypeError:
+                data['course'] = "Данный курс не найден"
+
+            try:
+                user = homework_service.get_user_by_id(homework.id_user)
+
+                data["user"] = {
+                    "id": user.user_id,
+                    "login": user.login,
+                    "name": user.name,
+                    "email": user.email,
+                }
+            except HomeworkProfileServiceException as error:
+                data['user'] = error
 
             return data
 
-    def get_data(self, _id_room_chat, _id_user):
+    def get_data_by_id_room_chat(self, _id_room_chat, _id_user):
         """
         Возвращает данные, связанные с домашней работы
 
@@ -256,35 +271,47 @@ class EducationChatPageController():
 
         room_chat = homework_service.room_chat_entry(_id_room_chat, _id_user)
         if room_chat is not None:
-            module = homework_service.get_lesson(room_chat.id_lesson)
-            course = homework_service.get_course(module.id_course)
-            user = homework_service.get_user_by_id(room_chat.id_user)
+            data = {}
+            try:
+                module = homework_service.get_lesson(room_chat.id_lesson)
 
-            data = {
-                "user":
-                    {
-                        "id": user.user_id,
-                        "login": user.login,
-                        "name": user.name,
-                        "email": user.email,
-                    },
-                "module":
-                    {
-                        "id": module.id,
-                        "name": module.name,
-                        "lesson":
-                            {
-                                "id": module.lessons.id,
-                                "name": module.lessons.name,
-                                "task": Markup(module.lessons.task)
-                            }
-                    },
-                "course":
-                    {
-                        "id": course.id,
-                        "name": course.name
-                    }
-            }
+                data["module"] ={
+                    "id": module.id,
+                    "name": module.name,
+                    "lesson":
+                        {
+                            "id": module.lessons.id,
+                            "name": module.lessons.name,
+                            "task": Markup(module.lessons.task)
+                        }
+                }
+            except HomeworkProfileServiceException as error:
+                data['module'] = error
+
+            try:
+                course = homework_service.get_course(module.id_course)
+
+                data["course"] = {
+                    "id": course.id,
+                    "name": course.name
+                }
+            except HomeworkProfileServiceException as error:
+                data['course'] = error
+
+            except TypeError:
+                data['course'] = "Данный курс не найден"
+
+            try:
+                user = homework_service.get_user_by_id(room_chat.id_user)
+
+                data["user"] = {
+                    "id": user.user_id,
+                    "login": user.login,
+                    "name": user.name,
+                    "email": user.email,
+                }
+            except HomeworkProfileServiceException as error:
+                data['user'] = error
 
             return data
 

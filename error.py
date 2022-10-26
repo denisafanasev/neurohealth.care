@@ -18,5 +18,9 @@ class RoomChatMessageException(NeuroHealthAppException):
     pass
 
 
-class MessageManagerException(NeuroHealthAppException):
+class EducationCourseLessonServiceException(NeuroHealthAppException):
+    pass
+
+
+class HomeworkProfileServiceException(NeuroHealthAppException):
     pass

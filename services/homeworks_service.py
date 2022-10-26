@@ -130,15 +130,17 @@ class HomeworksService():
         if courses_list is not None:
             courses = []
             for i_course in courses_list:
-                modules_list = module_manager.get_course_modules_list(i_course.id)
-                if modules_list is not None:
-                    modules = []
-                    for i_module in modules_list:
-                        i_module.lessons = lesson_manager.get_lessons_list_by_id_module(i_module.id)
-                        modules.append(i_module)
+                # нужны только основные курсы, так как только по ним сдаются домашние работы
+                if i_course.type == 'main':
+                    modules_list = module_manager.get_course_modules_list(i_course.id)
+                    if modules_list is not None:
+                        modules = []
+                        for i_module in modules_list:
+                            i_module.lessons = lesson_manager.get_lessons_list_by_id_module(i_module.id)
+                            modules.append(i_module)
 
-                i_course.modules = modules_list
-                courses.append(i_course)
+                    i_course.modules = modules_list
+                    courses.append(i_course)
 
             return courses
 

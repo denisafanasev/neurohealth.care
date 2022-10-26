@@ -1,3 +1,4 @@
+from error import HomeworkProfileServiceException
 from models.action_manager import ActionManager
 from models.homework_manager import HomeworkManager
 from models.course_manager import EducationCourseManager
@@ -50,6 +51,17 @@ class HomeworkProfileService():
 
         message_manager = MessageManager()
         room_chat_manager = RoomChatManager()
+        user_manager = UserManager()
+        lesson_manager = EducationLessonManager()
+
+        # проверка на наличие в базе данных пользователя и урока
+        user = user_manager.get_user_by_id(_id_user)
+        if user is None:
+            raise HomeworkProfileServiceException('Не удалось сохранить сообщение.')
+
+        lesson = lesson_manager.get_lesson(_id_lesson)
+        if lesson is None:
+            raise HomeworkProfileServiceException('Не удалось сохранить сообщение.')
 
         room_chat = room_chat_manager.get_room_chat(_id_user, _id_lesson)
         if room_chat is None:
@@ -153,7 +165,11 @@ class HomeworkProfileService():
 
         course_manager = EducationCourseManager()
 
-        return course_manager.get_course_by_id(_id_course)
+        course = course_manager.get_course_by_id(_id_course)
+        if course is None:
+            raise HomeworkProfileServiceException('Данный курс не найден.')
+
+        return course
 
     def get_lesson(self, _id_lesson):
         """
@@ -169,7 +185,11 @@ class HomeworkProfileService():
         module_manager = EducationModuleManager()
 
         lesson = lesson_manager.get_lesson(_id_lesson)
+        if lesson is None:
+            raise HomeworkProfileServiceException('Данный урок не найден.')
         module = module_manager.get_module_by_id(lesson.id_module)
+        if lesson is None:
+            raise HomeworkProfileServiceException('Данный модуль не найден.')
         module.lessons = lesson
 
         return module

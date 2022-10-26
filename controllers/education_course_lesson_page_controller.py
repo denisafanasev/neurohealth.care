@@ -1,6 +1,7 @@
 from flask import Markup
 
 from services.education_course_lesson_service import EducationCourseLessonService
+from error import HomeworkManagerException, EducationCourseLessonServiceException
 
 
 class EducationCourseLessonPageController():
@@ -100,7 +101,12 @@ class EducationCourseLessonPageController():
 
         education_course_service = EducationCourseLessonService()
 
-        education_course_service.add_message(_message, _id_lesson)
+        try:
+            education_course_service.add_message(_message, _id_lesson)
+        except EducationCourseLessonServiceException as error:
+            return error, 'Error'
+
+        return None, None
 
     def get_user_view_by_id_and_course_id(self, _user_id):
         """
@@ -168,7 +174,12 @@ class EducationCourseLessonPageController():
         """
         course_service = EducationCourseLessonService()
 
-        course_service.save_homework(_files_list, _user_id, _text, _id_lesson)
+        try:
+            course_service.save_homework(_files_list, _user_id, _text, _id_lesson)
+        except HomeworkManagerException as error:
+            return error, "Error"
+
+        return None, None
 
     def get_last_homework(self, _id_lesson, _user_id):
         """
