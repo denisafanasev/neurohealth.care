@@ -31,7 +31,6 @@ class EducationChatPageController():
                 "message": []
             }
             if room_chat.message is not None:
-                message_list = []
                 for i_message in room_chat.message:
                     user = homework_service.get_user_by_id(i_message.id_user)
                     try:
@@ -44,9 +43,7 @@ class EducationChatPageController():
                     except AttributeError:
                         continue
 
-                    message_list.append(message)
-
-                room_chat_view["message"] = message_list
+                    room_chat_view['message'].append(message)
 
             return room_chat_view
 
@@ -66,13 +63,12 @@ class EducationChatPageController():
         homework_service = HomeworkProfileService()
 
         try:
-            message = homework_service.add_message(_message, _id_lesson, _id_user)
-
-            if message is not None:
-                return message.id_room_chat, None
+            homework_service.add_message(_message, _id_lesson, _id_user)
 
         except HomeworkProfileServiceException as error:
             return error, 'Error'
+
+        return None, None
 
     def get_user_by_id(self, _user_id):
         """
@@ -236,23 +232,21 @@ class EducationChatPageController():
                     "name": course.name
                 }
             except HomeworkProfileServiceException as error:
-                data['course'] = error
                 data['module'] = error
 
             except TypeError:
                 data['course'] = "Данный курс не найден"
 
-            try:
-                user = homework_service.get_user_by_id(homework.id_user)
-
+            user = homework_service.get_user_by_id(homework.id_user)
+            if user is not None:
                 data["user"] = {
                     "id": user.user_id,
                     "login": user.login,
                     "name": user.name,
                     "email": user.email,
                 }
-            except HomeworkProfileServiceException as error:
-                data['user'] = error
+            else:
+                data['user'] = 'Данный пользователь не найден'
 
             return data
 
@@ -285,10 +279,6 @@ class EducationChatPageController():
                             "task": Markup(module.lessons.task)
                         }
                 }
-            except HomeworkProfileServiceException as error:
-                data['module'] = error
-
-            try:
                 course = homework_service.get_course(module.id_course)
 
                 data["course"] = {
@@ -296,22 +286,21 @@ class EducationChatPageController():
                     "name": course.name
                 }
             except HomeworkProfileServiceException as error:
-                data['course'] = error
+                data['module'] = error
 
             except TypeError:
                 data['course'] = "Данный курс не найден"
 
-            try:
-                user = homework_service.get_user_by_id(room_chat.id_user)
-
+            user = homework_service.get_user_by_id(room_chat.id_user)
+            if user is not None:
                 data["user"] = {
                     "id": user.user_id,
                     "login": user.login,
                     "name": user.name,
                     "email": user.email,
                 }
-            except HomeworkProfileServiceException as error:
-                data['user'] = error
+            else:
+                data['user'] = 'Данный пользователь не найден'
 
             return data
 

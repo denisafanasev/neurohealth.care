@@ -56,9 +56,6 @@ class MessageManager():
                 if message.id_user != _id_user:
                     message.read = True
                     data_store.update_row_by_id({"read": True}, message.id)
-                else:
-                    message.read = False
-                    data_store.update_row_by_id({"read": False}, message.id)
 
             message_list.append(message)
 
