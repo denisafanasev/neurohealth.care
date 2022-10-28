@@ -775,7 +775,7 @@ def education_course_lesson():
     room_chat = None
     course = None
     neighboring_lessons = None
-    message = None
+    error_message = None
     status_code = None
     if data is not None:
         course = page_controller.get_course_by_id(data['id_course'])
@@ -792,13 +792,13 @@ def education_course_lesson():
         # сохраняем новое сообщение
         if request.form.get("send"):
             text = request.form.get("text")
-            message, status_code = page_controller.add_message({"text": text, "id_user": user_id}, id_lesson)
+            error_message, status_code = page_controller.add_message({"text": text, "id_user": user_id}, id_lesson)
 
         # сохраняем домашнюю работу
         elif request.form.get("button") == "homework":
             files = request.files.getlist("files")
             text = request.form.get("text_homework")
-            message, status_code = page_controller.save_homework(files, user_id, text, id_lesson)
+            error_message, status_code = page_controller.save_homework(files, user_id, text, id_lesson)
 
         else:
             return redirect(f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}")
@@ -810,8 +810,8 @@ def education_course_lesson():
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _homework=homework,
-                           _data=data, _room_chat=room_chat, _user=user, _course=course, _error_message=message,
-                           _neighboring_lessons=neighboring_lessons, _error_type=status_code)
+                           _data=data, _room_chat=room_chat, _user=user, _course=course, _error_message=error_message,
+                           _neighboring_lessons=neighboring_lessons, _status_code=status_code)
 
 
 @app.route('/education_home_tasks', methods=['GET', 'POST'])
@@ -867,22 +867,22 @@ def education_home_task_profile():
 
     user = page_controller.get_user_by_id(user_id)
     room_chat = None
-    message = None
+    error_message = None
     status_code = None
 
     if request.method == "POST":
         if request.form.get("send"):
             text = request.form.get("text")
             if text is not None:
-                message, status_code = page_controller.add_message({"text": text, "id_user": user_id}, data['module']['lesson']['id'],
+                error_message, status_code = page_controller.add_message({"text": text, "id_user": user_id}, data['module']['lesson']['id'],
                                                       data['user']["id"])
 
         elif request.form.get("button") == "answer":
             answer = request.form.get("answer")
             if answer == "True":
-                homework, message, status_code = page_controller.homework_answer_accepted(homework["id"], user_id)
+                homework, error_message, status_code = page_controller.homework_answer_accepted(homework["id"], user_id)
             elif answer == "False":
-                homework, message, status_code = page_controller.homework_answer_no_accepted(homework["id"], user_id)
+                homework, error_message, status_code = page_controller.homework_answer_no_accepted(homework["id"], user_id)
 
     if data is not None:
         if id_homework is not None:
@@ -893,7 +893,7 @@ def education_home_task_profile():
 
     return render_template('education_home_task_profile.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _room_chat=room_chat,
-                           _homework=homework, _data=data, _error=message, _error_type=status_code)
+                           _homework=homework, _data=data, _error_message=error_message, _status_code=status_code)
 
 
 @app.route('/corrections', methods=['GET', 'POST'])

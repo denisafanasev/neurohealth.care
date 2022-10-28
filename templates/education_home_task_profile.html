@@ -6,25 +6,16 @@
     <script>
     document.addEventListener("DOMContentLoaded", function () {
         var message = document.getElementById('message');
-        {% if _error_type == "Error" %}
+        {% if _status_code == "Error" %}
             document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-            document.querySelector('p[id=text_message]').textContent = "{{ _error }}";
+            document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";
             message.style.display = "block";
-        {% elif _error_type == 'Successful' %}
+        {% elif _status_code == 'Successful' %}
             document.querySelector('h3[id=title_message]').textContent = 'Успешно';
-            document.querySelector('p[id=text_message]').textContent = "{{ _error }}";
+            document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";
             message.style.display = "block";
         {% endif %}
         });
-    </script>
-    <script>
-        var modal_discharge = document.getElementById('discharge');
-        // When the user clicks anywhere outside the modal, close it
-        window.onclick = function (event) {
-            if (event.target === modal_extension) {
-                modal_discharge.style.display = "none";
-            }
-        }
     </script>
 
     <style>

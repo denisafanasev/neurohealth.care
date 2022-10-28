@@ -57,7 +57,7 @@
     <script>
     document.addEventListener("DOMContentLoaded", function () {
         var message = document.getElementById('message');
-        {% if _error_type == "Error" %}
+        {% if _status_code == "Error" %}
             document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
             document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";
             message.style.display = "block";

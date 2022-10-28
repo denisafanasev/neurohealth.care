@@ -207,6 +207,9 @@ def delete_id_key_in_lesson():
 
 
 def create_copy_data():
+    """
+    Создает новые json файлы, в которые копирует текущие данные домашних работ, сообщения и чаты
+    """
     data_store_homework = DataStore("homeworks")
     data_store_room_chat = DataStore("room_chat")
     data_store_message = DataStore("message")

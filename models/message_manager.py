@@ -53,6 +53,7 @@ class MessageManager():
         for i_message in messages_data:
             message = self.message_row_to_message(i_message)
             if not message.read:
+                # если сообщение отправил не текущий пользователь, то отмечается как прочитанное
                 if message.id_user != _id_user:
                     message.read = True
                     data_store.update_row_by_id({"read": True}, message.id)
