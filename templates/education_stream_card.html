@@ -194,153 +194,181 @@
             <h1 class="h3 d-inline align-middle">{% if _mode == "view" %}Просмотр {% elif _mode == "new" %}Создание
                 {% else %}Редактирование {% endif %} карточки обучающего потока</h1>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="card border">
-                    <div class="card-body">
-                        <form method="post" enctype="multipart/form-data" onsubmit="return checkData(this);">
-                            <div class="row d-flex align-items-stretch bd-highlight">
-                                <div style="margin-right: 5px" class="col p-1 bd-highlight border">
-                                    <div class="card d-flex align-self-baseline" style="margin-left: auto; margin-right: auto; ">
-                                        <div class="card-header">
-                                            <div class="mb-2">
-                                                <label class="form-label"><strong>Название потока</strong></label>
-                                                <input id="name_stream" name="name" class="form-control" {% if _mode == "view" %} disabled {% endif %}
-                                                       {% if _mode == 'new' %}placeholder="Введите название потока.."{% else %} value="{{ _education_stream['name'] }}"{% endif %}>
-                                            </div>
 
-                                            <div class="mb-2">
-                                                <label class="form-label"><strong>Курс</strong></label>
-                                                <select id="course" name="course" class="form-select"
-                                                {% if _mode == 'view' %} disabled {% endif %}>
-                                                    <option selected disabled value="placeholder">Выберите курс..</option>
-                                                    {% for course in _courses_list %}
-                                                        <option {% if course['id'] == _education_stream['course']['id'] %} selected {% endif %}
-                                                                value="{{ course['id'] }}">{{ course['name'] }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="mb-2">
-                                                <label class="form-label"><strong>Ученики</strong></label>
-{#                                                <select id="students_list" name="students_list"#}
-{#                                                        style="overflow-y: scroll;" class="form-select" multiple="multiple">#}
-{#                                                    <option selected disabled value="">Выберите учеников..</option>#}
-{#                                                    {% for student in _students_list %}#}
-{#                                                        <option value="{{ student['login'] }}">{{ student['name'] }}</option>#}
-{#                                                    {% endfor %}#}
-{#                                                </select>#}
-                                                <table id="students_table" class="table dataTable border display" style="width: 100%">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">#</th>
-                                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {% for student in _students_list %}
-                                                        {% if _mode == 'new' or _mode == "view" and student['login'] in _education_stream['students_list'] or _mode == 'edit' %}
-                                                        <tr class="even">
-                                                            <td>
-                                                                <input {% if _mode == "view" %} disabled {% endif %}
-                                                                        {% if student['login'] in _education_stream['students_list'] %}checked {% endif %}
-                                                                        name="{{ student['login'] }}" type="checkbox" value="{{ student['login'] }}">
-                                                            </td>
-                                                            <td>{{ student['login'] }}</td>
-                                                        </tr>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
+        <form method="post" enctype="multipart/form-data" onsubmit="return checkData(this);">
+        
+            <div class="row">
+
+                <div class="col-12 col-xl-6">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Название потока</strong></label>
+                                <input id="name_stream" name="name" class="form-control" {% if _mode=="view" %} disabled {% endif %} {% if
+                                    _mode=='new' %}placeholder="Введите название потока.." {% else %} value="{{ _education_stream['name'] }}" {%
+                                    endif %}>
+                            </div>
+                            
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Курс</strong></label>
+                                <select id="course" name="course" class="form-select" {% if _mode=='view' %} disabled {% endif %}>
+                                    <option selected disabled value="placeholder">Выберите курс..</option>
+                                    {% for course in _courses_list %}
+                                    <option {% if course['id']==_education_stream['course']['id'] %} selected {% endif %}
+                                        value="{{ course['id'] }}">{{ course['name'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Преподаватель</strong></label>
+                                <select id="teacher" name="teacher" class="form-select" {% if _mode=="view" %} disabled {% endif %}>
+                                    <option selected disabled value="placeholder">Выберите преподавателя</option>
+                                    {% for teacher in _curators_list %}
+                                    <option {% if teacher['login']==_education_stream['teacher'] %} selected {% endif %}
+                                        value="{{ teacher['login'] }}">{{ teacher['login'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="mb-2">
+                                <div class="" style="display: inline-grid;float: left">
+                                    <label class="form-label"><strong>Дата старта</strong></label>
+                            
+                                    <div class="input-group mb-3">
+                                        <input {% if _mode=='view' %} disabled {% endif %} id="date_start" name="date_start" type="date"
+                                            class="form-control" {% if _mode=="view" %}value="{{ _education_stream['date_start'] }}" {% endif %}>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button"> </button>
                                     </div>
+
                                 </div>
-                                <div style="margin-right: 5px" class="col p-1 bd-highlight border">
-                                    <div class="card d-flex align-self-baseline" style="margin-left: auto; margin-right: auto; ">
-                                        <div class="card-header">
-                                            <div class="mb-4">
-
-                                                <div class="" style="display: inline-grid;float: left">
-                                                    <label class="form-label"><strong>Дата старта</strong></label>
-
-                                                    <div class="input-group mb-3">
-                                                        <input {% if _mode=='view' %} disabled {% endif %} id="date_start" name="date_start" type="date" class="form-control" {%
-                                                            if _mode=="view" %}value="{{ _education_stream['date_start'] }}" {% endif %}>
-                                                        <button class="btn btn-secondary" type="button"> </button>
-                                                    </div>
-
-                                                    
-                                                </div>
-                                                <div style="display:grid; justify-content: right">
-                                                    <label class="form-label"><strong>Дата окончания</strong></label>
-
-                                                    <div class="input-group mb-3">
-                                                        <input {% if _mode == 'view' %} disabled {% endif %} id="date_end" name="date_end" type="date" class="form-control"
-                                                            {% if _mode == "view" %}value="{{ _education_stream['date_end'] }}"{% endif %}>
-                                                        <button class="btn btn-secondary" type="button"> </button>
-                                                    </div>
-
-                                                </div>
-                                                
-                                            </div>
-                                            <div class="mb-2">
-                                                <label class="form-label"><strong>Преподаватель</strong></label>
-                                                <select id="teacher" name="teacher" class="form-select"
-                                                {% if _mode == "view" %} disabled {% endif %}>
-                                                    <option selected disabled value="placeholder">Выберите преподавателя</option>
-                                                    {% for teacher in _curators_list %}
-                                                        <option {% if teacher['login'] == _education_stream['teacher'] %} selected {% endif %} value="{{ teacher['login'] }}">{{ teacher['login'] }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="mb-2">
-                                                <label class="form-label"><strong>Кураторы</strong></label>
-{#                                                <select id="curators_list" name="curators_list"#}
-{#                                                        style="overflow-y: scroll;" class="form-select choices-multiple" multiple="multiple">#}
-{#                                                    {% for curator in _curators_list %}#}
-{#                                                        <option value="{{ curator['login'] }}">{{ curator['name'] }}</option>#}
-{#                                                    {% endfor %}#}
-{#                                                </select>#}
-                                                <table id="curators_table" class="table dataTable border display">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">#</th>
-                                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {% for curator in _curators_list %}
-                                                            {% if _mode == 'new' or _mode == "view" and curator['login'] in _education_stream['curators_list'] or _mode == 'edit' %}
-                                                                <tr>
-                                                                    <td><input {% if _mode == "view" %} disabled {% endif %}
-                                                                            {% if curator['login'] in _education_stream['curators_list'] %}checked {% endif %}
-                                                                            name="{{ curator['login'] }}" type="checkbox" value="{{ curator['login'] }}"></td>
-                                                                    <td>{{ curator['login'] }}</td>
-                                                                </tr>
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
+                                <div style="display:grid; justify-content: right">
+                                    <label class="form-label"><strong>Дата окончания</strong></label>
+                            
+                                    <div class="input-group mb-3">
+                                        <input {% if _mode=='view' %} disabled {% endif %} id="date_end" name="date_end" type="date"
+                                            class="form-control" {% if _mode=="view" %}value="{{ _education_stream['date_end'] }}" {% endif %}>
+                                        <button class="btn btn-secondary dropdown-toggle" type="button"> </button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
-                                <div class="p-1" align="right">
-                                    <button type="submit" name="button" value="{% if _mode == 'new' %}new{% elif _mode == "view" %}edit{% else %}save{% endif %}" class="btn btn-primary ">
-                                        {% if _mode == 'new' %}Создать{% elif _mode == "view" %}Редактировать{% else %}Сохранить{% endif %}
-                                    </button>
-                                    <a href="{{ url_for('education_streams') }}" class="btn btn-primary cancelbtn">
-                                        Отмена
-                                    </a>
-                                </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-6">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Кураторы</strong></label>
+                                <table id="curators_table" class="table dataTable border display">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                                colspan="1">#</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for curator in _curators_list %}
+                                        {% if _mode == 'new' or _mode == "view" and curator['login'] in _education_stream['curators_list'] or _mode
+                                        == 'edit' %}
+                                        <tr>
+                                            <td><input {% if _mode=="view" %} disabled {% endif %} {% if curator['login'] in
+                                                    _education_stream['curators_list'] %}checked {% endif %} name="{{ curator['login'] }}"
+                                                    type="checkbox" value="{{ curator['login'] }}"></td>
+                                            <td>{{ curator['login'] }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
-                        </form>
+                
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div class="row">
+                <div class="col-12 col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Доступные модули</strong></label>
+                                <table id="module_table" class="table dataTable border display" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                rowspan="1" colspan="1">#</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                                colspan="1">Название модуля</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+            
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Ученики</strong></label>
+                                <table id="students_table" class="table dataTable border display" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                                colspan="1">#</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for student in _students_list %}
+                                        {% if _mode == 'new' or _mode == "view" and student['login'] in _education_stream['students_list'] or _mode
+                                        == 'edit' %}
+                                        <tr class="even">
+                                            <td>
+                                                <input {% if _mode=="view" %} disabled {% endif %} {% if student['login'] in
+                                                    _education_stream['students_list'] %}checked {% endif %} name="{{ student['login'] }}"
+                                                    type="checkbox" value="{{ student['login'] }}">
+                                            </td>
+                                            <td>{{ student['login'] }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
+                <div class="p-1" align="right">
+                    <button type="submit" name="button" value="{% if _mode == 'new' %}new{% elif _mode == "view" %}edit{% else %}save{% endif %}" class="btn btn-primary ">
+                        {% if _mode == 'new' %}Создать{% elif _mode == "view" %}Редактировать{% else %}Сохранить{% endif %}
+                    </button>
+                    <a href="{{ url_for('education_streams') }}" class="btn btn-primary cancelbtn">
+                        Отмена
+                    </a>
+                </div>
+            </div>
+
+        </form>
+
         <div id="message" class="modal">
             <div class="modal-content animate" style="width: 34%">
                 <div class="row modal-header">
@@ -358,5 +386,6 @@
                 </div>
             </div>
         </div>
+
     </div>
 {% endblock %}

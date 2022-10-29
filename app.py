@@ -36,6 +36,8 @@ from controllers.education_home_task_profile_page_controller import EducationCha
 from controllers.education_streams_page_controller import EducationStreamsPageController
 from controllers.education_stream_page_controller import EducationStreamPageController
 from controllers.education_program_subscription_page_controller import EducationProgramSubscriptionPageController
+from controllers.maintenance_page_controller import MaintenancePageController
+
 
 from error import UserManagerException
 
@@ -1299,6 +1301,35 @@ def age_range_list():
                            _ranges_age=page_controller.get_age_ranges(),
                            _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
 
+@app.route('/settings/maintenance', methods=['GET', 'POST'])
+@login_required
+def maintenance():
+    """
+    Controller for maintenance page
+
+    Returns:
+
+    """
+
+    user_id = flask_login.current_user.user_id
+    page_controller = MaintenancePageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
+
+    if not flask_login.current_user.is_admin():
+        return redirect("main_page")
+
+    endpoint = request.endpoint
+
+    if request.method == "POST":
+        action_name = request.form['submit_button']
+
+        if action_name == "upload_users_from_json_to_sql":
+            page_controller.upload_users_from_json_to_sql(user_id)
+
+    return render_template('maintenance.html', view="maintenance", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _endpoint=endpoint)
+
 
 @app.route('/settings/estimated_values', methods=['GET', 'POST'])
 @login_required
@@ -1422,7 +1453,7 @@ def education_stream_card():
                 "date_end": request.form.get("date_end")
             }
 
-            page_controller.change_education_stream(education_stream_edit, education_stream['students_list'],
+            page_controller.save_education_stream(education_stream_edit, education_stream['students_list'],
                                                    education_stream["curators_list"])
             mode = "view"
             education_stream = page_controller.get_education_stream(id_education_stream)

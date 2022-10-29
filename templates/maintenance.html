@@ -1,0 +1,29 @@
+{% extends "settings.html" %}
+
+{% block maintenance %}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Загрузка списка пользователей в SQL базу</h5>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <form id="upload_users_from_json_to_sql" method="post" enctype="multipart/form-data">
+                    <button type="submit" name="submit_button" value="upload_users_from_json_to_sql" class="btn btn-primary">Save changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Еще одна функция на будущее</h5>
+
+        <div class="row">
+            <div class="col-sm-12">
+                tdb
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
