@@ -166,7 +166,17 @@ class EducationCourseService():
 
             course_modules = course_manager.get_course_modules_list(_course_id)
 
-            # проверяем, есть ли пользователь в списках участников третьего потока
+            # проверяем, есть ли пользователь в списках участников пятого потока
+            for i in range(1, min(len(course_modules) + 1, 5)):
+                if course_modules[i - 1].id == _module_id:
+                    with open(config.DATA_FOLDER + 'course_1/s5_users.txt') as f:
+                        course_users_list = f.read().splitlines()
+                    
+                    for course_user in course_users_list:
+                        if course_user.split()[0].lower() == user.login:
+                            return True
+
+            # проверяем, есть ли пользователь в списках участников четвертого потока
             for i in range(1, min(len(course_modules) + 1, 9)):
                 if course_modules[i - 1].id == _module_id:
                     with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
