@@ -26,4 +26,10 @@ class MaintenanceService():
         data_store = DataStore("users", "PostgreSQLDataAdapter")
 
         for user in users:
-            data_store.add_row({"id": user.id})
+
+            user_raw = {"user_id": user.user_id, "active": user.active, "create_data": user.created_date,
+                        "education_module_expiration_date": user.education_module_expiration_date, "email": user.email,
+                        "email_confirmed": user.email_confirmed, "login": user.login, "name": user.name,
+                        "probationers_number": user.probationers_number, "role": user.role, "token": user.token}
+
+            data_store.add_row(user_raw)

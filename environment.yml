@@ -28,10 +28,13 @@ dependencies:
   - itsdangerous=2.0.1
   - jansson=2.14
   - jinja2=3.0.3
+  - krb5=1.19.2
   - lazy-object-proxy=1.6.0
   - libcxx=12.0.0
+  - libedit=3.1.20210910
   - libffi=3.3
   - libiconv=1.16
+  - libpq=12.9
   - libxml2=2.9.12
   - libzlib=1.2.12
   - markupsafe=2.1.1
@@ -41,6 +44,7 @@ dependencies:
   - pcre=8.45
   - pip=22.1.2
   - platformdirs=2.4.0
+  - psycopg2=2.8.6
   - pycodestyle=2.8.0
   - pycparser=2.21
   - pylint=2.14.5

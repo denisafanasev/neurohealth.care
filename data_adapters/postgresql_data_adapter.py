@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine
+from sqlalchemy import table, insert
 import config
 
 class PostgreSQLDataAdapter():
@@ -69,7 +70,7 @@ class PostgreSQLDataAdapter():
         # result = len(self.get_rows(_filter))
 
         return result
-    
+
     def add_row(self, _data):
         """
         Добавить новую запись в хранилище
@@ -79,13 +80,14 @@ class PostgreSQLDataAdapter():
 
         Returns:
             Int: id созданной записи
-        """        
+        """
 
-        result = None
-
-        # result = self.data_store.insert(_data)
-
-        return result
+        # self.data_store.execute('INSERT INTO users (user_id) VALUES (1)')
+        stmt = insert("users").values(name="spongebob", fullname="Spongebob Squarepants")
+        compiled = stmt.compile()
+        with engine.connect() as conn:
+            result = conn.execute(stmt)
+            conn.commit()
 
     def change_row(self, _data):
 

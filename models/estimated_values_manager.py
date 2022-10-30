@@ -30,7 +30,8 @@ class EstimatedValuesManager():
 
         estimated_values = []
         data_default = DataStore("structure")
-        data_tests = DataStore("structure", "tests")
+        #data_tests = DataStore("structure", "tests")
+        data_tests = DataStore("tests")
 
         if data_default.get_rows() == []:
             return None

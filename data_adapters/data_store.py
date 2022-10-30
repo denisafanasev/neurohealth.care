@@ -88,7 +88,7 @@ class DataStore():
 
         Returns:
             Int: id созданной записи
-        """        
+        """
 
         result = self.data_store.add_row(_data)
 
