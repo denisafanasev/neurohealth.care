@@ -103,10 +103,11 @@ class HomeworkProfileService():
         user_manager = UserManager()
 
         homework = homework_manager.homework_answer_accepted(_id_homework)
-        user = user_manager.get_user_by_id(_user_id)
+        current_user = user_manager.get_user_by_id(_user_id)
+        user = user_manager.get_user_by_id(homework.id_user)
         lesson = self.get_lesson(homework.id_lesson)
 
-        action_manager.add_notifications(homework.id_user, "принял", lesson.lessons.name, "homework_manager", user.login)
+        action_manager.add_notifications(user.login, "принял", lesson.lessons.name, "homework_manager", current_user.login)
 
         return homework
 
@@ -127,10 +128,11 @@ class HomeworkProfileService():
         user_manager = UserManager()
 
         homework = homework_manager.homework_answer_no_accepted(_id_homework)
-        user = user_manager.get_user_by_id(_user_id)
+        current_user = user_manager.get_user_by_id(_user_id)
+        user = user_manager.get_user_by_id(homework.id_user)
         lesson = self.get_lesson(homework.id_lesson)
 
-        action_manager.add_notifications(homework.id_user, "не принял", lesson.lessons.name, "homework_manager", user.login)
+        action_manager.add_notifications(user.login, "не принял", lesson.lessons.name, "homework_manager", current_user.login)
 
         return homework
 
