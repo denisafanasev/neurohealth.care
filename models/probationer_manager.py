@@ -140,7 +140,7 @@ class ProbationerManager():
                             "educational_institution": probationer.educational_institution, "contacts": probationer.contacts,
                             "diagnoses": probationer.diagnoses, "reasons_for_contact": probationer.reasons_for_contact}
 
-        data_store.add_row(probationer_data)
+        data_store.insert_row(probationer_data)
 
         return probationer.name_probationer
 

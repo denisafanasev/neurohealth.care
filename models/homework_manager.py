@@ -84,7 +84,7 @@ class HomeworkManager():
                                                   "users_files_list": _homework_files_list, "text": _text,
                                                   "id_user": _id_user, "id_course": int(_id_course), "id_lesson": _id_lesson})
 
-        data_store.add_row({"id": homework.id, "id_room_chat": homework.id_room_chat,
+        data_store.insert_row({"id": homework.id, "id_room_chat": homework.id_room_chat,
                             "users_files_list": homework.users_files_list,
                             "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"), "text": homework.text,
                             "id_user": homework.id_user, "id_course": homework.id_course, "id_lesson": homework.id_lesson})
@@ -133,7 +133,7 @@ class HomeworkManager():
 
         homework_answer = self.homework_answer_row_to_homework_answer(answer)
 
-        data_store.add_row({"id": homework_answer.id, "answer": homework_answer.answer,
+        data_store.insert_row({"id": homework_answer.id, "answer": homework_answer.answer,
                             "id_homework": homework_answer.id_homework})
 
     def get_homework_answer(self, _id_homework):

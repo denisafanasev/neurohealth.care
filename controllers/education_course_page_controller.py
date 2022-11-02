@@ -90,12 +90,14 @@ class EducationCoursePageController():
             "education_stream": {}
         }
 
+        '''
         if type(user.education_stream_list) is not list:
             user_view['education_stream'] = {
                 "id": user.education_stream_list.id,
                 "date_end": user.education_stream_list.date_end.strftime("%d/%m/%Y"),
                 "status": user.education_stream_list.status
             }
+        '''
 
         return user_view
     

@@ -1,31 +1,42 @@
 from tinydb import TinyDB, Query, where
 import json
 from tinydb.operations import delete, increment, add
+
+from data_adapters.tinydb_data_adapter import TinyDBDataAdapter
+from data_adapters.postgresql_data_adapter import PostgreSQLDataAdapter
+
 import config
 
 class DataStore():
     """
     Класс предназначен для работы с системой хранения данных
-    Возвращается структуры типа Dict, а хранит данные в том виде
-    в котором это предполагает используемый адаптер
-
-    для разных структур может использовать разные адаптеры
-
-    поддерживаемые системы хранения: TinyDB
+    Возвращается структуры типа Dict
+    
+    The type of the adapter is defined in depends on the system configuration
+    Currently the following adapters are supported: TinyDB, PostgreSQL
     """
 
     data_store = None
 
-    def __init__(self, _type, _table="_default"):
+    def __init__(self, _table_name, _tinydb_table_name="_default", _force_adapter=None):
         """
         Возвращается объект хранилища данных по указанному типу данных
         @params:
-            _type    - Required  : тип данных (String)
+            _table_name    - Required  : имя структуры/таблицы хранения данных (String)
+            _force_adapter - Optional  : имя дата адаптера, если нужно использовать отличный от того, который указан в настройках системы
         """
-        self.data_store = TinyDB(config.DATA_FOLDER + _type + ".json", encoding='utf-8', ensure_ascii=False)
 
-        if _table != "_default":
-            self.data_store = self.data_store.table(_table)
+        if _force_adapter is None:
+            _force_adapter = config.data_adapter()
+
+        if _force_adapter == "PostgreSQLDataAdapter":
+            self.data_store = PostgreSQLDataAdapter(_table_name)
+
+        elif _force_adapter == "TinyDBDataAdapter":
+            self.data_store = TinyDBDataAdapter(_table_name, _tinydb_table_name)
+
+        else:
+            raise Exception("Unknown adapter")
 
     def get_rows(self, _filter=None):
         """
@@ -37,10 +48,7 @@ class DataStore():
 
         result = []
 
-        if _filter is not None:
-            result = self.data_store.search(Query().fragment(_filter))
-        else:
-            result = self.data_store.all()
+        result = self.data_store.get_rows(_filter)
 
         return result
 
@@ -54,8 +62,7 @@ class DataStore():
 
         result = None
 
-        if _id != '':
-            result = self.data_store.get(doc_id=int(_id))
+        result = self.data_store.get_row_by_id(_id)
 
         return result
 
@@ -68,11 +75,11 @@ class DataStore():
 
         result = 0
 
-        result = len(self.get_rows(_filter))
+        result = self.data_store.get_rows_count(_filter)
 
         return result
     
-    def add_row(self, _data):
+    def insert_row(self, _data):
         """
         Добавить новую запись в хранилище
 
@@ -81,32 +88,11 @@ class DataStore():
 
         Returns:
             Int: id созданной записи
-        """        
+        """
 
-        result = self.data_store.insert(_data)
+        result = self.data_store.insert_row(_data)
 
         return result
-
-    def change_row(self, _data):
-
-        """
-        Обновить запись в хранилище
-
-        Args:
-            _data (Dict): структура данных для записи
-        """
-
-        self.data_store.update_multiple([(_data, where("login") == _data["login"])])
-
-    def discharge_password(self, _data):
-        """
-        Сброс пароля
-
-        Args:
-            _data (Dict): структура данных для записи
-        """
-
-        self.data_store.update({"password": _data["password"]}, where("login") == _data["login"])
 
     def update_row(self, _data, _where):
         """
@@ -114,43 +100,23 @@ class DataStore():
 
         Args:
             _data(Dict): структура данных для записи
-            _where(Dict): переменная для поиска нужно записи
+            _where(Dict): переменная для поиска нужной записи
         """
 
-        self.data_store.update(_data, where(_where) == _data[_where])
-
-    def change_probationer(self, _data):
+        self.data_store.update_row(_data, _where)
+    
+    def update_row_by_id(self, _data, _id):
         """
-        Обновление данных тестируемого
+        Обновление данных по id
 
         Args:
             _data(Dict): структура данных для записи
+            _id(Int): id записи
         """
 
-        self.data_store.update_multiple([(_data,
-                                           where("probationer_id") == int(_data["probationer_id"]))])
+        self.data_store.update_row_by_id(_data, _id)
 
-    def update_action(self, _action, _login):
-        """
-        Обновление записей действий пользователей
-        Args:
-            _action(Dict): структура данных для записи
-            _login(Dict): переменная для поиска нужно записи
-        """
-
-        self.data_store.update(add("action", [_action]), where("login") == _login)
-
-    def upsert_row(self, _data, _where):
-        """
-        Обновление данных
-
-        Args:
-            _data(Dict): структура данных для записи
-            _where(Dict): переменная для поиска нужно записи
-        """
-
-        self.data_store.upsert(_data, where(_where) == _data[_where])
-
+    # TODO: убрать отсюда этот метод
     def update_messages(self, _message, _id):
         """
         Обновление записей действий пользователей
@@ -159,15 +125,32 @@ class DataStore():
             _id(Int): переменная для поиска нужно записи
         """
 
-        self.data_store.update(add("message", [_message]), where("id") == _id)
+        _data_store = None
+        _data_store = TinyDB(config.DATA_FOLDER + "room_chat" + ".json", encoding='utf-8', ensure_ascii=False)
+        _data_store.update(add("message", [_message]), where("id") == _id)
 
-    def delete_key_in_row(self, _key, _where, _where_value):
+    # TODO: убрать отсюда этот метод
+    def charge_password(self, _data):
         """
-        Удаление ключа и значения из записи
+        Сброс пароля
+
         Args:
-            _key(String): ключ, который нужно удалить
-            _where(String): ключ для поиска нужной записи
-            _where_value(String): значение ключа для поиска нужной записи
+            _data (Dict): структура данных для записи
         """
 
-        self.data_store.update(delete(_key), where(_where) == _where_value)
+        _data_store = None
+        _data_store = TinyDB(config.DATA_FOLDER + "users" + ".json", encoding='utf-8', ensure_ascii=False)
+        _data_store.update({"password": _data["password"]}, where("login") == _data["login"])
+    
+    # TODO: убрать отсюда этот метод
+    def change_probationer(self, _data):
+        """
+        Обновление данных тестируемого
+
+        Args:
+            _data(Dict): структура данных для записи
+        """
+
+        _data_store = None
+        _data_store = TinyDB(config.DATA_FOLDER + "users" + ".json", encoding='utf-8', ensure_ascii=False)
+        _data_store.update_multiple([(_data, where("probationer_id") == int(_data["probationer_id"]))])

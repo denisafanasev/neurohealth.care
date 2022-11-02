@@ -73,7 +73,7 @@ class UserProfileService():
         return user_manager.change_user(_login, _name, _email, _role, _probationers_number, _created_date,
                                         _education_module_expiration_date)
 
-    def discharge_password(self, _login, _password, _password2):
+    def charge_password(self, _login, _password, _password2):
         """
         Обновляет в системе пароль пользователя
 
@@ -89,7 +89,7 @@ class UserProfileService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        user_manager.discharge_password(_login, _password, _password2)
+        user_manager.charge_password(_login, _password, _password2)
 
         action_manager.add_notifications(_login, "изменил", '', "user_manager", _login)
 
