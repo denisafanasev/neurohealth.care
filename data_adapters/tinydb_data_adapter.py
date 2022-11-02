@@ -16,14 +16,14 @@ class TinyDBDataAdapter():
 
     data_store = None
 
-    def __init__(self, _table_name, _tinydb_table_name="_default"):
+    def __init__(self, _table_name, tinydb_table_name="_default"):
         """
         Возвращается объект хранилища данных по указанному типу данных
         @params:
             _type    - Required  : тип данных (String)
         """
         self.data_store = TinyDB(config.DATA_FOLDER + _table_name + ".json", encoding='utf-8', ensure_ascii=False)
-        self.data_store = self.data_store.table(_tinydb_table_name)
+        self.data_store = self.data_store.table(tinydb_table_name)
 
     def get_rows(self, _filter=None):
         """

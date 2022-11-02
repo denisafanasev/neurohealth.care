@@ -50,7 +50,7 @@ class MaintenanceService():
         users = user_manager.get_users(_current_user_id)
 
         # create data sttore with SQL data adapter
-        data_store = DataStore("users", "PostgreSQLDataAdapter")
+        data_store = DataStore("users", force_adapter="PostgreSQLDataAdapter")
 
         for user in users:
 
@@ -60,7 +60,7 @@ class MaintenanceService():
                             "email_confirmed": user.email_confirmed, "login": user.login, "name": user.name,
                             "probationers_number": user.probationers_number, "role": user.role, "token": user.token}
 
-            if len(data_store.get_row_by_id(user.user_id)) > 0:
+            if len(data_store.get_row_by_id(user.user_id))>0:
 
                 # if user existed in the table, make change
                 data_store.update_row_by_id(user_raw, user.user_id)

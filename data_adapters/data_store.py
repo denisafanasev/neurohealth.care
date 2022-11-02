@@ -18,7 +18,7 @@ class DataStore():
 
     data_store = None
 
-    def __init__(self, _table_name, _tinydb_table_name="_default", _force_adapter=None):
+    def __init__(self, _table_name, tinydb_table_name="_default", force_adapter=None):
         """
         Возвращается объект хранилища данных по указанному типу данных
         @params:
@@ -26,14 +26,14 @@ class DataStore():
             _force_adapter - Optional  : имя дата адаптера, если нужно использовать отличный от того, который указан в настройках системы
         """
 
-        if _force_adapter is None:
-            _force_adapter = config.data_adapter()
+        if force_adapter is None:
+            force_adapter = config.data_adapter()
 
-        if _force_adapter == "PostgreSQLDataAdapter":
+        if force_adapter == "PostgreSQLDataAdapter":
             self.data_store = PostgreSQLDataAdapter(_table_name)
 
-        elif _force_adapter == "TinyDBDataAdapter":
-            self.data_store = TinyDBDataAdapter(_table_name, _tinydb_table_name)
+        elif force_adapter == "TinyDBDataAdapter":
+            self.data_store = TinyDBDataAdapter(_table_name, tinydb_table_name)
 
         else:
             raise Exception("Unknown adapter")
