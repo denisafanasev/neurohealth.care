@@ -1,5 +1,8 @@
+import sqlalchemy as db
 from sqlalchemy import create_engine
-from sqlalchemy import table, insert
+from sqlalchemy import insert, select, update
+from sqlalchemy import MetaData
+
 import config
 
 class PostgreSQLDataAdapter():
@@ -24,7 +27,7 @@ class PostgreSQLDataAdapter():
         """
 
         self.table_name = _table_name
-        self.data_store = create_engine("postgresql+psycopg2:" + config.PostgreSQLDataAdapter_connection_string())
+        self.data_store = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
 
     def get_rows(self, _filter=None):
         """
@@ -53,8 +56,20 @@ class PostgreSQLDataAdapter():
 
         result = None
 
-        #if _id != '':
-        #    result = self.data_store.get(doc_id=int(_id))
+
+        if _id != '':
+
+            # read DB metadata
+            metadata = MetaData(bind=self.data_store)
+            metadata.reflect()
+
+            # run select by doc_id (default primary key for each table)
+            query_result = self.data_store.execute(
+                select(metadata.tables[self.table_name]).where(metadata.tables[self.table_name].columns["doc_id"] == _id)
+            )
+
+            # convert sqlalchemy query result to list of dict
+            result = [u._asdict() for u in query_result.all()]
 
         return result
 
@@ -67,11 +82,18 @@ class PostgreSQLDataAdapter():
 
         result = 0
 
-        # result = len(self.get_rows(_filter))
+        # read DB metadata
+        metadata = MetaData(bind=self.data_store)
+        metadata.reflect()
+
+        query_result = db.select([db.func.count()]).select_from(metadata.tables[self.table_name]).scalar()
+
+        # convert sqlalchemy query result to scalar
+        result = query_result
 
         return result
 
-    def add_row(self, _data):
+    def insert_row(self, _data):
         """
         Добавить новую запись в хранилище
 
@@ -79,27 +101,17 @@ class PostgreSQLDataAdapter():
             _data (Dict): структура данных для записи
 
         Returns:
-            Int: id созданной записи
+            none
         """
 
-        # self.data_store.execute('INSERT INTO users (user_id) VALUES (1)')
-        stmt = insert("users").values(name="spongebob", fullname="Spongebob Squarepants")
-        compiled = stmt.compile()
-        with engine.connect() as conn:
-            result = conn.execute(stmt)
-            conn.commit()
+        metadata = MetaData(bind=self.data_store)
+        metadata.reflect()
 
-    def change_row(self, _data):
+        result = self.data_store.execute(
+            insert(metadata.tables[self.table_name]),[_data],
+        )
 
-        """
-        Обновить запись в хранилище
-
-        Args:
-            _data (Dict): структура данных для записи
-        """
-
-        # self.data_store.update_multiple([(_data, where("login") == _data["login"])])
-
+    '''
     def update_row(self, _data, _where):
         """
         Обновление данных
@@ -110,6 +122,13 @@ class PostgreSQLDataAdapter():
         """
 
         # self.data_store.update(_data, where(_where) == _data[_where])
+        metadata = MetaData(bind=self.data_store)
+        metadata.reflect()
+
+        result = self.data_store.execute(
+            update(metadata.tables[self.table_name]),[_data],
+        )
+    '''
     
     def update_row_by_id(self, _data, _id):
         """
@@ -120,28 +139,9 @@ class PostgreSQLDataAdapter():
             _id(Int): id записи
         """
 
-        # self.data_store.update(_data, doc_ids = [_id])
+        metadata = MetaData(bind=self.data_store)
+        metadata.reflect()
 
-
-    def upsert_row(self, _data, _where):
-        """
-        Обновление данных
-
-        Args:
-            _data(Dict): структура данных для записи
-            _where(Dict): переменная для поиска нужно записи
-        """
-
-        # self.data_store.upsert(_data, where(_where) == _data[_where])
-
-    def delete_key_in_row(self, _key, _where, _where_value):
-        """
-        Удаление ключа и значения из записи
-        Args:
-            _key(String): ключ, который нужно удалить
-            _where(String): ключ для поиска нужной записи
-            _where_value(String): значение ключа для поиска нужной записи
-        """
-
-        # self.data_store.update(delete(_key), where(_where) == _where_value)
-    
+        result = self.data_store.execute(
+            update(metadata.tables[self.table_name]).where(metadata.tables[self.table_name].columns["doc_id"] == _id),[_data],
+        )

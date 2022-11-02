@@ -364,7 +364,7 @@ def user_manager():
                 user["password"] = request.form[f"password_{user_id}"]
                 user["password2"] = request.form[f"password2_{user_id}"]
 
-                error = page_controller.discharge_password(user["login"], user["password"], user["password2"], current_user_id)
+                error = page_controller.charge_password(user["login"], user["password"], user["password2"], current_user_id)
 
                 mode[user_id] = "view"
 
@@ -535,7 +535,7 @@ def user_profile():
                     user["password"] = request.form["password"]
                     user["password2"] = request.form["password2"]
 
-                    error = page_controller.discharge_password(user["login"], user["password"], user["password2"])
+                    error = page_controller.charge_password(user["login"], user["password"], user["password2"])
 
                     if error is None:
                         mode = "view"
@@ -612,7 +612,7 @@ def main_page():
             password2 = request.form["password2"]
             current_password = request.form['current_password']
 
-            error = page_controller.discharge_password(user['login'], password, password2, current_password, user_id)
+            error = page_controller.charge_password(user['login'], password, password2, current_password, user_id)
 
             if error is None:
                 error = "Пароль успешно изменен!"
@@ -1311,9 +1311,10 @@ def maintenance():
 
     """
 
-    user_id = flask_login.current_user.user_id
+    current_user_id = flask_login.current_user.user_id
     page_controller = MaintenancePageController()
-    mpc = MainMenuPageController(flask_login.current_user.user_id)
+    mpc = MainMenuPageController(current_user_id)
+    upload_users_from_json_to_sql_page_data = page_controller.get_upload_users_from_json_to_sql_page_data(current_user_id)
 
     if not flask_login.current_user.is_admin():
         return redirect("main_page")
@@ -1324,11 +1325,11 @@ def maintenance():
         action_name = request.form['submit_button']
 
         if action_name == "upload_users_from_json_to_sql":
-            page_controller.upload_users_from_json_to_sql(user_id)
+            page_controller.upload_users_from_json_to_sql(current_user_id)
 
     return render_template('maintenance.html', view="maintenance", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _endpoint=endpoint)
+                           _endpoint=endpoint, _page_data=upload_users_from_json_to_sql_page_data)
 
 
 @app.route('/settings/estimated_values', methods=['GET', 'POST'])

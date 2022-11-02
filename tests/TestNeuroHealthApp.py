@@ -5,19 +5,16 @@ import inspect
 import os.path
 import sys
 
-current_path = os.path.abspath(getsourcefile(lambda: 0))
-current_dir = os.path.dirname(current_path)
-parent_dir = current_dir[:current_dir.rfind(os.path.sep)]
-
-sys.path.insert(0, parent_dir)
-
-# import utils.ada as ada
-
 import app as tested_app
 from data_adapters.data_store import DataStore
 from models.user import User
 from models.user_manager import UserManager
 
+current_path = os.path.abspath(getsourcefile(lambda: 0))
+current_dir = os.path.dirname(current_path)
+parent_dir = current_dir[:current_dir.rfind(os.path.sep)]
+
+sys.path.insert(0, parent_dir)
 
 class TestNeuroHealthApp(unittest.TestCase):
 
@@ -50,11 +47,11 @@ class TestNeuroHealthApp(unittest.TestCase):
   
   # ----------------------------------------------------------------
   # тестирование модуля DataStore
-  def test_add_row(self):
+  def test_insert_row(self):
 
     print(inspect.currentframe().f_code.co_name)
     data_store = DataStore("test")
-    rows = data_store.add_row({"data": "test", "data2": "test2"})
+    rows = data_store.insert_row({"data": "test", "data2": "test2"})
 
   def test_get_rows(self):
 

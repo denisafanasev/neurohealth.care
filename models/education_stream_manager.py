@@ -59,7 +59,7 @@ class EducationStreamManager():
 
         data_store = DataStore("education_streams")
 
-        data_store.add_row({'name': _education_stream['name'],
+        data_store.insert_row({'name': _education_stream['name'],
                             'date_start': _education_stream['date_start'],
                             "date_end": _education_stream['date_end'],
                             "teacher": _education_stream['teacher'],

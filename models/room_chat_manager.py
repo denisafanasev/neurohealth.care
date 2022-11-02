@@ -107,7 +107,7 @@ class RoomChatManager():
         }
         room_chat = self.room_chat_row_to_room_chat(room_chat)
 
-        data_store.add_row({"id": room_chat.id, "name": room_chat.name, "message": [],
+        data_store.insert_row({"id": room_chat.id, "name": room_chat.name, "message": [],
                             "id_education_stream": room_chat.id_education_stream})
 
         return room_chat
@@ -148,7 +148,7 @@ class RoomChatManager():
         _message["send"] = datetime.today()
         message = self.message_row_to_message(_message)
 
-        data_store_message.add_row({"id": message.id, "name_sender": message.name_sender, "text": message.text})
+        data_store_message.insert_row({"id": message.id, "name_sender": message.name_sender, "text": message.text})
 
         data_store.update_messages(message.id, int(_id_room_chat))
 

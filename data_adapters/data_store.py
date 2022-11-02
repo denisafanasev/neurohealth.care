@@ -18,7 +18,7 @@ class DataStore():
 
     data_store = None
 
-    def __init__(self, _table_name, _force_adapter = None):
+    def __init__(self, _table_name, _tinydb_table_name="_default", _force_adapter=None):
         """
         Возвращается объект хранилища данных по указанному типу данных
         @params:
@@ -30,10 +30,10 @@ class DataStore():
             _force_adapter = config.data_adapter()
 
         if _force_adapter == "PostgreSQLDataAdapter":
-            self.data_store = PostgreSQLDataAdapter( _table_name)
+            self.data_store = PostgreSQLDataAdapter(_table_name)
 
         elif _force_adapter == "TinyDBDataAdapter":
-            self.data_store = TinyDBDataAdapter( _table_name)
+            self.data_store = TinyDBDataAdapter(_table_name, _tinydb_table_name)
 
         else:
             raise Exception("Unknown adapter")
@@ -79,7 +79,7 @@ class DataStore():
 
         return result
     
-    def add_row(self, _data):
+    def insert_row(self, _data):
         """
         Добавить новую запись в хранилище
 
@@ -90,20 +90,9 @@ class DataStore():
             Int: id созданной записи
         """
 
-        result = self.data_store.add_row(_data)
+        result = self.data_store.insert_row(_data)
 
         return result
-
-    def change_row(self, _data):
-
-        """
-        Обновить запись в хранилище
-
-        Args:
-            _data (Dict): структура данных для записи
-        """
-
-        self.data_store.change_row(_data)
 
     def update_row(self, _data, _where):
         """
@@ -127,30 +116,6 @@ class DataStore():
 
         self.data_store.update_row_by_id(_data, _id)
 
-
-    def upsert_row(self, _data, _where):
-        """
-        Обновление данных
-
-        Args:
-            _data(Dict): структура данных для записи
-            _where(Dict): переменная для поиска нужно записи
-        """
-
-        self.data_store.upsert_row(_data, _where)
-
-    def delete_key_in_row(self, _key, _where, _where_value):
-        """
-        Удаление ключа и значения из записи
-        Args:
-            _key(String): ключ, который нужно удалить
-            _where(String): ключ для поиска нужной записи
-            _where_value(String): значение ключа для поиска нужной записи
-        """
-
-        self.data_store.delete_key_in_row(_key, _where, _where_value)
-    
-
     # TODO: убрать отсюда этот метод
     def update_messages(self, _message, _id):
         """
@@ -163,24 +128,9 @@ class DataStore():
         _data_store = None
         _data_store = TinyDB(config.DATA_FOLDER + "room_chat" + ".json", encoding='utf-8', ensure_ascii=False)
         _data_store.update(add("message", [_message]), where("id") == _id)
-    
-    '''
-    # TODO: убрать отсюда этот метод
-    def update_action(self, _action, _login):
-        """
-        Обновление записей действий пользователей
-        Args:
-            _action(Dict): структура данных для записи
-            _login(Dict): переменная для поиска нужно записи
-        """
-
-        _data_store = None
-        _data_store = TinyDB(config.DATA_FOLDER + _type + ".json", encoding='utf-8', ensure_ascii=False)
-        _data_store.update(add("action", [_action]), where("login") == _login)
-    '''
 
     # TODO: убрать отсюда этот метод
-    def discharge_password(self, _data):
+    def charge_password(self, _data):
         """
         Сброс пароля
 

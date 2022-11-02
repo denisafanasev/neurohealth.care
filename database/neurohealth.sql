@@ -1,4 +1,5 @@
-create table users(user_id INT PRIMARY KEY,
+create table users(
+	doc_id INT PRIMARY KEY,
 	login VARCHAR ( 15 ) UNIQUE NOT NULL,
 	password VARCHAR ( 50 ),
 	email VARCHAR ( 50 ) UNIQUE NOT NULL,

@@ -99,7 +99,7 @@ class UserProfilePageController():
         return user_profile_service.change_user(_login, _name, _email, _role, _probationers_number,
                                                 _created_date, _education_module_expiration_date)
 
-    def discharge_password(self, _login, _password, _password2):
+    def charge_password(self, _login, _password, _password2):
         """
         Обновляет в системе пароль пользователя
 
@@ -114,7 +114,7 @@ class UserProfilePageController():
 
         user_profile_service = UserProfileService()
         try:
-            user_profile_service.discharge_password(_login, _password, _password2)
+            user_profile_service.charge_password(_login, _password, _password2)
         except UserManagerException as error:
 
             return error

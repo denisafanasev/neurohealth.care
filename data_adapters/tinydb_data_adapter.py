@@ -16,14 +16,14 @@ class TinyDBDataAdapter():
 
     data_store = None
 
-    def __init__(self, _table_name):
+    def __init__(self, _table_name, _tinydb_table_name="_default"):
         """
         Возвращается объект хранилища данных по указанному типу данных
         @params:
             _type    - Required  : тип данных (String)
         """
         self.data_store = TinyDB(config.DATA_FOLDER + _table_name + ".json", encoding='utf-8', ensure_ascii=False)
-        self.data_store = self.data_store.table("_default")
+        self.data_store = self.data_store.table(_tinydb_table_name)
 
     def get_rows(self, _filter=None):
         """
@@ -70,7 +70,7 @@ class TinyDBDataAdapter():
 
         return result
     
-    def add_row(self, _data):
+    def insert_row(self, _data):
         """
         Добавить новую запись в хранилище
 
@@ -85,6 +85,7 @@ class TinyDBDataAdapter():
 
         return result
 
+    '''
     def change_row(self, _data):
 
         """
@@ -95,6 +96,7 @@ class TinyDBDataAdapter():
         """
 
         self.data_store.update_multiple([(_data, where("login") == _data["login"])])
+    '''
 
     def update_row(self, _data, _where):
         """
@@ -117,27 +119,3 @@ class TinyDBDataAdapter():
         """
 
         self.data_store.update(_data, doc_ids = [_id])
-
-
-    def upsert_row(self, _data, _where):
-        """
-        Обновление данных
-
-        Args:
-            _data(Dict): структура данных для записи
-            _where(Dict): переменная для поиска нужно записи
-        """
-
-        self.data_store.upsert(_data, where(_where) == _data[_where])
-
-    def delete_key_in_row(self, _key, _where, _where_value):
-        """
-        Удаление ключа и значения из записи
-        Args:
-            _key(String): ключ, который нужно удалить
-            _where(String): ключ для поиска нужной записи
-            _where_value(String): значение ключа для поиска нужной записи
-        """
-
-        self.data_store.update(delete(_key), where(_where) == _where_value)
-    
