@@ -28,7 +28,7 @@ class MaintenanceService():
         users = user_manager.get_users(_current_user_id)
         users_number = len(users)
 
-        db_data_store = DataStore("users", "PostgreSQLDataAdapter")
+        db_data_store = DataStore("users", force_adapter="PostgreSQLDataAdapter")
         db_users_number = db_data_store.get_rows_count()
 
         _data = {}
