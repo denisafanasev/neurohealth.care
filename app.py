@@ -347,7 +347,7 @@ def user_manager():
                     user['education_module_expiration_date'] = data[user_id]["education_module_expiration_date"]
                     user['active'] = data[user_id]['active']
 
-                    error = page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
+                    error = page_controller.chenge_user(user["login"], user["name"], user["email"], user["role"],
                                                 user["probationers_number"], user["created_date"],
                                                 user['education_module_expiration_date'], current_user_id)
 
@@ -364,7 +364,7 @@ def user_manager():
                 user["password"] = request.form[f"password_{user_id}"]
                 user["password2"] = request.form[f"password2_{user_id}"]
 
-                error = page_controller.charge_password(user["login"], user["password"], user["password2"], current_user_id)
+                error = page_controller.chenge_password(user["login"], user["password"], user["password2"], current_user_id)
 
                 mode[user_id] = "view"
 
@@ -515,7 +515,7 @@ def user_profile():
                     user["active"] = request.form.get("is_active")
                     user['education_module_expiration_date'] = data["education_module_expiration_date"]
 
-                    page_controller.change_user(user["login"], user["name"], user["email"], user["role"],
+                    page_controller.chenge_user(user["login"], user["name"], user["email"], user["role"],
                                                 user["probationers_number"], user["created_date"], user["active"],
                                                 user['education_module_expiration_date'])
 
@@ -535,7 +535,7 @@ def user_profile():
                     user["password"] = request.form["password"]
                     user["password2"] = request.form["password2"]
 
-                    error = page_controller.charge_password(user["login"], user["password"], user["password2"])
+                    error = page_controller.chenge_password(user["login"], user["password"], user["password2"])
 
                     if error is None:
                         mode = "view"
@@ -612,7 +612,7 @@ def main_page():
             password2 = request.form["password2"]
             current_password = request.form['current_password']
 
-            error = page_controller.charge_password(user['login'], password, password2, current_password, user_id)
+            error = page_controller.chenge_password(user['login'], password, password2, current_password, user_id)
 
             if error is None:
                 error = "Пароль успешно изменен!"

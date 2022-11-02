@@ -30,7 +30,7 @@ class MainPageService():
 
         return user
 
-    def charge_password(self, _login, _password, _password2, _current_user_id, _current_password=''):
+    def chenge_password(self, _login, _password, _password2, _current_user_id, _current_password=''):
         """
         Обновляет в системе пароль пользователя
 
@@ -46,7 +46,7 @@ class MainPageService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        error = user_manager.charge_password(_login, _password, _password2, _current_password)
+        error = user_manager.chenge_password(_login, _password, _password2, _current_password)
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
         action_manager.add_notifications(_login, "изменил", 'пароль', "user_manager", login_superuser)

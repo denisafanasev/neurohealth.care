@@ -169,21 +169,21 @@ class UserManager():
             
             if user_data.get("education_module_expiration_date") is None:
 
-                self.change_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+                self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
                                  _probationers_number=user.probationers_number, _created_date=user.created_date,
                                  _education_module_expiration_date=user.education_module_expiration_date,
                                  _token=user.token, _email_confirmed=user.email_confirmed)
 
             elif user_data.get("token") is None:
 
-                self.change_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+                self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
                                  _probationers_number=user.probationers_number, _created_date=user.created_date,
                                  _education_module_expiration_date=user.education_module_expiration_date,
                                  _token=user.token, _email_confirmed=user.email_confirmed)
 
             elif user_data.get("email_confirmed") is None:
 
-                self.change_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+                self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
                                  _probationers_number=user.probationers_number, _created_date=user.created_date,
                                  _education_module_expiration_date=user.education_module_expiration_date,
                                  _token=user.token, _email_confirmed=user.email_confirmed)
@@ -390,7 +390,7 @@ class UserManager():
 
         return user_role
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
+    def chenge_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
                     _education_module_expiration_date="", _token="", _email_confirmed=False, _active=True):
         """
         Обновляет информацию о пользователе и возвращает ее
@@ -427,7 +427,7 @@ class UserManager():
 
         return user
 
-    def charge_password(self, _login, _password, _password2, _current_password=''):
+    def chenge_password(self, _login, _password, _password2, _current_password=''):
         """
         Сброс пароля пользователя
 
@@ -451,7 +451,7 @@ class UserManager():
 
         user_data = {"login": _login, "password": password}
 
-        data_store.charge_password(user_data)
+        data_store.chenge_password(user_data)
 
     def activation(self, _login):
         """
@@ -467,7 +467,7 @@ class UserManager():
         user = self.get_user_by_login(_login)
         user.active = True
 
-        self.change_user(user.login, user.name, user.email, user.role, user.probationers_number,
+        self.chenge_user(user.login, user.name, user.email, user.role, user.probationers_number,
                          user.created_date, user.education_module_expiration_date,
                          user.token, user.email_confirmed, user.active)
 
@@ -487,7 +487,7 @@ class UserManager():
         user = self.get_user_by_login(_login)
         user.active = False
 
-        self.change_user(user.login, user.name, user.email, user.role, user.probationers_number,
+        self.chenge_user(user.login, user.name, user.email, user.role, user.probationers_number,
                          user.created_date, user.education_module_expiration_date,
                          user.token, user.email_confirmed, user.active)
 
@@ -512,6 +512,6 @@ class UserManager():
             user.education_module_expiration_date = (datetime.now() + relativedelta(months=_period)).strftime(
                 "%d/%m/%Y")
 
-        self.change_user(user.login, user.name, user.email, user.role, user.probationers_number,
+        self.chenge_user(user.login, user.name, user.email, user.role, user.probationers_number,
                          user.created_date, user.education_module_expiration_date,
                          user.token, user.email_confirmed, user.active)

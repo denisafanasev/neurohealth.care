@@ -130,7 +130,7 @@ class DataStore():
         _data_store.update(add("message", [_message]), where("id") == _id)
 
     # TODO: убрать отсюда этот метод
-    def charge_password(self, _data):
+    def chenge_password(self, _data):
         """
         Сброс пароля
 
