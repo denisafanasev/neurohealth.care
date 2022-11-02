@@ -77,6 +77,8 @@ class UserManagerPageController():
             user_view['probationers_number'] = user.probationers_number
             user_view['token'] = user.token
             user_view['education_stream_list'] = []
+
+            '''
             if user.role == "user":
                 for education_stream in user.education_stream_list:
                     user_view['education_stream_list'].append({
@@ -87,6 +89,7 @@ class UserManagerPageController():
                         "course": education_stream.course.name,
                         "status": education_stream.status
                     })
+            '''
 
             user_view['active'] = user.active
         else:

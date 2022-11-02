@@ -44,7 +44,7 @@ class ProbesManager():
 
 
 
-        data_store.add_row({"probe_id": probe.probe_id, "name_probationer": probe.name_probationer, "probationer_id": probe.probationer_id,
+        data_store.insert_row({"probe_id": probe.probe_id, "name_probationer": probe.name_probationer, "probationer_id": probe.probationer_id,
                       "protocol_status": probe.protocol_status, "estimated_values_file": probe.estimated_values_file,
                       "date_test": probe.date_test, "date_protocol": probe.date_protocol, "test": probe.test})
 
@@ -127,9 +127,9 @@ class ProbesManager():
 
         for grade in _grades:
             if "_" in grade["id"]:
-                data_store_test.upsert_row({"id": int(grade["id"].split("_")[0]), "grade": {grade["id"].split("_")[1]: grade["grade"]}}, "id")
+                data_store_test.update_row_by_id({"id": int(grade["id"].split("_")[0]), "grade": {grade["id"].split("_")[1]: grade["grade"]}}, "id")
             else:
-                data_store_test.upsert_row({"id": int(grade["id"]), "grade": grade["grade"]}, "id")
+                data_store_test.update_row_by_id({"id": int(grade["id"]), "grade": grade["grade"]}, "id")
 
     def get_probe(self, _probe_id):
 

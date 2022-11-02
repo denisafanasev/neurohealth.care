@@ -4,7 +4,7 @@ app configuration
 import yaml
 import pathlib
 
-VERSION = "1.1.9"
+VERSION = "1.1.10"
 APP_NAME = "NeuroHealth"
 
 if str(pathlib.Path().resolve()).find("prod")!=-1:
@@ -15,6 +15,8 @@ else:
 # DATA_FOLDER = "../data/"
 DATA_FOLDER = "../neurohealth.care.data." + ENVIRONMENT + "/"
 CONFIG_FILE_NAME = "config.yaml"
+
+# TODO: надо бы проверить что папка существует и создать ее, если ее нет
 
 # system settings
 THREADING_ENABLE = True
@@ -145,3 +147,45 @@ def app_support_channel() -> str:
         user_support_channel = "not-found"
 
     return user_support_channel
+
+def data_adapter() -> str:
+    """
+    Возвращает идентификатор адаптера данных из системного файла настроек
+
+    Returns:
+        String: идентификатор адаптера данных
+    """   
+
+    _data_adapter = None
+
+    try:        
+        with open(DATA_FOLDER + CONFIG_FILE_NAME, "r") as f:
+            cfg = yaml.safe_load(f)
+        
+        _data_adapter = cfg['CONFIG']['data_adapter']
+    
+    except:
+        pass
+
+    return _data_adapter
+
+def PostgreSQLDataAdapter_connection_string() -> str:
+    """
+    Возвращает строку подключения для PostgreSQL адаптера  из системного файла настроек
+
+    Returns:
+        String: строка подключения для PostgreSQL адаптера
+    """   
+
+    _PostgreSQLDataAdapter_connection_string = None
+
+    try:        
+        with open(DATA_FOLDER + CONFIG_FILE_NAME, "r") as f:
+            cfg = yaml.safe_load(f)
+        
+        _PostgreSQLDataAdapter_connection_string = cfg['CONFIG']['PostgreSQLDataAdapter_connection_string']
+    
+    except:
+        pass
+
+    return _PostgreSQLDataAdapter_connection_string

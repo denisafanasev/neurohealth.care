@@ -26,10 +26,11 @@ class User(UserMixin):
     probationers_number = DEFAULT_PROBATIONS_NUMBER
     token = ""
     email_confirmed = False
+    active = True
 
     def __init__(self, _user_id=None, _login="", _name="", _email="", _role="user", _active=True, _created_date="",
                  _education_module_expiration_date="", _probationers_number=DEFAULT_PROBATIONS_NUMBER, _token="",
-                 _email_confirmed=False, _education_stream_list=[]):
+                 _email_confirmed=False):
         """
         Конструктор класса
 
@@ -75,7 +76,7 @@ class User(UserMixin):
         self.probationers_number = _probationers_number
 
         # кажется это тут не надо, это должно быть отдельной структурой
-        self.education_stream_list = _education_stream_list
+        # self.education_stream_list = _education_stream_list
     
     def is_active(self):
         """

@@ -33,9 +33,11 @@ from controllers.education_course_lesson_page_controller import EducationCourseL
 from controllers.download_page_controller import DownloadPageController
 from controllers.education_home_tasks_page_controller import EducationHomeTasksPageController
 from controllers.education_home_task_profile_page_controller import EducationChatPageController
+from controllers.education_streams_page_controller import EducationStreamsPageController
 from controllers.education_stream_page_controller import EducationStreamPageController
-from controllers.education_stream_profile_page_controller import EducationStreamProfilePageController
 from controllers.education_program_subscription_page_controller import EducationProgramSubscriptionPageController
+from controllers.maintenance_page_controller import MaintenancePageController
+
 
 from error import UserManagerException
 
@@ -362,7 +364,7 @@ def user_manager():
                 user["password"] = request.form[f"password_{user_id}"]
                 user["password2"] = request.form[f"password2_{user_id}"]
 
-                error = page_controller.discharge_password(user["login"], user["password"], user["password2"], current_user_id)
+                error = page_controller.charge_password(user["login"], user["password"], user["password2"], current_user_id)
 
                 mode[user_id] = "view"
 
@@ -533,7 +535,7 @@ def user_profile():
                     user["password"] = request.form["password"]
                     user["password2"] = request.form["password2"]
 
-                    error = page_controller.discharge_password(user["login"], user["password"], user["password2"])
+                    error = page_controller.charge_password(user["login"], user["password"], user["password2"])
 
                     if error is None:
                         mode = "view"
@@ -610,7 +612,7 @@ def main_page():
             password2 = request.form["password2"]
             current_password = request.form['current_password']
 
-            error = page_controller.discharge_password(user['login'], password, password2, current_password, user_id)
+            error = page_controller.charge_password(user['login'], password, password2, current_password, user_id)
 
             if error is None:
                 error = "Пароль успешно изменен!"
@@ -1299,6 +1301,36 @@ def age_range_list():
                            _ranges_age=page_controller.get_age_ranges(),
                            _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
 
+@app.route('/settings/maintenance', methods=['GET', 'POST'])
+@login_required
+def maintenance():
+    """
+    Controller for maintenance page
+
+    Returns:
+
+    """
+
+    current_user_id = flask_login.current_user.user_id
+    page_controller = MaintenancePageController()
+    mpc = MainMenuPageController(current_user_id)
+    upload_users_from_json_to_sql_page_data = page_controller.get_upload_users_from_json_to_sql_page_data(current_user_id)
+
+    if not flask_login.current_user.is_admin():
+        return redirect("main_page")
+
+    endpoint = request.endpoint
+
+    if request.method == "POST":
+        action_name = request.form['submit_button']
+
+        if action_name == "upload_users_from_json_to_sql":
+            page_controller.upload_users_from_json_to_sql(current_user_id)
+
+    return render_template('maintenance.html', view="maintenance", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _endpoint=endpoint, _page_data=upload_users_from_json_to_sql_page_data)
+
 
 @app.route('/settings/estimated_values', methods=['GET', 'POST'])
 @login_required
@@ -1347,11 +1379,11 @@ def estimated_values():
 @login_required
 def education_streams():
 
-    page_controller = EducationStreamPageController()
+    page_controller = EducationStreamsPageController()
     endpoint = "education_streams"
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
-    education_streams_list = page_controller.get_education_streams_list()
+    education_streams_list = page_controller.get_education_streams()
 
     return render_template('education_streams.html', view="education_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
@@ -1361,13 +1393,13 @@ def education_streams():
 @login_required
 def education_stream_card():
 
-    page_controller = EducationStreamProfilePageController()
     endpoint = "education_streams"
+
+    page_controller = EducationStreamPageController()
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
-    curators_list = page_controller.get_curators_list()
-    students_list = page_controller.get_students_list()
-    courses_list = page_controller.get_courses_list()
+    user_id = flask_login.current_user.user_id
+    
     id_education_stream = request.args.get('id')
     error = None
     error_type = None
@@ -1381,6 +1413,10 @@ def education_stream_card():
         id_education_stream = int(id_education_stream)
     else:
         mode = 'new'
+    
+    curators_list = page_controller.get_curators_list(user_id)
+    students_list = page_controller.get_students_list(user_id)
+    courses_list = page_controller.get_courses_list(user_id)
 
     education_stream = page_controller.get_education_stream(id_education_stream)
 
@@ -1400,10 +1436,8 @@ def education_stream_card():
                 education_stream_edit['curators_list'].append(education_stream_edit['teacher'])
 
             id_education_stream = page_controller.create_education_stream(education_stream_edit)
-            # education_stream_edit['course'] = {"id": education_stream_edit.pop("id_course")}
-            # education_stream = education_stream_edit
-            # mode = "view"
-            return redirect(f"/education_stream_card?id={id_education_stream}")
+
+            return redirect("education_streams")
 
         elif request.form.get('button') == 'edit':
             mode = "edit"
@@ -1420,11 +1454,10 @@ def education_stream_card():
                 "date_end": request.form.get("date_end")
             }
 
-            page_controller.change_education_stream(education_stream_edit, education_stream['students_list'],
+            page_controller.save_education_stream(education_stream_edit, education_stream['students_list'],
                                                    education_stream["curators_list"])
             mode = "view"
             education_stream = page_controller.get_education_stream(id_education_stream)
-
 
     return render_template('education_stream_card.html', view="education_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _endpoint=endpoint,

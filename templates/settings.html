@@ -47,7 +47,7 @@
 
     <div class="container-fluid p-0">
     
-        <h1 class="h3 mb-3">Настройки</h1>
+        <h1 class="h3 mb-3">Настройки и обслуживание</h1>
     
         <div class="row">
             <div class="col">
@@ -59,6 +59,10 @@
                             </a>
                             <a class="btn {% if _endpoint == "estimated_values" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("estimated_values") }}" role="tab">
                                 Справочник оценочных значений
+                            </a>
+                            <a class="btn {% if _endpoint == "maintenance" %} btn-primary {% else %}btn-light {% endif %} buttons-copy
+                                buttons-html5" aria-controls="datatables-buttons" href="{{ url_for("maintenance") }}" role="tab">
+                                Обслуживание системы
                             </a>
                         </div>
                     </div>
@@ -76,8 +80,8 @@
                         {% endblock %}
                     </div>
 
-                    <div class="tab-pane fade {% if _endpoint == "education_streams" %} show active {% endif %}" id="{{ url_for("education_streams") }}" role="tabpanel">
-                        {% block education_streams %}
+                    <div class="tab-pane fade {% if _endpoint == "maintenance" %} show active {% endif %}" id="{{ url_for("maintenance") }}" role="tabpanel">
+                        {% block maintenance %}
                         {% endblock %}
                     </div>
                 </div>

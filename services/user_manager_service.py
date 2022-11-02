@@ -48,7 +48,7 @@ class UserManagerService():
         user = user_manager.get_user_by_login(_login_user)
 
         #if user is not None:
-        #    user.education_stream_list = stream_service.get_education_streams_list_by_login_user(user.login, user.role)
+        #    user.education_stream_list = stream_service.get_education_streams_by_login_user(user.login, user.role)
 
 
         return user
@@ -66,6 +66,7 @@ class UserManagerService():
 
         user = user_manager.get_user_by_id(user_id)
 
+        '''
         if user is not None:
             if user.role == "user":
                 education_stream_list = []
@@ -75,6 +76,7 @@ class UserManagerService():
                 user.education_stream_list = education_stream_list
             else:
                 user.education_stream_list = None
+        '''
 
         return user
 
@@ -133,7 +135,7 @@ class UserManagerService():
 
         return user
 
-    def discharge_password(self, _login, _password, _password2, _current_user_id, _current_password=''):
+    def charge_password(self, _login, _password, _password2, _current_user_id, _current_password=''):
         """
         Обновляет в системе пароль пользователя
 
@@ -149,7 +151,7 @@ class UserManagerService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        error = user_manager.discharge_password(_login, _password, _password2, _current_password)
+        error = user_manager.charge_password(_login, _password, _password2, _current_password)
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
         action_manager.add_notifications(_login, "изменил", 'пароль', "user_manager", login_superuser)
