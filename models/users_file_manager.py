@@ -37,7 +37,7 @@ class UsersFileManager():
 
         user_files = self.user_files_row_to_users_files(_users_file)
 
-        data_store.add_row({"name_file_user": user_files.name_file_user, "name_file_unique": user_files.name_file_unique,
+        data_store.insert_row({"name_file_user": user_files.name_file_user, "name_file_unique": user_files.name_file_unique,
                             "path": user_files.path})
 
     def get_size_files(self, _files_list):

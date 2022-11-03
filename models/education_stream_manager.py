@@ -59,8 +59,7 @@ class EducationStreamManager():
 
         data_store = DataStore("education_streams")
 
-        # TODO: преобразовать логины пользователей в id
-        data_store.add_row({'name': _education_stream['name'],
+        data_store.insert_row({'name': _education_stream['name'],
                             'date_start': _education_stream['date_start'],
                             "date_end": _education_stream['date_end'],
                             "teacher": _education_stream['teacher'],
@@ -105,7 +104,7 @@ class EducationStreamManager():
         else:
             return None
 
-    def change_education_stream(self, _education_stream):
+    def save_education_stream(self, _education_stream):
         """
         Изменяет данные обучающего потока
 
@@ -115,12 +114,10 @@ class EducationStreamManager():
 
         data_store = DataStore('education_streams')
 
-        # education_stream = self.education_stream_row_to_education_stream(_education_stream)
-
         # создаем объект обучающего потока что бы отработать в нем логику установки атрибутов
         education_stream = EducationStream(_id=_education_stream['id'], _name=_education_stream['name'], _id_course=_education_stream['id_course'],
                                          _curators_list=_education_stream['curators_list'], _students_list=_education_stream['students_list'],
-                                         _teacher=_education_stream['teacher'])
+                                         _teacher=_education_stream['teacher'], _date_start=_education_stream['date_start'], _date_end=_education_stream['date_end'])
 
         # сохранение проводим из атрибутов объекта обучающего потока
         data_store.update_row_by_id({"name": education_stream.name,

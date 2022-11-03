@@ -11,11 +11,11 @@ class EducationCoursePageController():
         Возвращает список модулей курса по id
 
         Args:
-            _id(Int): ID курса
-            _user_id(Int): ID пользователя
+            _id(Int): индентификатор курса
+            _user_id(Int): индентификатор пользователя
 
         Returns:
-            List: список модулей курса
+            modules_list_view(List): список модулей курса
         """
 
         course_service = EducationCourseService()
@@ -94,12 +94,15 @@ class EducationCoursePageController():
             "education_module_expiration_date": user.education_module_expiration_date.strftime("%d/%m/%Y"),
             "education_stream": {}
         }
+
+        '''
         if type(user.education_stream_list) is not list:
             user_view['education_stream'] = {
                 "id": user.education_stream_list.id,
                 "date_end": user.education_stream_list.date_end.strftime("%d/%m/%Y"),
                 "status": user.education_stream_list.status
             }
+        '''
 
         return user_view
     
@@ -108,7 +111,7 @@ class EducationCoursePageController():
         Возвращает курс по id
 
         Args:
-            _id(Int): ID курса
+            _id(Int): индентификатор курса
 
         Returns:
             course(Dict): курс

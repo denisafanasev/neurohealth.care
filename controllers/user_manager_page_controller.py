@@ -77,6 +77,8 @@ class UserManagerPageController():
             user_view['probationers_number'] = user.probationers_number
             user_view['token'] = user.token
             user_view['education_stream_list'] = []
+
+            '''
             if user.role == "user":
                 for education_stream in user.education_stream_list:
                     user_view['education_stream_list'].append({
@@ -87,6 +89,7 @@ class UserManagerPageController():
                         "course": education_stream.course.name,
                         "status": education_stream.status
                     })
+            '''
 
             user_view['active'] = user.active
         else:
@@ -128,7 +131,7 @@ class UserManagerPageController():
         except UserManagerException as error:
             return error
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
+    def chenge_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
                     _education_module_expiration_date, _current_user_id):
         """
         Обновляет информацию о пользователе и возвращает ее
@@ -145,14 +148,14 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
 
-        user_manager_service.change_user(_login, _name, _email, _role, _probationers_number, _created_date,
+        user_manager_service.chenge_user(_login, _name, _email, _role, _probationers_number, _created_date,
                                          _education_module_expiration_date, _current_user_id)
 
         error = "Изменения успешно сохранены!"
 
         return error
 
-    def discharge_password(self, _user_id, _password, _password2, _current_user_id):
+    def chenge_password(self, _login, _password, _password2, _current_user_id):
         """
         Обновляет в системе пароль пользователя
 
@@ -168,7 +171,7 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
         try:
-            user_manager_service.discharge_password(_user_id, _password, _password2, _current_user_id)
+            user_manager_service.chenge_password(_login, _password, _password2, _current_user_id)
         except UserManagerException as error:
 
             return error

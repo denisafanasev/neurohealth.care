@@ -66,6 +66,7 @@ class UserManagerService():
 
         user = user_manager.get_user_by_id(user_id)
 
+        '''
         if user is not None:
             if user.role == "user":
                 education_stream_list = []
@@ -75,6 +76,7 @@ class UserManagerService():
                 user.education_stream_list = education_stream_list
             else:
                 user.education_stream_list = None
+        '''
 
         return user
 
@@ -106,7 +108,7 @@ class UserManagerService():
 
         return error
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
+    def chenge_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
                     _education_module_expiration_date, _current_user_id):
         """
         Обновляет информацию о пользователе и возвращает ее
@@ -124,7 +126,7 @@ class UserManagerService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        user = user_manager.change_user(_login, _name, _email, _role, _probationers_number, _created_date,
+        user = user_manager.chenge_user(_login, _name, _email, _role, _probationers_number, _created_date,
                                  _education_module_expiration_date)
 
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
@@ -133,7 +135,7 @@ class UserManagerService():
 
         return user
 
-    def discharge_password(self, _user_id, _password, _password2, _current_user_id):
+    def chenge_password(self, _login, _password, _password2, _current_user_id, _current_password=''):
         """
         Обновляет в системе пароль пользователя
 
@@ -150,7 +152,7 @@ class UserManagerService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        error = user_manager.discharge_password(_user_id, _password, _password2)
+        error = user_manager.chenge_password(_login, _password, _password2, _current_password)
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
         login_user = user_manager.get_user_by_id(_user_id).login
 

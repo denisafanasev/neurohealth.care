@@ -134,7 +134,7 @@ class EducationStreamPageController():
         education_stream_manager.create_education_stream(_education_stream)
 
 
-    def change_education_stream(self, _education_stream, _old_students_list, _old_curators_list):
+    def save_education_stream(self, _education_stream, _old_students_list, _old_curators_list):
         """
         Изменяет данные обучающего потока
 
@@ -144,6 +144,6 @@ class EducationStreamPageController():
 
         education_stream_service = EducationStreamService()
 
-        education_stream_service.change_education_stream(_education_stream)
+        education_stream_service.save_education_stream(_education_stream)
 
         _education_stream['course'] = _education_stream.pop("id_course")

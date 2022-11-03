@@ -1,9 +1,12 @@
 https://www.daterangepicker.com
 
 
+# remote server ssh conection
 ssh -i "shaman_aws_key.pem" ubuntu@ec2-3-142-254-179.us-east-2.compute.amazonaws.com
 
+# -----   conda enviroment management
 
+# save enviroment snapshot
 conda env export --no-builds > environment.yml
 
 # update and install packeges from the environment file
@@ -89,3 +92,7 @@ scp -i ../../_aws/shaman_aws_key.pem ubuntu@app.neurohealth.care:/home/ubuntu/_e
 
 # setup cert to nginx
 https://marcosantonocito.medium.com/steps-to-install-a-go-daddy-ssl-certificate-on-nginx-on-ubuntu-14-04-ff942b9fd7ff
+
+
+# postgres commands
+psql -U user_name -d database_name -h 127.0.0.1 -W

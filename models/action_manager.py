@@ -78,7 +78,7 @@ class ActionManager():
 
         action = self.action_row_to_action({"id": id, "login": _user, "action": action, "comment_action": comment_action})
 
-        data_store.add_row({"id": action.id, "login": action.user_login, "action": action.action,
+        data_store.insert_row({"id": action.id, "login": action.user_login, "action": action.action,
                             "comment_action": action.comment_action, "created_date": action.created_date.strftime("%d/%m/%Y %H:%M:%S")})
 
     def get_actions(self, _user):

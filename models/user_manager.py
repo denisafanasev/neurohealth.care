@@ -100,6 +100,7 @@ class UserManager():
         """
 
         # создадим пользователя с указанием обязательных атрибутов
+        # note that doc_id from the table used as a user_id
         try:
             user = User(_data_row.doc_id, _data_row['login'], _data_row['name'], _data_row['email'], _data_row['role'],
                         _data_row['active'])
@@ -147,11 +148,6 @@ class UserManager():
             else:
                 user.active_education_module = "active"
 
-        # if _data_row.get('education_stream_list') is not None:
-        #      user.education_stream_list = _data_row.get('education_stream_list')
-        # else:
-        #     user.education_stream_list = []
-
         return user
 
     def get_user_by_id(self, _user_id):
@@ -168,25 +164,26 @@ class UserManager():
         user_data = data_store.get_row_by_id(_user_id)
 
         if user_data is not None:
-            if user_data.get('access_time') is not None:
-                data_store.delete_key_in_row("access_time", "login", user_data["login"])
-            if user_data.get("expires_date") is not None:
-                data_store.delete_key_in_row("expires_date", "login", user_data["login"])
 
             user = self.user_row_to_user(user_data)
             
             if user_data.get("education_module_expiration_date") is None:
-                self.change_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+
+                self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
                                  _probationers_number=user.probationers_number, _created_date=user.created_date,
                                  _education_module_expiration_date=user.education_module_expiration_date,
                                  _token=user.token, _email_confirmed=user.email_confirmed)
+
             elif user_data.get("token") is None:
-                self.change_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+
+                self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
                                  _probationers_number=user.probationers_number, _created_date=user.created_date,
                                  _education_module_expiration_date=user.education_module_expiration_date,
                                  _token=user.token, _email_confirmed=user.email_confirmed)
+
             elif user_data.get("email_confirmed") is None:
-                self.change_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+
+                self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
                                  _probationers_number=user.probationers_number, _created_date=user.created_date,
                                  _education_module_expiration_date=user.education_module_expiration_date,
                                  _token=user.token, _email_confirmed=user.email_confirmed)
@@ -288,7 +285,6 @@ class UserManager():
 
         for user_data in users_list_data:
 
-            # user = User(user_data.doc_id, user_data['login'], user_data['name'], user_data['email'], user_data['role'])
             user = self.user_row_to_user(user_data)
 
             if self.get_user_role(_user_id) == "superuser":
@@ -335,15 +331,6 @@ class UserManager():
         Returns:
             _error (List): список ошибок при создании пользователя
         """
-        # проверяем логин, пароль и роль пользователя
-        # self.validate_login(_login)
-        # self.validate_password(_password)
-        # self.validate_role(_role)
-
-        # if _password != _password2:
-        #     raise UserManagerException("введенные пароли не совпадают")
-
-        # если ошибок нет, то записываем его в БД
 
         password = self.hash_password(_password)
         password2 = self.hash_password(_password2)
@@ -352,6 +339,7 @@ class UserManager():
         role = _role
         name = _name
         email_confirmed = False
+
         # создаем токен для подтверждения регистрации
         token = self.create_token(email)
 
@@ -373,7 +361,7 @@ class UserManager():
 
         # создаем новую запись
         user = User(_login=login, _name=name, _email=email, _role=role, _probationers_number=_probationers_number,
-                    _token=token)
+                    _token=token, _email_confirmed=email_confirmed)
 
         education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
 
@@ -383,26 +371,9 @@ class UserManager():
                      "probationers_number": user.probationers_number,
                      "active": user.active, "email_confirmed": user.email_confirmed, "token": user.token}
 
-        data_store.add_row(user_data)
+        data_store.insert_row(user_data)
 
         return
-
-    '''
-    def get_current_user_id(self):
-        """
-        Возвращает id текущего авторизованного пользователя
-
-        Returns:
-            Int: id пользователя
-        """
-
-        id = None
-
-        if flask_login.current_user.is_authenticated:
-            id = flask_login.current_user.user_id
-
-        return id
-    '''
 
     def get_user_role(self, _user_id):
         """
@@ -419,8 +390,8 @@ class UserManager():
 
         return user_role
 
-    def change_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
-                    _education_module_expiration_date="", _token="", _email_confirmed=False):
+    def chenge_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
+                    _education_module_expiration_date="", _token="", _email_confirmed=False, _active=True):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -438,12 +409,7 @@ class UserManager():
 
         user = User(_login=_login, _name=_name, _email=_email, _role=_role, _created_date=_created_date,
                     _probationers_number=_probationers_number, _token=_token, _email_confirmed=_email_confirmed,
-                    _education_module_expiration_date=_education_module_expiration_date)
-
-        # user = self.user_row_to_user({"login": _login, "email": _email, "role": _role, "name": _name,
-        #              "probationers_number": _probationers_number, "created_date": _created_date,
-        #              "education_module_expiration_date": _education_module_expiration_date, "active": _active,
-        #                               "token": _token, "email_confirmed": _email_confirmed})
+                    _education_module_expiration_date=_education_module_expiration_date, _active=_active)
 
         education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
         user.created_date = user.created_date.strftime("%d/%m/%Y")
@@ -451,15 +417,17 @@ class UserManager():
         data_store = DataStore("users")
         user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
                      "probationers_number": user.probationers_number, "created_date": user.created_date,
-                     "education_module_expiration_date": education_module_expiration_date,
+                     "education_module_expiration_date": education_module_expiration_date, "active": user.active,
                      "token": user.token, "email_confirmed": user.email_confirmed}
 
-        data_store.change_row(user_data)
+        stored_user = self.get_user_by_login(user.login)
+        user_id = stored_user.user_id
+        data_store.update_row_by_id(user_data, user_id)
         user = self.get_user_by_login(_login)
 
         return user
 
-    def discharge_password(self, _user_id, _password, _password2, _current_password=''):
+    def chenge_password(self, _login, _password, _password2, _current_password=''):
         """
         Сброс пароля пользователя
 
@@ -497,8 +465,13 @@ class UserManager():
         Returns:
             _active (bool): Активирован/заблокирован пользователь
         """
-        data_store = DataStore("users")
-        data_store.change_row({"login": _login, "active": True})
+
+        user = self.get_user_by_login(_login)
+        user.active = True
+
+        self.chenge_user(user.login, user.name, user.email, user.role, user.probationers_number,
+                         user.created_date, user.education_module_expiration_date,
+                         user.token, user.email_confirmed, user.active)
 
         return True
 
@@ -512,8 +485,13 @@ class UserManager():
         Returns:
             _active (bool): Активирован/заблокирован пользователь
         """
-        data_store = DataStore("users")
-        data_store.change_row({"login": _login, "active": False})
+
+        user = self.get_user_by_login(_login)
+        user.active = False
+
+        self.chenge_user(user.login, user.name, user.email, user.role, user.probationers_number,
+                         user.created_date, user.education_module_expiration_date,
+                         user.token, user.email_confirmed, user.active)
 
         return False
 
@@ -527,7 +505,6 @@ class UserManager():
             _login(String): логин пользователя, которому продлевают срок доступа
         """
 
-        data_store = DataStore("users")
         user = self.get_user_by_login(_login)
 
         if _reference_point == "end":
@@ -537,44 +514,6 @@ class UserManager():
             user.education_module_expiration_date = (datetime.now() + relativedelta(months=_period)).strftime(
                 "%d/%m/%Y")
 
-        data_store.change_row(
-            {"education_module_expiration_date": user.education_module_expiration_date, "login": user.login})
-
-    '''
-    def add_user_in_education_stream(self, _id_education_stream, _users_list):
-        """
-        Добавляет пользователей к обучающему потоку
-
-        Args:
-            _id_education_stream(Int): идентификатор обучающего потока
-            _users_list(List): список пользователей
-        """
-
-        data_store = DataStore("users")
-
-        for login_user in _users_list:
-            user = self.get_user_by_login(login_user)
-
-            if _id_education_stream not in user.education_stream_list:
-                user.education_stream_list.append(_id_education_stream)
-                data_store.change_row({"education_stream_list": user.education_stream_list, "login": user.login})
-
-    def exclusion_of_users_from_list(self, _excluded_users_list, _id_education_stream):
-        """
-        Исключает пользователей из обучающего потока
-
-        Args:
-            _id_education_stream(Int): идентификатор обучающего потока
-            _excluded_users_list(List): список пользователей
-        """
-
-        data_store = DataStore('users')
-
-        for user_login in _excluded_users_list:
-
-            user = self.get_user_by_login(user_login)
-
-            user.education_stream_list.remove(_id_education_stream)
-            data_store.change_row({"education_stream_list": user.education_stream_list, "login": user.login})
-
-'''
+        self.chenge_user(user.login, user.name, user.email, user.role, user.probationers_number,
+                         user.created_date, user.education_module_expiration_date,
+                         user.token, user.email_confirmed, user.active)
