@@ -54,11 +54,9 @@ class HomeworkManager():
         homework = Homework(_users_files_list=_homework_files_list, _text=_text, _id_user=_id_user,
                             _id_lesson=_id_lesson, _status=None, _date_delivery=datetime.now())
 
-        data_store.insert_row({"id": homework.id, "id_room_chat": homework.id_room_chat,
-                            "users_files_list": homework.users_files_list,
-        data_store.add_row({"users_files_list": homework.users_files_list,
-                            "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"), "text": homework.text,
-                            "id_user": homework.id_user, "id_lesson": homework.id_lesson, "status": homework.status})
+        data_store.insert_row({"users_files_list": homework.users_files_list,
+                               "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"), "text": homework.text,
+                               "id_user": homework.id_user, "id_lesson": homework.id_lesson, "status": homework.status})
 
         return homework
 

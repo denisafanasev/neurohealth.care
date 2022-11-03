@@ -215,23 +215,23 @@ class EducationCourseService():
                         if course_user.split()[0] == user.login:
                             return True
             '''
+            try:
+                with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
+                    course_users_list = f.read().splitlines()
+
+                for course_user in course_users_list:
                     try:
-                        with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
-                            course_users_list = f.read().splitlines()
+                        if course_user.split()[0].lower() == user.login:
+                            return True
+                    except IndexError:
+                        continue
 
-                        for course_user in course_users_list:
-                            try:
-                                if course_user.split()[0].lower() == user.login:
-                                    return True
-                            except IndexError:
-                                continue
+            except FileNotFoundError:
+                if 'course_1' not in os.listdir(config.DATA_FOLDER):
+                    os.mkdir(config.DATA_FOLDER + 'course_1')
 
-                    except FileNotFoundError:
-                        if 'course_1' not in os.listdir(config.DATA_FOLDER):
-                            os.mkdir(config.DATA_FOLDER + 'course_1')
-
-                        file = open(config.DATA_FOLDER + 'course_1/s2_users.txt', 'w')
-                        file.close()
+                file = open(config.DATA_FOLDER + 'course_1/s2_users.txt', 'w')
+                file.close()
 
             return False
 
