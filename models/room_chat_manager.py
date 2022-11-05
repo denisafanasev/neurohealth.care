@@ -56,7 +56,7 @@ class RoomChatManager():
 
         room_chat = RoomChat(_id_user=_id_user, _id_lesson=_id_lesson)
 
-        id_room_chat = data_store.add_row({"id_user": room_chat.id_user, "id_lesson": room_chat.id_lesson})
+        id_room_chat = data_store.insert_row({"id_user": room_chat.id_user, "id_lesson": room_chat.id_lesson})
 
         return id_room_chat
 

@@ -115,7 +115,6 @@ class DataStore():
         """
 
         self.data_store.update_row_by_id(_data, _id)
-        self.data_store.update(_data, doc_ids = [_id])
 
     def upsert_row(self, _data, _where):
         """

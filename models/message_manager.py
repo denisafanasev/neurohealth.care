@@ -83,7 +83,7 @@ class MessageManager():
         message = Message(_id_user=_message['id_user'], _id_room_chat=int(_message['id_room_chat']),
                           _text=_message['text'], _date_send=_message['date_send'])
 
-        data_store.add_row({"text": message.text, "id_user": message.id_user,
+        data_store.insert_row({"text": message.text, "id_user": message.id_user,
                             "id_room_chat": message.id_room_chat, "date_send": _message['date_send'].strftime("%d/%m/%Y"),
                             "read": message.read})
 
