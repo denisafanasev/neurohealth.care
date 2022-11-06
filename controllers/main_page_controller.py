@@ -79,7 +79,7 @@ class MainPageController():
 
         return user_view
 
-    def chenge_password(self, _login, _password, _password2, _current_password, _current_user_id):
+    def chenge_password(self, _user_id, _password, _password2, _current_password):
         """
         Функция изменения пароля пользователя
 
@@ -96,6 +96,6 @@ class MainPageController():
         main_page_service = MainPageService()
 
         try:
-            main_page_service.chenge_password(_login, _password, _password2, _current_user_id,_current_password)
+            main_page_service.chenge_password(_user_id, _password, _password2, _current_password)
         except UserManagerException as error:
             return error

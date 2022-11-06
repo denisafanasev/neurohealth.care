@@ -30,7 +30,7 @@ def conversion_module_data():
             if i_module.get("id_course") is None:
                 module.id_course = course.id
 
-            id_modules_edit = data_store_module_new.add_row({"id_course": module.id_course, "name": module.name})
+            id_modules_edit = data_store_module_new.insert_row({"id_course": module.id_course, "name": module.name})
 
             conversion_lessons_data(module, id_modules_edit)
 
@@ -65,7 +65,7 @@ def conversion_lessons_data(_module, _id_module_edit):
         if i_lesson.get("task") is not None:
             lesson.task = i_lesson['task']
 
-        id_lesson_edit = data_store_lesson_new.add_row({"id_module": lesson.id_module, "name": lesson.name,
+        id_lesson_edit = data_store_lesson_new.insert_row({"id_module": lesson.id_module, "name": lesson.name,
                                        "materials": lesson.materials, "link": lesson.link,
                                        "text": lesson.text, "task": lesson.task, "id": lesson.id})
 
@@ -97,6 +97,9 @@ def conversion_homework_data(_id_lesson, _id_lesson_edit, _id_course):
 
         if homework_data.get("id_course") is not None:
             data_store.delete_key_in_row("id_course", "id", homework.id)
+
+        if homework_data.get('id_room_chat') is not None:
+            data_store.delete_key_in_row("id_room_chat", "id", homework.id)
 
         if homework_data.get("id_learning_stream") is not None:
             data_store.delete_key_in_row("id_learning_stream", "id", homework.id)
@@ -219,15 +222,15 @@ def create_copy_data():
 
     homework_list = data_store_homework.get_rows()
     for homework in homework_list:
-        data_store_homework_copy.add_row(homework)
+        data_store_homework_copy.insert_row(homework)
 
     room_chat_list = data_store_room_chat.get_rows()
     for room_chat in room_chat_list:
-        data_store_room_chat_copy.add_row(room_chat)
+        data_store_room_chat_copy.insert_row(room_chat)
 
     message_list = data_store_message.get_rows()
     for message in message_list:
-        data_store_message_copy.add_row(message)
+        data_store_message_copy.insert_row(message)
 
 
 # Запуск функций для конвертации форматов данных

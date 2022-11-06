@@ -119,3 +119,14 @@ class TinyDBDataAdapter():
         """
 
         self.data_store.update(_data, doc_ids = [_id])
+
+    def delete_key_in_row(self, _key, _where, _where_value):
+        """
+        Удаление ключа и значения из записи
+        Args:
+            _key(String): ключ, который нужно удалить
+            _where(String): ключ для поиска нужной записи
+            _where_value(String): значение ключа для поиска нужной записи
+        """
+
+        self.data_store.update(delete(_key), where(_where) == _where_value)

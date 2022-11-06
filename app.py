@@ -359,11 +359,11 @@ def user_manager():
 
             elif request.form.get(f"button_{user_id}") == "discharge":
                 user = {}
-                user["login"] = data[user_id]['login']
+                user["user_id"] = data[user_id]['user_id']
                 user["password"] = request.form[f"password_{user_id}"]
                 user["password2"] = request.form[f"password2_{user_id}"]
 
-                error = page_controller.chenge_password(user["login"], user["password"], user["password2"], current_user_id)
+                error = page_controller.chenge_password(user["user_id"], user["password"], user["password2"], current_user_id)
 
                 mode[user_id] = "view"
 
@@ -611,8 +611,7 @@ def main_page():
             password2 = request.form["password2"]
             current_password = request.form['current_password']
 
-            error = page_controller.chenge_password(user['login'], password, password2, current_password, user_id)
-            error = page_controller.discharge_password(user_id, password, password2, current_password)
+            error = page_controller.chenge_password(user['user_id'], password, password2, current_password)
 
             if error is None:
                 error = "Пароль успешно изменен!"

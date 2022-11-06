@@ -136,5 +136,5 @@ class DataStore():
             _where_value(String): значение ключа для поиска нужной записи
         """
 
-        self.data_store.update(delete(_key), where(_where) == _where_value)
+        self.data_store.delete_key_in_row(_key, _where, _where_value)
 

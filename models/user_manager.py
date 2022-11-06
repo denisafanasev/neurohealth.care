@@ -427,7 +427,7 @@ class UserManager():
 
         return user
 
-    def chenge_password(self, _login, _password, _password2, _current_password=''):
+    def chenge_password(self, _user_id, _password, _password2, _current_password=''):
         """
         Сброс пароля пользователя
 

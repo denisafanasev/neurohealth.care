@@ -155,7 +155,7 @@ class UserManagerPageController():
 
         return error
 
-    def chenge_password(self, _login, _password, _password2, _current_user_id):
+    def chenge_password(self, _user_id, _password, _password2, _current_user_id):
         """
         Обновляет в системе пароль пользователя
 
@@ -171,7 +171,7 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
         try:
-            user_manager_service.chenge_password(_login, _password, _password2, _current_user_id)
+            user_manager_service.chenge_password(_user_id, _password, _password2, _current_user_id)
         except UserManagerException as error:
 
             return error
