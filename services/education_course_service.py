@@ -174,7 +174,7 @@ class EducationCourseService():
                         course_users_list = f.read().splitlines()
                     
                     for course_user in course_users_list:
-                        if course_user.split()[0].lower() == user.login:
+                        if course_user.lower() == user.login:
                             return True
 
             # проверяем, есть ли пользователь в списках участников четвертого потока
@@ -184,7 +184,7 @@ class EducationCourseService():
                         course_users_list = f.read().splitlines()
                     
                     for course_user in course_users_list:
-                        if course_user.split()[0].lower() == user.login:
+                        if course_user.lower() == user.login:
                             return True
 
             # проверяем, есть ли пользователь в списках участников третьего потока
@@ -194,29 +194,8 @@ class EducationCourseService():
                         course_users_list = f.read().splitlines()
                     
                     for course_user in course_users_list:
-                        if course_user.split()[0].lower() == user.login:
+                        if course_user.lower() == user.login:
                             return True
-
-            # проверяем, есть ли пользователь в списках участников второго потока
-            for i in range(1, min(len(course_modules) + 1, 9)):
-                if course_modules[i - 1].id == _module_id:
-                    with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
-                        course_users_list = f.read().splitlines()
-                    
-                    for course_user in course_users_list:
-                        if course_user.split()[0] == user.login:
-                            return True
-            '''
-            # проверяем, есть ли пользователь в спиках участкинов первого потока
-            for i in range(1, min(len(course_modules) + 1, 9)):
-                if course_modules[i - 1].id == _module_id:
-                    with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
-                        course_users_list = f.read().splitlines()
-                    
-                    for course_user in course_users_list:
-                        if course_user.split()[0] == user.login:
-                            return True
-            '''
 
             return False
 
