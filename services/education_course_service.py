@@ -192,44 +192,7 @@ class EducationCourseService():
                         file = open(config.DATA_FOLDER + 'course_1/s3_users.txt', 'w')
                         file.close()
 
-            # проверяем, есть ли пользователь в списках участников третьего потока
-            for i in range(1, min(len(course_modules) + 1, 9)):
-                if course_modules[i - 1].id == _module_id:
-                    try:
-                        with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
-                            course_users_list = f.read().splitlines()
-
-                        for course_user in course_users_list:
-                            try:
-                                if course_user.split()[0].lower() == user.login:
-                                    return True
-                            except IndexError:
-                                continue
-
-                    except FileNotFoundError:
-                        file = open(config.DATA_FOLDER + 'course_1/s2_users.txt', 'w')
-                        file.close()
-            '''
-            # проверяем, есть ли пользователь в спиках участкинов первого потока
-                    try:
-                        with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
-                            course_users_list = f.read().splitlines()
-
-                        for course_user in course_users_list:
-                            try:
-                                if course_user.split()[0].lower() == user.login:
-                                    return True
-                            except IndexError:
-                                continue
-
-                    except FileNotFoundError:
-                        if 'course_1' not in os.listdir(config.DATA_FOLDER):
-                            os.mkdir(config.DATA_FOLDER + 'course_1')
-
-                        file = open(config.DATA_FOLDER + 'course_1/s3_users.txt', 'w')
-                        file.close()
-
-            '''
+            return False
 
     def get_last_homework(self, _id_lesson, _id_user):
         """
