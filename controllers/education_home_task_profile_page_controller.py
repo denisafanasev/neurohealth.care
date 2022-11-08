@@ -33,15 +33,12 @@ class EducationChatPageController():
             if room_chat.message is not None:
                 for i_message in room_chat.message:
                     user = homework_service.get_user_by_id(i_message.id_user)
-                    try:
-                        message = {
-                            "id": i_message.id,
-                            "text": Markup(i_message.text),
-                            "id_user": i_message.id_user,
-                            "name": user.name
-                        }
-                    except AttributeError:
-                        continue
+                    message = {
+                        "id": i_message.id,
+                        "text": Markup(i_message.text),
+                        "id_user": i_message.id_user,
+                        "name": user.name
+                    }
 
                     room_chat_view['message'].append(message)
 
@@ -62,13 +59,11 @@ class EducationChatPageController():
 
         homework_service = HomeworkProfileService()
 
-        try:
-            homework_service.add_message(_message, _id_lesson, _id_user)
+        # если в сообщениях есть такое сочетание, то оно удаляется для того, чтобы сократить расстояние между строчками
+        if "<p><br></p>" in _message['text']:
+            _message['text'] = ''.join(_message['text'].split('<p><br></p>'))
 
-        except HomeworkProfileServiceException as error:
-            return error, 'Error'
-
-        return None, None
+        homework_service.add_message(_message, _id_lesson, _id_user)
 
     def get_user_by_id(self, _user_id):
         """
@@ -233,9 +228,6 @@ class EducationChatPageController():
                 }
             except HomeworkProfileServiceException as error:
                 data['module'] = error
-
-            except TypeError:
-                data['course'] = "Данный курс не найден"
 
             user = homework_service.get_user_by_id(homework.id_user)
             if user is not None:

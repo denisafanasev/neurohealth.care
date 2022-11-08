@@ -1,5 +1,7 @@
 import os
 
+from werkzeug.utils import redirect
+
 from models.room_chat_manager import RoomChatManager
 from models.message_manager import MessageManager
 from models.user_manager import UserManager
@@ -141,56 +143,32 @@ class EducationCourseService():
             # проверяем, есть ли пользователь в списках участников пятого потока
             for i in range(1, min(len(course_modules) + 1, 5)):
                 if course_modules[i - 1].id == _module_id:
-                    try:
-                        with open(config.DATA_FOLDER + 'course_1/s5_users.txt') as f:
-                            course_users_list = f.read().splitlines()
+                    with open(config.DATA_FOLDER + 'course_1/s5_users.txt') as f:
+                        course_users_list = f.read().splitlines()
 
-                        for course_user in course_users_list:
-                            try:
-                                if course_user.split()[0].lower() == user.login:
-                                    return True
-                            except IndexError:
-                                continue
-
-                    except FileNotFoundError:
-                        file = open(config.DATA_FOLDER + 'course_1/s5_users.txt', 'w')
-                        file.close()
+                    for course_user in course_users_list:
+                        if course_user.split()[0].lower() == user.login:
+                            return True
 
             # проверяем, есть ли пользователь в списках участников четвертого потока
             for i in range(1, min(len(course_modules) + 1, 9)):
                 if course_modules[i - 1].id == _module_id:
-                    try:
-                        with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
-                            course_users_list = f.read().splitlines()
+                    with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
+                        course_users_list = f.read().splitlines()
 
-                        for course_user in course_users_list:
-                            try:
-                                if course_user.split()[0].lower() == user.login:
-                                    return True
-                            except IndexError:
-                                continue
-
-                    except FileNotFoundError:
-                        file = open(config.DATA_FOLDER + 'course_1/s4_users.txt', 'w')
-                        file.close()
+                    for course_user in course_users_list:
+                        if course_user.split()[0].lower() == user.login:
+                            return True
 
             # проверяем, есть ли пользователь в списках участников третьего потока
             for i in range(1, min(len(course_modules) + 1, 9)):
                 if course_modules[i - 1].id == _module_id:
-                    try:
-                        with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
-                            course_users_list = f.read().splitlines()
+                    with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
+                        course_users_list = f.read().splitlines()
 
-                        for course_user in course_users_list:
-                            try:
-                                if course_user.split()[0].lower() == user.login:
-                                    return True
-                            except IndexError:
-                                continue
-
-                    except FileNotFoundError:
-                        file = open(config.DATA_FOLDER + 'course_1/s3_users.txt', 'w')
-                        file.close()
+                    for course_user in course_users_list:
+                        if course_user.split()[0].lower() == user.login:
+                            return True
 
             return False
 
@@ -248,7 +226,7 @@ class EducationCourseService():
 
             return room_chat
 
-    def add_action(self, _id_lesson, _id_user):
+    def redirect_to_lesson(self, _id_lesson, _id_user):
         """
         Создает событие "Просмотр урока пользователем"
 
@@ -268,3 +246,5 @@ class EducationCourseService():
         if user.role != "superuser":
             if lesson is not None:
                 action_manager.add_notifications(module, "посмотрел", '', "course_manager", user.login)
+
+        return redirect(f"/education_course/lesson?id_lesson={lesson.id}&id_video=1")

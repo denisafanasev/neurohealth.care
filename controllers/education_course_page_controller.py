@@ -133,7 +133,7 @@ class EducationCoursePageController():
 
         return course_formated
 
-    def add_action(self, _id_lesson, _id_user):
+    def redirect_to_lesson(self, _id_lesson, _id_user):
         """
         Создает событие "Просмотр урока пользователем"
 
@@ -143,4 +143,4 @@ class EducationCoursePageController():
         """
         course_service = EducationCourseService()
 
-        course_service.add_action(_id_lesson, _id_user)
+        return course_service.redirect_to_lesson(_id_lesson, _id_user)

@@ -12,6 +12,7 @@ from models.users_file_manager import UsersFileManager
 from models.module_manager import EducationModuleManager
 from models.lesson_manager import EducationLessonManager
 from models.message_manager import MessageManager
+
 from error import HomeworkManagerException, EducationCourseLessonServiceException
 
 
@@ -271,65 +272,32 @@ class EducationCourseLessonService():
             # проверяем, есть ли пользователь в списках участников третьего потока
             for i in range(1, min(len(course_modules) + 1, 5)):
                 if course_modules[i - 1].id == _module_id:
-                    try:
-                        with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
-                            course_users_list = f.read().splitlines()
+                    with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
+                        course_users_list = f.read().splitlines()
 
-                        for course_user in course_users_list:
-                            try:
-                                if course_user.split()[0].lower() == user.login:
-                                    return True
-                            except IndexError:
-                                continue
-
-                    except FileNotFoundError:
-                        if 'course_1' not in os.listdir(config.DATA_FOLDER):
-                            os.mkdir(config.DATA_FOLDER + 'course_1')
-
-                        file = open(config.DATA_FOLDER + 'course_1/s4_users.txt', 'w')
-                        file.close()
+                    for course_user in course_users_list:
+                        if course_user.split()[0].lower() == user.login:
+                            return True
 
             # проверяем, есть ли пользователь в списках участников третьего потока
             for i in range(1, min(len(course_modules) + 1, 9)):
                 if course_modules[i - 1].id == _module_id:
-                    try:
-                        with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
-                            course_users_list = f.read().splitlines()
+                    with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
+                        course_users_list = f.read().splitlines()
 
-                        for course_user in course_users_list:
-                            try:
-                                if course_user.split()[0].lower() == user.login:
-                                    return True
-                            except IndexError:
-                                continue
-
-                    except FileNotFoundError:
-                        if 'course_1' not in os.listdir(config.DATA_FOLDER):
-                            os.mkdir(config.DATA_FOLDER + 'course_1')
-
-                        file = open(config.DATA_FOLDER + 'course_1/s3_users.txt', 'w')
-                        file.close()
+                    for course_user in course_users_list:
+                        if course_user.split()[0].lower() == user.login:
+                            return True
 
             # проверяем, есть ли пользователь в списках участников второго потока
             for i in range(1, min(len(course_modules) + 1, 9)):
                 if course_modules[i - 1].id == _module_id:
-                    try:
-                        with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
-                            course_users_list = f.read().splitlines()
+                    with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
+                        course_users_list = f.read().splitlines()
 
-                        for course_user in course_users_list:
-                            try:
-                                if course_user.split()[0].lower() == user.login:
-                                    return True
-                            except IndexError:
-                                continue
-
-                    except FileNotFoundError:
-                        if 'course_1' not in os.listdir(config.DATA_FOLDER):
-                            os.mkdir(config.DATA_FOLDER + 'course_1')
-
-                        file = open(config.DATA_FOLDER + 'course_1/s2_users.txt', 'w')
-                        file.close()
+                    for course_user in course_users_list:
+                        if course_user.split()[0].lower() == user.login:
+                            return True
 
             return False
 

@@ -1,7 +1,9 @@
 from flask import Markup
 
 from services.education_course_lesson_service import EducationCourseLessonService
+
 from error import HomeworkManagerException, EducationCourseLessonServiceException
+from utils.ada import get_file_size
 
 
 class EducationCourseLessonPageController():
@@ -24,9 +26,9 @@ class EducationCourseLessonPageController():
             Dict: данные урока
         """
 
-        course_service = EducationCourseLessonService()
+        lesson_service = EducationCourseLessonService()
 
-        module = course_service.get_lesson(_user_id, _lesson_id, _id_video)
+        module = lesson_service.get_lesson(_user_id, _lesson_id, _id_video)
         if module is not None:
             if module.lessons.task:
                 module.lessons.task = Markup(module.lessons.task)
@@ -47,7 +49,7 @@ class EducationCourseLessonPageController():
                     "text": module.lessons.text,
                     "task": module.lessons.task
                 },
-                "available": course_service.is_course_module_avalable_for_user(module.id_course, module.id, _user_id)
+                "available": lesson_service.is_course_module_avalable_for_user(module.id_course, module.id, _user_id)
             }
 
             return lesson
@@ -64,9 +66,9 @@ class EducationCourseLessonPageController():
             Dict: данные чата
         """
 
-        education_course_service = EducationCourseLessonService()
+        lesson_service = EducationCourseLessonService()
 
-        room_chat = education_course_service.room_chat_entry(_id_room_chat, _id_user)
+        room_chat = lesson_service.room_chat_entry(_id_room_chat, _id_user)
         if room_chat is not None:
             chat = {
                 "id": room_chat.id,
@@ -76,7 +78,7 @@ class EducationCourseLessonPageController():
                 message_list = []
                 for i_message in room_chat.message:
                     # ищем данные пользователя, который отправил данное сообщения
-                    user = education_course_service.get_user_by_id(i_message.id_user)
+                    user = lesson_service.get_user_by_id(i_message.id_user)
                     message = {
                         "id": i_message.id,
                         "text": Markup(i_message.text),
@@ -99,14 +101,13 @@ class EducationCourseLessonPageController():
             _id_lesson(Int): ID урока
         """
 
-        education_course_service = EducationCourseLessonService()
+        lesson_service = EducationCourseLessonService()
 
-        try:
-            education_course_service.add_message(_message, _id_lesson)
-        except EducationCourseLessonServiceException as error:
-            return error, 'Error'
+        # если в сообщениях есть такое сочетание, то оно удаляется для того, чтобы сократить расстояние между строчками
+        if "<p><br></p>" in _message['text']:
+            _message['text'] = ''.join(_message['text'].split('<p><br></p>'))
 
-        return None, None
+        lesson_service.add_message(_message, _id_lesson)
 
     def get_user_view_by_id_and_course_id(self, _user_id):
         """
@@ -119,9 +120,9 @@ class EducationCourseLessonPageController():
             Dict: пользователь
         """
 
-        course_service = EducationCourseLessonService()
+        lesson_service = EducationCourseLessonService()
 
-        user = course_service.get_user_by_id(_user_id)
+        user = lesson_service.get_user_by_id(_user_id)
 
         user_view = {
             "user_id": user.user_id,
@@ -154,13 +155,12 @@ class EducationCourseLessonPageController():
             Dict: данные курса
         """
 
-        course_service = EducationCourseLessonService()
-        course = course_service.get_course_by_id(_id)
+        lesson_service = EducationCourseLessonService()
+        course = lesson_service.get_course_by_id(_id)
 
         course_formated = {}
         course_formated["id"] = course.id
         course_formated["name"] = course.name
-        course_formated["description"] = course.description
         course_formated["type"] = course.type
 
         return course_formated
@@ -175,14 +175,12 @@ class EducationCourseLessonPageController():
             _text(String): текст домашней работы
             _id_lesson(Int): ID урока
         """
-        course_service = EducationCourseLessonService()
+        lesson_service = EducationCourseLessonService()
 
         try:
-            course_service.save_homework(_files_list, _user_id, _text, _id_lesson)
+            lesson_service.save_homework(_files_list, _user_id, _text, _id_lesson)
         except HomeworkManagerException as error:
-            return error, "Error"
-
-        return None, None
+            pass
 
     def get_last_homework(self, _id_lesson, _user_id):
         """
@@ -196,9 +194,9 @@ class EducationCourseLessonPageController():
             Homework: домашняя работа
         """
 
-        course_service = EducationCourseLessonService()
+        lesson_service = EducationCourseLessonService()
 
-        homework = course_service.get_last_homework(_id_lesson, _user_id)
+        homework = lesson_service.get_last_homework(_id_lesson, _user_id)
         homework_view = None
         if homework is not None:
             if homework.status is None:
@@ -222,7 +220,7 @@ class EducationCourseLessonPageController():
                         file_size = f"{round(file.size / 1024, 2)} кБ"
                     else:
                         file_size = f"{round(file.size / 1048576, 2)} мБ"
-
+                    # file_size = get_file_size(file.name_file_unique)
                     homework_view['users_files_list'].append({"name_file_unique": file.name_file_unique,
                                                               "size": file_size})
             else:
@@ -242,15 +240,15 @@ class EducationCourseLessonPageController():
         Returns:
             Dict: данные соседних уроков текущего урока
         """
-        course_service = EducationCourseLessonService()
+        lesson_service = EducationCourseLessonService()
 
-        neighboring_lessons = course_service.get_neighboring_lessons(_id_lesson, _id_course, _user_id)
+        neighboring_lessons = lesson_service.get_neighboring_lessons(_id_lesson, _id_course, _user_id)
         neighboring_lessons_view = {
             "next_lesson": None,
             "previous_lesson": None
         }
         if neighboring_lessons['next_lesson'] is not None:
-            room_chat = course_service.get_room_chat(neighboring_lessons['next_lesson'].lessons.id, _user_id)
+            room_chat = lesson_service.get_room_chat(neighboring_lessons['next_lesson'].lessons.id, _user_id)
             neighboring_lessons_view["next_lesson"] = {
                 "id_course": _id_course,
                 "id_module": neighboring_lessons['next_lesson'].id,
@@ -261,7 +259,7 @@ class EducationCourseLessonPageController():
                 neighboring_lessons_view['next_lesson']['id_room_chat'] = room_chat.id
 
         if neighboring_lessons['previous_lesson'] is not None:
-            room_chat = course_service.get_room_chat(neighboring_lessons['previous_lesson'].lessons.id, _user_id)
+            room_chat = lesson_service.get_room_chat(neighboring_lessons['previous_lesson'].lessons.id, _user_id)
             neighboring_lessons_view["previous_lesson"] = {
                 "id_course": _id_course,
                 "id_module": neighboring_lessons['previous_lesson'].id,
@@ -284,9 +282,9 @@ class EducationCourseLessonPageController():
         Returns:
             Dict: данные комнаты чата
         """
-        course_service = EducationCourseLessonService()
+        lesson_service = EducationCourseLessonService()
 
-        room_chat = course_service.get_room_chat(_id_lesson, _id_user)
+        room_chat = lesson_service.get_room_chat(_id_lesson, _id_user)
         if room_chat is not None:
             room_chat_view = {
                 "id": room_chat.id,
@@ -296,7 +294,7 @@ class EducationCourseLessonPageController():
             }
             if room_chat.message is not None:
                 for message in room_chat.message:
-                    user = course_service.get_user_by_id(message.id_user)
+                    user = lesson_service.get_user_by_id(message.id_user)
                     room_chat_view['message'].append({
                         "id": message.id,
                         "id_room_chat": message.id_room_chat,

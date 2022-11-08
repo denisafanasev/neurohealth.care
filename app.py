@@ -612,7 +612,6 @@ def main_page():
             current_password = request.form['current_password']
 
             error = page_controller.chenge_password(user['user_id'], password, password2, current_password)
-
             if error is None:
                 error = "Пароль успешно изменен!"
                 error_type = "Successful"
@@ -738,8 +737,7 @@ def education_course():
         # если пользователь переходит на страницу урока, то записываем данное действие в базу данных
         if request.form.get("button"):
             id_lesson = int(request.form['button'])
-            page_controller.add_action(id_lesson, user_id)
-            return redirect(f"/education_course/lesson?id_lesson={ id_lesson }&id_video=1")
+            return page_controller.redirect_to_lesson(id_lesson, user_id)
 
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
@@ -800,7 +798,7 @@ def education_course_lesson():
         elif request.form.get("button") == "homework":
             files = request.files.getlist("files")
             text = request.form.get("text_homework")
-            error_message, status_code = page_controller.save_homework(files, user_id, text, id_lesson)
+            page_controller.save_homework(files, user_id, text, id_lesson)
 
         else:
             return redirect(f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}")
