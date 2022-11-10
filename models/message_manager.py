@@ -21,7 +21,7 @@ class MessageManager():
             Message: пользователь
         """
 
-        message = Message(_id=_message.doc_id, _text=_message["text"], _id_room_chat=_message['id_room_chat'],
+        message = Message(_id=_message.doc_id, _text=_message["text"], _id_homework_chat=_message['id_homework_chat'],
                           _id_user=_message['id_user'])
 
         if _message.get("date_send") is not None:
@@ -34,12 +34,12 @@ class MessageManager():
 
         return message
 
-    def get_messages(self, _id_room_chat, _id_user):
+    def get_messages(self, _id_homework_chat, _id_user):
         """
         Возвращает все сообщения из чата по ID комнаты чата
 
         Args:
-            _id_room_chat(Int): ID комнаты чата
+            _id_homework_chat(Int): ID комнаты чата
             _id_user(Int): ID текущего пользователя
 
         Return:
@@ -48,7 +48,7 @@ class MessageManager():
 
         data_store = DataStore("message")
 
-        messages_data = data_store.get_rows({"id_room_chat": _id_room_chat})
+        messages_data = data_store.get_rows({"id_homework_chat": _id_homework_chat})
         message_list = []
         for i_message in messages_data:
             message = self.message_row_to_message(i_message)
@@ -76,21 +76,21 @@ class MessageManager():
         data_store = DataStore("message")
 
         _message["date_send"] = datetime.now()
-        message = Message(_id_user=_message['id_user'], _id_room_chat=int(_message['id_room_chat']),
+        message = Message(_id_user=_message['id_user'], _id_homework_chat=int(_message['id_homework_chat']),
                           _text=_message['text'], _date_send=_message['date_send'])
 
         data_store.insert_row({"text": message.text, "id_user": message.id_user,
-                            "id_room_chat": message.id_room_chat, "date_send": _message['date_send'].strftime("%d/%m/%Y"),
+                            "id_homework_chat": message.id_homework_chat, "date_send": _message['date_send'].strftime("%d/%m/%Y"),
                             "read": message.read})
 
         return message
 
-    def get_unread_messages_amount(self, _id_room_chat, _id_user):
+    def get_unread_messages_amount(self, _id_homework_chat, _id_user):
         """
         Возвращает количество непрочитанных сообщений
 
         Args:
-            _id_room_chat(Integer): ID комнаты чата
+            _id_homework_chat(Integer): ID комнаты чата
             _id_user(Integer): ID текущего пользователя
 
         Return:
@@ -98,7 +98,7 @@ class MessageManager():
         """
         data_store = DataStore("message")
 
-        messages_data_list = data_store.get_rows({"read": False, "id_room_chat": _id_room_chat})
+        messages_data_list = data_store.get_rows({"read": False, "id_homework_chat": _id_homework_chat})
         amount = 0
         for message_data in messages_data_list:
             message = self.message_row_to_message(message_data)

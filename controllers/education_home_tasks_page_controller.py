@@ -12,7 +12,7 @@ class EducationHomeTasksPageController():
 
     def get_data(self, _id_current_user):
         """
-        Возвращает данные курсов, домашних заданий и комнат чатов
+        Возвращает данные курсов, домашних заданий и чатов
 
         Args:
             _id_current_user(Integer): ID текущего пользователя
@@ -32,7 +32,7 @@ class EducationHomeTasksPageController():
                         if lesson.task is not None:
                             for user in users_list:
                                 homework_list = homeworks_service.get_homeworks_list_by_id_user(lesson.id, user.user_id)
-                                room_chat = homeworks_service.get_room_chat(lesson.id, user.user_id, _id_current_user)
+                                homework_chat = homeworks_service.get_homework_chat(lesson.id, user.user_id, _id_current_user)
                                 data = {
                                     "user": {
                                         "user_id": user.user_id,
@@ -52,7 +52,7 @@ class EducationHomeTasksPageController():
                                         "name": lesson.name,
                                     },
                                     "homework_list": None,
-                                    "room_chat": None
+                                    "homework_chat": None
                                 }
                                 if homework_list is not None:
                                     data['homework_list'] = []
@@ -72,13 +72,13 @@ class EducationHomeTasksPageController():
 
                                         data['homework_list'].append(homework)
 
-                                if room_chat is not None:
-                                    data['room_chat'] = {
-                                        "id": room_chat.id,
-                                        "unread_message_amount": room_chat.unread_message_amount
+                                if homework_chat is not None:
+                                    data['homework_chat'] = {
+                                        "id": homework_chat.id,
+                                        "unread_message_amount": homework_chat.unread_message_amount
                                     }
 
-                                if data['room_chat'] is not None:
+                                if data['homework_chat'] is not None:
                                     data_list.append(data)
                                 elif data['homework_list'] is not None:
                                     data_list.append(data)

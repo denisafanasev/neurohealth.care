@@ -2,7 +2,7 @@ import os
 
 from werkzeug.utils import redirect
 
-from models.room_chat_manager import RoomChatManager
+from models.homework_chat_manager import HomeworkChatManager
 from models.message_manager import MessageManager
 from models.user_manager import UserManager
 from models.course_manager import EducationCourseManager
@@ -10,7 +10,6 @@ from models.module_manager import EducationModuleManager
 from models.lesson_manager import EducationLessonManager
 from models.education_stream_manager import EducationStreamManager
 from models.homework_manager import HomeworkManager
-from models.users_file_manager import UsersFileManager
 from models.action_manager import ActionManager
 
 from datetime import datetime
@@ -206,7 +205,7 @@ class EducationCourseService():
 
             return last_homework
 
-    def get_room_chat(self, _id_lesson, _id_user):
+    def get_homework_chat(self, _id_lesson, _id_user):
         """
         Возвращает данные комнаты чата
 
@@ -217,14 +216,14 @@ class EducationCourseService():
         Returns:
             RoomChat: комната чата
         """
-        room_chat_manager = RoomChatManager()
+        homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()
 
-        room_chat = room_chat_manager.get_room_chat(_id_user, _id_lesson)
-        if room_chat is not None:
-            room_chat.unread_message_amount = message_manager.get_unread_messages_amount(room_chat.id, _id_user)
+        homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson)
+        if homework_chat is not None:
+            homework_chat.unread_message_amount = message_manager.get_unread_messages_amount(homework_chat.id, _id_user)
 
-            return room_chat
+            return homework_chat
 
     def redirect_to_lesson(self, _id_lesson, _id_user):
         """

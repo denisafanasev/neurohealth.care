@@ -6,7 +6,7 @@ from models.course import Course
 from models.module import Module
 from models.lesson import Lesson
 from models.homework import Homework
-from models.room_chat import RoomChat
+from models.homework_chat import HomeworkChat
 from models.message import Message
 import config
 
@@ -114,7 +114,7 @@ def conversion_room_chat_data():
     """
     Конвертация формата данных комнат чатов
     """
-    data_store = DataStore("room_chat")
+    data_store = DataStore("homework_chat")
     data_store_user = DataStore("users")
     data_store_lessons = DataStore("lessons")
 
@@ -139,7 +139,7 @@ def conversion_room_chat_data():
 
             user = data_store_user.get_rows({"login": login_user})
             if user != []:
-                room_chat = RoomChat(_id=room_chat_data['id'], _id_user=user[0].doc_id, _id_lesson=int(id_lesson))
+                room_chat = HomeworkChat(_id=room_chat_data['id'], _id_user=user[0].doc_id, _id_lesson=int(id_lesson))
 
                 data_store.update_row({"id": room_chat.id, "id_lesson": room_chat.id_lesson, "id_user": room_chat.id_user}, "id")
                 if room_chat_data.get('message') is not None:
@@ -155,13 +155,13 @@ def conversion_room_chat_data():
                 data_store.delete_key_in_row("id", "id", room_chat.id)
 
 
-def conversion_message_data(_id_message, _id_room_chat):
+def conversion_message_data(_id_message, _id_homework_chat):
     """
     Конвертация формата данных сообщений
 
     Args:
         _id_message(Int): ID сообщения
-        _id_room_chat(Int): ID комнаты чата, в котором находится данное сообщение
+        _id_homework_chat(Int): ID комнаты чата, в котором находится данное сообщение
     """
 
     data_store = DataStore("message")
@@ -169,9 +169,10 @@ def conversion_message_data(_id_message, _id_room_chat):
 
     message_data = data_store.get_rows({"id": _id_message})
     if message_data != []:
-        message = Message(_id=message_data[0]['id'], _id_room_chat=_id_room_chat)
-        if message_data[0].get("id_room_chat") is None:
-            data_store.update_row({"id_room_chat": message.id_room_chat, "id": message.id, "read": False}, "id")
+        message = Message(_id=message_data[0]['id'], _id_homework_chat=_id_homework_chat)
+        if message_data[0].get("id_homework_chat") is None:
+            data_store.update_row({"id_homework_chat": message.id_homework_chat, "id": message.id, "read": False}, "id")
+            # data_store.delete_key_in_row('id_room_chat', 'id', message.id)
 
         # заменяет name_sender на id_user, если есть такой атрибут
         if message_data[0].get("name_sender") is not None:
@@ -214,7 +215,7 @@ def create_copy_data():
     Создает новые json файлы, в которые копирует текущие данные домашних работ, сообщения и чаты
     """
     data_store_homework = DataStore("homeworks")
-    data_store_room_chat = DataStore("room_chat")
+    data_store_room_chat = DataStore("homework_chat")
     data_store_message = DataStore("message")
     data_store_homework_copy = DataStore("homeworks_copy")
     data_store_room_chat_copy = DataStore("room_chat_copy")
@@ -232,6 +233,9 @@ def create_copy_data():
     for message in message_list:
         data_store_message_copy.insert_row(message)
 
+
+# переименовываем файл room_chat.json на homework_chat.json
+os.rename(os.path.join(config.DATA_FOLDER, 'room_chat.json'), os.path.join(config.DATA_FOLDER, 'homework_chat.json'))
 
 # Запуск функций для конвертации форматов данных
 create_copy_data()

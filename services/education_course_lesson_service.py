@@ -5,7 +5,7 @@ import config
 from models.action_manager import ActionManager
 from models.course_manager import EducationCourseManager
 from models.homework_manager import HomeworkManager
-from models.room_chat_manager import RoomChatManager
+from models.homework_chat_manager import HomeworkChatManager
 from models.upload_manager import UploadManager
 from models.user_manager import UserManager
 from models.users_file_manager import UsersFileManager
@@ -45,25 +45,25 @@ class EducationCourseLessonService():
 
             return module
 
-    def room_chat_entry(self, _id_room_chat, _id_user):
+    def homework_chat_entry(self, _id_homework_chat, _id_user):
         """
         Подключает пользователя к чату
 
         Args:
-            _id_room_chat(Integer): ID комнаты чата
+            _id_homework_chat(Integer): ID комнаты чата
             _id_user(Integer): ID текущего пользователя
         Returns:
             RoomChat: чат
         """
 
-        room_chat_manager = RoomChatManager()
+        homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()
 
-        room_chat = room_chat_manager.room_chat_entry(int(_id_room_chat))
-        if room_chat is not None:
-            room_chat.message = message_manager.get_messages(room_chat.id, _id_user)
+        homework_chat = homework_chat_manager.homework_chat_entry(int(_id_homework_chat))
+        if homework_chat is not None:
+            homework_chat.message = message_manager.get_messages(homework_chat.id, _id_user)
 
-        return room_chat
+        return homework_chat
 
     def add_message(self, _message, _id_lesson):
         """
@@ -78,7 +78,7 @@ class EducationCourseLessonService():
         """
 
         message_manager = MessageManager()
-        room_chat_manager = RoomChatManager()
+        homework_chat_manager = HomeworkChatManager()
         user_manager = UserManager()
         lesson_manager = EducationLessonManager()
 
@@ -91,11 +91,11 @@ class EducationCourseLessonService():
         if lesson is None:
             raise EducationCourseLessonServiceException('Не удалось сохранить сообщение.')
 
-        room_chat = room_chat_manager.get_room_chat(_message['id_user'], _id_lesson)
-        if room_chat is None:
-            _message['id_room_chat'] = room_chat_manager.add_room_chat(_message['id_user'], _id_lesson)
+        homework_chat = homework_chat_manager.get_homework_chat(_message['id_user'], _id_lesson)
+        if homework_chat is None:
+            _message['id_homework_chat'] = homework_chat_manager.add_homework_chat(_message['id_user'], _id_lesson)
         else:
-            _message['id_room_chat'] = room_chat.id
+            _message['id_homework_chat'] = homework_chat.id
 
         message_manager.add_message(_message)
 
@@ -289,15 +289,15 @@ class EducationCourseLessonService():
                         if course_user.split()[0].lower() == user.login:
                             return True
 
-            # проверяем, есть ли пользователь в списках участников второго потока
-            for i in range(1, min(len(course_modules) + 1, 9)):
-                if course_modules[i - 1].id == _module_id:
-                    with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
-                        course_users_list = f.read().splitlines()
-
-                    for course_user in course_users_list:
-                        if course_user.split()[0].lower() == user.login:
-                            return True
+            # # проверяем, есть ли пользователь в списках участников второго потока
+            # for i in range(1, min(len(course_modules) + 1, 9)):
+            #     if course_modules[i - 1].id == _module_id:
+            #         with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
+            #             course_users_list = f.read().splitlines()
+            #
+            #         for course_user in course_users_list:
+            #             if course_user.split()[0].lower() == user.login:
+            #                 return True
 
             return False
 
@@ -312,11 +312,11 @@ class EducationCourseLessonService():
         Return:
             RoomChat: комната чата
         """
-        room_chat_manager = RoomChatManager()
+        homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()
 
-        room_chat = room_chat_manager.get_room_chat(_id_user, _id_lesson)
-        if room_chat is not None:
-            room_chat.message = message_manager.get_messages(room_chat.id, _id_user)
+        homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson)
+        if homework_chat is not None:
+            homework_chat.message = message_manager.get_messages(homework_chat.id, _id_user)
 
-        return room_chat
+        return homework_chat

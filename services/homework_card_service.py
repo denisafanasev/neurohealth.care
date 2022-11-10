@@ -4,37 +4,37 @@ from models.homework_manager import HomeworkManager
 from models.course_manager import EducationCourseManager
 from models.module_manager import EducationModuleManager
 from models.lesson_manager import EducationLessonManager
-from models.room_chat_manager import RoomChatManager
+from models.homework_chat_manager import HomeworkChatManager
 from models.user_manager import UserManager
 from models.message_manager import MessageManager
 
 
-class HomeworkProfileService():
+class HomeworkCardService():
     """
     HomeworkProfileService - класс бизнес-логики сервиса управления настройками приложения
     Возвращает в слой отображения объекты в доменной модели
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
-    def room_chat_entry(self, _id_room_chat, _id_user):
+    def homework_chat_entry(self, _id_homework_chat, _id_user):
         """
         Подключает пользователя к чату
 
         Args:
-            _id_room_chat(Integer): ID чата
+            _id_homework_chat(Integer): ID чата
             _id_user(Integer): ID пользователя
 
         Returns:
             RoomChat: чат
         """
 
-        room_chat_manager = RoomChatManager()
+        homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()
 
-        room_chat = room_chat_manager.room_chat_entry(_id_room_chat)
-        if room_chat is not None:
-            room_chat.message = message_manager.get_messages(_id_room_chat, _id_user)
+        homework_chat = homework_chat_manager.homework_chat_entry(_id_homework_chat)
+        if homework_chat is not None:
+            homework_chat.message = message_manager.get_messages(_id_homework_chat, _id_user)
 
-        return room_chat
+        return homework_chat
 
     def add_message(self, _message, _id_lesson, _id_user):
         """
@@ -50,7 +50,7 @@ class HomeworkProfileService():
         """
 
         message_manager = MessageManager()
-        room_chat_manager = RoomChatManager()
+        homework_chat_manager = HomeworkChatManager()
         user_manager = UserManager()
         lesson_manager = EducationLessonManager()
 
@@ -63,11 +63,11 @@ class HomeworkProfileService():
         if lesson is None:
             raise HomeworkProfileServiceException('Не удалось сохранить сообщение.')
 
-        room_chat = room_chat_manager.get_room_chat(_id_user, _id_lesson)
-        if room_chat is None:
-            _message['id_room_chat'] = room_chat_manager.add_room_chat(_id_user, _id_lesson)
+        homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson)
+        if homework_chat is None:
+            _message['id_homework_chat'] = homework_chat_manager.add_homework_chat(_id_user, _id_lesson)
         else:
-            _message['id_room_chat'] = room_chat.id
+            _message['id_homework_chat'] = homework_chat.id
 
         return message_manager.add_message(_message)
 
@@ -99,15 +99,16 @@ class HomeworkProfileService():
         """
 
         homework_manager = HomeworkManager()
+        lesson_manager = EducationLessonManager()
         action_manager = ActionManager()
         user_manager = UserManager()
 
         homework = homework_manager.homework_answer_accepted(_id_homework)
         current_user = user_manager.get_user_by_id(_user_id)
         user = user_manager.get_user_by_id(homework.id_user)
-        lesson = self.get_lesson(homework.id_lesson)
+        lesson = lesson_manager.get_lesson(homework.id_lesson)
 
-        action_manager.add_notifications(user.login, "принял", lesson.lessons.name, "homework_manager", current_user.login)
+        action_manager.add_notifications(user.login, "принял", lesson.name, "homework_manager", current_user.login)
 
         return homework
 
@@ -124,15 +125,16 @@ class HomeworkProfileService():
         """
 
         homework_manager = HomeworkManager()
+        lesson_manager = EducationLessonManager()
         action_manager = ActionManager()
         user_manager = UserManager()
 
         homework = homework_manager.homework_answer_no_accepted(_id_homework)
         current_user = user_manager.get_user_by_id(_user_id)
         user = user_manager.get_user_by_id(homework.id_user)
-        lesson = self.get_lesson(homework.id_lesson)
+        lesson = lesson_manager.get_lesson(homework.id_lesson)
 
-        action_manager.add_notifications(user.login, "не принял", lesson.lessons.name, "homework_manager", current_user.login)
+        action_manager.add_notifications(user.login, "не принял", lesson.name, "homework_manager", current_user.login)
 
         return homework
 
@@ -208,11 +210,11 @@ class HomeworkProfileService():
         Returns:
             RoomChat: комната чата
         """
-        room_chat_manager = RoomChatManager()
+        homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()
 
-        room_chat = room_chat_manager.get_room_chat(_id_user, _id_lesson)
-        if room_chat is not None:
-            room_chat.message = message_manager.get_messages(room_chat.id, _id_current_user)
+        homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson)
+        if homework_chat is not None:
+            homework_chat.message = message_manager.get_messages(homework_chat.id, _id_current_user)
 
-        return room_chat
+        return homework_chat

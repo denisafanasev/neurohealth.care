@@ -135,11 +135,11 @@
                                                         Перейти
                                                     </a>
                                                 </td>
-                                                {% if item['room_chat'] %}
-                                                    {% if item['room_chat']['unread_message_amount'] != 0 %}
+                                                {% if item['homework_chat'] %}
+                                                    {% if item['homework_chat']['unread_message_amount'] != 0 %}
                                                         <td style="display: revert">
                                                             <div class="badge bg-danger float-end" style="text-align: left">
-                                                                {{ item['room_chat']['unread_message_amount'] }}
+                                                                {{ item['homework_chat']['unread_message_amount'] }}
                                                             </div>
                                                         </td>
                                                         {% else %}
@@ -168,15 +168,15 @@
                                             </td>
                                             <td></td>
                                             <td style="text-align: center">
-                                                <a href="/education_home_task_profile?id_chat={{ item['room_chat']['id'] }}" >
+                                                <a href="/education_home_task_profile?id_chat={{ item['homework_chat']['id'] }}" >
                                                     Перейти
                                                 </a>
                                             </td>
-                                            {% if item['room_chat'] %}
-                                                {% if item['room_chat']['unread_message_amount'] != 0 %}
+                                            {% if item['homework_chat'] %}
+                                                {% if item['homework_chat']['unread_message_amount'] != 0 %}
                                                     <td style="display: revert">
                                                         <div class="badge bg-danger float-end" style="text-align: left">
-                                                            {{ item['room_chat']['unread_message_amount'] }}
+                                                            {{ item['homework_chat']['unread_message_amount'] }}
                                                         </div>
                                                     </td>
                                                     {% else %}

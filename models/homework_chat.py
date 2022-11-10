@@ -1,6 +1,6 @@
-class RoomChat():
+class HomeworkChat():
     """
-    Класс Комната Чата
+    Класс Чата
     """
     def __init__(self, _id=None, _id_user=None, _id_lesson=None, _unread_message_amount=0):
         """

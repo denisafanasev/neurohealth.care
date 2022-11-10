@@ -3,7 +3,7 @@ from flask import Markup
 from services.education_course_lesson_service import EducationCourseLessonService
 
 from error import HomeworkManagerException, EducationCourseLessonServiceException
-from utils.ada import get_file_size
+from utils.ada import get_file_size, size_to_format_view
 
 
 class EducationCourseLessonPageController():
@@ -54,12 +54,12 @@ class EducationCourseLessonPageController():
 
             return lesson
 
-    def room_chat_entry(self, _id_room_chat=None, _id_user=None):
+    def homework_chat_entry(self, _id_homework_chat=None, _id_user=None):
         """
         Подключает пользователя к чату
 
         Args:
-            _id_room_chat(Int): ID чата
+            _id_homework_chat(Int): ID чата
             _id_user(Int): ID пользователя
 
         Returns:
@@ -68,15 +68,15 @@ class EducationCourseLessonPageController():
 
         lesson_service = EducationCourseLessonService()
 
-        room_chat = lesson_service.room_chat_entry(_id_room_chat, _id_user)
-        if room_chat is not None:
+        homework_chat = lesson_service.homework_chat_entry(_id_homework_chat, _id_user)
+        if homework_chat is not None:
             chat = {
-                "id": room_chat.id,
+                "id": homework_chat.id,
                 "message": None
             }
-            if room_chat.message is not None:
+            if homework_chat.message is not None:
                 message_list = []
-                for i_message in room_chat.message:
+                for i_message in homework_chat.message:
                     # ищем данные пользователя, который отправил данное сообщения
                     user = lesson_service.get_user_by_id(i_message.id_user)
                     message = {
@@ -106,12 +106,15 @@ class EducationCourseLessonPageController():
         # если в сообщениях есть такое сочетание, то оно удаляется для того, чтобы сократить расстояние между строчками
         if "<p><br></p>" in _message['text']:
             _message['text'] = ''.join(_message['text'].split('<p><br></p>'))
+        try:
+            lesson_service.add_message(_message, _id_lesson)
 
-        lesson_service.add_message(_message, _id_lesson)
+        except EducationCourseLessonServiceException as error:
+            return error
 
-    def get_user_view_by_id_and_course_id(self, _user_id):
+    def get_user_view_by_id(self, _user_id):
         """
-        Возвращает текущего пользователя
+        Возвращает представление текущего пользователя по id
 
         Args:
             _user_id(Int): ID текущего пользователя
@@ -180,7 +183,7 @@ class EducationCourseLessonPageController():
         try:
             lesson_service.save_homework(_files_list, _user_id, _text, _id_lesson)
         except HomeworkManagerException as error:
-            pass
+            return error
 
     def get_last_homework(self, _id_lesson, _user_id):
         """
@@ -216,11 +219,7 @@ class EducationCourseLessonPageController():
             # переводим размер файлов, сданной вместе с домашней работой, из бит в кб или мб
             if homework.users_files_list is not None:
                 for file in homework.users_files_list:
-                    if file.size // 1048576 == 0:
-                        file_size = f"{round(file.size / 1024, 2)} кБ"
-                    else:
-                        file_size = f"{round(file.size / 1048576, 2)} мБ"
-                    # file_size = get_file_size(file.name_file_unique)
+                    file_size = size_to_format_view(file.size)
                     homework_view['users_files_list'].append({"name_file_unique": file.name_file_unique,
                                                               "size": file_size})
             else:
@@ -248,32 +247,24 @@ class EducationCourseLessonPageController():
             "previous_lesson": None
         }
         if neighboring_lessons['next_lesson'] is not None:
-            room_chat = lesson_service.get_room_chat(neighboring_lessons['next_lesson'].lessons.id, _user_id)
             neighboring_lessons_view["next_lesson"] = {
                 "id_course": _id_course,
                 "id_module": neighboring_lessons['next_lesson'].id,
                 "id": neighboring_lessons['next_lesson'].lessons.id,
-                "id_room_chat": None
             }
-            if room_chat is not None:
-                neighboring_lessons_view['next_lesson']['id_room_chat'] = room_chat.id
 
         if neighboring_lessons['previous_lesson'] is not None:
-            room_chat = lesson_service.get_room_chat(neighboring_lessons['previous_lesson'].lessons.id, _user_id)
             neighboring_lessons_view["previous_lesson"] = {
                 "id_course": _id_course,
                 "id_module": neighboring_lessons['previous_lesson'].id,
                 "id": neighboring_lessons['previous_lesson'].lessons.id,
-                "id_room_chat": None
             }
-            if room_chat is not None:
-                neighboring_lessons_view['previous_lesson']['id_room_chat'] = room_chat.id
 
         return neighboring_lessons_view
 
-    def get_room_chat(self, _id_lesson, _id_user):
+    def get_homework_chat(self, _id_lesson, _id_user):
         """
-        Возвращает данные комнаты чата по ID урока и пользователя
+        Возвращает данные чата по ID урока и пользователя
 
         Args:
             _id_lesson(Integer): ID урока
@@ -284,24 +275,24 @@ class EducationCourseLessonPageController():
         """
         lesson_service = EducationCourseLessonService()
 
-        room_chat = lesson_service.get_room_chat(_id_lesson, _id_user)
-        if room_chat is not None:
-            room_chat_view = {
-                "id": room_chat.id,
-                "id_lesson": room_chat.id_lesson,
-                "id_user": room_chat.id_user,
+        homework_chat = lesson_service.get_room_chat(_id_lesson, _id_user)
+        if homework_chat is not None:
+            homework_chat_view = {
+                "id": homework_chat.id,
+                "id_lesson": homework_chat.id_lesson,
+                "id_user": homework_chat.id_user,
                 "message": []
             }
-            if room_chat.message is not None:
-                for message in room_chat.message:
+            if homework_chat.message is not None:
+                for message in homework_chat.message:
                     user = lesson_service.get_user_by_id(message.id_user)
-                    room_chat_view['message'].append({
+                    homework_chat_view['message'].append({
                         "id": message.id,
-                        "id_room_chat": message.id_room_chat,
+                        "id_homework_chat": message.id_homework_chat,
                         "id_user": message.id_user,
                         "name": user.name,
                         "text": Markup(message.text),
                         "date_send": message.date_send
                     })
 
-            return room_chat_view
+            return homework_chat_view

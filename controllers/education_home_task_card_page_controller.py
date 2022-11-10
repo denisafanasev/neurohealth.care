@@ -1,37 +1,37 @@
 from flask import Markup
 
 from error import HomeworkManagerException, EducationCourseLessonServiceException, HomeworkProfileServiceException
-from services.homework_profile_service import HomeworkProfileService
+from services.homework_card_service import HomeworkCardService
 
-class EducationChatPageController():
+class EducationHomeworkCardPageController():
     """
     EducationChatPageController - класс контроллера представления чата с пользователями, реализующий логику взаимодействия приложения с пользователем.
     Возвращает в слой отображения объекты в виде, пригодном для отображения в web странице и в соответствующем форматировании
     Взаимодейтвует с классами слоя сервисов, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def room_chat_entry(self, _id_room_chat, _id_user):
+    def homework_chat_entry(self, _id_homework_chat, _id_user):
         """
         Подключает пользователя к чату
 
         Args:
-            _id_room_chat(Integer): ID чата
+            _id_homework_chat(Integer): ID чата
             _id_user(Integer) ID пользователя
 
         Returns:
             Dict: чат
         """
 
-        homework_service = HomeworkProfileService()
+        homework_service = HomeworkCardService()
 
-        room_chat = homework_service.room_chat_entry(_id_room_chat, _id_user)
-        if room_chat is not None:
-            room_chat_view = {
-                "id": room_chat.id,
+        homework_chat = homework_service.homework_chat_entry(_id_homework_chat, _id_user)
+        if homework_chat is not None:
+            homework_chat_view = {
+                "id": homework_chat.id,
                 "message": []
             }
-            if room_chat.message is not None:
-                for i_message in room_chat.message:
+            if homework_chat.message is not None:
+                for i_message in homework_chat.message:
                     user = homework_service.get_user_by_id(i_message.id_user)
                     message = {
                         "id": i_message.id,
@@ -40,9 +40,9 @@ class EducationChatPageController():
                         "name": user.name
                     }
 
-                    room_chat_view['message'].append(message)
+                    homework_chat_view['message'].append(message)
 
-            return room_chat_view
+            return homework_chat_view
 
     def add_message(self, _message, _id_lesson, _id_user):
         """
@@ -57,13 +57,16 @@ class EducationChatPageController():
             Dict: сообщение
         """
 
-        homework_service = HomeworkProfileService()
+        homework_service = HomeworkCardService()
 
         # если в сообщениях есть такое сочетание, то оно удаляется для того, чтобы сократить расстояние между строчками
         if "<p><br></p>" in _message['text']:
             _message['text'] = ''.join(_message['text'].split('<p><br></p>'))
 
-        homework_service.add_message(_message, _id_lesson, _id_user)
+        try:
+            homework_service.add_message(_message, _id_lesson, _id_user)
+        except HomeworkProfileServiceException as error:
+            return error
 
     def get_user_by_id(self, _user_id):
         """
@@ -73,7 +76,7 @@ class EducationChatPageController():
             user(Dict): данные пользователя
         """
 
-        homework_service = HomeworkProfileService()
+        homework_service = HomeworkCardService()
 
         user = homework_service.get_user_by_id(_user_id)
         user_view = {
@@ -101,7 +104,7 @@ class EducationChatPageController():
             status_code(String): сообщает об успешном изменении оценки
         """
 
-        homework_service = HomeworkProfileService()
+        homework_service = HomeworkCardService()
 
         homework = homework_service.homework_answer_accepted(_id_homework, _user_id)
         message = "Домашняя работа принята"
@@ -137,7 +140,7 @@ class EducationChatPageController():
             status_code(String): сообщает об успешном изменении оценки
         """
 
-        homework_service = HomeworkProfileService()
+        homework_service = HomeworkCardService()
 
         homework = homework_service.homework_answer_no_accepted(_id_homework, _user_id)
         message = "Домашняя работа не принята"
@@ -169,7 +172,7 @@ class EducationChatPageController():
         Return:
             Dict: данные домашней работы
         """
-        homework_service = HomeworkProfileService()
+        homework_service = HomeworkCardService()
 
         homework = homework_service.get_homework(_id_homework)
         if homework is not None:
@@ -202,7 +205,7 @@ class EducationChatPageController():
         Return:
             Dict: данные, связанные с домашней работы
         """
-        homework_service = HomeworkProfileService()
+        homework_service = HomeworkCardService()
 
         homework = homework_service.get_homework(_id_homework)
         if homework is not None:
@@ -242,24 +245,24 @@ class EducationChatPageController():
 
             return data
 
-    def get_data_by_id_room_chat(self, _id_room_chat, _id_user):
+    def get_data_by_id_homework_chat(self, _id_homework_chat, _id_user):
         """
         Возвращает данные, связанные с домашней работы
 
         Args:
-            _id_room_chat(Integer): ID комнаты чата
+            _id_homework_chat(Integer): ID комнаты чата
             _id_user(Integer): ID пользователя
 
         Return:
             Dict: данные, связанные с домашней работы
         """
-        homework_service = HomeworkProfileService()
+        homework_service = HomeworkCardService()
 
-        room_chat = homework_service.room_chat_entry(_id_room_chat, _id_user)
-        if room_chat is not None:
+        homework_chat = homework_service.homework_chat_entry(_id_homework_chat, _id_user)
+        if homework_chat is not None:
             data = {}
             try:
-                module = homework_service.get_lesson(room_chat.id_lesson)
+                module = homework_service.get_lesson(homework_chat.id_lesson)
 
                 data["module"] ={
                     "id": module.id,
@@ -283,7 +286,7 @@ class EducationChatPageController():
             except TypeError:
                 data['course'] = "Данный курс не найден"
 
-            user = homework_service.get_user_by_id(room_chat.id_user)
+            user = homework_service.get_user_by_id(homework_chat.id_user)
             if user is not None:
                 data["user"] = {
                     "id": user.user_id,
@@ -296,7 +299,7 @@ class EducationChatPageController():
 
             return data
 
-    def get_room_chat_by_id_homework(self, _id_homework, _id_current_user):
+    def get_homework_chat_by_id_homework(self, _id_homework, _id_current_user):
         """
         Возвращает данные комнаты чата по ID домашней работы
 
@@ -307,7 +310,7 @@ class EducationChatPageController():
         Returns:
             Dict: комната чата
         """
-        homework_service = HomeworkProfileService()
+        homework_service = HomeworkCardService()
 
         homework = homework_service.get_homework(_id_homework)
         if homework is not None:
