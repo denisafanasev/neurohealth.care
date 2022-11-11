@@ -207,14 +207,14 @@ class EducationCourseService():
 
     def get_homework_chat(self, _id_lesson, _id_user):
         """
-        Возвращает данные комнаты чата
+        Возвращает данные чата по ID урока и пользователя
 
         Args:
             _id_lesson(Int): ID урока
             _id_user(Int): ID текущего пользователя
 
         Returns:
-            RoomChat: комната чата
+            HomeworkChat: комната чата
         """
         homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()
@@ -227,7 +227,7 @@ class EducationCourseService():
 
     def redirect_to_lesson(self, _id_lesson, _id_user):
         """
-        Создает событие "Просмотр урока пользователем"
+        Создает событие "Просмотр урока пользователем" и перенаправляет пользователя на страницу заданного урока
 
         Args:
             _id_lesson(Integer): ID урока
@@ -246,4 +246,4 @@ class EducationCourseService():
             if lesson is not None:
                 action_manager.add_notifications(module, "посмотрел", '', "course_manager", user.login)
 
-        return redirect(f"/education_course/lesson?id_lesson={lesson.id}&id_video=1")
+                return redirect(f"/education_course/lesson?id_lesson={lesson.id}&id_video=1")

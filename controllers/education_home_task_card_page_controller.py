@@ -1,7 +1,7 @@
 from flask import Markup
 
-from error import HomeworkManagerException, EducationCourseLessonServiceException, HomeworkProfileServiceException
 from services.homework_card_service import HomeworkCardService
+from error import HomeworkManagerException, HomeworkCardServiceException
 
 class EducationHomeworkCardPageController():
     """
@@ -65,7 +65,7 @@ class EducationHomeworkCardPageController():
 
         try:
             homework_service.add_message(_message, _id_lesson, _id_user)
-        except HomeworkProfileServiceException as error:
+        except HomeworkCardServiceException as error:
             return error
 
     def get_user_by_id(self, _user_id):
@@ -229,7 +229,7 @@ class EducationHomeworkCardPageController():
                     "id": course.id,
                     "name": course.name
                 }
-            except HomeworkProfileServiceException as error:
+            except HomeworkCardServiceException as error:
                 data['module'] = error
 
             user = homework_service.get_user_by_id(homework.id_user)
@@ -280,7 +280,7 @@ class EducationHomeworkCardPageController():
                     "id": course.id,
                     "name": course.name
                 }
-            except HomeworkProfileServiceException as error:
+            except HomeworkCardServiceException as error:
                 data['module'] = error
 
             except TypeError:
@@ -308,31 +308,28 @@ class EducationHomeworkCardPageController():
             _id_current_user(Int): ID текущего пользователя
 
         Returns:
-            Dict: комната чата
+            Dict: чат
         """
         homework_service = HomeworkCardService()
 
         homework = homework_service.get_homework(_id_homework)
         if homework is not None:
-            room_chat = homework_service.get_room_chat(homework.id_lesson, homework.id_user, _id_current_user)
-            if room_chat is not None:
+            homework_chat = homework_service.get_homework_chat(homework.id_lesson, homework.id_user, _id_current_user)
+            if homework_chat is not None:
                 room_chat_view = {
-                    "id": room_chat.id,
+                    "id": homework_chat.id,
                     "message": []
                 }
-                if room_chat.message is not None:
+                if homework_chat.message is not None:
                     message_list = []
-                    for i_message in room_chat.message:
+                    for i_message in homework_chat.message:
                         user = homework_service.get_user_by_id(i_message.id_user)
-                        try:
-                            message = {
-                                "id": i_message.id,
-                                "text": Markup(i_message.text),
-                                "id_user": i_message.id_user,
-                                "name": user.name
-                            }
-                        except AttributeError:
-                            continue
+                        message = {
+                            "id": i_message.id,
+                            "text": Markup(i_message.text),
+                            "id_user": i_message.id_user,
+                            "name": user.name
+                        }
 
                         message_list.append(message)
 

@@ -22,5 +22,5 @@ class EducationCourseLessonServiceException(NeuroHealthAppException):
     pass
 
 
-class HomeworkProfileServiceException(NeuroHealthAppException):
+class HomeworkCardServiceException(NeuroHealthAppException):
     pass
