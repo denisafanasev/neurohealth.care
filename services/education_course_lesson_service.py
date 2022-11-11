@@ -53,7 +53,7 @@ class EducationCourseLessonService():
             _id_homework_chat(Integer): ID комнаты чата
             _id_user(Integer): ID текущего пользователя
         Returns:
-            RoomChat: чат
+            HomeworkChat: чат
         """
 
         homework_chat_manager = HomeworkChatManager()
@@ -166,7 +166,7 @@ class EducationCourseLessonService():
 
     def get_last_homework(self, _id_lesson, _user_id):
         """
-        Возвращает последнюю сданную домашнюю работу по ID комнаты чата.
+        Возвращает последнюю сданную домашнюю работу по ID чата.
         Дата сдачи возвращается первой сданной домашней работы.
         Args:
             _id_lesson(Integer): ID урока
@@ -310,7 +310,7 @@ class EducationCourseLessonService():
             _id_user(Integer): ID пользователя
 
         Return:
-            RoomChat: комната чата
+            HomeworkChat: чат
         """
         homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()

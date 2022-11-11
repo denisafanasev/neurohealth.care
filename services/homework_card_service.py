@@ -1,4 +1,3 @@
-from error import HomeworkProfileServiceException
 from models.action_manager import ActionManager
 from models.homework_manager import HomeworkManager
 from models.course_manager import EducationCourseManager
@@ -7,6 +6,7 @@ from models.lesson_manager import EducationLessonManager
 from models.homework_chat_manager import HomeworkChatManager
 from models.user_manager import UserManager
 from models.message_manager import MessageManager
+from error import HomeworkCardServiceException
 
 
 class HomeworkCardService():
@@ -24,7 +24,7 @@ class HomeworkCardService():
             _id_user(Integer): ID пользователя
 
         Returns:
-            RoomChat: чат
+            HomeworkChat: чат
         """
 
         homework_chat_manager = HomeworkChatManager()
@@ -57,11 +57,11 @@ class HomeworkCardService():
         # проверка на наличие в базе данных пользователя и урока
         user = user_manager.get_user_by_id(_id_user)
         if user is None:
-            raise HomeworkProfileServiceException('Не удалось сохранить сообщение.')
+            raise HomeworkCardServiceException('Не удалось сохранить сообщение.')
 
         lesson = lesson_manager.get_lesson(_id_lesson)
         if lesson is None:
-            raise HomeworkProfileServiceException('Не удалось сохранить сообщение.')
+            raise HomeworkCardServiceException('Не удалось сохранить сообщение.')
 
         homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson)
         if homework_chat is None:
@@ -171,7 +171,7 @@ class HomeworkCardService():
 
         course = course_manager.get_course_by_id(_id_course)
         if course is None:
-            raise HomeworkProfileServiceException('Данный курс не найден.')
+            raise HomeworkCardServiceException('Данный курс не найден.')
 
         return course
 
@@ -190,15 +190,15 @@ class HomeworkCardService():
 
         lesson = lesson_manager.get_lesson(_id_lesson)
         if lesson is None:
-            raise HomeworkProfileServiceException('Данный урок не найден.')
+            raise HomeworkCardServiceException('Данный урок не найден.')
         module = module_manager.get_module_by_id(lesson.id_module)
         if lesson is None:
-            raise HomeworkProfileServiceException('Данный модуль не найден.')
+            raise HomeworkCardServiceException('Данный модуль не найден.')
         module.lessons = lesson
 
         return module
 
-    def get_room_chat(self, _id_lesson, _id_user, _id_current_user):
+    def get_homework_chat(self, _id_lesson, _id_user, _id_current_user):
         """
         Возвращает данные чата по ID урока и пользователя
 
@@ -208,7 +208,7 @@ class HomeworkCardService():
             _id_current_user(Integer): ID текущего пользователя
 
         Returns:
-            RoomChat: комната чата
+            HomeworkChat: чат
         """
         homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()

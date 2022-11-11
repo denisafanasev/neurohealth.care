@@ -1,9 +1,8 @@
 from flask import Markup
 
 from services.education_course_lesson_service import EducationCourseLessonService
-
+from utils.ada import size_to_format_view
 from error import HomeworkManagerException, EducationCourseLessonServiceException
-from utils.ada import get_file_size, size_to_format_view
 
 
 class EducationCourseLessonPageController():
@@ -271,7 +270,7 @@ class EducationCourseLessonPageController():
             _id_user(Integer): ID текущего пользователя
 
         Returns:
-            Dict: данные комнаты чата
+            Dict: данные чата
         """
         lesson_service = EducationCourseLessonService()
 
