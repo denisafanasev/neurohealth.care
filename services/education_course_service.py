@@ -242,8 +242,9 @@ class EducationCourseService():
         module = module_manager.get_module_by_id(lesson.id_module)
         module.lessons = lesson
         user = user_manager.get_user_by_id(_id_user)
-        if user.role != "superuser":
-            if lesson is not None:
+
+        if lesson is not None:
+            if user.role != "superuser":
                 action_manager.add_notifications(module, "посмотрел", '', "course_manager", user.login)
 
-                return redirect(f"/education_course/lesson?id_lesson={lesson.id}&id_video=1")
+            return redirect(f"/education_course/lesson?id_lesson={lesson.id}&id_video=1")

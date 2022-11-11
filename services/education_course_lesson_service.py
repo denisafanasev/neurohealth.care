@@ -301,9 +301,9 @@ class EducationCourseLessonService():
 
             return False
 
-    def get_room_chat(self, _id_lesson, _id_user):
+    def get_homework_chat(self, _id_lesson, _id_user):
         """
-        Возвращает данные комнаты чата
+        Возвращает данные чата
 
         Args:
             _id_lesson(Integer): ID урока
