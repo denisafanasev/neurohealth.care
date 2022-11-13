@@ -24,7 +24,7 @@ class EducationCourseManager():
             Course: урок
         """
 
-        course = Course(_data_row.doc_id, _data_row["name"], _data_row["description"], _data_row["type"])
+        course = Course(_data_row.doc_id, _data_row["name"], _data_row["description"], _data_row["type"], _data_row["image"])
 
         return course
 
@@ -42,18 +42,6 @@ class EducationCourseManager():
         courses = []
 
         for i_course in courses_list:
-            try:
-                data_store_course = DataStore(f"course_{i_course.doc_id}/settings")
-            except FileNotFoundError:
-                # os.mkdir(f"data/course_{i_course['id']}")
-                os.mkdir(config.DATA_FOLDER+"course_"+str(i_course.doc_id))
-                data_store_course = DataStore(f"course_{i_course.doc_id}/settings")
-
-            try:
-                i_course['image'] = data_store_course.get_rows()[0]["image"]
-            except IndexError:
-                i_course['image'] = ""
-
             courses.append(self.course_row_to_course(i_course))
 
         return courses
