@@ -154,58 +154,20 @@ class HomeworksService():
         user_manager = UserManager()
 
         users_login_list = []
-        try:
-            with open(config.DATA_FOLDER + 'course_1/s5_users.txt') as f:
-                users_login_list.extend(f.read().splitlines())
+        with open(config.DATA_FOLDER + 'course_1/s5_users.txt') as f:
+            users_login_list.extend(f.read().splitlines())
 
-        except FileNotFoundError:
-            if 'course_1' not in os.listdir(config.DATA_FOLDER):
-                os.mkdir(config.DATA_FOLDER + 'course_1')
+        with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
+            users_login_list.extend(f.read().splitlines())
 
-            file = open(config.DATA_FOLDER + 'course_1/s5_users.txt', 'w')
-            file.close()
-        try:
-            with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
-                users_login_list.extend(f.read().splitlines())
+        with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
+            users_login_list.extend(f.read().splitlines())
 
-        except FileNotFoundError:
-            if 'course_1' not in os.listdir(config.DATA_FOLDER):
-                os.mkdir(config.DATA_FOLDER + 'course_1')
+        with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
+            users_login_list.extend(f.read().splitlines())
 
-            file = open(config.DATA_FOLDER + 'course_1/s4_users.txt', 'w')
-            file.close()
-
-        try:
-            with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
-                users_login_list.extend(f.read().splitlines())
-
-        except FileNotFoundError:
-            if 'course_1' not in os.listdir(config.DATA_FOLDER):
-                os.mkdir(config.DATA_FOLDER + 'course_1')
-
-            file = open(config.DATA_FOLDER + 'course_1/s3_users.txt', 'w')
-            file.close()
-        try:
-            with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
-                users_login_list.extend(f.read().splitlines())
-
-        except FileNotFoundError:
-            if 'course_1' not in os.listdir(config.DATA_FOLDER):
-                os.mkdir(config.DATA_FOLDER + 'course_1')
-
-            file = open(config.DATA_FOLDER + 'course_1/s2_users.txt', 'w')
-            file.close()
-
-        try:
-            with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
-                users_login_list.extend(f.read().splitlines())
-
-        except FileNotFoundError:
-            if 'course_1' not in os.listdir(config.DATA_FOLDER):
-                os.mkdir(config.DATA_FOLDER + 'course_1')
-
-            file = open(config.DATA_FOLDER + 'course_1/s1_users.txt', 'w')
-            file.close()
+        with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
+            users_login_list.extend(f.read().splitlines())
 
         users_list = []
         for user_login in users_login_list:
