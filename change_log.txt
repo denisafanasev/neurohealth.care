@@ -1,0 +1,96 @@
+[1.2.1]
+
+Общие изменения
+- Исправлены кнопки для перехода к следующему/предыдущему уроку на странице с уроком
+- Исправлен сброс пароля на главной странице и со списком пользователей
+- Исправлено создание действия "Принял/Не принял" домашняя работа
+- Исправлена обработки ошибки, если не найден пользователь для страницы для проверки домашней работы
+- Отредактирован метод для возвращения списка сообщений из чата
+- Добавлены проверки на данные урока и пользователя при отправке сообщения/домашней работы пользователем.
+- Добавлена проверка при загрузке файла с сервера
+- Изменен внешний вид страницы с уроком для мобильной версии
+- Роль пользователя теперь показывается только админам 
+- Исправлены кнопки "следующий/предыдущий урок" на странице урока
+- Добавлена возможность кураторам общаться в чате со студентами вне зависимости сдали ли домашку студенты или нет на странице проверки домашки
+- Изменена логика и вид вывода списка домашних работ
+- Добавлены уведомления о непрочитанных сообщениях
+- Отредактирован чат
+- Добавлены уведомления о непрочитанных сообщений на странице со списком домашек
+- Внесены изменения отображения статуса домашних работ на странице со списком модулей
+- Внесены изменения чата на странице Домашняя работа 
+- Внесены изменения в моделе и логике комнаты чата(RoomChat)
+
+
+Системные изменения
+- Исправлены ошибки
+- Добавлены doc string
+- Доработана общая структура кода
+- Добавлены docstrings в conversion_data.py и комментарии message_manager.py
+- Удален ненужный скрипт в education_home_task_profile.html
+- Удалены лишние стили в room_chat.html
+- Добавлены обработчики ошибок на странице дл проверки домашнего задания 
+- Исправлен обработчик ошибок на странице с уроком
+- Дополнен обработчик ошибок при чтение файла с логинами пользователей с подпиской
+- Добавлен обработчик ошибок при поиске файла, сданного вместе с домашней работой
+- Добавлены обработка ошибок при открытее файлов с логинами пользователей, которые приобрели подписку, при выводе сообщений чатов и неверных параметров для страницы с уроком
+- Добавлен метод для удаления ключа со значением из определенной записи
+- Исправлен баг в файле conversion_data.py
+- data_store.py: выполнены TODO. Методы удалены и заменены на другие;
+- action_manager.py: Изменен метод get_actions - теперь передается пользователь, вместо его ID. Сделано для того, чтобы manager не обращаться к другому manager.
+- Изменена логика изменения пароля пользователя: в user_manager.py передается вместо логина пользователя его ID, чтобы поиск пользователя сделать через ID. Также при изменении пароля пользователя через главную страницу убран один из аргументов- _current_user_id.
+- При изменении логики изменения пароля были дополнены и добавлены doc string
+- app.py: Обработана ошибка на случай, если неправильные данные были переданы через url для страницы /education_course/lesson
+- education_home_task_profile.html: Убрана граница, которая была вокруг всех элементов
+- message_manager.py: изменен метод для обновления информации о сообщении при проверке на "прочитано/не прочитано сообщение"
+- probationer_manager.py: заменен метод для обновления данных тестируемых, а также теперь при создании нового тестируемого, id определяется автоматически
+- data_store.py: удалены методы change_probationer и update_message
+- Исправлено создания события "Просмотр урока" 
+- Внесены изменения в конвертацию данных
+
+
+General changes
+- Fixed buttons to go to the next/previous lesson on the lesson page
+- Fixed password reset on the main page and with the list of users
+- Fixed creation of action "Accepted/Not accepted" homework
+- Fixed error handling if no user found for page to check homework
+- Edited method for returning list of messages from chat
+- Added checks for lesson and user data when a user sends a message/homework.
+- Added check when downloading a file from the server
+- Changed the appearance of the page with a lesson for the mobile version
+- User role is now shown only to admins
+- Fixed "next/previous lesson" buttons on the lesson page
+- Added the ability for curators to chat with students, regardless of whether students passed homework or not on the homework check page
+- Changed the logic and view of the output of the list of homework
+- Added notifications about unread messages
+- Edited chat
+- Added notifications about unread messages on the page with a list of homework
+- Changes have been made to displaying the status of homework on the page with the list of modules
+- Changes made to the chat on the Homework page
+- Changes have been made in the model and logic of the chat room (RoomChat)
+
+
+System changes
+- Fixed bugs
+- Added doc string
+- Improved overall code structure
+- Added docstrings to conversion_data.py and comments to message_manager.py
+- Removed unnecessary script in education_home_task_profile.html
+- Removed extra styles in room_chat.html
+- Added error handlers on the page for checking homework
+- Fixed error handler on the lesson page
+- Added error handler when reading a file with logins of users with a subscription
+- Added error handler when searching for a file handed in with homework
+- Added error handling when opening files with logins of users who have purchased a subscription, when displaying chat messages and incorrect parameters for the lesson page
+- Added a method to remove a key with a value from a specific entry
+- Fixed bug in conversion_data.py file
+- data_store.py: TODO done. Methods removed and replaced with others;
+- action_manager.py: Changed the get_actions method - now the user is passed instead of his ID. It is made so that the manager does not refer to another manager.
+- The logic of changing the user's password has been changed: instead of the user's login, the user's ID is passed to user_manager.py in order to search for the user through the ID. Also, when changing the user's password through the main page, one of the arguments - _current_user_id - was removed.
+- When changing the logic of changing the password, the doc string was added and added
+- app.py: Handled error in case bad data was passed via url for /education_course/lesson page
+- education_home_task_profile.html: Removed border that was around all items
+- message_manager.py: changed method for updating message information when checking for "message read/unread"
+- probationer_manager.py: replaced method for updating testee data, and now when creating a new testee, id is determined automatically
+- data_store.py: removed methods change_probationer and update_message
+- Fixed creation of the "View lesson" event
+- Changes have been made to data conversion
