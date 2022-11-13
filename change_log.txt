@@ -1,3 +1,12 @@
+[1.2.2]
+Общие изменения
+- Удалены не нужные эксепшены
+- Исправлены доступы к модулям для потоков
+
+General changes
+- Removed unnecessary exeptions
+- Fixed access to modules for education streams
+
 [1.2.1]
 
 Общие изменения
