@@ -1,6 +1,12 @@
-from services.education_course_service import EducationCourseService
+from services.education_list_courses_service import EducationListCoursesService
+
 
 class EducationListCoursesPageController():
+    """
+    EducationListCoursesPageController - класс контроллера представления списка курсов.
+    Возвращает в слой отображения объекты в виде, пригодном для отображения в web странице и в соответсвующем форматировании
+    Взаимодейтвует с классами слоя сервисов, передавая им данные и получая данные в объектах доменной модели
+    """
 
     def get_courses(self):
         """
@@ -10,7 +16,7 @@ class EducationListCoursesPageController():
             courses(List): список курсов
         """
 
-        course_service = EducationCourseService()
+        course_service = EducationListCoursesService()
 
         courses = course_service.get_courses()
         courses_list = []
@@ -39,7 +45,7 @@ class EducationListCoursesPageController():
         Returns:
             User: пользователь
         """
-        course_service = EducationCourseService()
+        course_service = EducationListCoursesService()
 
         user = course_service.get_user_by_id_and_course_id(_user_id, _course_id)
 
@@ -56,7 +62,7 @@ class EducationListCoursesPageController():
         Returns:
             User: пользователь
         """
-        course_service = EducationCourseService()
+        course_service = EducationListCoursesService()
 
         user = course_service.get_user_by_id(_user_id)
 

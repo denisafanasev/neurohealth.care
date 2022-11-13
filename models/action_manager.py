@@ -61,7 +61,7 @@ class ActionManager():
 
         elif _name_place == "course_manager":
             _name_place = "урок"
-            comment_action = f"{_place.lessons.name[0:-2]} модуля {_place.lessons.id_module}"
+            comment_action = f"{_place.lessons.name[0:-1]} модуля {_place.lessons.id_module}"
 
         elif _name_place == "homework_manager":
             _name_place = "домашнюю работу"
@@ -81,10 +81,13 @@ class ActionManager():
         data_store.insert_row({"id": action.id, "login": action.user_login, "action": action.action,
                             "comment_action": action.comment_action, "created_date": action.created_date.strftime("%d/%m/%Y %H:%M:%S")})
 
-    def get_actions(self, _user_id):
+    def get_actions(self, _user):
         """
         Возвращает список действий, сделанных авторизованным пользователем(если авторизованный пользователь админ,
         то возвращает список действий всех пользователей, которые есть в системе)
+
+        Args:
+            _user(User): пользователь
 
         Returns:
             actions(List): список испытуемых
@@ -93,17 +96,17 @@ class ActionManager():
         data_store = DataStore("action")
     
         actions_list = data_store.get_rows()
-        user = UserManager().get_user_by_id(_user_id)
 
         date = datetime.now()
         actions = []
 
         for i_action in actions_list:
-            if not user.role == "superuser":
-                if user.login == i_action["login"]:
+            if not _user.role == "superuser":
+                if _user.login == i_action["login"]:
                     action = self.action_row_to_action(i_action)
                     if action.comment_action == '':
                         data_store.update_row({"comment_action": action.comment_action, "id": action.id}, "id")
+
                     if date < action.created_date:
                         actions.append({"action": action, "timedelta": date - date})
                         data_store.update_row({"created_date": date.strftime("%d/%m/%Y %H:%M:%S"), "id": action.id}, "id")

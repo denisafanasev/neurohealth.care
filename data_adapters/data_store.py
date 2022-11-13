@@ -11,7 +11,7 @@ class DataStore():
     """
     Класс предназначен для работы с системой хранения данных
     Возвращается структуры типа Dict
-    
+
     The type of the adapter is defined in depends on the system configuration
     Currently the following adapters are supported: TinyDB, PostgreSQL
     """
@@ -116,41 +116,25 @@ class DataStore():
 
         self.data_store.update_row_by_id(_data, _id)
 
-    # TODO: убрать отсюда этот метод
-    def update_messages(self, _message, _id):
+    def upsert_row(self, _data, _where):
         """
-        Обновление записей действий пользователей
-        Args:
-            _message(Dict): структура данных для записи
-            _id(Int): переменная для поиска нужно записи
-        """
-
-        _data_store = None
-        _data_store = TinyDB(config.DATA_FOLDER + "room_chat" + ".json", encoding='utf-8', ensure_ascii=False)
-        _data_store.update(add("message", [_message]), where("id") == _id)
-
-    # TODO: убрать отсюда этот метод
-    def chenge_password(self, _data):
-        """
-        Сброс пароля
-
-        Args:
-            _data (Dict): структура данных для записи
-        """
-
-        _data_store = None
-        _data_store = TinyDB(config.DATA_FOLDER + "users" + ".json", encoding='utf-8', ensure_ascii=False)
-        _data_store.update({"password": _data["password"]}, where("login") == _data["login"])
-    
-    # TODO: убрать отсюда этот метод
-    def change_probationer(self, _data):
-        """
-        Обновление данных тестируемого
+        Обновление данных
 
         Args:
             _data(Dict): структура данных для записи
+            _where(Dict): переменная для поиска нужно записи
         """
 
-        _data_store = None
-        _data_store = TinyDB(config.DATA_FOLDER + "users" + ".json", encoding='utf-8', ensure_ascii=False)
-        _data_store.update_multiple([(_data, where("probationer_id") == int(_data["probationer_id"]))])
+        self.data_store.upsert(_data, where(_where) == _data[_where])
+
+    def delete_key_in_row(self, _key, _where, _where_value):
+        """
+        Удаление ключа и значения из записи
+        Args:
+            _key(String): ключ, который нужно удалить
+            _where(String): ключ для поиска нужной записи
+            _where_value(String): значение ключа для поиска нужной записи
+        """
+
+        self.data_store.delete_key_in_row(_key, _where, _where_value)
+

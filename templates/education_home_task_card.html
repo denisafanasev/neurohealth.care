@@ -6,22 +6,16 @@
     <script>
     document.addEventListener("DOMContentLoaded", function () {
         var message = document.getElementById('message');
-        {% if _error_type == "Error" %}
-        {% elif _error_type == 'Successful' %}
+        {% if _status_code == "Error" %}
+            document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+            document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";
+            message.style.display = "block";
+        {% elif _status_code == 'Successful' %}
             document.querySelector('h3[id=title_message]').textContent = 'Успешно';
-            document.querySelector('p[id=text_message]').textContent = "{{ _error }}";
+            document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";
             message.style.display = "block";
         {% endif %}
         });
-    </script>
-    <script>
-        var modal_discharge = document.getElementById('discharge');
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function (event) {
-            if (event.target === modal_extension) {
-                modal_discharge.style.display = "none";
-            }
-        }
     </script>
 
     <style>
@@ -33,7 +27,7 @@
         font-size: 14px;
     }
     </style>
-
+    {% if _data %}
     <div class="container-fluid p-0">
 
         <div class="mb-3">
@@ -41,30 +35,41 @@
         </div>
 
         <div class="row d-flex align-items-stretch bd-highlight">
-            <div class="card d-flex align-self-baseline border-0" style="background: fixed;">
+            <div class="align-self-baseline border-0" style="background: fixed;">
                 <div class="row d-flex align-items-stretch bd-highlight">
                     <div class="col-md-6 bd-highlight">
 
                             <div class="card d-flex align-self-baseline border p-4">
                                 <h4>Данные ученика</h4>
                                 <div class="card-header">
-                                    <p><strong>Login:</strong> {{ _data['user']['login'] }}</p>
-                                    <p><strong>Имя:</strong> {{ _data['user']['name'] }}</p>
-                                    <p><strong>Email:</strong> {{ _data['user']['email'] }}</p>
+                                    {% if _data['user'] is mapping %}
+                                        <p><strong>Login:</strong> {{ _data['user']['login'] }}</p>
+                                        <p><strong>Имя:</strong> {{ _data['user']['name'] }}</p>
+                                        <p><strong>Email:</strong> {{ _data['user']['email'] }}</p>
+                                    {% else %}
+                                        <p>{{ _data['user'] }}</p>
+                                    {% endif %}
                                 </div>
                             </div>
 
                             <div class="card d-flex align-self-baseline border p-4">
                                 <h4>Данные урока</h4>
                                 <div class="card-header">
+                                {% if _data['module'] is mapping %}
                                     <p><strong>Курс: </strong>{{ _data['course']['name'] }}</p>
                                     <p><strong>Модуль: </strong>{{ _data['module']['name'] }}</p>
                                     <p><strong>Урок: </strong>{{ _data['module']['lesson']['name'] }}</p>
                                     <p class="task"><strong>Задание: </strong>{{ _data['module']['lesson']['task'] }}</p>
-                                    <p><strong>Статус: </strong>{% if _homework['homework_answer']["status"] == "проверено" %}{{ _homework['homework_answer']["answer"] }}{% else %}{{ _homework['homework_answer']["status"] }}{% endif %}</p>
+                                    <p><strong>Статус: </strong>
+                                        {% if request.args.get("id_homework") is not none %}{{ _homework["status"] }}
+                                        {% else %}Не сдано{% endif %}
+                                    </p>
+                                {% else %}
+                                    <p>{{ _data['module'] }}</p>
+                                {% endif %}
                                 </div>
                             </div>
-
+                        {% if request.args.get("id_homework") is not none %}
                             <div class="card d-flex align-self-baseline border p-4">
                                 <h4>Домашняя работа</h4>
                                 <div class="card-header">
@@ -73,12 +78,12 @@
                                             <div class="mb-2">
                                                 {{ _homework['text'] }}
                                             </div>
-                                                {% for file in _homework['users_files_list'] %}
-                                                    <a download href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
-                                                {% endfor %}
+                                            {% for file in _homework['users_files_list'] %}
+                                                <a download href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
+                                            {% endfor %}
                                         </div>
 
-                                    {% if _homework['homework_answer']['status'] == "не проверено" %}
+                                    {% if _homework['status'] == "не проверено" %}
                                         <div class="mb-0">
                                             <label class="form-label"><strong>Ответ</strong></label>
                                             <div class="">
@@ -97,7 +102,7 @@
                                     {% endif %}
                                     </form>
                                 </div>
-                            {% if _homework['homework_answer']['status'] == "не проверено" %}
+                            {% if _homework['status'] == "не проверено" %}
                                 <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto;">
                                     <div class="p-1" style="float: right">
                                         <button type="submit" form="homework" name="button" value="answer" class="btn btn-primary ">
@@ -107,9 +112,9 @@
                                 </div>
                             {% endif %}
                             </div>
-
+                        {% endif %}
                     </div>
-                <div class="col-md-6 text-left">
+                <div class="col-md-6 text-left bd-highlight">
                     {% include "room_chat.html" %}
                 </div>
                 </div>
@@ -117,4 +122,9 @@
         </div>
     {% include "message_form.html" %}
     </div>
+    {% else %}
+        <div class="text-center">
+            <h2>Чат/домашняя работа не найдены</h2>
+        </div>
+    {% endif %}
 {% endblock %}

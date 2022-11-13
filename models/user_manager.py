@@ -1,6 +1,4 @@
-import calendar
 import hashlib
-#import flask_login
 
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -339,7 +337,7 @@ class UserManager():
         role = _role
         name = _name
         email_confirmed = False
-        
+
         # создаем токен для подтверждения регистрации
         token = self.create_token(email)
 
@@ -427,14 +425,16 @@ class UserManager():
 
         return user
 
-    def chenge_password(self, _login, _password, _password2, _current_password=''):
+    def chenge_password(self, _user_id, _password, _password2, _current_password=''):
         """
         Сброс пароля пользователя
 
         Args:
-            _login (String): логин пользователя
+            _user_id (Integer): ID пользователя
             _password (String): пароль пользователя
             _password2 (String): контрольный ввод пароля пользователя
+            _current_password(String): текущий пароль пользователя(нужен, если пароль меняет user, а не superuser).
+                                        Defaults to ''
         """
 
         self.validate_password(_password)
@@ -445,13 +445,13 @@ class UserManager():
         data_store = DataStore("users")
         if _current_password != "":
             current_password = self.hash_password(_current_password)
-            user = data_store.get_rows({'login': _login})[0]
+            user = data_store.get_row_by_id(_user_id)
             if current_password != user['password']:
                 raise UserManagerException("введенный текущий пароль неправильный")
 
-        user_data = {"login": _login, "password": password}
+        user_data = {"password": password}
 
-        data_store.chenge_password(user_data)
+        data_store.update_row_by_id(user_data, _user_id)
 
     def activation(self, _login):
         """
@@ -483,7 +483,7 @@ class UserManager():
         Returns:
             _active (bool): Активирован/заблокирован пользователь
         """
-        
+
         user = self.get_user_by_login(_login)
         user.active = False
 

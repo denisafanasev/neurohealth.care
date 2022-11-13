@@ -1,84 +1,86 @@
 from flask import Markup
 
-from services.homework_service import HomeworkService
+from services.homeworks_service import HomeworksService
 
 
 class EducationHomeTasksPageController():
     """
-    EducationHomeTasksPageController - класс контроллера представления списка домашних работ, реализующий логику взаимодействия приложения с пользователем
+    EducationHomeTasksPageController - класс контроллера представления списка домашних работ, реализующий логику взаимодействия приложения с пользователем.
     Возвращает в слой отображения объекты в виде, пригодном для отображения в web странице и в соответствующем форматировании
     Взаимодейтвует с классами слоя сервисов, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def get_homeworks_list(self):
+    def get_data(self, _id_current_user):
         """
-        Возвращает список домашних работ пользователей
+        Возвращает данные курсов, домашних заданий и чатов
+
+        Args:
+            _id_current_user(Integer): ID текущего пользователя
 
         Returns:
-            List: список домашних работ
+            List: данные
         """
+        homeworks_service = HomeworksService()
 
-        homework_service = HomeworkService()
+        course_list = homeworks_service.get_courses_list()
+        users_list = homeworks_service.get_users_list_in_education_streams()
+        if course_list is not None:
+            data_list = []
+            for course in course_list:
+                for module in course.modules:
+                    for lesson in module.lessons:
+                        if lesson.task is not None:
+                            for user in users_list:
+                                homework_list = homeworks_service.get_homeworks_list_by_id_user(lesson.id, user.user_id)
+                                homework_chat = homeworks_service.get_homework_chat(lesson.id, user.user_id, _id_current_user)
+                                data = {
+                                    "user": {
+                                        "user_id": user.user_id,
+                                        "login": user.login,
+                                        "name": user.name
+                                    },
+                                    "course": {
+                                        "id": course.id,
+                                        "name": course.name
+                                    },
+                                    "module": {
+                                        "id": module.id,
+                                        "name": module.name
+                                    },
+                                    "lesson": {
+                                        "id": lesson.id,
+                                        "name": lesson.name,
+                                    },
+                                    "homework_list": None,
+                                    "homework_chat": None
+                                }
+                                if homework_list is not None:
+                                    data['homework_list'] = []
+                                    for homework in homework_list:
+                                        if homework is not None:
+                                            if homework.status is None:
+                                                homework.status = "Не проверено"
+                                            elif homework.status:
+                                                homework.status = "Принято"
+                                            else:
+                                                homework.status = "Не принято"
+                                        homework = {
+                                            "id": homework.id,
+                                            "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
+                                            "status": homework.status,
+                                        }
 
-        homework_list = homework_service.get_homeworks_list()
-        homework_list_view = []
-        for homework in homework_list:
-            if homework.id_user is None:
-                homework = homework_service.update_homework(homework)
+                                        data['homework_list'].append(homework)
 
-            course = homework_service.get_course(homework.id_course)
-            lesson = homework_service.get_lesson(homework.id_lesson, homework.id_course)
-            # education_stream = homework_service.get_education_stream(room_chat.id_education_stream)
-            user = homework_service.get_user_by_id(homework.id_user)
-            if homework is not None:
-                if homework.homework_answer.answer:
-                    homework.homework_answer.answer = "Принято"
-                else:
-                    homework.homework_answer.answer = "Не принято"
+                                if homework_chat is not None:
+                                    data['homework_chat'] = {
+                                        "id": homework_chat.id,
+                                        "unread_message_amount": homework_chat.unread_message_amount
+                                    }
 
-            homework_view = {
-                "id": homework.id,
-                "user": {
-                    "login": user.login,
-                    "name": user.name
-                },
-                "course": {
-                    "id": course.id,
-                    "name": course.name
-                },
-                "lesson": {
-                    "id": lesson.lessons.id,
-                    "name": lesson.lessons.name,
-                    "module_name": lesson.name
-                },
-                # "education_stream": {
-                #     "id": education_stream.id,
-                #     "name": education_stream.name
-                # },
-                "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
-                "users_files_list": homework.users_files_list,
-                "homework_answer": {
-                    "id": homework.homework_answer.id,
-                    "answer": homework.homework_answer.answer,
-                    "status": homework.homework_answer.status
-                },
-                "id_room_chat": homework.id_room_chat,
-                "text": Markup(homework.text)
-            }
+                                if data['homework_chat'] is not None:
+                                    data_list.append(data)
+                                elif data['homework_list'] is not None:
+                                    data_list.append(data)
 
-            homework_list_view.append(homework_view)
-
-        return homework_list_view
-
-    # def change_homework_answer(self, _answer, _id_homework_answer):
-    #     """
-    #     Изменяет оценку домашнего задания
-    #
-    #     Args:
-    #         _answer(String): оценка
-    #         _id_homework_answer(Int): индетификатор оценки домашего задания
-    #     """
-    #
-    #     homework_service = HomeworkService()
-    #
-    #     homework_service.change_homework_answer(_answer, _id_homework_answer)
+            return data_list

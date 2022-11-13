@@ -1,6 +1,6 @@
 import logging
 from logging.handlers import RotatingFileHandler
-from flask import Flask, request, redirect, render_template, url_for, send_file
+from flask import Flask, request, redirect, render_template, url_for, send_file, abort
 from flask_login import LoginManager, login_required, login_user, logout_user
 import flask_login
 
@@ -32,7 +32,7 @@ from controllers.education_course_page_controller import EducationCoursePageCont
 from controllers.education_course_lesson_page_controller import EducationCourseLessonPageController
 from controllers.download_page_controller import DownloadPageController
 from controllers.education_home_tasks_page_controller import EducationHomeTasksPageController
-from controllers.education_home_task_profile_page_controller import EducationChatPageController
+from controllers.education_home_task_card_page_controller import EducationHomeworkCardPageController
 from controllers.education_streams_page_controller import EducationStreamsPageController
 from controllers.education_stream_page_controller import EducationStreamPageController
 from controllers.education_program_subscription_page_controller import EducationProgramSubscriptionPageController
@@ -330,7 +330,6 @@ def user_manager():
                     # new_user['user_id'] = 0
                     # users_list.append(new_user)
 
-
             elif request.form.get(f"button_{user_id}") == "edit":
                 if mode[user_id] == "view":
                     mode[user_id] = "edit"
@@ -360,11 +359,11 @@ def user_manager():
 
             elif request.form.get(f"button_{user_id}") == "discharge":
                 user = {}
-                user["login"] = data[user_id]['login']
+                user["user_id"] = data[user_id]['user_id']
                 user["password"] = request.form[f"password_{user_id}"]
                 user["password2"] = request.form[f"password2_{user_id}"]
 
-                error = page_controller.chenge_password(user["login"], user["password"], user["password2"], current_user_id)
+                error = page_controller.chenge_password(user["user_id"], user["password"], user["password2"], current_user_id)
 
                 mode[user_id] = "view"
 
@@ -612,8 +611,7 @@ def main_page():
             password2 = request.form["password2"]
             current_password = request.form['current_password']
 
-            error = page_controller.chenge_password(user['login'], password, password2, current_password, user_id)
-
+            error = page_controller.chenge_password(user['user_id'], password, password2, current_password)
             if error is None:
                 error = "Пароль успешно изменен!"
                 error_type = "Successful"
@@ -692,6 +690,12 @@ def evolution_centre_dummy():
 @app.route('/education_list_courses', methods=['GET', 'POST'])
 @login_required
 def education_list_courses():
+    """
+    Просмотр списка курсов
+
+    Returns:
+
+    """
     page_controller = EducationListCoursesPageController()
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
@@ -708,7 +712,12 @@ def education_list_courses():
 @app.route('/education_course', methods=['GET', 'POST'])
 @login_required
 def education_course():
+    """
+    Просмотр списка модулей и уроков курса
 
+    Returns:
+
+    """
     page_controller = EducationCoursePageController()
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
@@ -720,9 +729,15 @@ def education_course():
     if course_id is not None:
         user = page_controller.get_user_view_for_course_by_id(user_id, course_id)
         course = page_controller.get_course_by_id(course_id)
-        data = page_controller.get_course_modules_list(course_id, user_id)
+        data = page_controller.get_course_modules_list(int(course_id), user_id)
     else:
         return redirect("education_list_courses")
+
+    if request.method == "POST":
+        # если пользователь переходит на страницу урока, то записываем данное действие в базу данных
+        if request.form.get("button"):
+            id_lesson = int(request.form['button'])
+            return page_controller.redirect_to_lesson(id_lesson, user_id)
 
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
@@ -732,103 +747,75 @@ def education_course():
 @app.route('/education_course/lesson', methods=['GET', 'POST'])
 @login_required
 def education_course_lesson():
+    """
+    Просмотр урока, сдача домашней работы и чат для ощения с кураторами
+
+    Returns:
+
+    """
     page_controller = EducationCourseLessonPageController()
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     endpoint = 'education_list_courses'
-
-    id_course = request.args.get("id_course")
-    id_module = int(request.args.get("id_module"))
-    id_lesson = int(request.args.get("id_lesson"))
-    id_video = request.args.get("id_video")
-    id_room_chat = request.args.get("id_chat")
     user_id = flask_login.current_user.user_id
 
-    user = page_controller.get_user_view_by_id_and_course_id(user_id, int(id_course))
-    course = page_controller.get_course_by_id(id_course)
-    user_list = None
+    try:
+        id_lesson = int(request.args.get("id_lesson"))
+    except (ValueError, TypeError) as e:
+        abort(404)
+
+    try:
+        id_video = int(request.args.get("id_video"))
+    except (ValueError, TypeError) as e:
+        return redirect('/education_course/lesson?id_lesson={id_lesson}&id_video=1'.format(id_lesson=id_lesson))
+
+    user = page_controller.get_user_view_by_id(user_id)
+    data = page_controller.get_lesson(user_id, id_lesson, id_video)
     homework = None
+    homework_chat = None
+    course = None
+    neighboring_lessons = None
+    error_message = None
+    status_code = None
+    if data is not None:
+        course = page_controller.get_course_by_id(data['id_course'])
 
-    # тут проверяем, что пользователь подписан на курс
-    #if user['role'] == 'user' and course['type'] == 'main' and int(id_module) > 1:
-    #    return redirect("/education_program_subscription")
-
-    data = page_controller.get_lesson(user_id, id_lesson, int(id_course), int(id_video), id_room_chat)
-    neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, int(id_course))
-
-    if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
-        if int(id_module) > 1 and user['role'] != 'superuser' and not data['available']:
-            return redirect('/education_program_subscription')
-
-
-    if data["lesson"].get("task") is not None:
-        if id_room_chat is None:
-            if user["role"] != "superuser":
-                if user['education_stream'].get("status") == "идет":
-                    id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module, _id_user=user_id,
-                                                                   _id_education_stream=user['education_stream']['id'])["id"]
-                    return redirect(
-                        f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
-                elif user['active_education_module'] == "active":
-                    id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module,
-                                                                   _id_user=user_id)['id']
-                    return redirect(
-                        f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
-                elif data['available']:
-                    id_room_chat = page_controller.room_chat_entry(id_lesson, id_course, _id_module=id_module,
-                                                                   _id_user=user_id)['id']
-                    return redirect(
-                        f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
-                elif not data['available']:
-                    return redirect(
-                        f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat=none")
-
-            return redirect(
-                f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat=none")
+        neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
+        if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
+            if data['id_module'] > 1 and user['role'] != 'superuser' and not data['available']:
+                return redirect('/education_program_subscription')
 
     if id_video is None:
         id_video = 1
 
-    if user["role"] == "superuser":
-        user_list = page_controller.get_user_list(user_id)
-
     if request.method == "POST":
+        # сохраняем новое сообщение
         if request.form.get("send"):
             text = request.form.get("text")
-            page_controller.add_message({"text": text}, id_room_chat, user_id)
+            error_message = page_controller.add_message({"text": text, "id_user": user_id}, id_lesson)
+            if error_message is not None:
+                status_code = 'Error'
 
+        # сохраняем домашнюю работу
         elif request.form.get("button") == "homework":
             files = request.files.getlist("files")
             text = request.form.get("text_homework")
-            page_controller.save_homework(files, id_room_chat, user_id, text, id_lesson, id_course)
-
-        # elif request.form.get("button") == "previous":
-        #     data = page_controller.get_lesson(user_id, id_lesson - 1, int(id_course), int(id_video))
-        #     return redirect(
-        #         f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson - 1}&id_module={data['id_module']}&id_video={id_video}&id_chat={id_room_chat}")
-        #
-        # elif request.form.get("button") == "previous":
-        #     return redirect(
-        #         f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson - 1}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
+            error_message = page_controller.save_homework(files, user_id, text, id_lesson)
+            if error_message is not None:
+                status_code = 'Error'
 
         else:
-            id_room_chat = page_controller.room_chat_entry(_id_lesson=id_lesson, _id_course=id_course,
-                                                           _id_user=user_id)["id"]
-            return redirect(
-                f"/education_course/lesson?id_course={id_course}&id_lesson={id_lesson}&id_module={id_module}&id_video={id_video}&id_chat={id_room_chat}")
+            return redirect(f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}")
 
-    if id_room_chat == "none":
-        room_chat = None
-    elif id_room_chat is not None:
-        room_chat = page_controller.room_chat_entry(_id_room_chat=id_room_chat)
-        homework = page_controller.get_homework(int(id_room_chat))
-    else:
-        room_chat = None
+    if data is not None:
+        if data['available']:
+            homework = page_controller.get_last_homework(id_lesson, user_id)
+            homework_chat = page_controller.get_homework_chat(id_lesson, user_id)
 
     return render_template('education_courses_lesson.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _homework=homework,
-                           _data=data, _room_chat=room_chat, _user_list=user_list, _user=user, _course_name=course['name'],
-                           _neighboring_lessons=neighboring_lessons)
+                           _data=data, _homework_chat=homework_chat, _user=user, _course=course, _error_message=error_message,
+                           _neighboring_lessons=neighboring_lessons, _status_code=status_code)
 
 
 @app.route('/education_home_tasks', methods=['GET', 'POST'])
@@ -846,50 +833,71 @@ def education_home_tasks():
     mpc = MainMenuPageController(user_id)
     endpoint = request.endpoint
 
-    data = page_controller.get_homeworks_list()
+    if not flask_login.current_user.is_admin():
+        return redirect("main_page")
 
+    data = page_controller.get_data(user_id)
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
 
-@app.route('/education_home_task_profile', methods=['GET', 'POST'])
+@app.route('/education_home_task_card', methods=['GET', 'POST'])
 @login_required
-def education_home_task_profile():
+def education_home_task_card():
     """
     Общение с пользователями, которые сдали домашнюю работу(только для кураторов)
     """
 
     user_id = flask_login.current_user.user_id
-    page_controller = EducationChatPageController()
+    page_controller = EducationHomeworkCardPageController()
     mpc = MainMenuPageController(user_id)
     endpoint = "education_home_tasks"
 
-    id_room_chat = request.args.get("id_chat")
-    id_homework = request.args.get("id_homework")
+    if not flask_login.current_user.is_admin():
+        return redirect("main_page")
 
-    room_chat = page_controller.room_chat_entry(id_room_chat, user_id)
-    homework = page_controller.get_homework(int(id_homework))
+    id_homework = request.args.get("id_homework")
+    id_homework_chat = request.args.get("id_chat")
+
+    data = None
+    homework = None
+    if id_homework is not None:
+        homework = page_controller.get_homework(int(id_homework))
+        if homework is not None:
+            data = page_controller.get_data_by_id_homework(int(id_homework))
+    elif id_homework_chat is not None:
+        data = page_controller.get_data_by_id_homework_chat(id_homework_chat, user_id)
+
     user = page_controller.get_user_by_id(user_id)
-    data = page_controller.get_data(int(id_homework))
-    error = None
-    error_type = None
+    homework_chat = None
+    error_message = None
+    status_code = None
 
     if request.method == "POST":
         if request.form.get("send"):
             text = request.form.get("text")
             if text is not None:
-                room_chat['message'].append(page_controller.add_message({"text": text}, id_room_chat, user_id))
+                error_message = page_controller.add_message({"text": text, "id_user": user_id}, data['module']['lesson']['id'],
+                                                      data['user']["id"])
+                if error_message is not None:
+                    status_code = "Error"
 
         elif request.form.get("button") == "answer":
             answer = request.form.get("answer")
+            if answer == "True":
+                homework, error_message, status_code = page_controller.homework_answer_accepted(homework["id"], user_id)
+            elif answer == "False":
+                homework, error_message, status_code = page_controller.homework_answer_no_accepted(homework["id"], user_id)
 
-            homework['homework_answer']["answer"], error, error_type = page_controller.change_homework_answer\
-                                                                        (answer, homework['homework_answer']["id"],
-                                                                         user_id)
-            homework['homework_answer']["status"] = "проверено"
+    if data is not None:
+        if id_homework is not None:
+            if homework is not None:
+                homework_chat = page_controller.get_homework_chat_by_id_homework(int(id_homework), user_id)
+        else:
+            homework_chat = page_controller.homework_chat_entry(int(id_homework_chat), user_id)
 
-    return render_template('education_home_task_profile.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _room_chat=room_chat,
-                           _homework=homework, _data=data, _error=error, _error_type=error_type)
+    return render_template('education_home_task_card.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _homework_chat=homework_chat,
+                           _homework=homework, _data=data, _error_message=error_message, _status_code=status_code)
 
 
 @app.route('/corrections', methods=['GET', 'POST'])

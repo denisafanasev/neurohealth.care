@@ -147,7 +147,7 @@
                                                 {% if item['is_active'] %}
                                                     <td style="display: flex">
                                                         <div class="col" style="position: center; margin-left: 27%">
-                                                            <a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}" onclick="document.getElementById('status_{{ item['user_id'] }}').style.display='block';">
+                                                            <a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}" onclick="document.getElementById('status_{{ item['user_id'] }}').style.display='block'; document.getElementById('extension_{{ item['user_id'] }}').style.display = 'none';">
                                                                 <span class="fas fa-circle chat-online"></span>
                                                             </a>
                                                         </div>
@@ -155,7 +155,7 @@
                                                 {% else %}
                                                     <td style="display: flex">
                                                         <div class="col" style="position: center; margin-left: 27%">
-                                                            <a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}" onclick="document.getElementById('status_{{ item['user_id'] }}').style.display='block';">
+                                                            <a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}" onclick="document.getElementById('status_{{ item['user_id'] }}').style.display='block'; document.getElementById('extension_{{ item['user_id'] }}').style.display = 'none';">
                                                                 <span class="fas fa-circle chat-offline"></span>
                                                             </a>
                                                         </div>

@@ -54,12 +54,34 @@
         return true;
     }
     </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var message = document.getElementById('message');
+        {% if _status_code == "Error" %}
+            document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+            document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";
+            message.style.display = "block";
+        {% endif %}
+        });
+    </script>
+    <script>
+        var modal_discharge = document.getElementById('discharge');
+        // When the user clicks anywhere outside the modal, close it
+        window.onclick = function (event) {
+            if (event.target === modal_extension) {
+                modal_discharge.style.display = "none";
+            }
+        }
+    </script>
     <style>
 
-    .word {
+    .word-icon {
         width: 35px;
     }
-    .pdf {
+    .pdf-icon {
+        width: 30px;
+    }
+    .img-icon {
         width: 30px;
     }
     .card-text{
@@ -90,11 +112,11 @@
     /* Добавить серый цвет фона при наведении курсора мыши */
     .pagination a:hover:not(.active) {background-color: #ddd;}
     </style>
-
+    {% if _data %}
     <h1 class="h3 mb-2">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/education_course?id_course={{ _data['id_course'] }}">Курс "{{ _course_name }}"</a></li>
+                <li class="breadcrumb-item"><a href="/education_course?id_course={{ _data['id_course'] }}">Курс "{{ _course['name'] }}"</a></li>
                 {% if _data['name'] != '' %}
                 <li class="breadcrumb-item">{{ _data['name'] }}</li>
                 {% endif %}
@@ -157,7 +179,7 @@
                                 </div>
                             </div>
                         {% endif %}
-
+                        <!-- Информация об обучении пользователя -->
                         <div class="card py-1 py-md-1 border">
                             <div class="card-body">
                                 <table class="table">
@@ -191,10 +213,10 @@
                                             </td>
                                             <td class="d-none d-md-table-cell">
                                                 <div class='badge {% if _homework is none %}
-                                                {% elif _homework['homework_answer']['answer'] == "Принято" %} bg-success
-                                                {% elif _homework['homework_answer']['status'] == "не проверено" %} bg-info
-                                                {% elif _homework['homework_answer']['answer'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>
-                                                    {% if _homework is none %}{% elif _homework['homework_answer']['status'] == "не проверено" %}Не проверено{% elif _homework is not none %}{{ _homework['homework_answer']['answer'] }}{% endif %}
+                                                {% elif _homework['status'] == "Принято" %} bg-success
+                                                {% elif _homework['status'] == "не проверено" %} bg-info
+                                                {% elif _homework['status'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>
+                                                    {% if _homework is none %}{% elif _homework['status'] == "не проверено" %}Не проверено{% elif _homework is not none %}{{ _homework['status'] }}{% endif %}
                                                 </div>
                                             </td>
                                         </tr>
@@ -203,7 +225,7 @@
                                 </table>
                             </div>
                         </div>
-
+                        <!--Дополнительные материалы урока  -->
                         {% if _data['lesson']['materials'] %}
                             <div class="card py-1 py-md-1 border">
                                 <div class="card-body">
@@ -221,8 +243,8 @@
                                             {% set name_file = i_materials.split('/')[-1].split('.')[0] %}
                                             <tr>
                                                 <td class="table-action">
-                                                    <img class="{% if type == 'doc' or type == "docx" %}word{% else %}pdf{% endif %}"
-                                                         src="{% if type == 'doc' or type == "docx" %}/static/img/icons/icon_word.png{% else %}/static/img/icons/icon_pdf.png{% endif %}">
+                                                    <img class="{% if type == 'doc' or type == "docx" %}word-icon{% elif type == 'jpg' %}img-icon{% else %}pdf-icon{% endif %}"
+                                                         src="{% if type == 'doc' or type == "docx" %}/static/img/icons/icon_word.png{% elif type == 'jpg' %}/static/img/icons/icon-img.png{% else %}/static/img/icons/icon_pdf.png{% endif %}">
                                                 </td>
                                                 <td style="word-break: break-all;">{{ name_file }}</td>
                                                 <td>
@@ -251,12 +273,13 @@
                 </div>
             </div>
         </div>
+        <!-- Задание по уроку -->
         <div class="card border">
         {% if _data['lesson']['task'] %}
             <div class="card-body">
                 <div class="row d-flex align-items-stretch bd-highlight">
 
-                    <div class="col-7 md-2 text-left bd-highlight">
+                    <div class="col-sm-7 md-2 text-left bd-highlight">
                         <div class="card py-1 py-md-1 border">
                             <div class="card-header">
                                 <h4 class="form-label">Домашние задание</h4>
@@ -264,12 +287,10 @@
                                 <p class="card-text">
                                     {{ _data['lesson']['task'] }}
                                 </p>
+                            <!-- Сдача домашней работы, если пользователя не superuser -->
                             {% if _user['role'] != "superuser" %}
-
-                                <!-- Если есть id комнаты чата, то значит есть и доступ к выполнению домашней работы -->
-
                                 {% if _data['available'] %}
-                                    {% if _homework is none or _homework.get('homework_answer')['status'] == "проверено" and _homework.get('homework_answer')['answer'] == "Не принято" %}
+                                    {% if _homework is none or _homework['status'] == "Не принято" %}
                                     <form id="homework" method="post" enctype="multipart/form-data">
                                         <div class="mb-2">
                                             <label class="form-label" for="hometask">Ответ</label>
@@ -289,6 +310,7 @@
                             {% endif %}
                             </div>
                         </div>
+                    <!-- Ответ пользователя на задание -->
                         {% if _homework is not none %}
                             <div class="card py-1 py-md-1 border">
                                 <div class="card-header">
@@ -307,13 +329,13 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                                {% for file in _homework['users_files_list'] %}
-                                                    <tr>
-                                                        <td>{{ file['name_file_unique'] }}</td>
-                                                        <td>{{ file['size'] }}</td>
-                                                        <td><a href="/download?name_file={{ file['name_file_unique'] }}&dataset=chat">Файл</a></td>
-                                                    </tr>
-                                                {% endfor %}
+                                            {% for file in _homework['users_files_list'] %}
+                                                <tr>
+                                                    <td>{{ file['name_file_unique'] }}</td>
+                                                    <td>{{ file['size'] }}</td>
+                                                    <td><a href="/download?name_file={{ file['name_file_unique'] }}&dataset=chat">Файл</a></td>
+                                                </tr>
+                                            {% endfor %}
                                         </tbody>
                                         </table>
                                     {% endif %}
@@ -324,7 +346,32 @@
                     </div>
 
                 <!-- Чат для общения с кураторами/преподавателями -->
-                    {% if request.args.get('id_chat') == "none" and _user['role'] == "superuser" %}
+                    {% if _user['role'] == "superuser" %}
+                        <div class="col card border">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col">
+                                        <h4>
+                                            Чат
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 text-left">
+                                        <div class="card py-1 py-md-1">
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <h2>Чат не доступен</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
+                    {% elif not _data['available']%}
                         <div class="col card border">
                             <div class="card-header">
                                 <div class="row">
@@ -387,15 +434,20 @@
             <div class="row d-flex align-items-stretch bd-highlight">
                 <div class="col d-grid gap-2 d-md-flex justify-content-md-start m-2">
                     {% if _neighboring_lessons['previous_lesson'] is not none %}
-                        <a class="btn btn-primary" href="/education_course/lesson?id_course={{ _neighboring_lessons['previous_lesson']['id_course'] }}&id_lesson={{ _neighboring_lessons['previous_lesson']['id'] }}&id_module={{ _neighboring_lessons['previous_lesson']['id_module'] }}&id_video=1">Предыдущий урок</a>
+                        <a class="btn btn-primary" href="/education_course/lesson?id_lesson={{ _neighboring_lessons['previous_lesson']['id'] }}&id_video=1">Предыдущий урок</a>
                     {% endif %}
                 </div>
                 <div class="col d-grid gap-2 d-md-flex justify-content-md-end m-2">
                     {% if _neighboring_lessons['next_lesson'] is not none %}
-                        <a class="btn btn-primary" href="/education_course/lesson?id_course={{ _neighboring_lessons['next_lesson']['id_course'] }}&id_lesson={{ _neighboring_lessons['next_lesson']['id'] }}&id_module={{ _neighboring_lessons['next_lesson']['id_module'] }}&id_video=1">Следующий урок</a>
+                        <a class="btn btn-primary" href="/education_course/lesson?id_lesson={{ _neighboring_lessons['next_lesson']['id'] }}&id_video=1">Следующий урок</a>
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
+    {% else %}
+        <div class="text-center">
+            <h2>Данная страница недоступна из-за отсутствия нужного файла.</h2>
+        </div>
+    {% endif %}
 {% endblock %}
