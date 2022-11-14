@@ -59,7 +59,7 @@ class HomeworkCardService():
         if user is None:
             raise HomeworkCardServiceException('Не удалось сохранить сообщение.')
 
-        lesson = lesson_manager.get_lesson(_id_lesson)
+        lesson = lesson_manager.get_lesson_by_id(_id_lesson)
         if lesson is None:
             raise HomeworkCardServiceException('Не удалось сохранить сообщение.')
 
@@ -106,7 +106,7 @@ class HomeworkCardService():
         homework = homework_manager.homework_answer_accepted(_id_homework)
         current_user = user_manager.get_user_by_id(_user_id)
         user = user_manager.get_user_by_id(homework.id_user)
-        lesson = lesson_manager.get_lesson(homework.id_lesson)
+        lesson = lesson_manager.get_lesson_by_id(homework.id_lesson)
 
         action_manager.add_notifications(user.login, "принял", lesson.name, "homework_manager", current_user.login)
 
@@ -132,7 +132,7 @@ class HomeworkCardService():
         homework = homework_manager.homework_answer_no_accepted(_id_homework)
         current_user = user_manager.get_user_by_id(_user_id)
         user = user_manager.get_user_by_id(homework.id_user)
-        lesson = lesson_manager.get_lesson(homework.id_lesson)
+        lesson = lesson_manager.get_lesson_by_id(homework.id_lesson)
 
         action_manager.add_notifications(user.login, "не принял", lesson.name, "homework_manager", current_user.login)
 
@@ -153,7 +153,7 @@ class HomeworkCardService():
 
         homework = homework_manager.get_homework_by_id(_id_homework)
         if homework is not None:
-            homework.lesson = lesson_manager.get_lesson(homework.id_lesson)
+            homework.lesson = lesson_manager.get_lesson_by_id(homework.id_lesson)
 
             return homework
 
@@ -188,7 +188,7 @@ class HomeworkCardService():
         lesson_manager = EducationLessonManager()
         module_manager = EducationModuleManager()
 
-        lesson = lesson_manager.get_lesson(_id_lesson)
+        lesson = lesson_manager.get_lesson_by_id(_id_lesson)
         if lesson is None:
             raise HomeworkCardServiceException('Данный урок не найден.')
         module = module_manager.get_module_by_id(lesson.id_module)

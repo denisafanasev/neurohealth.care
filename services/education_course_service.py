@@ -238,7 +238,7 @@ class EducationCourseService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        lesson = lesson_manager.get_lesson(_id_lesson)
+        lesson = lesson_manager.get_lesson_by_id(_id_lesson)
         module = module_manager.get_module_by_id(lesson.id_module)
         module.lessons = lesson
         user = user_manager.get_user_by_id(_id_user)
