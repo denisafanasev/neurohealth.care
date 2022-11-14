@@ -83,6 +83,8 @@ SETTINGS_MENU = [
     {"name": "Справочник диапазонов возрастов", "endpoint": "age_range_list"},
 ]
 
+AMOUNT_EDUCATION_STREAMS = 5
+
 
 def ga_id() -> str:
     """
