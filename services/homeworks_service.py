@@ -47,7 +47,7 @@ class HomeworksService():
         module_manager = EducationModuleManager()
         lesson_manager = EducationLessonManager()
 
-        lesson = lesson_manager.get_lesson(_id_lesson)
+        lesson = lesson_manager.get_lesson_by_id(_id_lesson)
         module = module_manager.get_module_by_id(lesson.id_module)
 
         return course_manager.get_course_by_id(module.id_course)
@@ -66,7 +66,7 @@ class HomeworksService():
         lesson_manager = EducationLessonManager()
         module_manager = EducationModuleManager()
 
-        lesson = lesson_manager.get_lesson(_id_lesson)
+        lesson = lesson_manager.get_lesson_by_id(_id_lesson)
         module = module_manager.get_module_by_id(lesson.id_module)
         module.lessons = lesson
 
@@ -113,7 +113,7 @@ class HomeworksService():
         if homework_chat is not None:
             homework_chat.unread_message_amount = message_manager.get_unread_messages_amount(homework_chat.id, _id_current_user)
 
-            return homework_chat
+        return homework_chat
 
     def get_courses_list(self):
         """
@@ -144,7 +144,7 @@ class HomeworksService():
 
             return courses
 
-    def get_users_list_in_education_streams(self):
+    def get_users_list_in_education_streams(self, _id_education_stream):
         """
         Возвращает список пользователей, которые находятся в обучающем потоке
 
@@ -154,20 +154,20 @@ class HomeworksService():
         user_manager = UserManager()
 
         users_login_list = []
-        with open(config.DATA_FOLDER + 'course_1/s5_users.txt') as f:
+        with open(config.DATA_FOLDER + f'course_1/s{_id_education_stream}_users.txt') as f:
             users_login_list.extend(f.read().splitlines())
 
-        with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
-            users_login_list.extend(f.read().splitlines())
-
-        with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
-            users_login_list.extend(f.read().splitlines())
-
-        with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
-            users_login_list.extend(f.read().splitlines())
-
-        with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
-            users_login_list.extend(f.read().splitlines())
+        # with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
+        #     users_login_list.extend(f.read().splitlines())
+        #
+        # with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
+        #     users_login_list.extend(f.read().splitlines())
+        #
+        # with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
+        #     users_login_list.extend(f.read().splitlines())
+        #
+        # with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
+        #     users_login_list.extend(f.read().splitlines())
 
         users_list = []
         for user_login in users_login_list:
@@ -179,7 +179,7 @@ class HomeworksService():
 
     def get_homeworks_list_by_id_user(self, _id_lesson, _id_user):
         """
-        Возвращает список домашних работ по ID пользователя и урока
+        Возвращает список проверенных домашних работ по ID пользователя и урока
 
         Args:
             _id_lesson(Integer): ID урока
@@ -191,5 +191,81 @@ class HomeworksService():
         homework_manager = HomeworkManager()
 
         homework_list = homework_manager.get_homeworks_list_by_id_lesson(_id_lesson, _id_user)
+        if homework_list:
+            return homework_list
 
-        return homework_list
+    def get_homeworks_list_by_id_user_verified(self, _id_lesson, _id_user):
+        """
+        Возвращает список проверенных домашних работ по ID пользователя и урока
+
+        Args:
+            _id_lesson(Integer): ID урока
+            _id_user(Integer): ID пользователя
+
+        Returns:
+            List: список домашних работ
+        """
+        homework_manager = HomeworkManager()
+
+        homework_list = homework_manager.get_homeworks_list_by_id_lesson(_id_lesson, _id_user)
+        if homework_list:
+            homeworks = [homework for homework in homework_list if homework.status is not None]
+            return homeworks
+
+    def get_homeworks_list_by_id_user_no_verified(self, _id_lesson, _id_user):
+        """
+        Возвращает список не проверенных домашних работ по ID пользователя и урока
+
+        Args:
+            _id_lesson(Integer): ID урока
+            _id_user(Integer): ID пользователя
+
+        Returns:
+            List: список домашних работ
+        """
+        homework_manager = HomeworkManager()
+
+        homework_list = homework_manager.get_homeworks_list_by_id_lesson_no_verified(_id_lesson, _id_user)
+        if homework_list:
+            return homework_list
+
+    def get_lessons(self):
+        """
+        Возвращает данные всех уроков, которые есть в базе данных
+
+        Return:
+            List(Lesson): список уроков
+        """
+        lesson_manager = EducationLessonManager()
+
+        return lesson_manager.get_lessons()
+
+    def get_module_by_id(self, _id):
+        """
+        Возвращает данные модуля по ID
+
+        Args:
+            _id(Int): ID модуля
+
+        Return:
+            Module: модуль
+        """
+
+        module_manager = EducationModuleManager()
+
+        return module_manager.get_module_by_id(_id)
+
+    def get_course_by_id(self, _id):
+        """
+        Возвращает данные курса по ID
+
+        Args:
+            _id(Int): ID курса
+
+        Return:
+            Course: курс
+        """
+
+        course_manager = EducationCourseManager()
+
+        return course_manager.get_course_by_id(_id)

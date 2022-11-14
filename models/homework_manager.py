@@ -77,6 +77,27 @@ class HomeworkManager():
 
         return homework_list
 
+    def get_homeworks_list_by_id_lesson_no_verified(self, _id_lesson, _id_user):
+        """
+        Возвращает список домашних работ по ID урока и ID пользователя
+
+        Args:
+            _id_lesson(Int): ID урока
+            _id_user(Int): ID пользователя
+
+        Return:
+            List: список домашних работ
+        """
+
+        data_store = DataStore("homeworks")
+
+        homeworks_list = data_store.get_rows({"id_lesson": _id_lesson, "id_user": _id_user, 'status': None})
+        homeworks = []
+        for homework in homeworks_list:
+            homeworks.append(self.homework_row_to_homework(homework))
+
+        return homeworks
+
     def get_homeworks_list_by_id_lesson(self, _id_lesson, _id_user):
         """
         Возвращает список домашних работ по ID урока и ID пользователя
@@ -93,11 +114,10 @@ class HomeworkManager():
 
         homeworks_list = data_store.get_rows({"id_lesson": _id_lesson, "id_user": _id_user})
         homeworks = []
-
         for homework in homeworks_list:
             homeworks.append(self.homework_row_to_homework(homework))
 
-        if homeworks != []:
+        if homeworks:
             return homeworks
 
     def get_homework_by_id(self, _id):

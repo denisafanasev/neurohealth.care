@@ -101,8 +101,7 @@ class MessageManager():
         messages_data_list = data_store.get_rows({"read": False, "id_homework_chat": _id_homework_chat})
         amount = 0
         for message_data in messages_data_list:
-            message = self.message_row_to_message(message_data)
-            if message.id_user != _id_user:
+            if message_data['id_user'] != _id_user:
                 amount += 1
 
         return amount

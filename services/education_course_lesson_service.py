@@ -38,7 +38,7 @@ class EducationCourseLessonService():
         module_manager = EducationModuleManager()
         lesson_manager = EducationLessonManager()
 
-        lesson = lesson_manager.get_lesson(_lesson_id, _id_video)
+        lesson = lesson_manager.get_lesson_by_id(_lesson_id, _id_video)
         if lesson is not None:
             module = module_manager.get_module_by_id(lesson.id_module)
             module.lessons = lesson
@@ -87,7 +87,7 @@ class EducationCourseLessonService():
         if user is None:
             raise EducationCourseLessonServiceException('Не удалось сохранить сообщение.')
 
-        lesson = lesson_manager.get_lesson(_id_lesson)
+        lesson = lesson_manager.get_lesson_by_id(_id_lesson)
         if lesson is None:
             raise EducationCourseLessonServiceException('Не удалось сохранить сообщение.')
 
@@ -155,7 +155,7 @@ class EducationCourseLessonService():
         if user is None:
             raise HomeworkManagerException('Не удалось сохранить домашнюю работу.')
 
-        lesson = lesson_manager.get_lesson(_id_lesson)
+        lesson = lesson_manager.get_lesson_by_id(_id_lesson)
         if lesson is None:
             raise HomeworkManagerException('Не удалось сохранить домашнюю работу.')
 

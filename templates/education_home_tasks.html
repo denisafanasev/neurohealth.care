@@ -85,6 +85,22 @@
                 <div class="p-2 bd-highlight">
                     <div class="card d-flex align-self-baseline">
                         <div class="card-header">
+                            <div class="row">
+                                <label for="education_stream">Выберите поток:</label>
+                                <div class="col-sm-1">
+                                    <select class="form-select" onchange="this.form.submit();" name="education_stream" id="education_stream">
+                                        {% for education_stream in range(1, _amount_education_streams + 1) %}
+                                            <option {% if education_stream == _id_education_stream %}selected{% endif %} value="{{ education_stream }}">{{ education_stream }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm">
+                                    <a class="btn btn-primary pb-1" href="/education_home_tasks?data_option=chat_without_homework">Чаты без домашних работ</a>
+                                    <a class="btn btn-primary pb-1" href="/education_home_tasks?data_option=homework_verified">Проверенные домашние работы</a>
+                                    <a class="btn btn-primary pb-1" href="/education_home_tasks">Не проверенные домашние работы</a>
+                                </div>
+                            </div>
+                        <h3>Поток: {{ _id_education_stream }}</h3>
                             <table id="datatables-homeworks" class="table dataTable no-footer nowrap"
                                    aria-describedby="datatables-buttons_info" style="width: 100%">
                                 <thead>
@@ -137,14 +153,18 @@
                                                 </td>
                                                 {% if item['homework_chat'] %}
                                                     {% if item['homework_chat']['unread_message_amount'] != 0 %}
-                                                        <td style="display: revert">
-                                                            <div class="badge bg-danger float-end" style="text-align: left">
-                                                                {{ item['homework_chat']['unread_message_amount'] }}
-                                                            </div>
-                                                        </td>
+                                                        {% if item['homework_chat']['unread_message_amount']%}
+                                                            <td style="display: revert">
+                                                                <div class="badge bg-danger float-end" style="text-align: left">
+                                                                    {{ item['homework_chat']['unread_message_amount'] }}
+                                                                </div>
+                                                            </td>
                                                         {% else %}
-                                                        <td></td>
-                                                    {% endif %}
+                                                            <td></td>
+                                                        {% endif %}
+                                                    {% else %}
+                                                    <td></td>
+                                                {% endif %}
                                                 {% else %}
                                                     <td></td>
                                                 {% endif %}

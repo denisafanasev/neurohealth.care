@@ -836,9 +836,24 @@ def education_home_tasks():
     if not flask_login.current_user.is_admin():
         return redirect("main_page")
 
-    data = page_controller.get_data(user_id)
+    data_option = request.args.get('data_option')
+    id_education_stream = 5
+    if request.method == "POST":
+        if request.form.get('education_stream'):
+            id_education_stream = int(request.form['education_stream'])
+
+    data = None
+    if data_option is None:
+        data = page_controller.get_data(user_id, id_education_stream)
+    elif data_option == 'chat_without_homework':
+        data = page_controller.get_chat_without_homework(user_id, id_education_stream)
+    elif data_option == 'homework_verified':
+        data = page_controller.get_homework_verified(user_id, id_education_stream)
+
+    amount_education_streams = config.AMOUNT_EDUCATION_STREAMS
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data)
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
+                           _amount_education_streams=amount_education_streams, _id_education_stream=id_education_stream)
 
 @app.route('/education_home_task_card', methods=['GET', 'POST'])
 @login_required

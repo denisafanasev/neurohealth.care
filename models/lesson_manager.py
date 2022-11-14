@@ -30,9 +30,9 @@ class EducationLessonManager():
 
         return lesson
 
-    def get_lesson(self, _id, _id_video=1):
+    def get_lesson_by_id(self, _id, _id_video=1):
         """
-        Возвращает данные урока
+        Возвращает данные урока по ID, а также данные видео по ID
 
         Args:
             _id(Integer): ID урока
@@ -110,5 +110,19 @@ class EducationLessonManager():
         lessons_list = []
         for lesson_data in lessons_data_list:
             lessons_list.append(self.lesson_row_to_lesson(lesson_data))
+
+        return lessons_list
+
+    def get_lessons(self):
+        """
+        Возвращает все уроки, которые есть в базе данных
+
+        Return:
+            lesson_list(List): список уроков
+        """
+        data_store = DataStore('lessons')
+
+        lessons_data_list = data_store.get_rows()
+        lessons_list = [self.lesson_row_to_lesson(lesson) for lesson in lessons_data_list if lesson['task'] != '']
 
         return lessons_list
