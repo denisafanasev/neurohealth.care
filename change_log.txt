@@ -7,6 +7,9 @@
 - Если нужно посмотреть уже уже проверенные домашние работы, то нужно нажать на кнопку "Проверенные домашние работы" и после выбрать поток, в котором находится пользователь
 - Если нужно заново посмотреть не проверенные домашние задания, то нужно нажать на кнопку "Не проверенные домашние работы" и после выбрать поток, в котором находится пользователь
 
+Исправлены ошибки
+- Исправлена ошибка проверки доступа к модулям для пользователей с пробелом в логине
+
 General changes
 
 - When you go to the "Checking homework" page, only unchecked homework of the 5th stream will be transferred.
@@ -14,6 +17,9 @@ General changes
 - If the user wrote in the chat, but did not turn in the homework, then in this chat you can see if the "Chats without homework" option is suitable and after selecting the thread in which the user is located
 - If you need to see already checked homework, then you need to set the "Checked homework" parameter and after selecting the stream in which the user is
 - If you want to re-view unverified homework, then you must set the "Unverified homework" option after selecting the stream in which the user is located.
+
+Bugs fixed
+- Fixed module access check error for users with a space in the login
 
 [1.2.2]
 Общие изменения
