@@ -1,5 +1,17 @@
-[1.2.4]
+[1.2.5]
+Общие изменения
+- Добавлено название для столбца с количеством непрочитанными сообщениями "Непрочитанные сообщения"
 
+Исправлены ошибки
+- Исправлена ошибка при переходе на страницу первого урока дополнительного курса
+
+General changes
+- Added name for the column with the number of unread messages "Unread messages"
+
+Bugs fixed
+- Fixed a bug when going to the page of the first lesson of the additional course
+
+[1.2.4]
 Общие изменения
 - Надпись "Не проверено" в столбце "Ответ" обведена тем же цветом, что и в столбце "Статус"
 
