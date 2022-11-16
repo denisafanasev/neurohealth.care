@@ -255,10 +255,14 @@ class EducationCourseLessonService():
 
         # если это обычный пользователь, посмотрим что за курс и модуль
         course = course_manager.get_course_by_id(_course_id)
+        course_modules = module_manager.get_course_modules_list(_course_id)
+        first_module = course_modules[0]
 
         if course.type == 'additional':
             # если дополнительный курс, то проверяем доступность модуля для пользователя по налицию у него общей подписки
             if user.education_module_expiration_date >= datetime.now():
+                return True
+            elif first_module.id == _module_id:
                 return True
             else:
                 return False
@@ -266,8 +270,6 @@ class EducationCourseLessonService():
             # если это основной курс, то проверяем доступность модуля по наличию подписки на обучающий курс
 
             # TODO: это надо перенести в целевую модель проверки вхождения пользователя в обущающий поток
-
-            course_modules = module_manager.get_course_modules_list(_course_id)
 
             # проверяем, есть ли пользователь в списках участников пятого потока
             for i in range(1, min(len(course_modules) + 1, 5)):
