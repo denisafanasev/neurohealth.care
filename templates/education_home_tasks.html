@@ -145,7 +145,7 @@
                                                         {% if homework['status'] == "Не проверено" %}{{ homework['status'] }}{% else %}Проверено{% endif %}
                                                     </div>
                                                 </td>
-                                                <td><div class='badge {% if homework['status'] == "Принято" %} bg-success {% elif homework['status'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>{{ homework['status'] }}</div></td>
+                                                <td><div class='badge {% if homework['status'] == "Принято" %} bg-success {% elif homework['status'] == "Не принято" %} bg-danger {% elif homework['status'] == "Не проверено" %} bg-info {% endif %} bg-gradient text-light'>{{ homework['status'] }}</div></td>
                                                 <td style="text-align: center">
                                                     <a href="/education_home_task_card?id_homework={{ homework['id'] }}" >
                                                         Перейти
