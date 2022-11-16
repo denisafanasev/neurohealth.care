@@ -1,3 +1,17 @@
+[1.2.4]
+
+Общие изменения
+- Надпись "Не проверено" в столбце "Ответ" обведена тем же цветом, что и в столбце "Статус"
+
+Исправлены ошибки
+- Исправлена ошибка проверки доступа к модулям для пользователей с пробелом в логине
+
+General changes
+- "Not verified" in the "Response" column circled in the same color as in the "Status" column
+
+Bugs fixed
+- Fixed module access check error for users with a space in the login
+
 [1.2.3]
 Общие изменения
 
