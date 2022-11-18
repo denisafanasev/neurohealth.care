@@ -182,7 +182,7 @@ class EducationCourseLessonPageController():
         try:
             lesson_service.save_homework(_files_list, _user_id, _text, _id_lesson)
         except HomeworkManagerException as error:
-            return error
+            return str(error)
 
     def get_last_homework(self, _id_lesson, _user_id):
         """

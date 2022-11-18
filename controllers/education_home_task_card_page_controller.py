@@ -106,25 +106,10 @@ class EducationHomeworkCardPageController():
 
         homework_service = HomeworkCardService()
 
-        homework = homework_service.homework_answer_accepted(_id_homework, _user_id)
+        homework_service.homework_answer_accepted(_id_homework, _user_id)
         message = "Домашняя работа принята"
-        if homework is not None:
-            if homework.status is None:
-                homework.status = "не проверено"
-            elif homework.status:
-                homework.status = "Принято"
-            elif not homework.status:
-                homework.status = "Не принято"
 
-        homework_view = {
-            "id": homework.id,
-            "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
-            "users_files_list": homework.users_files_list,
-            "status": homework.status,
-            "text": Markup(homework.text)
-        }
-
-        return homework_view, message, "Successful"
+        return message, "Successful"
 
     def homework_answer_no_accepted(self, _id_homework, _user_id):
         """
@@ -142,25 +127,10 @@ class EducationHomeworkCardPageController():
 
         homework_service = HomeworkCardService()
 
-        homework = homework_service.homework_answer_no_accepted(_id_homework, _user_id)
+        homework_service.homework_answer_no_accepted(_id_homework, _user_id)
         message = "Домашняя работа не принята"
-        if homework is not None:
-            if homework.status is None:
-                homework.status = "не проверено"
-            elif homework.status:
-                homework.status = "Принято"
-            elif not homework.status:
-                homework.status = "Не принято"
 
-        homework_view = {
-            "id": homework.id,
-            "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
-            "users_files_list": homework.users_files_list,
-            "status": homework.status,
-            "text": Markup(homework.text)
-        }
-
-        return homework_view, message, "Successful"
+        return message, "Successful"
 
     def get_homework(self, _id_homework):
         """

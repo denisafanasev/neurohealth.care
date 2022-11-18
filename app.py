@@ -1,6 +1,6 @@
 import logging
 from logging.handlers import RotatingFileHandler
-from flask import Flask, request, redirect, render_template, url_for, send_file, abort
+from flask import Flask, request, redirect, render_template, send_file, abort, session
 from flask_login import LoginManager, login_required, login_user, logout_user
 import flask_login
 
@@ -775,8 +775,14 @@ def education_course_lesson():
     homework_chat = None
     course = None
     neighboring_lessons = None
-    error_message = None
-    status_code = None
+    error_message = session.get('error_message')
+    status_code = session.get('status_code')
+    if session.get('error_message') is not None:
+        session.pop('error_message')
+
+    if session.get('status_code') is not None:
+        session.pop('status_code')
+
     if data is not None:
         course = page_controller.get_course_by_id(data['id_course'])
 
@@ -792,20 +798,19 @@ def education_course_lesson():
         # сохраняем новое сообщение
         if request.form.get("send"):
             text = request.form.get("text")
-            error_message = page_controller.add_message({"text": text, "id_user": user_id}, id_lesson)
-            if error_message is not None:
-                status_code = 'Error'
+            session['error_message'] = page_controller.add_message({"text": text, "id_user": user_id}, id_lesson)
+            if session.get('error_message') is not None:
+                session['status_code'] = 'Error'
 
         # сохраняем домашнюю работу
         elif request.form.get("button") == "homework":
             files = request.files.getlist("files")
             text = request.form.get("text_homework")
-            error_message = page_controller.save_homework(files, user_id, text, id_lesson)
-            if error_message is not None:
-                status_code = 'Error'
+            session['error_message'] = page_controller.save_homework(files, user_id, text, id_lesson)
+            if session.get('error_message') is not None:
+                session['status_code'] = 'Error'
 
-        else:
-            return redirect(f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}")
+        return redirect(f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}")
 
     if data is not None:
         if data['available']:
@@ -884,24 +889,34 @@ def education_home_task_card():
 
     user = page_controller.get_user_by_id(user_id)
     homework_chat = None
-    error_message = None
-    status_code = None
+    error_message = session.get('error_message')
+    status_code = session.get('status_code')
+    if session.get('error_message') is not None:
+        session.pop('error_message')
+
+    if session.get('status_code') is not None:
+        session.pop('status_code')
 
     if request.method == "POST":
         if request.form.get("send"):
             text = request.form.get("text")
             if text is not None:
-                error_message = page_controller.add_message({"text": text, "id_user": user_id}, data['module']['lesson']['id'],
+                session['error_message'] = page_controller.add_message({"text": text, "id_user": user_id}, data['module']['lesson']['id'],
                                                       data['user']["id"])
-                if error_message is not None:
-                    status_code = "Error"
+                if session['error_message'] is not None:
+                    session['status_code'] = "Error"
 
         elif request.form.get("button") == "answer":
             answer = request.form.get("answer")
             if answer == "True":
-                homework, error_message, status_code = page_controller.homework_answer_accepted(homework["id"], user_id)
+                session['error_message'], session['status_code'] = page_controller.homework_answer_accepted(homework["id"], user_id)
             elif answer == "False":
-                homework, error_message, status_code = page_controller.homework_answer_no_accepted(homework["id"], user_id)
+                session['error_message'], session['status_code'] = page_controller.homework_answer_no_accepted(homework["id"], user_id)
+
+        if homework is None:
+            return redirect(f'/education_home_task_card?id_chat={id_homework_chat}')
+        else:
+            return redirect(f'/education_home_task_card?id_homework={id_homework}')
 
     if data is not None:
         if id_homework is not None:
