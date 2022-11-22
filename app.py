@@ -1463,8 +1463,8 @@ def education_stream_card():
             education_stream_edit = {
                 "name": request.form.get("name"),
                 "id_course": int(request.form.get("course")),
-                "curators_list": [i['login'] for i in curators_list if request.form.get(i['login']) is not None],
-                "students_list": [i['login'] for i in students_list if request.form.get(i['login']) is not None],
+                "curators_list": [i['id'] for i in curators_list if request.form.get(i['login']) is not None],
+                "students_list": [i['id'] for i in students_list if request.form.get(i['login']) is not None],
                 "teacher": request.form.get("teacher"),
                 "date_start": request.form.get("date_start"),
                 "date_end": request.form.get("date_end")

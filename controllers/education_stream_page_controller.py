@@ -21,6 +21,7 @@ class EducationStreamPageController():
 
         for i_student in students:
             student = {
+                'id': i_student.user_id,
                 'login': i_student.login,
                 'name': i_student.name,
             }
@@ -44,6 +45,7 @@ class EducationStreamPageController():
 
         for i_curator in curators:
             curator = {
+                'id': i_curator.user_id,
                 'login': i_curator.login,
                 'name': i_curator.name,
             }
@@ -68,8 +70,15 @@ class EducationStreamPageController():
         for i_course in courses:
             course = {
                 'id': i_course.id,
-                "name": i_course.name
+                "name": i_course.name,
+                'modules': []
             }
+            for module in i_course.modules:
+                course['modules'].append({
+                    "id": module.id,
+                    'name': module.name,
+                    'id_course': module.id_course
+                })
 
             courses_list.append(course)
 
@@ -85,7 +94,10 @@ class EducationStreamPageController():
 
         education_stream_service = EducationStreamService()
 
-        education_stream = education_stream_service.get_education_stream(_id)
+        if _id is not None:
+            education_stream = education_stream_service.get_education_stream(_id)
+        else:
+            education_stream = None
 
         if education_stream is not None:
 

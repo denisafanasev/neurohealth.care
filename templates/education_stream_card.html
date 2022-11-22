@@ -36,11 +36,11 @@
 
         flatpickr(date_start, {
             dateFormat: "d/m/Y",
-            defaultDate: "{{ _education_stream['date_start'] }}"
+            wrap: true
         });
         flatpickr(date_end, {
             dateFormat: 'd/m/Y',
-            defaultDate: "{{ _education_stream['date_end'] }}"
+            wrap: true
         });
 
     })
@@ -186,6 +186,10 @@
             }
         }
 
+    .choices__list, .choices__list--dropdown, .is-active{
+        z-index: 37!important;
+    }
+
     </style>
 
 
@@ -206,13 +210,13 @@
                             <div class="mb-2">
                                 <label class="form-label"><strong>Название потока</strong></label>
                                 <input id="name_stream" name="name" class="form-control" {% if _mode=="view" %} disabled {% endif %} {% if
-                                    _mode=='new' %}placeholder="Введите название потока.." {% else %} value="{{ _education_stream['name'] }}" {%
+                                    _mode=='new' %} placeholder="Введите название потока.." {% else %} value="{{ _education_stream['name'] }}" {%
                                     endif %}>
                             </div>
                             
                             <div class="mb-2">
                                 <label class="form-label"><strong>Курс</strong></label>
-                                <select id="course" name="course" class="form-select" {% if _mode=='view' %} disabled {% endif %}>
+                                <select id="course" name="course" class="form-select" {% if _mode=='view' %} disabled {% endif %} style="z-index: auto">
                                     <option selected disabled value="placeholder">Выберите курс..</option>
                                     {% for course in _courses_list %}
                                     <option {% if course['id']==_education_stream['course']['id'] %} selected {% endif %}
@@ -233,23 +237,23 @@
                             </div>
 
                             <div class="mb-2">
-                                <div class="" style="display: inline-grid;float: left">
+                                <div class="col" style="display: inline-grid;float: left">
                                     <label class="form-label"><strong>Дата старта</strong></label>
                             
-                                    <div class="input-group mb-3">
-                                        <input {% if _mode=='view' %} disabled {% endif %} id="date_start" name="date_start" type="date"
-                                            class="form-control" {% if _mode=="view" %}value="{{ _education_stream['date_start'] }}" {% endif %}>
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"> </button>
+                                    <div id="date_start" class="flatpickr input-group mb-3">
+                                        <input {% if _mode=='view' %} disabled {% endif %} name="date_start" type="text"
+                                            class="form-control" value="{{ _education_stream['date_start'] }}" data-input>
+                                        <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle> </a>
                                     </div>
 
                                 </div>
-                                <div style="display:grid; justify-content: right">
+                                <div class="col" style="display:grid; justify-content: right">
                                     <label class="form-label"><strong>Дата окончания</strong></label>
                             
-                                    <div class="input-group mb-3">
-                                        <input {% if _mode=='view' %} disabled {% endif %} id="date_end" name="date_end" type="date"
-                                            class="form-control" {% if _mode=="view" %}value="{{ _education_stream['date_end'] }}" {% endif %}>
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"> </button>
+                                    <div id="date_end" class="flatpickr input-group mb-3">
+                                        <input {% if _mode=='view' %} disabled {% endif %} name="date_end" type="text"
+                                            class="form-control" value="{{ _education_stream['date_end'] }}" data-input>
+                                        <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle> </a>
                                     </div>
                                 </div>
                             </div>
@@ -279,7 +283,7 @@
                                         <tr>
                                             <td><input {% if _mode=="view" %} disabled {% endif %} {% if curator['login'] in
                                                     _education_stream['curators_list'] %}checked {% endif %} name="{{ curator['login'] }}"
-                                                    type="checkbox" value="{{ curator['login'] }}"></td>
+                                                    type="checkbox" value="{{ curator['id'] }}"></td>
                                             <td>{{ curator['login'] }}</td>
                                         </tr>
                                         {% endif %}
@@ -309,7 +313,18 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-            
+                                    {% for course in _courses_list %}
+                                        {% for module in course['modules'] %}
+                                            <tr>
+                                                <td>
+                                                    {{ module['id'] }}
+                                                </td>
+                                                <td>
+                                                    {{ module['name'] }}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endfor %}
                                     </tbody>
                                 </table>
                             </div>
@@ -341,7 +356,7 @@
                                             <td>
                                                 <input {% if _mode=="view" %} disabled {% endif %} {% if student['login'] in
                                                     _education_stream['students_list'] %}checked {% endif %} name="{{ student['login'] }}"
-                                                    type="checkbox" value="{{ student['login'] }}">
+                                                    type="checkbox" value="{{ student['id'] }}">
                                             </td>
                                             <td>{{ student['login'] }}</td>
                                         </tr>

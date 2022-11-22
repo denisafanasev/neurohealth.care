@@ -1,6 +1,7 @@
 from models.education_stream_manager import EducationStreamManager
 from models.user_manager import UserManager
 from models.course_manager import EducationCourseManager
+from models.module_manager import EducationModuleManager
 
 class EducationStreamService():
     """
@@ -75,9 +76,17 @@ class EducationStreamService():
             (List): список курсов
         """
 
-        course_service = EducationCourseManager()
+        course_manager = EducationCourseManager()
+        module_manager = EducationModuleManager()
 
-        return course_service.get_courses()
+        courses_list = course_manager.get_courses()
+        main_courses_list = [course for course in courses_list if course.type == 'main']
+        courses = []
+        for course in main_courses_list:
+            course.modules = module_manager.get_course_modules_list(course.id)
+            courses.append(course)
+
+        return courses
 
     def get_education_stream(self, _id):
         """
