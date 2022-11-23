@@ -1,6 +1,8 @@
 from models.education_stream_manager import EducationStreamManager
 from models.user_manager import UserManager
 from models.course_manager import EducationCourseManager
+from models.module_manager import EducationModuleManager
+from models.timetable_manager import TimetableManager
 
 class EducationStreamService():
     """
@@ -75,9 +77,17 @@ class EducationStreamService():
             (List): список курсов
         """
 
-        course_service = EducationCourseManager()
+        course_manager = EducationCourseManager()
+        module_manager = EducationModuleManager()
 
-        return course_service.get_courses()
+        courses_list = course_manager.get_courses()
+        main_courses_list = [course for course in courses_list if course.type == 'main']
+        courses = []
+        for course in main_courses_list:
+            course.modules = module_manager.get_course_modules_list(course.id)
+            courses.append(course)
+
+        return courses
 
     def get_education_stream(self, _id):
         """
@@ -97,20 +107,24 @@ class EducationStreamService():
 
         return education_stream
 
-    def create_education_stream(self, _education_stream):
+    def create_education_stream(self, _education_stream, _timetables_list):
         """
         Создает обучающий поток
 
         Args:
             _education_stream(Dict): обучающий поток
+            _timetables_list(List): расписание открытия модулей для обучающего потока
 
         Returns:
             id(Int): идентификатор обучающего потока
         """
         education_stream_manager = EducationStreamManager()
+        timetable_manager = TimetableManager()
 
-        education_stream_manager.create_education_stream(_education_stream)
+        id_education_stream = education_stream_manager.create_education_stream(_education_stream)
+        timetable_manager.create_timetable(_timetables_list, id_education_stream)
 
+        return id_education_stream
 
     def save_education_stream(self, _education_stream):
         """
@@ -140,3 +154,31 @@ class EducationStreamService():
         education_stream_manager = EducationStreamManager()
 
         return education_stream_manager.get_education_streams_by_login_user(_login_user, _role_user)
+
+    def get_timetables_list(self, _id):
+        """
+        Возвращает список расписаний обучающего потока по ID потока
+
+        Args:
+            _id(Int): ID обучающего потока
+
+        Returns:
+            List(Timetable): список расписаний
+        """
+        timetable_manager = TimetableManager()
+
+        return timetable_manager.get_timetables_list_by_id_education_stream(_id)
+
+    def get_module_by_id(self, _id):
+        """
+        Возвращает модуль курса по id модуля
+
+        Args:
+            _id(Int): ID модуля
+
+        Returns:
+            Module: модуль курса
+        """
+        module_manager = EducationModuleManager()
+
+        return module_manager.get_module_by_id(_id)

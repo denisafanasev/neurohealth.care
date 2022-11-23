@@ -59,13 +59,13 @@ class EducationStreamManager():
 
         data_store = DataStore("education_streams")
 
-        data_store.insert_row({'name': _education_stream['name'],
-                            'date_start': _education_stream['date_start'],
-                            "date_end": _education_stream['date_end'],
-                            "teacher": _education_stream['teacher'],
-                            "id_course": _education_stream['id_course'],
-                            "curators_list": _education_stream['curators_list'],
-                            "students_list": _education_stream['students_list']})
+        id_education_stream = data_store.insert_row({'name': _education_stream['name'], 'date_start': _education_stream['date_start'],
+                               "date_end": _education_stream['date_end'], "teacher": _education_stream['teacher'],
+                               "id_course": _education_stream['id_course'],
+                               "curators_list": _education_stream['curators_list'],
+                               "students_list": _education_stream['students_list']})
+
+        return id_education_stream
 
     def get_education_streams(self):
         """
@@ -114,7 +114,7 @@ class EducationStreamManager():
 
         data_store = DataStore('education_streams')
 
-        # создаем объект обучающего потока что бы отработать в нем логику установки атрибутов
+        # создаем объект обучающего потока, чтобы отработать в нем логику установки атрибутов
         education_stream = EducationStream(_id=_education_stream['id'], _name=_education_stream['name'], _id_course=_education_stream['id_course'],
                                          _curators_list=_education_stream['curators_list'], _students_list=_education_stream['students_list'],
                                          _teacher=_education_stream['teacher'], _date_start=_education_stream['date_start'], _date_end=_education_stream['date_end'])
@@ -128,7 +128,7 @@ class EducationStreamManager():
 
         return education_stream
 
-    def get_education_streams_by_login_user(self, _login_user, _role_user):
+    def get_education_streams_by_login_user(self, _id_user, _role_user):
 
         data_store = DataStore("education_streams")
 
@@ -137,10 +137,10 @@ class EducationStreamManager():
         for i_education_stream in education_streams_list:
             education_stream = self.education_stream_row_to_education_stream(i_education_stream)
             if _role_user == "user":
-                if _login_user in education_stream.students_list:
+                if _id_user in education_stream.students_list:
                     education_streams.append(education_stream)
             elif _role_user == "superuser":
-                if _login_user in education_stream.curators_list:
+                if _id_user in education_stream.curators_list:
                     education_streams.append(education_stream)
 
         return education_streams

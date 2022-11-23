@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+
 class EducationStream():
 
     def __init__(self, _id=None, _name='', _date_start='', _date_end='', _id_course=None, _curators_list=None,

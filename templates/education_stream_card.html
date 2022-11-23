@@ -36,12 +36,35 @@
 
         flatpickr(date_start, {
             dateFormat: "d/m/Y",
-            defaultDate: "{{ _education_stream['date_start'] }}"
+            wrap: true
         });
         flatpickr(date_end, {
             dateFormat: 'd/m/Y',
-            defaultDate: "{{ _education_stream['date_end'] }}"
+            wrap: true
         });
+        {% for course in _courses_list %}
+            $('#course').change(function(){
+                var val = $(this).val();
+                //если элемент с id равным значению #select1 существует
+                if($('#' + val).length){
+                 //скрываем все селекты шага 2
+                    $('#modules table').hide();
+                //показываем нужный
+                    $('#' + val).show();
+                //в противном случае, если значение равняется "all"
+                }else{
+                //показать все списки шага2
+                 $('#modules table').hide();
+                }
+                })
+            {% for module in course['modules'] %}
+                var date_start_module_{{ module['id'] }} = document.getElementById("date_start_module_{{ module['id'] }}")
+                flatpickr(date_start_module_{{ module['id'] }}, {
+                    dateFormat: "d/m/Y",
+                    wrap: true
+                });
+            {% endfor %}
+        {% endfor %}
 
     })
     </script>
@@ -186,6 +209,10 @@
             }
         }
 
+    .choices__list, .choices__list--dropdown, .is-active{
+        z-index: 37!important;
+    }
+
     </style>
 
 
@@ -206,17 +233,17 @@
                             <div class="mb-2">
                                 <label class="form-label"><strong>Название потока</strong></label>
                                 <input id="name_stream" name="name" class="form-control" {% if _mode=="view" %} disabled {% endif %} {% if
-                                    _mode=='new' %}placeholder="Введите название потока.." {% else %} value="{{ _education_stream['name'] }}" {%
+                                    _mode=='new' %} placeholder="Введите название потока.." {% else %} value="{{ _education_stream['name'] }}" {%
                                     endif %}>
                             </div>
                             
                             <div class="mb-2">
                                 <label class="form-label"><strong>Курс</strong></label>
-                                <select id="course" name="course" class="form-select" {% if _mode=='view' %} disabled {% endif %}>
+                                <select id="course" name="course" class="form-select" {% if _mode=='view' %} disabled {% endif %} style="z-index: auto">
                                     <option selected disabled value="placeholder">Выберите курс..</option>
                                     {% for course in _courses_list %}
                                     <option {% if course['id']==_education_stream['course']['id'] %} selected {% endif %}
-                                        value="{{ course['id'] }}">{{ course['name'] }}</option>
+                                        value="modules_courses_{{ course['id'] }}">{{ course['name'] }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -233,23 +260,23 @@
                             </div>
 
                             <div class="mb-2">
-                                <div class="" style="display: inline-grid;float: left">
+                                <div class="col" style="display: inline-grid;float: left">
                                     <label class="form-label"><strong>Дата старта</strong></label>
                             
-                                    <div class="input-group mb-3">
-                                        <input {% if _mode=='view' %} disabled {% endif %} id="date_start" name="date_start" type="date"
-                                            class="form-control" {% if _mode=="view" %}value="{{ _education_stream['date_start'] }}" {% endif %}>
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"> </button>
+                                    <div id="date_start" class="flatpickr input-group mb-3">
+                                        <input {% if _mode=='view' %} disabled {% endif %} name="date_start" type="text"
+                                            class="form-control" value="{{ _education_stream['date_start'] }}" data-input>
+                                        <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle> </a>
                                     </div>
 
                                 </div>
-                                <div style="display:grid; justify-content: right">
+                                <div class="col" style="display:grid; justify-content: right">
                                     <label class="form-label"><strong>Дата окончания</strong></label>
                             
-                                    <div class="input-group mb-3">
-                                        <input {% if _mode=='view' %} disabled {% endif %} id="date_end" name="date_end" type="date"
-                                            class="form-control" {% if _mode=="view" %}value="{{ _education_stream['date_end'] }}" {% endif %}>
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"> </button>
+                                    <div id="date_end" class="flatpickr input-group mb-3">
+                                        <input {% if _mode=='view' %} disabled {% endif %} name="date_end" type="text"
+                                            class="form-control" value="{{ _education_stream['date_end'] }}" data-input>
+                                        <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle> </a>
                                     </div>
                                 </div>
                             </div>
@@ -270,6 +297,7 @@
                                             <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
                                                 colspan="1">#</th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Имя пользователя</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -277,10 +305,13 @@
                                         {% if _mode == 'new' or _mode == "view" and curator['login'] in _education_stream['curators_list'] or _mode
                                         == 'edit' %}
                                         <tr>
-                                            <td><input {% if _mode=="view" %} disabled {% endif %} {% if curator['login'] in
-                                                    _education_stream['curators_list'] %}checked {% endif %} name="{{ curator['login'] }}"
-                                                    type="checkbox" value="{{ curator['login'] }}"></td>
+                                            <td>
+                                                <input {% if _mode=="view" %} disabled {% endif %} {% if curator['login'] in
+                                                    _education_stream['curators_list'] %}checked {% endif %} name="user_{{ curator['id'] }}"
+                                                    type="checkbox" value="{{ curator['id'] }}">
+                                            </td>
                                             <td>{{ curator['login'] }}</td>
+                                            <td>{{ curator['name'] }}</td>
                                         </tr>
                                         {% endif %}
                                         {% endfor %}
@@ -299,19 +330,38 @@
                         <div class="card-body">
                             <div class="mb-2">
                                 <label class="form-label"><strong>Доступные модули</strong></label>
-                                <table id="module_table" class="table dataTable border display" style="width: 100%">
+                            <div id="modules">
+                                {% for course in _courses_list %}
+                                <table id="modules_courses_{{ course['id'] }}" class="table dataTable border display" style="width: 100%; display: none">
                                     <thead>
                                         <tr>
-                                            <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons"
-                                                rowspan="1" colspan="1">#</th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
                                                 colspan="1">Название модуля</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                rowspan="1" colspan="1">Дата начала</th>
                                         </tr>
                                     </thead>
+
                                     <tbody>
-            
+                                        {% for module in course['modules'] %}
+                                            <tr>
+                                                <td>
+                                                    {{ module['name'] }}
+                                                </td>
+                                                <td>
+                                                    <div id="date_start_module_{{ module['id'] }}" class="flatpickr input-group mb-3">
+                                                        <input {% if _mode=='view' %} disabled {% endif %} name="date_end" type="text"
+                                                            class="form-control" value="{{ _education_stream['date_start'] }}" data-input>
+                                                        <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
                                     </tbody>
+
                                 </table>
+                            {% endfor %}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -331,6 +381,7 @@
                                             <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
                                                 colspan="1">#</th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Имя пользователя</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -340,10 +391,11 @@
                                         <tr class="even">
                                             <td>
                                                 <input {% if _mode=="view" %} disabled {% endif %} {% if student['login'] in
-                                                    _education_stream['students_list'] %}checked {% endif %} name="{{ student['login'] }}"
-                                                    type="checkbox" value="{{ student['login'] }}">
+                                                    _education_stream['students_list'] %}checked {% endif %} name="{{ student['id'] }}"
+                                                    type="checkbox" value="{{ student['id'] }}">
                                             </td>
                                             <td>{{ student['login'] }}</td>
+                                            <td>{{ student['name'] }}</td>
                                         </tr>
                                         {% endif %}
                                         {% endfor %}
