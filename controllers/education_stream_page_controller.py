@@ -131,20 +131,20 @@ class EducationStreamPageController():
 
         return education_stream_view
     
-    def create_education_stream(self, _education_stream):
+    def create_education_stream(self, _education_stream, _timetables_list):
         """
         Создает обучающий поток
 
         Args:
             _education_stream(Dict): обучающий поток
+            _timetables_list(List): расписание открытия модулей для обучающего потока
 
         Returns:
             id(Int): идентификатор обучающего потока
         """
         education_stream_manager = EducationStreamService()
 
-        education_stream_manager.create_education_stream(_education_stream)
-
+        education_stream_manager.create_education_stream(_education_stream, _timetables_list)
 
     def save_education_stream(self, _education_stream, _old_students_list, _old_curators_list):
         """
@@ -159,3 +159,28 @@ class EducationStreamPageController():
         education_stream_service.save_education_stream(_education_stream)
 
         _education_stream['course'] = _education_stream.pop("id_course")
+
+    def get_timetables_list(self, _id):
+        """
+        Возвращает список расписаний
+
+        Args:
+            _id(Int): ID обучающего потока
+
+        Returns
+            List(Dict): список расписаний
+        """
+        education_stream_service = EducationStreamService()
+
+        if _id is not None:
+            timetables_list = education_stream_service.get_timetables_list(_id)
+            timetables_list_view = []
+            for timetable in timetables_list:
+                # module = education_stream_service.get_module_by_id(timetable.id_module)
+                timetables_list_view.append({
+                    'module': timetable.id_module,
+                    'id_education_stream': timetable.id_education_stream,
+                    'date_start': timetable.date_start
+                })
+
+            return timetables_list_view

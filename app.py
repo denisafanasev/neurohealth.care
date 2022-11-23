@@ -1451,29 +1451,38 @@ def education_stream_card():
         id_education_stream = int(id_education_stream)
     else:
         mode = 'new'
-    
-    curators_list = page_controller.get_curators_list(user_id)
-    students_list = page_controller.get_students_list(user_id)
-    courses_list = page_controller.get_courses_list(user_id)
 
     education_stream = page_controller.get_education_stream(id_education_stream)
+
+    curators_list = page_controller.get_curators_list(user_id, education_stream, mode)
+    students_list = page_controller.get_students_list(user_id, education_stream, mode)
+    courses_list = page_controller.get_courses_list(user_id, education_stream, mode)
+    timetables_list = page_controller.get_timetables_list(id_education_stream)
 
     if request.method == 'POST':
         if request.form.get("button") == 'new':
             education_stream_edit = {
                 "name": request.form.get("name"),
-                "id_course": int(request.form.get("course")),
-                "curators_list": [i['id'] for i in curators_list if request.form.get(i['login']) is not None],
-                "students_list": [i['id'] for i in students_list if request.form.get(i['login']) is not None],
+                "id_course": int(request.form.get("course").split('_')[-1]),
+                "curators_list": [i['id'] for i in curators_list if request.form.get(i[f'user_{i["id"]}']) is not None],
+                "students_list": [i['id'] for i in students_list if request.form.get(i[f'user_{i["id"]}']) is not None],
                 "teacher": request.form.get("teacher"),
                 "date_start": request.form.get("date_start"),
                 "date_end": request.form.get("date_end")
             }
-
             if education_stream_edit['teacher'] not in education_stream['curators_list']:
                 education_stream_edit['curators_list'].append(education_stream_edit['teacher'])
 
-            id_education_stream = page_controller.create_education_stream(education_stream_edit)
+            timetables_list = []
+            for course in courses_list:
+                if course['id'] == education_stream_edit['id_course']:
+                    for module in course['modules']:
+                        timetables_list.append({
+                            "id_module": module['id'],
+                            'date_start': request.form.get(f'date_start_{module["id"]}')
+                        })
+
+            id_education_stream = page_controller.create_education_stream(education_stream_edit, timetables_list)
 
             return redirect("education_streams")
 
@@ -1500,7 +1509,7 @@ def education_stream_card():
     return render_template('education_stream_card.html', view="education_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _endpoint=endpoint,
                            _curators_list=curators_list, _students_list=students_list, _courses_list=courses_list,
-                           _mode=mode, _education_stream=education_stream)
+                           _mode=mode, _education_stream=education_stream, _timetables_list=timetables_list)
 
 
 @app.route('/download', methods=['GET', 'POST'])
