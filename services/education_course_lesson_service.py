@@ -79,17 +79,6 @@ class EducationCourseLessonService():
 
         message_manager = MessageManager()
         homework_chat_manager = HomeworkChatManager()
-        user_manager = UserManager()
-        lesson_manager = EducationLessonManager()
-
-        # проверка на наличие в базе данных пользователя и урока
-        user = user_manager.get_user_by_id(_message['id_user'])
-        if user is None:
-            raise EducationCourseLessonServiceException('Не удалось сохранить сообщение.')
-
-        lesson = lesson_manager.get_lesson_by_id(_id_lesson)
-        if lesson is None:
-            raise EducationCourseLessonServiceException('Не удалось сохранить сообщение.')
 
         homework_chat = homework_chat_manager.get_homework_chat(_message['id_user'], _id_lesson)
         if homework_chat is None:
@@ -150,19 +139,16 @@ class EducationCourseLessonService():
         action_manager = ActionManager()
         lesson_manager = EducationLessonManager()
 
-        # проверка на наличие в базе данных пользователя и урока
         user = user_manager.get_user_by_id(_current_user_id)
-        if user is None:
-            raise HomeworkManagerException('Не удалось сохранить домашнюю работу.')
-
         lesson = lesson_manager.get_lesson_by_id(_id_lesson)
-        if lesson is None:
-            raise HomeworkManagerException('Не удалось сохранить домашнюю работу.')
 
-        homework_files_list = upload_service.upload_files(_files_list, user.login)
-        homework_manager.create_homework(homework_files_list, _text, _current_user_id, _id_lesson)
+        last_homeworks_list = homework_manager.get_homeworks_list_by_id_lesson_no_verified(_id_lesson, _current_user_id)
 
-        action_manager.add_notifications("", "сдал", lesson.name, "homework_manager", user.login)
+        if not last_homeworks_list:
+            homework_files_list = upload_service.upload_files(_files_list, user.login)
+            homework_manager.create_homework(homework_files_list, _text, _current_user_id, _id_lesson)
+
+            action_manager.add_notifications("", "сдал", lesson.name, "homework_manager", user.login)
 
     def get_last_homework(self, _id_lesson, _user_id):
         """

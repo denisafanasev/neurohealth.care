@@ -89,6 +89,21 @@ class EducationStreamService():
 
         return courses
 
+    def get_course_by_id_education_stream(self, _id_course):
+        """
+        Возвращает список курсов
+
+        Returns:
+            (List): список курсов
+        """
+
+        course_manager = EducationCourseManager()
+        module_manager = EducationModuleManager()
+
+        course = course_manager.get_course_by_id(_id_course)
+
+        return course
+
     def get_education_stream(self, _id):
         """
         Возвращает обучающий поток по id
@@ -99,11 +114,17 @@ class EducationStreamService():
 
         education_stream_manager = EducationStreamManager()
         course_manager = EducationCourseManager()
+        user_manager = UserManager()
 
         education_stream = education_stream_manager.get_education_stream(_id)
 
         if education_stream is not None:
             education_stream.course = course_manager.get_course_by_id(education_stream.course)
+            students_list = [user_manager.get_user_by_id(user_id) for user_id in education_stream.students_list]
+            curators_list = [user_manager.get_user_by_id(user_id) for user_id in education_stream.curators_list]
+
+            education_stream.students_list = students_list
+            education_stream.curators_list = curators_list
 
         return education_stream
 

@@ -47,15 +47,6 @@ class HomeworkManager():
 
         data_store = DataStore("homeworks")
 
-        # если в сообщениях есть такое сочетание, то оно удаляется для того, чтобы сократить расстояние между строчками
-        if "<p><br></p>" in _text:
-            _text = ''.join(_text.split('<p><br></p>'))
-
-        last_homeworks_list = self.get_homeworks_list_by_id_lesson_no_verified(_id_lesson, _id_user)
-        if last_homeworks_list:
-            raise HomeworkManagerException('Нельзя повторно сдать домашнюю работу по уроку, когда не проверенна предыдущая домашняя работа')
-
-
         homework = Homework(_users_files_list=_homework_files_list, _text=_text, _id_user=_id_user,
                             _id_lesson=_id_lesson, _status=None, _date_delivery=datetime.now())
 

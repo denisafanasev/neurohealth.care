@@ -105,11 +105,8 @@ class EducationCourseLessonPageController():
         # если в сообщениях есть такое сочетание, то оно удаляется для того, чтобы сократить расстояние между строчками
         if "<p><br></p>" in _message['text']:
             _message['text'] = ''.join(_message['text'].split('<p><br></p>'))
-        try:
-            lesson_service.add_message(_message, _id_lesson)
 
-        except EducationCourseLessonServiceException as error:
-            return error
+        lesson_service.add_message(_message, _id_lesson)
 
     def get_user_view_by_id(self, _user_id):
         """
@@ -179,10 +176,11 @@ class EducationCourseLessonPageController():
         """
         lesson_service = EducationCourseLessonService()
 
-        try:
-            lesson_service.save_homework(_files_list, _user_id, _text, _id_lesson)
-        except HomeworkManagerException as error:
-            return str(error)
+        # если в сообщениях есть такое сочетание, то оно удаляется для того, чтобы сократить расстояние между строчками
+        if "<p><br></p>" in _text:
+            _text = ''.join(_text.split('<p><br></p>'))
+
+        lesson_service.save_homework(_files_list, _user_id, _text, _id_lesson)
 
     def get_last_homework(self, _id_lesson, _user_id):
         """

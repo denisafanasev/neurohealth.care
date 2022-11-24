@@ -84,6 +84,25 @@ class EducationStreamPageController():
 
         return courses_list
 
+    def get_course_by_id_education_stream(self, _id_course):
+        """
+        Возвращает список курсов
+
+        Returns:
+            (List): список курсов
+        """
+
+        education_stream_service = EducationStreamService()
+
+        course = education_stream_service.get_course_by_id_education_stream(_id_course)
+
+        course_view = {
+            'id': course.id,
+            "name": course.name,
+        }
+
+        return course_view
+
     def get_education_stream(self, _id):
         """
         Возвращает представление обучающего потока по id
@@ -106,17 +125,31 @@ class EducationStreamPageController():
                 "name": education_stream.name,
                 "course": {
                     "id": education_stream.course.id,
-                    "name": education_stream.course.name
+                    "name": education_stream.course.name,
                 },
                 "date_start": education_stream.date_start.strftime("%d/%m/%Y"),
                 "date_end": education_stream.date_end.strftime("%d/%m/%Y"),
-                "curators_list": education_stream.curators_list,
-                "students_list": education_stream.students_list,
+                "curators_list": [],
+                "students_list": [],
                 "count_curators": len(education_stream.curators_list),
                 "count_students": len(education_stream.students_list),
                 "teacher": education_stream.teacher,
                 "status": education_stream.status
             }
+            for student in education_stream.students_list:
+                education_stream_view['students_list'].append({
+                    'id': student.user_id,
+                    'login': student.login,
+                    'name': student.name
+                })
+
+            for curator in education_stream.curators_list:
+                education_stream_view['curators_list'].append({
+                    'id': curator.user_id,
+                    'login': curator.login,
+                    'name': curator.name
+                })
+
         else:
             education_stream_view = {
                 "id": 0,
@@ -176,11 +209,14 @@ class EducationStreamPageController():
             timetables_list = education_stream_service.get_timetables_list(_id)
             timetables_list_view = []
             for timetable in timetables_list:
-                # module = education_stream_service.get_module_by_id(timetable.id_module)
+                module = education_stream_service.get_module_by_id(timetable.id_module)
                 timetables_list_view.append({
-                    'module': timetable.id_module,
+                    'module': {
+                        'id': module.id,
+                        'name': module.name
+                    },
                     'id_education_stream': timetable.id_education_stream,
-                    'date_start': timetable.date_start
+                    'date_start': timetable.date_start.strftime("%d/%m/%Y")
                 })
 
             return timetables_list_view
