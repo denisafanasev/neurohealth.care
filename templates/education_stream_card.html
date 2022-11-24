@@ -42,21 +42,22 @@
             dateFormat: 'd/m/Y',
             wrap: true
         });
+
+        $('#course').change(function(){
+            var val = $(this).val();
+            //если элемент с id равным значению #select1 существует
+            if($('#' + val).length){
+             //скрываем все селекты шага 2
+                $('#modules table').hide();
+            //показываем нужный
+                $('#' + val).show();
+            //в противном случае, если значение равняется "all"
+            }else{
+            //показать все списки шага2
+             $('#modules table').hide();
+            }
+            })
         {% for course in _courses_list %}
-            $('#course').change(function(){
-                var val = $(this).val();
-                //если элемент с id равным значению #select1 существует
-                if($('#' + val).length){
-                 //скрываем все селекты шага 2
-                    $('#modules table').hide();
-                //показываем нужный
-                    $('#' + val).show();
-                //в противном случае, если значение равняется "all"
-                }else{
-                //показать все списки шага2
-                 $('#modules table').hide();
-                }
-                })
             {% for module in course['modules'] %}
                 var date_start_module_{{ module['id'] }} = document.getElementById("date_start_module_{{ module['id'] }}")
                 flatpickr(date_start_module_{{ module['id'] }}, {
@@ -97,41 +98,42 @@
     </script>
     <script>
     function checkData(form){
-         var teacher = form.teacher.value;
-         var date_start = form.date_start.value;
-         var date_end = form.date_end.value;
-         var name_stream = form.name_stream.value;
-         var course = form.course.value;
-         var text = "Заполнены не все обязательные поля"
-         var message = document.getElementById('message');
+        const formData = document.forms.stream_data;
+        const teacher = formData.elements.teacher.value;
+        const date_start = formData.elements.date_start.value;
+        const date_end = formData.elements.date_end.value;
+        const name_stream = formData.elements.name_stream.value;
+        const course = formData.elements.course.value;
+        const text = "Заполнены не все обязательные поля"
+        const message = document.getElementById('message');
 
          if (teacher === 'placeholder'){
              document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = text;
+             document.querySelector('p[id=text_message]').textContent = "teacher";
              message.style.display = 'block'
              return false;
          }
          if (date_start === ''){
              document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = text;
+             document.querySelector('p[id=text_message]').textContent = 'date_start';
              message.style.display = 'block'
              return false;
          }
          if (date_end === ''){
              document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = text;
+             document.querySelector('p[id=text_message]').textContent = 'date_end';
              message.style.display = 'block'
              return false;
          }
          if (name_stream === ''){
              document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = text;
+             document.querySelector('p[id=text_message]').textContent = 'name_stream';
              message.style.display = 'block'
              return false;
          }
          if (course === 'placeholder'){
              document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = text;
+             document.querySelector('p[id=text_message]').textContent = 'course';
              message.style.display = 'block'
              return false;
          }else {
@@ -222,7 +224,7 @@
                 {% else %}Редактирование {% endif %} карточки обучающего потока</h1>
         </div>
 
-        <form method="post" enctype="multipart/form-data" onsubmit="return checkData(this);">
+        <form name="stream_data" method="post" enctype="multipart/form-data" onsubmit="return checkData(this);">
         
             <div class="row">
 
@@ -240,7 +242,7 @@
                             <div class="mb-2">
                                 <label class="form-label"><strong>Курс</strong></label>
                                 <select id="course" name="course" class="form-select" {% if _mode=='view' %} disabled {% endif %} style="z-index: auto">
-                                    <option selected disabled value="placeholder">Выберите курс..</option>
+                                    {% if _mode == 'new' %}<option selected disabled value="placeholder">Выберите курс..</option>{% endif %}
                                     {% for course in _courses_list %}
                                     <option {% if course['id']==_education_stream['course']['id'] %} selected {% endif %}
                                         value="modules_courses_{{ course['id'] }}">{{ course['name'] }}</option>
@@ -254,7 +256,7 @@
                                     <option selected disabled value="placeholder">Выберите преподавателя</option>
                                     {% for teacher in _curators_list %}
                                     <option {% if teacher['login']==_education_stream['teacher'] %} selected {% endif %}
-                                        value="{{ teacher['login'] }}">{{ teacher['login'] }}</option>
+                                        value="{{ teacher['id'] }}">{{ teacher['login'] }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -302,18 +304,14 @@
                                     </thead>
                                     <tbody>
                                         {% for curator in _curators_list %}
-                                        {% if _mode == 'new' or _mode == "view" and curator['login'] in _education_stream['curators_list'] or _mode
-                                        == 'edit' %}
                                         <tr>
                                             <td>
-                                                <input {% if _mode=="view" %} disabled {% endif %} {% if curator['login'] in
-                                                    _education_stream['curators_list'] %}checked {% endif %} name="user_{{ curator['id'] }}"
+                                                <input {% if _mode=="view" %} disabled checked {% endif %} name="user_{{ curator['id'] }}"
                                                     type="checkbox" value="{{ curator['id'] }}">
                                             </td>
                                             <td>{{ curator['login'] }}</td>
                                             <td>{{ curator['name'] }}</td>
                                         </tr>
-                                        {% endif %}
                                         {% endfor %}
                                     </tbody>
                                 </table>
@@ -330,37 +328,69 @@
                         <div class="card-body">
                             <div class="mb-2">
                                 <label class="form-label"><strong>Доступные модули</strong></label>
-                            <div id="modules">
-                                {% for course in _courses_list %}
-                                <table id="modules_courses_{{ course['id'] }}" class="table dataTable border display" style="width: 100%; display: none">
-                                    <thead>
-                                        <tr>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
-                                                colspan="1">Название модуля</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
-                                                rowspan="1" colspan="1">Дата начала</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        {% for module in course['modules'] %}
+                                <div id="modules">
+                                {% if _mode != 'view' %}
+                                    {% for course in _courses_list %}
+                                        <table id="modules_courses_{{ course['id'] }}" class="table dataTable border display" style="width: 100%; {% if _mode == 'new' %}display: none"{% endif %}>
+                                        <thead>
                                             <tr>
-                                                <td>
-                                                    {{ module['name'] }}
-                                                </td>
-                                                <td>
-                                                    <div id="date_start_module_{{ module['id'] }}" class="flatpickr input-group mb-3">
-                                                        <input {% if _mode=='view' %} disabled {% endif %} name="date_end" type="text"
-                                                            class="form-control" value="{{ _education_stream['date_start'] }}" data-input>
-                                                        <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle></a>
-                                                    </div>
-                                                </td>
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                                    colspan="1">Название модуля</th>
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                    rowspan="1" colspan="1">Дата начала</th>
                                             </tr>
-                                        {% endfor %}
-                                    </tbody>
+                                        </thead>
 
-                                </table>
-                            {% endfor %}
+                                        <tbody>
+                                            {% for module in course['modules'] %}
+                                                <tr>
+                                                    <td>
+                                                        {{ module['name'] }}
+                                                    </td>
+                                                    <td>
+                                                        <div id="date_start_module_{{ module['id'] }}" class="flatpickr input-group mb-3">
+                                                            <input {% if _mode=='view' %} disabled {% endif %} name="date_start_module_{{ module['id'] }}" type="text"
+                                                                class="form-control" value="{% if _mode != 'new' %}{{ _timetables_list['date_start'] }}{% else %}{{ _education_stream['date_start'] }}{% endif %}" data-input>
+                                                            <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+
+                                    </table>
+                                    {% endfor %}
+                                {% elif _mode == 'view' %}
+                                    <table id="modules_courses" class="table dataTable border display" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                                    colspan="1">Название модуля</th>
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                    rowspan="1" colspan="1">Дата начала</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {% for timetable in _timetables_list %}
+                                                <tr>
+                                                    <td>
+                                                        {{ timetable['module']['name'] }}
+                                                    </td>
+                                                    <td>
+                                                        <div id="date_start_module_{{ timetable['module']['id'] }}" class="flatpickr input-group mb-3">
+                                                            <input disabled name="date_end" type="text"
+                                                                class="form-control" value="{{ timetable['date_start'] }}" data-input>
+                                                            <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+
+                                    </table>
+
+                                {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -386,18 +416,16 @@
                                     </thead>
                                     <tbody>
                                         {% for student in _students_list %}
-                                        {% if _mode == 'new' or _mode == "view" and student['login'] in _education_stream['students_list'] or _mode
-                                        == 'edit' %}
+
                                         <tr class="even">
                                             <td>
                                                 <input {% if _mode=="view" %} disabled {% endif %} {% if student['login'] in
-                                                    _education_stream['students_list'] %}checked {% endif %} name="{{ student['id'] }}"
+                                                    _education_stream['students_list'] %}checked {% endif %} name="user_{{ student['id'] }}"
                                                     type="checkbox" value="{{ student['id'] }}">
                                             </td>
                                             <td>{{ student['login'] }}</td>
                                             <td>{{ student['name'] }}</td>
                                         </tr>
-                                        {% endif %}
                                         {% endfor %}
                                     </tbody>
                                 </table>

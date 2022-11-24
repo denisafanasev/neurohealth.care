@@ -63,10 +63,7 @@ class EducationHomeworkCardPageController():
         if "<p><br></p>" in _message['text']:
             _message['text'] = ''.join(_message['text'].split('<p><br></p>'))
 
-        try:
-            homework_service.add_message(_message, _id_lesson, _id_user)
-        except HomeworkCardServiceException as error:
-            return error
+        homework_service.add_message(_message, _id_lesson, _id_user)
 
     def get_user_by_id(self, _user_id):
         """

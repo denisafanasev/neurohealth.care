@@ -1453,44 +1453,51 @@ def education_stream_card():
         mode = 'new'
 
     education_stream = page_controller.get_education_stream(id_education_stream)
-
-    curators_list = page_controller.get_curators_list(user_id, education_stream, mode)
-    students_list = page_controller.get_students_list(user_id, education_stream, mode)
-    courses_list = page_controller.get_courses_list(user_id, education_stream, mode)
     timetables_list = page_controller.get_timetables_list(id_education_stream)
+
+    if mode != 'view':
+        curators_list = page_controller.get_curators_list(user_id)
+        students_list = page_controller.get_students_list(user_id)
+        courses_list = page_controller.get_courses_list(user_id)
+
+    else:
+        curators_list = education_stream['curators_list']
+        students_list = education_stream['students_list']
+        courses_list = page_controller.get_course_by_id_education_stream(education_stream['course']['id'])
 
     if request.method == 'POST':
         if request.form.get("button") == 'new':
-            education_stream_edit = {
+            education_stream_new = {
                 "name": request.form.get("name"),
                 "id_course": int(request.form.get("course").split('_')[-1]),
-                "curators_list": [i['id'] for i in curators_list if request.form.get(i[f'user_{i["id"]}']) is not None],
-                "students_list": [i['id'] for i in students_list if request.form.get(i[f'user_{i["id"]}']) is not None],
+                "curators_list": [i['id'] for i in curators_list if request.form.get(f'user_{i["id"]}') is not None],
+                "students_list": [i['id'] for i in students_list if request.form.get(f'user_{i["id"]}') is not None],
                 "teacher": request.form.get("teacher"),
                 "date_start": request.form.get("date_start"),
                 "date_end": request.form.get("date_end")
             }
-            if education_stream_edit['teacher'] not in education_stream['curators_list']:
-                education_stream_edit['curators_list'].append(education_stream_edit['teacher'])
+
+            if education_stream_new['teacher'] not in education_stream['curators_list']:
+                education_stream_new['curators_list'].append(education_stream_new['teacher'])
 
             timetables_list = []
             for course in courses_list:
-                if course['id'] == education_stream_edit['id_course']:
+                if course['id'] == education_stream_new['id_course']:
                     for module in course['modules']:
                         timetables_list.append({
                             "id_module": module['id'],
-                            'date_start': request.form.get(f'date_start_{module["id"]}')
+                            'date_start': request.form.get(f'date_start_module_{module["id"]}')
                         })
 
-            id_education_stream = page_controller.create_education_stream(education_stream_edit, timetables_list)
+            id_education_stream = page_controller.create_education_stream(education_stream_new, timetables_list)
 
-            return redirect("education_streams")
+            return redirect(f"/education_stream_card?id={id_education_stream}")
 
         elif request.form.get('button') == 'edit':
             mode = "edit"
 
         elif request.form.get('button') == "save":
-            education_stream_edit = {
+            education_stream_new = {
                 "id": education_stream['id'],
                 "name": request.form.get("name"),
                 "id_course": int(request.form.get("course")),
@@ -1501,7 +1508,7 @@ def education_stream_card():
                 "date_end": request.form.get("date_end")
             }
 
-            page_controller.save_education_stream(education_stream_edit, education_stream['students_list'],
+            page_controller.save_education_stream(education_stream_new, education_stream['students_list'],
                                                    education_stream["curators_list"])
             mode = "view"
             education_stream = page_controller.get_education_stream(id_education_stream)

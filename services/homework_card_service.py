@@ -51,17 +51,6 @@ class HomeworkCardService():
 
         message_manager = MessageManager()
         homework_chat_manager = HomeworkChatManager()
-        user_manager = UserManager()
-        lesson_manager = EducationLessonManager()
-
-        # проверка на наличие в базе данных пользователя и урока
-        user = user_manager.get_user_by_id(_id_user)
-        if user is None:
-            raise HomeworkCardServiceException('Не удалось сохранить сообщение.')
-
-        lesson = lesson_manager.get_lesson_by_id(_id_lesson)
-        if lesson is None:
-            raise HomeworkCardServiceException('Не удалось сохранить сообщение.')
 
         homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson)
         if homework_chat is None:
