@@ -220,3 +220,24 @@ class EducationHomeTasksPageController():
                     data_list.append(data)
 
         return data_list
+
+    def get_education_streams_list(self):
+        """
+        Возвращает список данных всех обучающих потоков
+
+        Returns:
+            List(): список образовательных потоков
+        """
+        homeworks_service = HomeworksService()
+
+        education_streams_list = homeworks_service.get_educations_stream()
+        education_streams_list_view =[]
+        for education_stream in education_streams_list:
+            education_stream_view = {
+                "id": education_stream.id,
+                'name': education_stream.name,
+            }
+
+            education_streams_list_view.append(education_stream_view)
+
+        return education_streams_list_view

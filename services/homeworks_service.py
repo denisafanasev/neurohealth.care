@@ -152,10 +152,10 @@ class HomeworksService():
             List: список пользователей
         """
         user_manager = UserManager()
+        education_stream_manager = EducationStreamManager()
 
-        users_login_list = []
-        with open(config.DATA_FOLDER + f'course_1/s{_id_education_stream}_users.txt') as f:
-            users_login_list.extend(f.read().splitlines())
+        # with open(config.DATA_FOLDER + f'course_1/s{_id_education_stream}_users.txt') as f:
+        #     users_login_list.extend(f.read().splitlines())
 
         # with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
         #     users_login_list.extend(f.read().splitlines())
@@ -170,8 +170,9 @@ class HomeworksService():
         #     users_login_list.extend(f.read().splitlines())
 
         users_list = []
-        for user_login in users_login_list:
-            user = user_manager.get_user_by_login(user_login)
+        education_stream = education_stream_manager.get_education_stream(_id_education_stream)
+        for student_id in education_stream.students_list:
+            user = user_manager.get_user_by_id(student_id)
             if user is not None:
                 users_list.append(user)
 
@@ -269,3 +270,15 @@ class HomeworksService():
         course_manager = EducationCourseManager()
 
         return course_manager.get_course_by_id(_id)
+
+    def get_educations_stream(self):
+        """
+        Возвращает список всех обучающих потоков
+
+        Returns:
+            List(EducationStream): список образовательных потоков
+        """
+
+        education_stream = EducationStreamManager()
+
+        return education_stream.get_education_streams()

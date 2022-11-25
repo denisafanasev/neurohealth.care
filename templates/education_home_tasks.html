@@ -87,10 +87,10 @@
                         <div class="card-header">
                             <div class="row">
                                 <label for="education_stream">Выберите поток:</label>
-                                <div class="col-sm-1">
+                                <div class="col-sm-3">
                                     <select class="form-select" onchange="this.form.submit();" name="education_stream" id="education_stream">
-                                        {% for education_stream in range(1, _amount_education_streams + 1) %}
-                                            <option {% if education_stream == _id_education_stream %}selected{% endif %} value="{{ education_stream }}">{{ education_stream }}</option>
+                                        {% for education_stream in _education_streams_list %}
+                                            <option {% if education_stream['id'] == _id_education_stream %}selected{% endif %} value="{{ education_stream['id'] }}">{{ education_stream['name'] }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>

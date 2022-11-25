@@ -39,7 +39,7 @@
             wrap: true
         });
         flatpickr(date_end, {
-            dateFormat: 'd/m/Y',
+            dateFormat: "d/m/Y",
             wrap: true
         });
 
@@ -101,39 +101,38 @@
         const formData = document.forms.stream_data;
         const teacher = formData.elements.teacher.value;
         const date_start = formData.elements.date_start.value;
-        const date_end = formData.elements.date_end.value;
+        const date_end = formData.elements.date_ends.value;
         const name_stream = formData.elements.name_stream.value;
         const course = formData.elements.course.value;
-        const text = "Заполнены не все обязательные поля"
         const message = document.getElementById('message');
 
          if (teacher === 'placeholder'){
              document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = "teacher";
+             document.querySelector('p[id=text_message]').textContent = "Выберите учителя данного потока.";
              message.style.display = 'block'
              return false;
          }
          if (date_start === ''){
              document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = 'date_start';
+             document.querySelector('p[id=text_message]').textContent = 'Выберите дату начала обучения данного потока.';
              message.style.display = 'block'
              return false;
          }
          if (date_end === ''){
              document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = 'date_end';
+             document.querySelector('p[id=text_message]').textContent = 'Выберите дату окончания обучения данного потока.';
              message.style.display = 'block'
              return false;
          }
          if (name_stream === ''){
              document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = 'name_stream';
+             document.querySelector('p[id=text_message]').textContent = 'Введите название для данного потока.';
              message.style.display = 'block'
              return false;
          }
          if (course === 'placeholder'){
              document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = 'course';
+             document.querySelector('p[id=text_message]').textContent = 'Выберите курс для данного потока.';
              message.style.display = 'block'
              return false;
          }else {
@@ -224,7 +223,7 @@
                 {% else %}Редактирование {% endif %} карточки обучающего потока</h1>
         </div>
 
-        <form name="stream_data" method="post" enctype="multipart/form-data" onsubmit="return checkData(this);">
+        <form disabled name="stream_data" method="post" enctype="multipart/form-data" onsubmit="return checkData(this);">
         
             <div class="row">
 
@@ -253,9 +252,12 @@
                             <div class="mb-2">
                                 <label class="form-label"><strong>Преподаватель</strong></label>
                                 <select id="teacher" name="teacher" class="form-select" {% if _mode=="view" %} disabled {% endif %}>
-                                    <option selected disabled value="placeholder">Выберите преподавателя</option>
+                                    {% if _mode == 'new' %}
+                                        <option selected disabled value="placeholder">Выберите преподавателя</option>
+                                    {% endif %}
+
                                     {% for teacher in _curators_list %}
-                                    <option {% if teacher['login']==_education_stream['teacher'] %} selected {% endif %}
+                                    <option {% if teacher['id']==_education_stream['teacher'] %} selected {% endif %}
                                         value="{{ teacher['id'] }}">{{ teacher['login'] }}</option>
                                     {% endfor %}
                                 </select>
@@ -276,7 +278,7 @@
                                     <label class="form-label"><strong>Дата окончания</strong></label>
                             
                                     <div id="date_end" class="flatpickr input-group mb-3">
-                                        <input {% if _mode=='view' %} disabled {% endif %} name="date_end" type="text"
+                                        <input {% if _mode=='view' %} disabled {% endif %} name="date_ends" type="text"
                                             class="form-control" value="{{ _education_stream['date_end'] }}" data-input>
                                         <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle> </a>
                                     </div>
@@ -306,7 +308,8 @@
                                         {% for curator in _curators_list %}
                                         <tr>
                                             <td>
-                                                <input {% if _mode=="view" %} disabled checked {% endif %} name="user_{{ curator['id'] }}"
+                                                <input {% if _mode=="view" %} disabled {% endif %} {% if _mode != 'new' %} {% if curator['id'] in
+                                                    _education_stream['curators_list'] %}checked {% endif %}{% endif %} name="user_{{ curator['id'] }}"
                                                     type="checkbox" value="{{ curator['id'] }}">
                                             </td>
                                             <td>{{ curator['login'] }}</td>
@@ -331,40 +334,37 @@
                                 <div id="modules">
                                 {% if _mode != 'view' %}
                                     {% for course in _courses_list %}
-                                        <table id="modules_courses_{{ course['id'] }}" class="table dataTable border display" style="width: 100%; {% if _mode == 'new' %}display: none"{% endif %}>
-                                        <thead>
-                                            <tr>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
-                                                    colspan="1">Название модуля</th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
-                                                    rowspan="1" colspan="1">Дата начала</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            {% for module in course['modules'] %}
+                                        <table id="modules_courses_{{ course['id'] }}" class="table dataTable border display" style="width: 100%; {% if _education_stream['course']['id'] != course['id'] %}display: none{% endif %}">
+                                            <thead>
                                                 <tr>
-                                                    <td>
-                                                        {{ module['name'] }}
-                                                    </td>
-                                                    <td>
-                                                        <div id="date_start_module_{{ module['id'] }}" class="flatpickr input-group mb-3">
-                                                            <input {% if _mode=='view' %} disabled {% endif %} name="date_start_module_{{ module['id'] }}" type="text"
-                                                                class="form-control" value="{% if _mode != 'new' %}{{ _timetables_list['date_start'] }}{% else %}{{ _education_stream['date_start'] }}{% endif %}" data-input>
-                                                            <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle></a>
-                                                        </div>
-                                                    </td>
+                                                    <th class="sorting" style="width: 75%" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                                        colspan="1">Название модуля</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                        rowspan="1" colspan="1">Дата начала</th>
                                                 </tr>
-                                            {% endfor %}
-                                        </tbody>
+                                            </thead>
 
-                                    </table>
+                                            <tbody>
+                                                {% for module in course['modules'] %}
+                                                    <tr>
+                                                        <td>{{ module['name'] }}</td>
+                                                        <td>
+                                                            <div id="date_start_module_{{ module['id'] }}" class="flatpickr input-group mb-3">
+                                                                <input name="date_start_module_{{ module['id'] }}" type="text"
+                                                                    class="form-control" value="{% if module['date_start'] %}{{ module['date_start'] }}{% else %}{{ _education_stream['date_start'] }}{% endif %}" data-input>
+                                                                <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle></a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
                                     {% endfor %}
                                 {% elif _mode == 'view' %}
                                     <table id="modules_courses" class="table dataTable border display" style="width: 100%;">
                                         <thead>
                                             <tr>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                                <th class="sorting" tabindex="0" style="width: 75%!important;" aria-controls="datatables-buttons" rowspan="1"
                                                     colspan="1">Название модуля</th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
                                                     rowspan="1" colspan="1">Дата начала</th>
@@ -387,9 +387,7 @@
                                                 </tr>
                                             {% endfor %}
                                         </tbody>
-
                                     </table>
-
                                 {% endif %}
                                 </div>
                             </div>
@@ -405,6 +403,7 @@
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Ученики</strong></label>
+                            {% if _students_list != [] %}
                                 <table id="students_table" class="table dataTable border display" style="width: 100%">
                                     <thead>
                                         <tr>
@@ -419,8 +418,8 @@
 
                                         <tr class="even">
                                             <td>
-                                                <input {% if _mode=="view" %} disabled {% endif %} {% if student['login'] in
-                                                    _education_stream['students_list'] %}checked {% endif %} name="user_{{ student['id'] }}"
+                                                <input {% if _mode=="view" %} disabled {% endif %} {% if _mode != 'new' %} {% if student['id'] in
+                                                    _education_stream['students_list'] %}checked {% endif %} {% endif %} name="user_{{ student['id'] }}"
                                                     type="checkbox" value="{{ student['id'] }}">
                                             </td>
                                             <td>{{ student['login'] }}</td>
@@ -429,6 +428,13 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
+                            {% else %}
+                                <div class="text-center">
+                                    {% if _mode == 'view' %}
+                                        <h2>В этом потоке нет учеников.</h2>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
                             </div>
                             
                         </div>
