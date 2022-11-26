@@ -138,3 +138,12 @@ class DataStore():
 
         self.data_store.delete_key_in_row(_key, _where, _where_value)
 
+    def delete_row(self, _data_ids):
+        """
+        Удаление записи
+        Args:
+            _data_ids(List): список из id записей, которые нужно удалить
+        """
+
+        self.data_store.delete_row(_data_ids)
+

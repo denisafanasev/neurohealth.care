@@ -4,6 +4,7 @@ from werkzeug.utils import redirect
 
 from models.homework_chat_manager import HomeworkChatManager
 from models.message_manager import MessageManager
+from models.timetable_manager import TimetableManager
 from models.user_manager import UserManager
 from models.course_manager import EducationCourseManager
 from models.module_manager import EducationModuleManager
@@ -115,6 +116,8 @@ class EducationCourseService():
         """        
         course_manager = EducationCourseManager()
         module_manager = EducationModuleManager()
+        timetable_manager = TimetableManager()
+        education_stream_manager = EducationStreamManager()
         user_manager = UserManager()
 
         user = user_manager.get_user_by_id(_user_id)
@@ -138,6 +141,13 @@ class EducationCourseService():
             # TODO: это надо перенести в целевую модель проверки вхождения пользователя в обущающий поток   
 
             course_modules = module_manager.get_course_modules_list(_course_id)
+            # education_stream = education_stream_manager.get_education_stream_by_id_user_and_id_course(_user_id,
+            #                                                                                           _course_id)
+            # timetable = timetable_manager.get_timetable_by_id_module_and_id_education_stream(_module_id,
+            #                                                                                  education_stream.id)
+            # date_today = datetime.today()
+            # if date_today >= timetable.date_start:
+            #     return True
 
             # проверяем, есть ли пользователь в списках участников пятого потока
             for i in range(1, min(len(course_modules) + 1, 5)):

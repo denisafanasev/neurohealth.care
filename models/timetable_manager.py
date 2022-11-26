@@ -59,4 +59,39 @@ class TimetableManager():
 
         return timetables_list
 
+    def get_timetable_by_id_module_and_id_education_stream(self, _id_module, _id_education_stream):
+        """
+        Возвращает расписание по id модуля и id обучающего потока
 
+        Args:
+            _id_module(Int): ID модуля
+            _id_education_stream(Int): ID обучающего потока
+
+        Returns:
+            TimeTable: расписание
+        """
+        data_store = DataStore('timetables')
+
+        timetables_data_list = data_store.get_rows({'id_education_stream': _id_education_stream, 'id_module': _id_module})
+
+        if len(timetables_data_list) == 1:
+            return self.timetable_row_to_timetable(timetables_data_list[0])
+
+    def save_timetable(self, _data, _id_education_stream):
+        """
+        Обновляем расписание
+
+        Args:
+            _data(List): список с расписаниями модулей обучающего потока
+            _id_education_stream(Int): ID обучающего потока
+
+        Returns:
+            None
+        """
+
+        data_store = DataStore('timetables')
+
+        timetables_list = self.get_timetables_list_by_id_education_stream(_id_education_stream)
+        data_store.delete_row([timetable.id for timetable in timetables_list])
+
+        self.create_timetable(_data, _id_education_stream)

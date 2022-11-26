@@ -128,8 +128,17 @@ class EducationStreamManager():
 
         return education_stream
 
-    def get_education_streams_by_login_user(self, _id_user, _role_user):
+    def get_education_streams_list_by_id_user(self, _id_user, _role_user):
+        """
+        Возвращает список обучающих потоков, в которых находится данный пользователь
 
+        Args:
+            _id_user(Int): ID пользователя
+            _role_user(String): роль пользователя
+
+        Returns:
+            List(EducationStream): список обучающих потоков
+        """
         data_store = DataStore("education_streams")
 
         education_streams_list = data_store.get_rows()
@@ -144,3 +153,24 @@ class EducationStreamManager():
                     education_streams.append(education_stream)
 
         return education_streams
+
+    def get_education_stream_by_id_user_and_id_course(self, _id_user, _id_course):
+        """
+        Возвращает список обучающих потоков, в которых находится данный пользователь
+
+        Args:
+            _id_user(Int): ID пользователя
+            _id_course(Int): ID курса
+
+        Returns:
+            EducationStream: обучающий поток
+        """
+        data_store = DataStore("education_streams")
+
+        education_streams_list = data_store.get_rows({'id_course': _id_course})
+        for i_education_stream in education_streams_list:
+            education_stream = self.education_stream_row_to_education_stream(i_education_stream)
+            if education_stream.status == 'идет':
+                if _id_user in education_stream.students_list:
+                    return education_stream
+

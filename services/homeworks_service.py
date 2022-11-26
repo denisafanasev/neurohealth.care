@@ -269,3 +269,15 @@ class HomeworksService():
         course_manager = EducationCourseManager()
 
         return course_manager.get_course_by_id(_id)
+
+    def get_educations_stream(self):
+        """
+        Возвращает список всех обучающих потоков
+
+        Returns:
+            List(EducationStream): список образовательных потоков
+        """
+
+        education_stream = EducationStreamManager()
+
+        return education_stream.get_education_streams()

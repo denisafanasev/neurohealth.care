@@ -69,7 +69,7 @@ class EducationStreamService():
 
         return curators_list
 
-    def get_courses_list(self, _id_user):
+    def get_courses_list(self):
         """
         Возвращает список курсов
 
@@ -89,21 +89,6 @@ class EducationStreamService():
 
         return courses
 
-    def get_course_by_id_education_stream(self, _id_course):
-        """
-        Возвращает список курсов
-
-        Returns:
-            (List): список курсов
-        """
-
-        course_manager = EducationCourseManager()
-        module_manager = EducationModuleManager()
-
-        course = course_manager.get_course_by_id(_id_course)
-
-        return course
-
     def get_education_stream(self, _id):
         """
         Возвращает обучающий поток по id
@@ -114,17 +99,11 @@ class EducationStreamService():
 
         education_stream_manager = EducationStreamManager()
         course_manager = EducationCourseManager()
-        user_manager = UserManager()
 
         education_stream = education_stream_manager.get_education_stream(_id)
 
         if education_stream is not None:
             education_stream.course = course_manager.get_course_by_id(education_stream.course)
-            students_list = [user_manager.get_user_by_id(user_id) for user_id in education_stream.students_list]
-            curators_list = [user_manager.get_user_by_id(user_id) for user_id in education_stream.curators_list]
-
-            education_stream.students_list = students_list
-            education_stream.curators_list = curators_list
 
         return education_stream
 
@@ -147,19 +126,20 @@ class EducationStreamService():
 
         return id_education_stream
 
-    def save_education_stream(self, _education_stream):
+    def save_education_stream(self, _education_stream, _timetables_list):
         """
         Изменяет данные обучающего потока
 
         Args:
             _education_stream(Dict): обучающий поток
-            _old_students_list(List): предыдущий список студентов
-            _old_curators_list(List): предыдющий список кураторов
+            _timetables_list(List): список расписаний открытия модулей для потока
         """
 
         education_stream_manager = EducationStreamManager()
+        timetable_manager = TimetableManager()
 
-        education_stream_manager.save_education_stream(_education_stream)
+        education_stream = education_stream_manager.save_education_stream(_education_stream)
+        timetable_manager.save_timetable(_timetables_list, education_stream.id)
 
     def get_education_streams_by_login_user(self, _login_user, _role_user):
         """_summary_
@@ -174,7 +154,7 @@ class EducationStreamService():
 
         education_stream_manager = EducationStreamManager()
 
-        return education_stream_manager.get_education_streams_by_login_user(_login_user, _role_user)
+        return education_stream_manager.get_education_streams_list_by_id_user(_login_user, _role_user)
 
     def get_timetables_list(self, _id):
         """
@@ -189,6 +169,21 @@ class EducationStreamService():
         timetable_manager = TimetableManager()
 
         return timetable_manager.get_timetables_list_by_id_education_stream(_id)
+
+    def get_timetable_by_id_module_and_id_education_stream(self, _id_module, _id_education_stream):
+        """
+        Возвращает расписание по id модуля и id обучающего потока
+
+        Args:
+            _id_module(Int): ID модуля
+            _id_education_stream(Int): ID обучающего потока
+
+        Returns:
+            TimeTable: расписание
+        """
+        timetable_manager = TimetableManager()
+
+        return timetable_manager.get_timetable_by_id_module_and_id_education_stream(_id_module, _id_education_stream)
 
     def get_module_by_id(self, _id):
         """

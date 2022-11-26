@@ -22,6 +22,8 @@ class EducationStreamsPageController():
 
         for i_education_stream in education_streams:
 
+            teacher = education_stream_service.get_user_by_id(i_education_stream.teacher)
+
             education_stream = {
                 "id": i_education_stream.id,
                 "name": i_education_stream.name,
@@ -35,7 +37,7 @@ class EducationStreamsPageController():
                 "students_list": i_education_stream.students_list,
                 "count_curators": len(i_education_stream.curators_list),
                 "count_students": len(i_education_stream.students_list),
-                "teacher": i_education_stream.teacher,
+                "teacher": teacher.login,
                 "status": i_education_stream.status
             }
 

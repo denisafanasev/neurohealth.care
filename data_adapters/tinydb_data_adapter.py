@@ -130,3 +130,12 @@ class TinyDBDataAdapter():
         """
 
         self.data_store.update(delete(_key), where(_where) == _where_value)
+
+    def delete_row(self, _data_ids):
+        """
+        Удаление записи
+        Args:
+            _data_ids(List): список из id записей, которые нужно удалить
+        """
+
+        self.data_store.remove(doc_ids=_data_ids)

@@ -856,9 +856,11 @@ def education_home_tasks():
         data = page_controller.get_homework_verified(user_id, id_education_stream)
 
     amount_education_streams = config.AMOUNT_EDUCATION_STREAMS
+
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
                            _amount_education_streams=amount_education_streams, _id_education_stream=id_education_stream)
+
 
 @app.route('/education_home_task_card', methods=['GET', 'POST'])
 @login_required
@@ -1413,6 +1415,7 @@ def estimated_values():
                            _data=data, _ranges_age=page_controller.get_age_ranges(), _id_file_name=int(id_file_name),
                            _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
 
+
 @app.route('/education_streams', methods=['GET', 'POST'])
 @login_required
 def education_streams():
@@ -1427,6 +1430,7 @@ def education_streams():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _education_streams_list=education_streams_list, _endpoint=endpoint)
 
+
 @app.route('/education_stream_card', methods=['GET', 'POST'])
 @login_required
 def education_stream_card():
@@ -1437,6 +1441,9 @@ def education_stream_card():
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     user_id = flask_login.current_user.user_id
+
+    if not flask_login.current_user.is_admin():
+        return redirect("main_page")
     
     id_education_stream = request.args.get('id')
     error = None
@@ -1458,12 +1465,14 @@ def education_stream_card():
     if mode != 'view':
         curators_list = page_controller.get_curators_list(user_id)
         students_list = page_controller.get_students_list(user_id)
-        courses_list = page_controller.get_courses_list(user_id)
+        courses_list = page_controller.get_courses_list(id_education_stream)
 
     else:
-        curators_list = education_stream['curators_list']
-        students_list = education_stream['students_list']
-        courses_list = page_controller.get_course_by_id_education_stream(education_stream['course']['id'])
+        curators_list = page_controller.get_curators_list(user_id, education_stream['curators_list'])
+        students_list = page_controller.get_students_list(user_id, education_stream['students_list'])
+        # curators_list = education_stream['curators_list']
+        # students_list = education_stream['students_list']
+        courses_list = [education_stream['course']]
 
     if request.method == 'POST':
         if request.form.get("button") == 'new':
@@ -1472,12 +1481,12 @@ def education_stream_card():
                 "id_course": int(request.form.get("course").split('_')[-1]),
                 "curators_list": [i['id'] for i in curators_list if request.form.get(f'user_{i["id"]}') is not None],
                 "students_list": [i['id'] for i in students_list if request.form.get(f'user_{i["id"]}') is not None],
-                "teacher": request.form.get("teacher"),
+                "teacher": int(request.form.get("teacher")),
                 "date_start": request.form.get("date_start"),
-                "date_end": request.form.get("date_end")
+                "date_end": request.form.get("date_ends")
             }
 
-            if education_stream_new['teacher'] not in education_stream['curators_list']:
+            if education_stream_new['teacher'] not in education_stream_new['curators_list']:
                 education_stream_new['curators_list'].append(education_stream_new['teacher'])
 
             timetables_list = []
@@ -1500,18 +1509,29 @@ def education_stream_card():
             education_stream_new = {
                 "id": education_stream['id'],
                 "name": request.form.get("name"),
-                "id_course": int(request.form.get("course")),
-                "curators_list": [i['login'] for i in curators_list if request.form.get(i['login']) is not None],
-                "students_list": [i['login'] for i in students_list if request.form.get(i['login']) is not None],
-                "teacher": request.form.get("teacher"),
+                "id_course": int(request.form.get("course").split('_')[-1]),
+                "curators_list": [i['id'] for i in curators_list if request.form.get(f'user_{i["id"]}') is not None],
+                "students_list": [i['id'] for i in students_list if request.form.get(f'user_{i["id"]}') is not None],
+                "teacher": int(request.form.get("teacher")),
                 "date_start": request.form.get("date_start"),
-                "date_end": request.form.get("date_end")
+                "date_end": request.form.get("date_ends")
             }
 
-            page_controller.save_education_stream(education_stream_new, education_stream['students_list'],
-                                                   education_stream["curators_list"])
-            mode = "view"
-            education_stream = page_controller.get_education_stream(id_education_stream)
+            timetables_list = []
+            for course in courses_list:
+                if course['id'] == education_stream_new['id_course']:
+                    for module in course['modules']:
+                        timetables_list.append({
+                            "id_module": module['id'],
+                            'date_start': request.form.get(f'date_start_module_{module["id"]}')
+                        })
+
+            if education_stream_new['teacher'] not in education_stream_new['curators_list']:
+                education_stream_new['curators_list'].append(education_stream_new['teacher'])
+
+            page_controller.save_education_stream(education_stream_new, timetables_list)
+
+            return redirect(f"/education_stream_card?id={id_education_stream}")
 
     return render_template('education_stream_card.html', view="education_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _endpoint=endpoint,

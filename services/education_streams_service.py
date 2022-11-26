@@ -26,6 +26,21 @@ class EducationStreamsService():
 
         return education_streams_list
 
+    def get_user_by_id(self, _user_id):
+        """
+        Возвращает пользователя по ID
+
+        Args:
+            _user_id(Int): ID пользователя
+
+        Returns:
+            User: пользователь
+        """
+
+        user_manager = UserManager()
+
+        return user_manager.get_user_by_id(_user_id)
+
     def get_students_list(self, _id_user):
         """
         Возвращает список пользователей с ролью user
@@ -147,4 +162,4 @@ class EducationStreamsService():
 
         education_stream_manager = EducationStreamManager()
 
-        return education_stream_manager.get_education_streams_by_login_user(_login_user, _role_user)
+        return education_stream_manager.get_education_streams_list_by_id_user(_login_user, _role_user)
