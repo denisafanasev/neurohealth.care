@@ -1,3 +1,20 @@
+[1.2.6]
+Общие изменения
+- Добавлен раздел для управления обучающими потоками
+- В разделе обучающие потоки суперпользователь видит список текущих обучающих потоков, может их редактировать и создавать новые
+- Добавлена проверка на повторную сдачу домашней работы 
+
+Исправлены ошибки
+- 
+
+General changes
+- Added section for managing learning streams
+- In the training streams section, the superuser sees a list of current training streams, can edit them and create new ones
+- Added check for resubmission of homework
+
+Bugs fixed
+-
+
 [1.2.5]
 Общие изменения
 - Добавлено название для столбца с количеством непрочитанными сообщениями "Непрочитанные сообщения"
