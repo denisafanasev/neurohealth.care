@@ -235,9 +235,6 @@ class EducationCourseLessonService():
         course_manager = EducationCourseManager()
         module_manager = EducationModuleManager()
         user_manager = UserManager()
-        timetable_manager = TimetableManager()
-        education_stream_manager = EducationStreamManager()
-        user_manager = UserManager()
 
         user = user_manager.get_user_by_id(_user_id)
 
@@ -263,52 +260,53 @@ class EducationCourseLessonService():
 
             # TODO: это надо перенести в целевую модель проверки вхождения пользователя в обущающий поток
 
-            education_stream = education_stream_manager.get_education_stream_by_id_user_and_id_course(_user_id,
-                                                                                                      _course_id)
-            timetable = timetable_manager.get_timetable_by_id_module_and_id_education_stream(_module_id,
-                                                                                             education_stream.id)
-            date_today = datetime.today()
-            if date_today >= timetable.date_start:
-                return True
-            # проверяем, есть ли пользователь в списках участников пятого потока
-            # for i in range(1, min(len(course_modules) + 1, 5)):
-            #     if course_modules[i - 1].id == _module_id:
-            #         with open(config.DATA_FOLDER + 'course_1/s5_users.txt') as f:
-            #             course_users_list = f.read().splitlines()
-            #
-            #         for course_user in course_users_list:
-            #             if course_user.lower() == user.login:
-            #                 return True
-            #
-            # # проверяем, есть ли пользователь в списках участников четвертого потока
-            # for i in range(1, min(len(course_modules) + 1, 9)):
-            #     if course_modules[i - 1].id == _module_id:
-            #         with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
-            #             course_users_list = f.read().splitlines()
-            #
-            #         for course_user in course_users_list:
-            #             if course_user.lower() == user.login:
-            #                 return True
-            #
-            # # проверяем, есть ли пользователь в списках участников третьего потока
-            # for i in range(1, min(len(course_modules) + 1, 9)):
-            #     if course_modules[i - 1].id == _module_id:
-            #         with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
-            #             course_users_list = f.read().splitlines()
-            #
-            #         for course_user in course_users_list:
-            #             if course_user.lower() == user.login:
-            #                 return True
+            # education_stream = education_stream_manager.get_education_stream_by_id_user_and_id_course(_user_id,
+            #                                                                                           _course_id)
+            # timetable = timetable_manager.get_timetable_by_id_module_and_id_education_stream(_module_id,
+            #                                                                                  education_stream.id)
+            # date_today = datetime.today()
+            # if date_today >= timetable.date_start:
+            #     return True
 
-            # # проверяем, есть ли пользователь в списках участников второго потока
-            # for i in range(1, min(len(course_modules) + 1, 9)):
-            #     if course_modules[i - 1].id == _module_id:
-            #         with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
-            #             course_users_list = f.read().splitlines()
-            #
-            #         for course_user in course_users_list:
-            #             if course_user.split()[0].lower() == user.login:
-            #                 return True
+            # проверяем, есть ли пользователь в списках участников пятого потока
+            for i in range(1, min(len(course_modules) + 1, 5)):
+                if course_modules[i - 1].id == _module_id:
+                    with open(config.DATA_FOLDER + 'course_1/s5_users.txt') as f:
+                        course_users_list = f.read().splitlines()
+
+                    for course_user in course_users_list:
+                        if course_user.lower() == user.login:
+                            return True
+
+            # проверяем, есть ли пользователь в списках участников четвертого потока
+            for i in range(1, min(len(course_modules) + 1, 9)):
+                if course_modules[i - 1].id == _module_id:
+                    with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
+                        course_users_list = f.read().splitlines()
+
+                    for course_user in course_users_list:
+                        if course_user.lower() == user.login:
+                            return True
+
+            # проверяем, есть ли пользователь в списках участников третьего потока
+            for i in range(1, min(len(course_modules) + 1, 9)):
+                if course_modules[i - 1].id == _module_id:
+                    with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
+                        course_users_list = f.read().splitlines()
+
+                    for course_user in course_users_list:
+                        if course_user.lower() == user.login:
+                            return True
+
+            # проверяем, есть ли пользователь в списках участников второго потока
+            for i in range(1, min(len(course_modules) + 1, 9)):
+                if course_modules[i - 1].id == _module_id:
+                    with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
+                        course_users_list = f.read().splitlines()
+
+                    for course_user in course_users_list:
+                        if course_user.split()[0].lower() == user.login:
+                            return True
 
             return False
 

@@ -842,17 +842,10 @@ def education_home_tasks():
         return redirect("main_page")
 
     data_option = request.args.get('data_option')
-    id_education_stream = session.get('id_education_stream')
-
-    education_streams_list = page_controller.get_education_streams_list()
-    if id_education_stream is not None:
-        session.pop('id_education_stream')
-    else:
-        id_education_stream = education_streams_list[-1]['id']
-
+    id_education_stream = 5
     if request.method == "POST":
         if request.form.get('education_stream'):
-            session['id_education_stream'] = int(request.form['education_stream'])
+            id_education_stream = int(request.form['education_stream'])
 
     data = None
     if data_option is None:
@@ -862,9 +855,12 @@ def education_home_tasks():
     elif data_option == 'homework_verified':
         data = page_controller.get_homework_verified(user_id, id_education_stream)
 
+    amount_education_streams = config.AMOUNT_EDUCATION_STREAMS
+
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
-                           _education_streams_list=education_streams_list, _id_education_stream=id_education_stream)
+                           _amount_education_streams=amount_education_streams, _id_education_stream=id_education_stream)
+
 
 @app.route('/education_home_task_card', methods=['GET', 'POST'])
 @login_required

@@ -106,7 +106,7 @@ class EducationStreamPageController():
                     'id_course': module.id_course
                 }
                 if timetable is not None:
-                    module_view['date_start'] = timetable.date_start
+                    module_view['date_start'] = timetable.date_start.strftime('%d/%m/%Y')
 
                 course_view['modules'].append(module_view)
 
