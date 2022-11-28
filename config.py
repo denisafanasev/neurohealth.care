@@ -4,7 +4,7 @@ app configuration
 import yaml
 import pathlib
 
-VERSION = "1.2.6"
+VERSION = "1.2.7"
 APP_NAME = "NeuroHealth"
 
 if str(pathlib.Path().resolve()).find("prod")!=-1:
@@ -106,6 +106,27 @@ def ga_id() -> str:
         ga_id = "G-not-found"
 
     return ga_id
+
+def cdp_id() -> str:
+    """
+    Возвращает идентификатор CDP из системного файла настроек
+
+    Returns:
+        String: идентификатор CDP
+    """    
+
+    cdp_id = ''
+
+    try:
+        with open(DATA_FOLDER + CONFIG_FILE_NAME, "r") as f:
+            cfg = yaml.safe_load(f)
+        
+        cdp_id = cfg['CONFIG']['cdp_id']
+
+    except:
+        cdp_id = 'not-found'
+
+    return cdp_id
 
 
 def sentry_dsn() -> str:

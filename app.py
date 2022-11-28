@@ -97,12 +97,14 @@ def inject_global_context():
     """
 
     ga_id = config.ga_id()
+    cdp_id = config.cdp_id()
     app_support_channel = config.app_support_channel()
 
     return dict(app_version=config.VERSION,
                 app_name=config.APP_NAME,
                 GA_TRACKING_ID=ga_id,
-                APP_SUPPORT_CHANNEL=app_support_channel)
+                APP_SUPPORT_CHANNEL=app_support_channel,
+                CDP_TRACKING_ID=cdp_id)
 
 
 @login_manager.user_loader

@@ -14,6 +14,19 @@
             gtag('config', '{{ GA_TRACKING_ID }}');
         </script>
 
+        <!-- DMPKit Tag Manager -->
+        <script>
+            (function (w, d, s, l, h, m) {
+                w[l] = w[l] || [];
+                var f = d.getElementsByTagName(s)[0],
+                    j = d.createElement(s), dl = l != 'dmpkitdl' ? '&l=' + l : '';
+                j.async = true;
+                j.src = '//' + m + '/tm.js?id=' + h + dl;
+                f.parentNode.insertBefore(j, f);
+            })(window, document, 'script', 'dmpkitdl', '{{ CDP_TRACKING_ID }}', 'static.cdp.cleverdata.ru');
+        </script>
+        <!-- End DMPKit Tag Manager -->
+
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
