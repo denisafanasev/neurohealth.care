@@ -8,6 +8,15 @@
 Исправлены ошибки
 - Исправлено редактирование обучающего потока
 
+General changes
+- Added notification about successful creation/editing of the training stream
+- Opened access for the 5th stream to all training modules
+- added platform CDP tracker
+- added support chat link on login page
+
+Bugs fixed
+- Fixed tutorial stream editing
+
 [1.2.6]
 Общие изменения
 - Добавлен раздел для управления обучающими потоками
