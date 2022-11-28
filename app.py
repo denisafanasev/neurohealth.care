@@ -1446,8 +1446,13 @@ def education_stream_card():
         return redirect("main_page")
     
     id_education_stream = request.args.get('id')
-    error = None
-    error_type = None
+    message_error = session.get('message_error')
+    status_code = session.get('status_code')
+    if message_error is not None:
+        session.pop('message_error')
+
+    if status_code is not None:
+        session.pop('status_code')
 
     if id_education_stream is not None:
         if request.form.get('button') is None:
@@ -1468,10 +1473,10 @@ def education_stream_card():
         courses_list = page_controller.get_courses_list(id_education_stream)
 
     else:
+        # Если пользователь просматривает карточку обучающего потока, то ищем только данные пользователей и курса
+        # этого обучающего потока
         curators_list = page_controller.get_curators_list(user_id, education_stream['curators_list'])
         students_list = page_controller.get_students_list(user_id, education_stream['students_list'])
-        # curators_list = education_stream['curators_list']
-        # students_list = education_stream['students_list']
         courses_list = [education_stream['course']]
 
     if request.method == 'POST':
@@ -1498,7 +1503,7 @@ def education_stream_card():
                             'date_start': request.form.get(f'date_start_module_{module["id"]}')
                         })
 
-            id_education_stream = page_controller.create_education_stream(education_stream_new, timetables_list)
+            id_education_stream, session['message_error'], session['status_code'] = page_controller.create_education_stream(education_stream_new, timetables_list)
 
             return redirect(f"/education_stream_card?id={id_education_stream}")
 
@@ -1506,6 +1511,7 @@ def education_stream_card():
             mode = "edit"
 
         elif request.form.get('button') == "save":
+            x = request.form
             education_stream_new = {
                 "id": education_stream['id'],
                 "name": request.form.get("name"),
@@ -1529,14 +1535,15 @@ def education_stream_card():
             if education_stream_new['teacher'] not in education_stream_new['curators_list']:
                 education_stream_new['curators_list'].append(education_stream_new['teacher'])
 
-            page_controller.save_education_stream(education_stream_new, timetables_list)
+            session['message_error'], session['status_code'] = page_controller.save_education_stream(education_stream_new, timetables_list)
 
             return redirect(f"/education_stream_card?id={id_education_stream}")
 
     return render_template('education_stream_card.html', view="education_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _endpoint=endpoint,
                            _curators_list=curators_list, _students_list=students_list, _courses_list=courses_list,
-                           _mode=mode, _education_stream=education_stream, _timetables_list=timetables_list)
+                           _mode=mode, _education_stream=education_stream, _timetables_list=timetables_list,
+                           _message_error=message_error, _status_code=status_code)
 
 
 @app.route('/download', methods=['GET', 'POST'])

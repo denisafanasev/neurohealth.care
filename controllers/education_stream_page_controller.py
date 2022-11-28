@@ -105,6 +105,7 @@ class EducationStreamPageController():
                     'name': module.name,
                     'id_course': module.id_course
                 }
+                # Если есть расписание в потоке для данного модуля, то добавляем дату открытия этого модуля
                 if timetable is not None:
                     module_view['date_start'] = timetable.date_start.strftime('%d/%m/%Y')
 
@@ -186,7 +187,9 @@ class EducationStreamPageController():
         """
         education_stream_manager = EducationStreamService()
 
-        return education_stream_manager.create_education_stream(_education_stream, _timetables_list)
+        id_education_stream = education_stream_manager.create_education_stream(_education_stream, _timetables_list)
+
+        return id_education_stream, 'Обучающий поток успешно создан.', 'Successful'
 
     def save_education_stream(self, _education_stream, _timetables_list):
         """
@@ -206,23 +209,7 @@ class EducationStreamPageController():
 
         _education_stream['course'] = _education_stream.pop("id_course")
 
-    def update_education_stream(self, _education_stream, _timetables_list):
-        """
-        Изменяет данные обучающего потока
-
-        Args:
-            _education_stream(Dict): обновленные атрибуты обучающего потока
-            _timetables_list(List): список расписаний открытия модулей для потока
-
-        Returns:
-            None
-        """
-
-        education_stream_service = EducationStreamService()
-
-        education_stream_service.save_education_stream(_education_stream, _timetables_list)
-
-        _education_stream['course'] = _education_stream.pop("id_course")
+        return 'Редактирование обучающего потока успешно завершено.', 'Successful'
 
     def get_timetables_list(self, _id):
         """
