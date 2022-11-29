@@ -251,9 +251,6 @@ def user_manager():
     endpoint = request.endpoint
     users_list = page_controller.get_users_list_view(current_user_id)
     user_id = ''
-    # new_user = page_controller.get_users_profile_view(user_id)
-    # new_user['user_id'] = 0
-    # users_list.append(new_user)
 
     error = None
     error_type = {}
@@ -434,8 +431,10 @@ def user_profile():
 
     endpoint = "user_manager"
     user_id = request.args.get('user_id')
+    current_user_id = flask_login.current_user.user_id
 
     if user_id is not None and not request.form.get("button"):
+        user_id = int(user_id)
         mode = "view"
     else:
         try:
@@ -464,6 +463,7 @@ def user_profile():
             mode = "edit"
 
     data = page_controller.get_users_profile_view(user_id)
+    education_streams_list = page_controller.get_education_streams_list(user_id, data['role'])
     data_edit = {}
     if isinstance(data, dict):
         active = data['active']
@@ -515,8 +515,8 @@ def user_profile():
                     user['education_module_expiration_date'] = data["education_module_expiration_date"]
 
                     page_controller.chenge_user(user["login"], user["name"], user["email"], user["role"],
-                                                user["probationers_number"], user["created_date"], user["active"],
-                                                user['education_module_expiration_date'])
+                                                user["probationers_number"], user["created_date"],
+                                                user['education_module_expiration_date'], user_id)
 
                     data_edit = user
                     mode = "view"
@@ -554,10 +554,15 @@ def user_profile():
                     data_edit = page_controller.get_users_profile_view(user_id)
                     mode = "view"
 
-            elif request.form.get("button") is None and (
-                    request.form.get("is_active") is None or request.form.get("is_active")):
-                active = page_controller.activation_deactivation(data['login'], data["active"])
-                error_type = "Successful"
+            elif request.form.get("is_active"):
+                is_active = request.form.get("is_active")
+                if is_active == "True":
+                    error = page_controller.activation(data[user_id]['login'], current_user_id)
+                    data[user_id]['active'] = True
+
+                else:
+                    error = page_controller.deactivation(data[user_id]['login'], current_user_id)
+                    data[user_id]['active'] = False
 
                 if active:
                     error = "Пользователь успешно разблокирован!"
@@ -580,7 +585,8 @@ def user_profile():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data_edit=data_edit, _data=data, _settings=settings_user,
                            _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _mode=mode, _error=error, _active=active, _error_type=error_type)
+                           _mode=mode, _error=error, _active=active, _error_type=error_type,
+                           _education_streams_list=education_streams_list)
 
 
 @app.route('/main_page', methods=['GET', 'POST'])

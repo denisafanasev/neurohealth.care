@@ -6,6 +6,13 @@
         // Choices.js
         new Choices(document.querySelector(".choices-single"));
         new Choices(document.querySelector(".choices-multiple"));
+
+        var education_stream_table = $("#education_stream_table").DataTable({
+                responsive: true,
+                lengthChange: !1,
+                pageLength: 5
+
+            });
         // Flatpickr
         flatpickr(".flatpickr-minimum");
         flatpickr(".flatpickr-datetime", {
@@ -132,7 +139,7 @@
                             <input id="is_active" name="is_active" class="form-check-input" type="checkbox"
                                    value="True"
                                    {% if _data_edit['active'] %}checked{% endif %}
-                                    {% if _mode != "edit" and _mode != "view" %}disabled{% endif %}
+                                    {% if _mode == "new" %}disabled{% endif %}
                                     {% if _mode == "view" %} onclick="this.form.submit()" {% endif %}>
                             <label class="form-check-label" for="is_active">Разблокирован</label>
                         </div>
@@ -205,6 +212,58 @@
             </div>
         </div>
         </form>
+    <div class="row d-flex align-items-stretch bd-highlight">
+        <div class="p-2 bd-highlight">
+            <div class="card d-flex align-self-baseline" style="height: 100%;">
+                <div class="card-header">
+                    <h5 class="card-title">Учетные данные пользователя</h5>
+
+                    <div id="education_stream_table" class="mb-2">
+                        <table id="education_stream_table" class=" table dataTable border" >
+                            <thead>
+                            <tr>
+{#                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"#}
+{#                                    style="width:20%;" aria-label="Position: activate to sort column ascending">Название#}
+{#                                </th>#}
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                    style="width:10%;" aria-label="Position: activate to sort column ascending">Преподаватель
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                    style="width:5%;" aria-label="Position: activate to sort column ascending">Дата старта
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                    style="width:5%;" aria-label="Position: activate to sort column ascending">Дата окончания
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                    style="width:15%;" aria-label="Position: activate to sort column ascending">Обучающий курс
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for education_stream in _education_streams_list %}
+                                <tr class="even">
+{#                                    <td>#}
+{#                                        <div style="text-align: center; margin-right: 21%">#}
+{#                                            <a href="/education_stream_card?id={{ education_stream['id'] }}">{{ education_stream['name'] }}</a>#}
+{#                                        </div>#}
+{#                                    </td>#}
+                                    <td>
+                                        <div style="text-align: center; margin-right: 14%">{{ education_stream['teacher'] }}</div>
+                                    </td>
+                                    <td>{{ education_stream['date_start'] }}</td>
+                                    <td>{{ education_stream['date_end'] }}</td>
+                                    <td>
+                                        <div style="text-align: center; margin-right: 16%">{{ education_stream['course'] }}</div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 

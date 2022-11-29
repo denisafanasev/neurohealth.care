@@ -1,3 +1,4 @@
+from models.course_manager import EducationCourseManager
 from models.user_manager import UserManager
 from models.action_manager import ActionManager
 from models.education_stream_manager import EducationStreamManager
@@ -20,11 +21,24 @@ class UserProfileService():
         Returns:
             Dict: характеристики профиля пользователя
         """
+
         user_manager = UserManager()
+        stream_manager = EducationStreamManager()
+
         user = user_manager.get_user_by_id(user_id)
+        # education_streams = stream_manager.get_education_streams_list_by_id_user(user.user_id, user.role)
+        # if user is not None:
+        #     if user.role == "user":
+        #         education_stream_list = []
+        #         for id_education_stream in education_streams:
+        #             education_stream_list.append(stream_manager.get_education_stream(id_education_stream))
+        #         user.education_stream_list = education_stream_list
+        #     else:
+        #         user.education_stream_list = None
+
         return user
 
-    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _user_id):
+    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _current_user_id):
         """
         Создает в системе суперпользователя
 
@@ -44,14 +58,16 @@ class UserProfileService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        login_superuser = user_manager.get_user_by_id(_user_id).login
+        error = user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
+        login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
-        action_manager.add_notifications(_login, "добавил", '', "user_manager", login_superuser)
+        if error is None:
+            action_manager.add_notifications(_login, "добавил", 'нового', "user_manager", login_superuser)
 
-        return user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
+        return error
 
     def chenge_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
-                    _education_module_expiration_date):
+                    _education_module_expiration_date, _current_user_id):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -68,19 +84,24 @@ class UserProfileService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        action_manager.add_notifications(_login, "изменил", '', "user_manager", _login)
-
-        return user_manager.chenge_user(_login, _name, _email, _role, _probationers_number, _created_date,
+        user = user_manager.chenge_user(_login, _name, _email, _role, _probationers_number, _created_date,
                                         _education_module_expiration_date)
 
-    def chenge_password(self, _login, _password, _password2):
+        login_superuser = user_manager.get_user_by_id(_current_user_id).login
+
+        action_manager.add_notifications(_login, "изменил", 'данные', "user_manager", login_superuser)
+
+        return user
+
+    def chenge_password(self, _user_id, _password, _password2, _current_user_id, _current_password=''):
         """
         Обновляет в системе пароль пользователя
 
         Args:
-            _login (String): логин пользователя
+            _user_id (Integer): ID пользователя
             _password (String): пароль пользователя
             _password2 (String): контрольный ввод пароля пользователя
+            _current_user_id(Integer): ID текущего пользователя
 
         Returns:
             String: ошибка при обновлении пароля пользователя
@@ -89,79 +110,94 @@ class UserProfileService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        user_manager.chenge_password(_login, _password, _password2)
+        error = user_manager.chenge_password(_user_id, _password, _password2, _current_password)
+        login_superuser = user_manager.get_user_by_id(_current_user_id).login
+        login_user = user_manager.get_user_by_id(_user_id).login
 
-        action_manager.add_notifications(_login, "изменил", '', "user_manager", _login)
+        action_manager.add_notifications(login_user, "изменил", 'пароль', "user_manager", login_superuser)
 
-    def activation_deactivation(self, _login, _active):
+        return error
+
+    def activation(self, _login, _current_user_id):
         """
-        Блокировка/разблокировка пользователя
+        разблокировка пользователя
 
         Args:
             _login(String): логин пользователя
-
-        Returns:
-            _active (bool): Активирован/заблокирован пользователь
         """
 
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        action_manager.add_notifications(_login, "изменил", '', "user_manager", _login)
+        user_manager.activation(_login)
 
-        if not _active:
-            return user_manager.activation(_login)
-        elif _active:
-            return user_manager.deactivation(_login)
+        login_superuser = user_manager.get_user_by_id(_current_user_id).login
+        action_manager.add_notifications(_login, "изменил", 'доступ', "user_manager", login_superuser)
 
-    def get_current_user(self, _login_user, _user_id):
+    def deactivation(self, _login, _current_user_id):
         """
-        Возвращает модель User пользователя. Если _login_user = '', то возвращает модель User текущего пользователя
+        Блокировка пользователя
 
         Args:
-            _login_user: логин пользователя
+            _login(String): логин пользователя
+        """
 
-        Returns:
-            user(User): модель User
+        user_manager = UserManager()
+        action_manager = ActionManager()
+
+        active = user_manager.deactivation(_login)
+
+        login_superuser = user_manager.get_user_by_id(_current_user_id).login
+        action_manager.add_notifications(_login, "изменил", 'доступ', "user_manager", login_superuser)
+
+        return active
+
+    def get_current_user_role(self, _current_user_id):
+        """
+        Возвращает роль текущего пользователя
+
+        Return:
+            role(String): роль текущего пользователя
         """
 
         user_manager = UserManager()
 
-        if _login_user == "":
-            return user_manager.get_user_by_id(user_manager.get_user_by_id(_user_id))
-        else:
-            return user_manager.get_user_by_login(_login_user)
+        return user_manager.get_user_by_id(_current_user_id).role
 
-    def access_extension(self, _period, _reference_point, _login):
+    def access_extension(self, _period, _reference_point, _login, _current_user_id):
         """
-        Ппродление срока доступа пользователя к центру обучения
+        Продление срока доступа пользователя к центру обучения
 
         Args:
             _period(Int): количество месяцев, на которое продлевают срок доступа пользователю
             _reference_point(String): начальное время отсчета
             _login(String): логин пользователя, которому продлевают срок доступа
         """
-
         user_manager = UserManager()
+        action_manager = ActionManager()
 
-        return user_manager.access_extension(_period, _reference_point, _login)
+        user_manager.access_extension(_period, _reference_point, _login)
+        login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
-    def get_education_streams_users(self, _education_stream_list):
-        """
-        Возвращает список обучающих потоков по id, в которых есть пользователь
+        action_manager.add_notifications(_login, "продлил", 'срок доступа', "user_manager", login_superuser)
 
-        Args:
-            _education_stream_list(List): список id обучающих потоков
-
-        Returns:
-            (List): список обучающих потоков
-        """
+    def get_education_streams_list(self, _user_id, _role_user):
 
         education_stream_manager = EducationStreamManager()
+        user_manager = UserManager()
+        course_manager = EducationCourseManager()
 
-        education_stream_list = []
-        for education_stream in _education_stream_list:
-            education_stream_list.append(education_stream_manager.get_education_stream(education_stream))
+        education_streams = education_stream_manager.get_education_streams_list_by_id_user(_user_id, _role_user)
+        education_streams_list = []
+        for education_stream in education_streams:
+            education_stream.teacher = user_manager.get_user_by_id(education_stream.teacher).name
+            education_stream.course = course_manager.get_course_by_id(education_stream.course).name
+            education_streams_list.append(education_stream)
 
-        return education_stream_list
+        return education_streams_list
 
+    def get_course_by_id(self, _id_course):
+
+        course_manager = EducationCourseManager()
+
+        return

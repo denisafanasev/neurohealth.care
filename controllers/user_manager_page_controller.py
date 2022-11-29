@@ -78,19 +78,6 @@ class UserManagerPageController():
             user_view['token'] = user.token
             user_view['education_stream_list'] = []
 
-            '''
-            if user.role == "user":
-                for education_stream in user.education_stream_list:
-                    user_view['education_stream_list'].append({
-                        "name": education_stream.name,
-                        "teacher": education_stream.teacher,
-                        "date_start": education_stream.date_start.strftime("%d/%m/%Y"),
-                        "date_end": education_stream.date_end.strftime("%d/%m/%Y"),
-                        "course": education_stream.course.name,
-                        "status": education_stream.status
-                    })
-            '''
-
             user_view['active'] = user.active
         else:
             user_view["login"] = "введите логин пользователя.."
