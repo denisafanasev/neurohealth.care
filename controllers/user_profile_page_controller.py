@@ -122,10 +122,9 @@ class UserProfilePageController():
         try:
             user_profile_service.chenge_password(_user_id, _password, _password2, _current_user_id)
         except UserManagerException as error:
+            return error, 'Error'
 
-            return error
-
-        return "Пароль успешно изменен!"
+        return "Пароль успешно изменен!", 'Successful'
 
     def activation(self, _login, _current_user_id):
         """

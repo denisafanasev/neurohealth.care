@@ -434,7 +434,6 @@ def user_profile():
     current_user_id = flask_login.current_user.user_id
 
     if user_id is not None and not request.form.get("button"):
-        user_id = int(user_id)
         mode = "view"
     else:
         try:
@@ -459,6 +458,7 @@ def user_profile():
         user_id = ""
         settings_user = page_controller.get_settings_user()
     else:
+        user_id = int(user_id)
         if not flask_login.current_user.is_admin():
             mode = "edit"
 
@@ -473,6 +473,7 @@ def user_profile():
     error_type = False
     try:
         if request.method == 'POST':
+            x = request.form
             if request.form.get("button") == "add":
                 if mode == "new":
                     # добавляем нового пользователя и получаем список с ошибками
@@ -534,11 +535,9 @@ def user_profile():
                     user["password"] = request.form["password"]
                     user["password2"] = request.form["password2"]
 
-                    error = page_controller.chenge_password(user["login"], user["password"], user["password2"])
-
+                    error, error_type = page_controller.chenge_password(user_id, user["password"], user["password2"], current_user_id)
                     if error is None:
                         mode = "view"
-
                         error = "Пароль успешно изменен!"
                         error_type = "Successful"
 
@@ -550,27 +549,23 @@ def user_profile():
                     reference_point = request.form["reference_point"]
                     period = request.form["period"]
                     user_login = data['login']
-                    page_controller.access_extension(int(period), reference_point, user_login)
+                    page_controller.access_extension(int(period), reference_point, user_login, current_user_id)
                     data_edit = page_controller.get_users_profile_view(user_id)
                     mode = "view"
 
             elif request.form.get("is_active"):
                 is_active = request.form.get("is_active")
-                if is_active == "True":
-                    error = page_controller.activation(data[user_id]['login'], current_user_id)
-                    data[user_id]['active'] = True
+                if is_active == "true":
+                    error = page_controller.activation(data['login'], current_user_id)
+                    data['active'] = True
+                    error_type = 'Successful'
 
-                else:
-                    error = page_controller.deactivation(data[user_id]['login'], current_user_id)
-                    data[user_id]['active'] = False
-
-                if active:
-                    error = "Пользователь успешно разблокирован!"
-                else:
-                    error = "Пользователь успешно заблокирован!"
+                elif is_active == 'false':
+                    error = page_controller.deactivation(data['login'], current_user_id)
+                    data['active'] = False
+                    error_type = 'Successful'
 
                 mode = "view"
-                data['active'] = active
 
             else:
                 return redirect("user_manager")
