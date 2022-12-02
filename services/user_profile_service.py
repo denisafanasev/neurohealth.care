@@ -67,7 +67,7 @@ class UserProfileService():
         return error
 
     def chenge_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
-                    _education_module_expiration_date, _current_user_id):
+                    _education_module_expiration_date, _is_active,_current_user_id):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -85,7 +85,7 @@ class UserProfileService():
         action_manager = ActionManager()
 
         user = user_manager.chenge_user(_login, _name, _email, _role, _probationers_number, _created_date,
-                                        _education_module_expiration_date)
+                                        _education_module_expiration_date, _active=_is_active)
 
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
 

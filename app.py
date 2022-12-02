@@ -334,6 +334,8 @@ def user_profile():
 
                         return redirect(f'/user_profile?user_id={error}')
 
+                    data_edit = user
+
             elif request.form.get("button") == "edit":
                 if mode == "view":
                     mode = "edit"
@@ -348,15 +350,22 @@ def user_profile():
                     user["probationers_number"] = int(request.form["probationers_number"])
                     user["created_date"] = data["created_date"]
                     user['education_module_expiration_date'] = data["education_module_expiration_date"]
+                    user['is_active'] = request.form.get('is_active')
+                    if user['is_active'] is not None:
+                        user['is_active'] = True
+                    else:
+                        user['is_active'] = False
 
-                    page_controller.chenge_user(user["login"], user["name"], user["email"], user["role"],
+                    error = page_controller.chenge_user(user["login"], user["name"], user["email"], user["role"],
                                                 user["probationers_number"], user["created_date"],
-                                                user['education_module_expiration_date'], user_id)
+                                                user['education_module_expiration_date'], user['is_active'], user_id)
+                    if error is None:
+                        session['error'] = "Изменения сохранены!"
+                        session['error_type'] = "Successful"
 
-                    session['error'] = "Изменения сохранены!"
-                    session['error_type'] = "Successful"
+                        return redirect(f'/user_profile?user_id={user_id}')
 
-                    return redirect(f'/user_profile?user_id={user_id}')
+                    data_edit = user
 
             elif request.form.get("button") == "discharge" or request.form.get("button") == "save_discharge":
                 if mode == "discharge":

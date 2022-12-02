@@ -403,6 +403,11 @@ class UserManager():
             Dict: словарь с информацией о пользователе
         """
 
+        user = self.get_user_by_email(_email)
+        if user is not None:
+            if user.login != _login:
+                raise UserManagerException("Пользователь с таким email уже существует")
+
         user = User(_login=_login, _name=_name, _email=_email, _role=_role, _created_date=_created_date,
                     _probationers_number=_probationers_number, _token=_token, _email_confirmed=_email_confirmed,
                     _education_module_expiration_date=_education_module_expiration_date, _active=_active)

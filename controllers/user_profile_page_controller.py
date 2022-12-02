@@ -84,7 +84,7 @@ class UserProfilePageController():
         return user_id
 
     def chenge_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
-                    _education_module_expiration_date, _current_user_id):
+                    _education_module_expiration_date, _is_active, _current_user_id):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -100,8 +100,12 @@ class UserProfilePageController():
 
         user_profile_service = UserProfileService()
 
-        user_profile_service.chenge_user(_login, _name, _email, _role, _probationers_number, _created_date,
-                                         _education_module_expiration_date, _current_user_id)
+        try:
+            user_profile_service.chenge_user(_login, _name, _email, _role, _probationers_number, _created_date,
+                                         _education_module_expiration_date, _is_active,_current_user_id)
+
+        except UserManagerException as error:
+            return error
 
     def chenge_password(self, _user_id, _password, _password2, _current_user_id):
         """
