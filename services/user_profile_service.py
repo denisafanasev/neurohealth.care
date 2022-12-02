@@ -195,9 +195,3 @@ class UserProfileService():
             education_streams_list.append(education_stream)
 
         return education_streams_list
-
-    def get_course_by_id(self, _id_course):
-
-        course_manager = EducationCourseManager()
-
-        return

@@ -369,9 +369,7 @@ class UserManager():
                      "probationers_number": user.probationers_number,
                      "active": user.active, "email_confirmed": user.email_confirmed, "token": user.token}
 
-        data_store.insert_row(user_data)
-
-        return
+        return data_store.insert_row(user_data)
 
     def get_user_role(self, _user_id):
         """

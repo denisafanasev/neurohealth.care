@@ -57,7 +57,8 @@ class UserProfilePageController():
 
     def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _current_user_id):
         """
-        Создает в системе пользователя
+        Создает в системе пользователя. Если нет ошибок при создании пользователя, возвращает id нового пользователя,
+        иначе передает сообщение ошибки.
 
         Args:
             _login (String): логин пользователя
@@ -75,10 +76,12 @@ class UserProfilePageController():
 
         user_profile_service = UserProfileService()
         try:
-            user_profile_service.create_user(_login, _name, _password, _password2, _email, _role,
-                                             _probationers_number, _current_user_id)
+            user_id = user_profile_service.create_user(_login, _name, _password, _password2, _email, _role,
+                                             _probationers_number, _current_user_id=_current_user_id)
         except UserManagerException as error:
             return error
+
+        return user_id
 
     def chenge_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
                     _education_module_expiration_date, _current_user_id):
@@ -99,10 +102,6 @@ class UserProfilePageController():
 
         user_profile_service.chenge_user(_login, _name, _email, _role, _probationers_number, _created_date,
                                          _education_module_expiration_date, _current_user_id)
-
-        error = "Изменения успешно сохранены!"
-
-        return error
 
     def chenge_password(self, _user_id, _password, _password2, _current_user_id):
         """
@@ -195,7 +194,16 @@ class UserProfilePageController():
         return error
 
     def get_education_streams_list(self, _user_id, _role_user):
+        """
+        Возвращает список обучающих потоков, в которых находится данный пользователь
 
+        Args:
+            _user_id(Int): ID пользователя
+            _role_user(String): роль пользователя
+
+        Returns:
+            List(EducationStream): список обучающих потоков
+        """
         user_profile_service = UserProfileService()
 
         education_streams_list = user_profile_service.get_education_streams_list(_user_id, _role_user)
@@ -203,8 +211,8 @@ class UserProfilePageController():
         for education_stream in education_streams_list:
             education_stream_view = {
                 'course': education_stream.course,
-                'date_start': education_stream.date_start,
-                'date_end': education_stream.date_end,
+                'date_start': education_stream.date_start.strftime('%d/%m/%Y'),
+                'date_end': education_stream.date_end.strftime('%d/%m/%Y'),
                 'teacher': education_stream.teacher,
                 'status': education_stream.status
             }
