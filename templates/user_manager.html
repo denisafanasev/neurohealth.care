@@ -13,35 +13,8 @@
                 responsive: true,
                 pageLength: 20
             });
-            var education_stream_table = $("#education_stream_table").DataTable({
-                responsive: true,
-                lengthChange: !1,
-                pageLength: 5
 
-            });
-
-            education_stream_table.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
             datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
-            let message = document.getElementById('message');
-
-            {% for item in _users_list %}
-                let modal_{{ item['user_id'] }} = document.getElementById('{{ item['user_id'] }}');
-
-                {% if _mode[item['user_id']] == "edit" %}
-                    modal_{{ item['user_id'] }}.style.display = "block";
-
-                {% elif _error_type[item['user_id']] == "Error" %}
-                    modal_{{ item['user_id'] }}.style.display = "block";
-                    {#document.querySelector('h3[id=title_message]').textContent = 'Ошибка';#}
-                    {#document.querySelector('p[id=text_message]').textContent = "{{ _error }}";#}
-                    {#message.style.display = 'block'#}
-
-                {% elif _error_type[item['user_id']] == "Successful" %}
-                    document.querySelector('h3[id=title_message]').textContent = 'Успешно';
-                    document.querySelector('p[id=text_message]').textContent = "{{ _error }}";
-                    message.style.display = 'block'
-                {% endif %}
-            {% endfor %}
 
         });
     </script>
@@ -60,8 +33,13 @@
             overflow-y: scroll!important;
         }
 
-        .pagination {
-            z-index: 0;
+        a{
+            color: white;
+            text-decoration: none;
+        }
+        a:hover{
+            color: white;
+            text-decoration: none;
         }
 
     </style>
@@ -81,8 +59,7 @@
                                     <div class="col-sm-12 col-md-6">
                                         <div class="dt-buttons btn-group flex-wrap">
                                             <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
-                                            data-bs-toggle="modal" data-bs-target="#0"
-                                                    onclick="document.getElementById('0').style.display='block'">
+                                            href="{{ url_for('user_profile') }}">
                                                 <span>Добавить пользователя</span>
                                             </a>
                                         </div>
@@ -132,8 +109,7 @@
 
                                                 <td class="sorting_1 dtr-control" style="display: flex">
                                                     <div class="col{% if item['role'] == "superuser" %} bg-primary {% else %} bg-success {% endif %} bg-gradient" style="text-align: center;position: center; margin-right: 16%; color: white">
-                                                        <a style="display: inline-block; width: 100%"  data-bs-toggle="modal" data-bs-target="#{{ item['user_id'] }}"
-                                                        onclick="document.getElementById('{{ item['user_id'] }}').style.display='block'">
+                                                        <a style="display: inline-block; width: 100%"  href="{{ url_for('user_profile', user_id=item['user_id']) }}">
                                                             <span class="">{{ item['login'] }}</span>
                                                         </a>
                                                     </div>
@@ -141,23 +117,18 @@
                                                 <td>{{ item['name'] }}</td>
                                                 <td>{{ item['email'] }}</td>
                                                 <td>{{ item['created_date'] }}</td>
-                                                <td><a href="#" data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}"
-                                                       onclick="document.getElementById('extension_{{ item['user_id'] }}').style.display='block';">{{ item['education_module_expiration_date'] }}</a></td>
+                                                <td><a>{{ item['education_module_expiration_date'] }}</a></td>
 
                                                 {% if item['is_active'] %}
                                                     <td style="display: flex">
                                                         <div class="col" style="position: center; margin-left: 27%">
-                                                            <a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}" onclick="document.getElementById('status_{{ item['user_id'] }}').style.display='block'; document.getElementById('extension_{{ item['user_id'] }}').style.display = 'none';">
-                                                                <span class="fas fa-circle chat-online"></span>
-                                                            </a>
+                                                            <a><span class="fas fa-circle chat-online"></span></a>
                                                         </div>
                                                     </td>
                                                 {% else %}
                                                     <td style="display: flex">
                                                         <div class="col" style="position: center; margin-left: 27%">
-                                                            <a data-bs-toggle="modal" data-bs-target="#extension_{{ item['user_id'] }}" onclick="document.getElementById('status_{{ item['user_id'] }}').style.display='block'; document.getElementById('extension_{{ item['user_id'] }}').style.display = 'none';">
-                                                                <span class="fas fa-circle chat-offline"></span>
-                                                            </a>
+                                                            <a><span class="fas fa-circle chat-offline"></span></a>
                                                         </div>
                                                     </td>
                                                 {% endif %}
@@ -188,280 +159,6 @@
                 </div>
             </div>
         </div>
-
-        {% for item in _users_list %}
-            <script>
-                // Get the modal
-                var modal_{{ item['user_id'] }} = document.getElementById('{{ item['user_id'] }}');
-                var modal_extension_{{ item['user_id'] }} = document.getElementById('extension_{{ item['user_id'] }}');
-                var modal_status_{{ item['user_id'] }} = document.getElementById('status_{{ item['user_id'] }}');
-                var modal_discharge_{{ item['user_id'] }} = document.getElementById('discharge_{{ item['user_id'] }}');
-                var modal_education_stream_{{ item['user_id'] }} = document.getElementById('education_stream_{{ item['user_id'] }}');
-                // When the user clicks anywhere outside of the modal, close it
-                window.onclick = function (event) {
-                    if (event.target === modal_{{ item['user_id'] }}) {
-                        modal_{{ item['user_id'] }}.style.display = "none";
-                    }
-                    if (event.target === modal_extension_{{ item['user_id'] }}) {
-                        modal_extension_{{ item['user_id'] }}.style.display = "none";
-                    }
-                    if (event.target === modal_status_{{ item['user_id'] }}) {
-                        modal_status_{{ item['user_id'] }}.style.display = "none";
-                    }
-                    if (event.target === modal_discharge_{{ item['user_id'] }}) {
-                        modal_discharge_{{ item['user_id'] }}.style.display = "none";
-                    }
-                    if (event.target === modal_education_stream_{{ item['user_id'] }}) {
-                        modal_education_stream_{{ item['user_id'] }}.style.display = "none";
-                    }
-                }
-            </script>
-        {% endfor %}
-
-    {% for item in _users_list %}
-
-        <!-- Modal user profile form -->
-
-        <div id="{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal">
-            <div class="modal-content animate">
-                <h3 class="modal-title">{% if _mode[item['user_id']] == "view" %}Просмотр{% elif _mode[item['user_id']] == "new" %}Создание{% else %}Редактирование{% endif %} карточки пользователя</h3>
-                {% if _error_type[item['user_id']] == 'Error' %}
-                    <div class="alert alert-danger alert-dismissible" role="alert">
-                        <div class="alert-message">
-                            <strong>Ошибка</strong> {{ _error }}
-                        </div>
-                    </div>
-                {% endif %}
-                <form id="add_user_{{ item['user_id'] }}" name="add_user" method="post" class="was-validated" enctype="multipart/form-data"
-                        {% if _mode[item['user_id']] == "new" %}onsubmit="return checkPasswordsMatched(this)"
-                        {% elif _mode[item['user_id']] == "edit" %} onsubmit="return checkLogin(this);"{% endif %}>
-                    
-                    <div class="row d-flex align-items-stretch bd-highlight">
-
-                        <div style="margin-right: 5px" class="col p-1 bd-highlight border">
-
-                            <div class="card d-flex align-self-baseline" style="height: 100%;">
-                                <div class="card-header">
-                                    <h5 class="card-title">Учетные данные пользователя</h5>
-
-                                    <div class="mb-2">
-                                        <label class="form-label"><strong>Login</strong></label>
-                                        <input required type="text" id="login" name="login_{{ item['user_id']|int }}" class="form-control" {% if _mode[ item['user_id']|int]!="new" %}readonly {% endif %}
-                                                {% if _data_edit[ item['user_id']|int]['login'] != _data[ item['user_id']|int]['login'] or _mode[ item['user_id']|int] != "new" %}value="{{ _data_edit[ item['user_id']|int]['login'] }}" {% else %}
-                                            placeholder="Введите логин пользователя" {% endif %}>
-                                    </div>
-
-                                    <div class="mb-2">
-                                        <label class="form-label"><strong>Имя пользователя</strong></label>
-                                        <input required type="text" name="user_name_{{ item['user_id']|int }}" class="form-control" {% if _mode[ item['user_id']|int]=="view" or _mode[ item['user_id']|int]=="discharge" %}readonly {% endif %}
-                                                {% if _data_edit[ item['user_id']|int]['name'] != _data[ item['user_id']|int]['name'] or _mode[ item['user_id']|int] != "new" %} value="{{ _data_edit[ item['user_id']|int]['name'] }}" {% else %}
-                                            placeholder="Введите имя пользователя" {% endif %}>
-                                    </div>
-
-                                    {% if _mode[ item['user_id']|int]=="new" %}
-                                        <div class="mb-2">
-                                            <label class="form-label"><strong>Пароль</strong></label>
-                                            <input id="password" required type="password" name="password_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password']!= _data[ item['user_id']|int]['password'] %}
-                                                value="{{ _data_edit[ item['user_id']|int]['password'] }}" {% else %}placeholder="Введите пароль" {% endif %}>
-                                        </div>
-
-                                        <div class="mb-2">
-                                            <label class="form-label"><strong>Повтор пароля</strong></label>
-                                            <input id="password2" required type="password" name="password2_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password2']!= _data[ item['user_id']|int]['password2'] %}
-                                                value="{{ _data_edit[ item['user_id']|int]['password2'] }}" {% else %}placeholder="Повторно введите пароль" {% endif %}>
-                                        </div>
-                                    {% endif %}
-
-                                    <div class="mb-2">
-                                        <label class="form-label"><strong>Email</strong></label>
-                                        <input id="email" required type="email" name="email_{{ item['user_id']|int }}" class="form-control"{% if _mode[ item['user_id']|int]=="view" or _mode[ item['user_id']|int]=="discharge" %} readonly {% endif %}
-                                                {% if _data_edit[ item['user_id']|int]['email'] != _data[ item['user_id']|int]['email'] or _mode[ item['user_id']|int] != "new" %}value="{{ _data_edit[ item['user_id']|int]['email'] }}" {% else %}placeholder="Введите email пользователя" {% endif %}>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="col p-1 bd-highlight border">
-
-                            <div class="card d-flex align-self-baseline" style="height: 100%;">
-                                <div class="card-header">
-                                    <h5 class="card-title">Параметры доступа</h5>
-                                    <div class="mb-2">
-                                        <label class="form-label"><strong>Роль пользователя</strong></label>
-                                        <select id="role" required type="text" name="role_{{ item['user_id'] }}" class="form-select"
-                                                {% if _mode[ item['user_id']|int]=="view" or _mode[ item['user_id']|int]=="discharge" %}disabled {% endif %}>
-                                            {% if _mode[ item['user_id']|int] != "view" %}
-                                                {% for i in _settings['role'] %}
-                                                    <option {% if i == _data_edit[ item['user_id']|int]['role'] %}selected {% endif %}value="{{ i }}">{{ i }}</option>
-                                                {% endfor %}
-                                            {% else %}
-                                                <option>{{ _data_edit[ item['user_id']|int]['role'] }}</option>
-                                            {% endif %}
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-2">
-                                        <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
-                                        <select required type="text" name="probationers_number_{{ item['user_id'] }}" class="form-select" {% if _mode[ item['user_id']|int]=="view" or [ item['user_id']|int]=="discharge" %}disabled {% endif %}>
-                                            {% if _mode[ item['user_id']|int] != "view" %}
-                                                {% for i in _settings['probationers_number'] %}
-                                                    <option{% if _data_edit[ item['user_id']|int]['probationers_number'] == i %} selected {% endif %} value="{{ i }}">{{ i }}</option>
-                                                {% endfor %}
-                                            {% else %}
-                                                <option>{{ _data_edit[ item['user_id']|int]['probationers_number'] }}</option>
-                                            {% endif %}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-                    <div class="row d-flex align-items-stretch bd-highlight" align="right">
-                        <div class="col-12 p-2">
-                            {% if _mode[ item['user_id']|int] !="discharge" %}
-                                <button type="submit" name="button_{{ item['user_id']|int }}" value="{% if _mode[ item['user_id']|int]=="new" %}add{% elif _mode[ item['user_id']|int]=="edit" %}save{% else %}edit{% endif %}" class="btn btn-primary ">
-                                    {% if _mode[ item['user_id']|int]=="new" %}Добавить пользователя
-                                    {% elif _mode[ item['user_id']|int]=="edit" %}Сохранить
-                                    {% else %}Редактировать
-                                    {% endif %}
-                                </button>
-                            {% endif %}
-                            {% if _mode[ item['user_id']|int] == "view" %}
-                                <a type="submit" href="#" data-bs-toggle="modal" data-bs-target="#discharge_{{ item['user_id'] }}"
-                                                                                        onclick="document.getElementById('{{ item['user_id'] }}').style.display='none';
-                                                                                        document.getElementById('discharge_{{ item['user_id'] }}').style.display='block';" class="btn btn-primary">Сброс пароля
-                                </a>
-                            {% endif %}
-
-                            <button id="button_{{ item['user_id']|int }}_cancel" type="submit" value="cancel" formnovalidate name="button_{{ item['user_id']|int }}" class="btn btn-primary">Отмена</button>
-                        <input name="cancel_{{ item['user_id']|int }}" value="" type="hidden">
-                        </div>
-                    </div>
-                </form>
-
-            </div>
-        </div>
-
-        <!-- Modal form for changing user access to education module -->
-
-        <div id="extension_{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal">
-            <div class="modal-content animate " style="width: 31%">
-                <h3 class="modal-title">Доступ к центру обучения</h3>
-                <form id="extension_{{ item['user_id'] }}" name="form" method="post" enctype="multipart/form-data" class="was-validated">
-                    <div class="row d-flex align-items-stretch bd-highlight">
-                        <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto;">
-                            <div class="card-header">
-                                <div class="mb-2">
-
-                                    <label class="form-label"><strong>Продление срока доступа</strong></label>
-                                    <select required class="form-select" name="period_{{ item['user_id']|int }}">
-                                        <option selected disabled value="">
-                                            Выберите продление срок доступа..
-                                        </option>
-                                        {% for i in _settings['education_module_expiration_date'] %}
-                                            <option value="{{ i['amount'] }}">{{ i['name_period'] }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="mb-2">
-                                    <select required name="reference_point_{{ item['user_id']|int }}" class="form-select">
-                                        <option selected disabled value="">
-                                            Выберите начальное время отсчета..
-                                        </option>
-                                        {% for i_point in _settings['reference_point'] %}
-                                            <option value="{{ i_point['value'] }}">{{ i_point['name_point'] }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row d-flex align-items-stretch bd-highlight" align="right">
-                        <div class="p-1">
-                            <button type="submit" class="btn btn-primary " name="button_{{ item['user_id']|int }}" value="extension">
-                                Продлить
-                            </button>
-                            <a onclick="document.getElementById('extension_{{ item['user_id'] }}').style.display='none'" type="submit" name="button" class="btn btn-primary cancelbtn">
-                                Отмена
-                            </a>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-
-        <!-- Modal form for changing user access status -->
-
-        <div id="status_{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal" >
-            <div class="modal-content animate" style="width: 20%">
-            <h3 class="modal-title">Статус доступа</h3>
-                <form id="status_user_{{ item['user_id'] }}" name="status_user" method="post"  enctype="multipart/form-data">
-                    <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; ">
-                        <div class="card-header">
-                            <div class="mb-2">
-                                <div>
-                                    <input id="is_active_{{ item['user_id']|int }}" name="is_active_{{ item['user_id']|int }}"
-                                            class="form-check-input" type="checkbox" value="True"
-                                            {% if _data_edit[item['user_id']]['active'] %}checked{% endif %}>
-                                    <label class="form-check-label" for="is_active">есть доступ к платформе</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
-                        <div class="p-2" align="right">
-                        <button class="btn btn-primary" name="button_{{ item['user_id']|int }}" value="is_active">Сохранить</button>
-                        <a onclick="document.getElementById('status_{{ item['user_id'] }}').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
-                            Отмена
-                        </a>
-                    </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-
-        <!-- Modal form for changing user password -->
-
-        <div id="discharge_{{ item['user_id'] }}" class="modal_{{ item['user_id'] }} modal">
-            <div class="modal-content animate" style="width: 20%">
-                <h3 class="modal-title">Сброс пароля</h3>
-                <form id="discharge_user_{{ item['user_id']|int }}" name="discharge_user_{{ item['user_id']|int }}" method="post" enctype="multipart/form-data"
-                        class="was-validated" onsubmit="return checkPasswordsMatched(this);">
-                    <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; ">
-                        <div class="card-header">
-                            <div class="mb-2">
-                                <label class="form-label"><strong>Пароль</strong></label>
-                                <input id="password" required type="password" name="password_{{ item['user_id']|int }}" class="form-control"{% if _data_edit[ item['user_id']|int]['password']!= _data[ item['user_id']|int]['password'] %}
-                                        value="{{ _data_edit[ item['user_id']|int]['password'] }}" {% else %}placeholder="Введите пароль" {% endif %}>
-                            </div>
-
-                            <div class="mb-2">
-                                <label class="form-label"><strong>Повтор пароля</strong></label>
-                                <input id="password2" required type="password" name="password2_{{ item['user_id']|int }}" class="form-control"{% if _data_edit['password2']!= _data['password2'] %}
-                                        value="{{ _data_edit['password2'] }}" {% else %}placeholder="Повторно введите пароль" {% endif %}>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
-                        <div class="p-1" align="right">
-                            <button type="submit" name="button_{{ item['user_id']|int }}" value="discharge" class="btn btn-primary ">
-                                Сохранить
-                            </button>
-                            <a onclick="document.getElementById('discharge_{{ item['user_id'] }}').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
-                                Отмена
-                            </a>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-    {% endfor %}
 
     </div>
 {% endblock %}

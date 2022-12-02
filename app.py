@@ -244,184 +244,21 @@ def user_manager():
     current_user_id = flask_login.current_user.user_id
     mpc = MainMenuPageController(current_user_id)
 
-    # page_controller = UserProfilePageController()
-
     # страница доступна только администратору
     if not flask_login.current_user.is_admin():
         return redirect("main_page")
 
     endpoint = request.endpoint
     users_list = page_controller.get_users_list_view(current_user_id)
-    user_id = ''
-    # new_user = page_controller.get_users_profile_view(user_id)
-    # new_user['user_id'] = 0
-    # users_list.append(new_user)
 
     error = None
-    error_type = {}
-    settings_user = page_controller.get_settings_user()
-
-    mode = {0: "new"}
-    data_edit = {}
-    data = {0: page_controller.get_users_profile_view(user_id)}
+    error_type = None
     num_page = 0
-
-    for i_id in users_list:
-        if i_id is not None and not request.form.get(f"button_{i_id['user_id']}"):
-            mode[i_id['user_id']] = "view"
-        else:
-            try:
-                if request.form[f"button_{i_id['user_id']}"] == "discharge":
-                    mode[i_id['user_id']] = "discharge"
-                elif request.form[f"button_{i_id['user_id']}"] == "extension":
-                    mode[i_id['user_id']] = "extension"
-                else:
-                    mode[i_id['user_id']] = "edit"
-            except exceptions.BadRequestKeyError:
-                mode[i_id['user_id']] = "view"
-
-        data[i_id['user_id']] = page_controller.get_users_profile_view(i_id["user_id"])
-        error_type[i_id['user_id']] = None
-
-    try:
-        if request.method == 'POST':
-            user_id = None
-            for i in users_list:
-                if request.form.get(f"button_{i['user_id']}") is not None:
-                    user_id = i['user_id']
-                    break
-
-            if request.form.get("button_0") is not None:
-                user_id = 0
-
-            num_page = user_id // 10
-
-            if request.form.get(f"button_{user_id}") == "add":
-                if mode[user_id] == "new":
-                    # добавляем нового пользователя и получаем список с ошибками
-                    # если их нет, то получаем пустой список
-                    user = {}
-                    user["login"] = request.form[f"login_{user_id}"]
-                    user["name"] = request.form[f"user_name_{user_id}"]
-                    user["password"] = request.form[f"password_{user_id}"]
-                    user["password2"] = request.form[f"password2_{user_id}"]
-                    user["email"] = request.form[f"email_{user_id}"]
-                    user["role"] = request.form[f"role_{user_id}"]
-                    user["probationers_number"] = int(request.form[f"probationers_number_{user_id}"])
-                    user["active"] = True
-
-                    error = page_controller.create_user(user["login"], user["name"], user["password"],
-                                                        user["password2"], user["email"], user["role"],
-                                                        user["probationers_number"], current_user_id)
-
-                    data_edit = {key: value for key, value in data.items()}
-
-                    if error is None:
-                        users_list = page_controller.get_users_list_view(current_user_id)
-                        mode[len(users_list)] = "view"
-                        error = "Пользователь успешно сохранён!"
-                        error_type[len(users_list)] = "Successful"
-
-                        data[len(users_list)] = page_controller.get_users_profile_view(len(users_list))
-                        data_edit[len(users_list)] = page_controller.get_users_profile_view(len(users_list))
-
-                    else:
-                        data_edit[0] = user
-                        error_type[user_id] = "Error"
-                    # new_user = page_controller.get_users_profile_view('')
-                    # new_user['user_id'] = 0
-                    # users_list.append(new_user)
-
-            elif request.form.get(f"button_{user_id}") == "edit":
-                if mode[user_id] == "view":
-                    mode[user_id] = "edit"
-
-            elif request.form.get(f"button_{user_id}") == "save":
-                if mode[user_id] == "edit":
-                    user = {}
-                    user["login"] = request.form[f"login_{user_id}"]
-                    user["name"] = request.form[f"user_name_{user_id}"]
-                    user["email"] = request.form[f"email_{user_id}"]
-                    user["role"] = request.form[f"role_{user_id}"]
-                    user["probationers_number"] = int(request.form[f"probationers_number_{user_id}"])
-                    user["created_date"] = data[user_id]["created_date"]
-                    user['education_module_expiration_date'] = data[user_id]["education_module_expiration_date"]
-                    user['active'] = data[user_id]['active']
-
-                    error = page_controller.chenge_user(user["login"], user["name"], user["email"], user["role"],
-                                                user["probationers_number"], user["created_date"],
-                                                user['education_module_expiration_date'], current_user_id)
-
-                    # data[user_id] = page_controller.get_users_profile_view(user_id)
-                    data_edit = data
-                    data_edit[user_id] = user
-                    users_list = page_controller.get_users_list_view(current_user_id)
-                    mode[user_id] = "view"
-                    error_type[user_id] = "Successful"
-
-            elif request.form.get(f"button_{user_id}") == "discharge":
-                user = {}
-                user["user_id"] = data[user_id]['user_id']
-                user["password"] = request.form[f"password_{user_id}"]
-                user["password2"] = request.form[f"password2_{user_id}"]
-
-                error = page_controller.chenge_password(user["user_id"], user["password"], user["password2"], current_user_id)
-
-                mode[user_id] = "view"
-
-                error_type[user_id] = "Successful"
-
-            elif request.form.get(f"button_{user_id}") == "extension":
-                reference_point = request.form[f"reference_point_{user_id}"]
-                period = request.form[f"period_{user_id}"]
-                user_login = data[user_id]['login']
-
-                error = page_controller.access_extension(int(period), reference_point, user_login, current_user_id)
-                data_edit = data
-                data_edit[user_id] = page_controller.get_users_profile_view(user_id)
-                mode[user_id] = "view"
-                error_type[user_id] = "Successful"
-
-            elif request.form.get(f"button_{user_id}") == "is_active":
-                # делаем блокировки или разблокировку пользователя
-
-                error_type[user_id] = "Successful"
-                mode[user_id] = "view"
-                is_active = request.form.get(f"is_active_{user_id}")
-
-                if is_active == "True":
-                    error = page_controller.activation(data[user_id]['login'], current_user_id)
-                    data[user_id]['active'] = True
-
-                else:
-                    error = page_controller.deactivation(data[user_id]['login'], current_user_id)
-                    data[user_id]['active'] = False
-
-            elif request.form.get(f"button_{user_id}") == "cancel":
-                if user_id != 0:
-                    mode[user_id] = "view"
-
-            else:
-                return redirect("user_manager")
-
-            users_list = page_controller.get_users_list_view(current_user_id)
-
-    except exceptions.BadRequestKeyError:
-        for i_id in users_list:
-            mode[i_id["user_id"]] = "view"
-
-    if data_edit == {}:
-        data_edit = data
-
-    new_user = page_controller.get_users_profile_view('')
-    new_user['user_id'] = 0
-    users_list.append(new_user)
 
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _users_list=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _data_edit=data_edit, _data=data, _settings=settings_user,
-                           _mode=mode, _error=error, _error_type=error_type, _num_page=num_page)
+                           _error=error, _error_type=error_type, _num_page=num_page)
 
 
 @app.route('/user_profile', methods=['GET', 'POST'])
@@ -436,6 +273,7 @@ def user_profile():
 
     endpoint = "user_manager"
     user_id = request.args.get('user_id')
+    current_user_id = flask_login.current_user.user_id
 
     if user_id is not None and not request.form.get("button"):
         mode = "view"
@@ -449,36 +287,36 @@ def user_profile():
             mode = "view"
         pass
 
-    error = None
+    error = session.get('error')
+    error_type = session.get('error_type')
+    if error_type is not None:
+        session.pop('error_type')
+
+    if error is not None:
+        session.pop('error')
+
     settings_user = page_controller.get_settings_user()
+    # страница доступна только администратору
+    if not flask_login.current_user.is_admin():
+        return redirect("main_page")
 
     if user_id is None:
-        # если пользователь не задан, то открываем страницу в режиме создания нового пользователя
-        # страница доступна только администратору
-        if not flask_login.current_user.is_admin():
-            return redirect("main_page")
-
         mode = "new"
         user_id = ""
         settings_user = page_controller.get_settings_user()
     else:
-        if not flask_login.current_user.is_admin():
-            mode = "edit"
+        user_id = int(user_id)
 
     data = page_controller.get_users_profile_view(user_id)
+    education_streams_list = page_controller.get_education_streams_list(user_id, data['role'])
     data_edit = {}
-    if isinstance(data, dict):
-        active = data['active']
-    else:
-        active = False
 
-    error_type = False
     try:
         if request.method == 'POST':
             if request.form.get("button") == "add":
                 if mode == "new":
                     # добавляем нового пользователя и получаем список с ошибками
-                    # если их нет, то получаем пустой список
+                    # если их нет, то получаем id пользователя
                     user = {}
                     user["login"] = request.form["login"]
                     user["name"] = request.form["user_name"]
@@ -487,18 +325,16 @@ def user_profile():
                     user["email"] = request.form["email"]
                     user["role"] = request.form["role"]
                     user["probationers_number"] = int(request.form["probationers_number"])
-                    active = True
+                    user['active'] = True
 
                     error = page_controller.create_user(user["login"], user["name"], user["password"],
                                                         user["password2"], user["email"], user["role"],
-                                                        user["probationers_number"], user_id)
+                                                        user["probationers_number"], current_user_id)
+                    if isinstance(error, int):
+                        session['error'] = "Пользователь сохранён!"
+                        session['error_type'] = "Successful"
 
-                    if error is None:
-                        mode = "view"
-                        error = "Пользователь сохранён!"
-                        error_type = "Successful"
-
-                    data_edit = user
+                        return redirect(f'/user_profile?user_id={error}')
 
             elif request.form.get("button") == "edit":
                 if mode == "view":
@@ -513,21 +349,16 @@ def user_profile():
                     user["role"] = request.form["role"]
                     user["probationers_number"] = int(request.form["probationers_number"])
                     user["created_date"] = data["created_date"]
-                    user["active"] = request.form.get("is_active")
                     user['education_module_expiration_date'] = data["education_module_expiration_date"]
 
                     page_controller.chenge_user(user["login"], user["name"], user["email"], user["role"],
-                                                user["probationers_number"], user["created_date"], user["active"],
-                                                user['education_module_expiration_date'])
+                                                user["probationers_number"], user["created_date"],
+                                                user['education_module_expiration_date'], user_id)
 
-                    data_edit = user
-                    mode = "view"
-                    error = "Изменения сохранены!"
-                    error_type = "Successful"
-                    if data_edit["active"] == "True":
-                        data_edit["active"] = True
-                    elif data_edit["active"] is None:
-                        data_edit["active"] = False
+                    session['error'] = "Изменения сохранены!"
+                    session['error_type'] = "Successful"
+
+                    return redirect(f'/user_profile?user_id={user_id}')
 
             elif request.form.get("button") == "discharge" or request.form.get("button") == "save_discharge":
                 if mode == "discharge":
@@ -536,13 +367,12 @@ def user_profile():
                     user["password"] = request.form["password"]
                     user["password2"] = request.form["password2"]
 
-                    error = page_controller.chenge_password(user["login"], user["password"], user["password2"])
+                    error, error_type = page_controller.chenge_password(user_id, user["password"], user["password2"], current_user_id)
+                    if error_type == 'Successful':
+                        session['error'] = error
+                        session['error_type'] = error_type
 
-                    if error is None:
-                        mode = "view"
-
-                        error = "Пароль успешно изменен!"
-                        error_type = "Successful"
+                        return redirect(f'/user_profile?user_id={user_id}')
 
                 else:
                     mode = "discharge"
@@ -552,22 +382,25 @@ def user_profile():
                     reference_point = request.form["reference_point"]
                     period = request.form["period"]
                     user_login = data['login']
-                    page_controller.access_extension(int(period), reference_point, user_login)
-                    data_edit = page_controller.get_users_profile_view(user_id)
-                    mode = "view"
+                    page_controller.access_extension(int(period), reference_point, user_login, current_user_id)
+                    # data_edit = page_controller.get_users_profile_view(user_id)
+                    return redirect(f'/user_profile?user_id={user_id}')
 
-            elif request.form.get("button") is None and (
-                    request.form.get("is_active") is None or request.form.get("is_active")):
-                active = page_controller.activation_deactivation(data['login'], data["active"])
-                error_type = "Successful"
+            elif request.form.get("is_active"):
+                is_active = request.form.get("is_active")
+                if is_active == "true":
+                    session['error'] = page_controller.activation(data['login'], current_user_id)
+                    data['active'] = True
+                    session['error_type'] = 'Successful'
 
-                if active:
-                    error = "Пользователь успешно разблокирован!"
-                else:
-                    error = "Пользователь успешно заблокирован!"
+                    return redirect(f'/user_profile?user_id={user_id}')
 
-                mode = "view"
-                data['active'] = active
+                elif is_active == 'false':
+                    session['error'] = page_controller.deactivation(data['login'], current_user_id)
+                    data['active'] = False
+                    session['error_type'] = 'Successful'
+
+                    return redirect(f'/user_profile?user_id={user_id}')
 
             else:
                 return redirect("user_manager")
@@ -582,7 +415,8 @@ def user_profile():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data_edit=data_edit, _data=data, _settings=settings_user,
                            _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _mode=mode, _error=error, _active=active, _error_type=error_type)
+                           _mode=mode, _error=error, _error_type=error_type,
+                           _education_streams_list=education_streams_list)
 
 
 @app.route('/main_page', methods=['GET', 'POST'])
