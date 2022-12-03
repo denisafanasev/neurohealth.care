@@ -38,6 +38,18 @@
             paging: true,
             searching: true
         });
+        {% for course in _courses_list %}
+            $("#modules_courses_{{ course['id'] }}").DataTable({
+                responsive: true,
+                lengthChange: !1,
+                scrollX: true,
+                fixedColumns: false,
+                fixedHeader: false
+            });
+        {% endfor %}
+        $("#modules_courses").DataTable({
+                scrollX: true,
+            });
 
         $('#stream_data').on('submit', function(e) {
             var form = this;
@@ -187,6 +199,9 @@
      }
     </script>
     <style>
+    .dataTables_scroll{
+        overflow: auto;
+    }
     .modal {
             display: none; /* Hidden by default */
             z-index: 99; /* Sit on top */
@@ -309,8 +324,8 @@
                                 </select>
                             </div>
 
-                            <div class="mb-2">
-                                <div class="col" style="display: inline-grid;float: left">
+                            <div class="row mb-2">
+                                <div class="col-sm-6" style="display: inline-grid;float: left">
                                     <label class="form-label"><strong>Дата старта</strong></label>
                             
                                     <div id="date_start" class="flatpickr input-group mb-3">
@@ -320,7 +335,7 @@
                                     </div>
 
                                 </div>
-                                <div class="col" style="display:grid; justify-content: right">
+                                <div class="col-sm-6" style="display: block; justify-content: right">
                                     <label class="form-label"><strong>Дата окончания</strong></label>
                             
                                     <div id="date_end" class="flatpickr input-group mb-3">
@@ -383,7 +398,7 @@
                                         <table id="modules_courses_{{ course['id'] }}" class="table dataTable border display" style="width: 100%; {% if _education_stream['course']['id'] != course['id'] %}display: none{% endif %}">
                                             <thead>
                                                 <tr>
-                                                    <th class="sorting" style="width: 75%" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                                    <th class="sorting" style="width: 60%" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
                                                         colspan="1">Название модуля</th>
                                                     <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
                                                         rowspan="1" colspan="1">Дата начала</th>
@@ -407,12 +422,12 @@
                                         </table>
                                     {% endfor %}
                                 {% elif _mode == 'view' %}
-                                    <table id="modules_courses" class="table dataTable border display" style="width: 100%;">
+                                    <table id="modules_courses" class="table dataTable border display dataTables_scroll nowrap" style="width: 100%;">
                                         <thead>
                                             <tr>
-                                                <th class="sorting" tabindex="0" style="width: 75%!important;" aria-controls="datatables-buttons" rowspan="1"
+                                                <th class="sorting" tabindex="0" style="width: 70%!important;" aria-controls="datatables-buttons" rowspan="1"
                                                     colspan="1">Название модуля</th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                <th class="sorting" tabindex="0" style="width: 30%!important;" aria-controls="datatables-buttons"
                                                     rowspan="1" colspan="1">Дата начала</th>
                                             </tr>
                                         </thead>
