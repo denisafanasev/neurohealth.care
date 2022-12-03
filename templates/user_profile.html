@@ -207,27 +207,6 @@
                 </div>
             </div>
         </div>
-        <div class="row d-flex align-items-stretch bd-highlight" align="right">
-            <div class="col-12 p-2">
-                <a type="submit" name="button" href="{{ url_for('user_manager') }}" class="btn btn-primary ">
-                    {% if _mode != "view" %}Отмена{% else %}Назад{% endif %}
-                </a>
-                {% if _mode !="discharge" %}
-                <button type="submit" name="button" value="{% if _mode=="new" %}add{% elif _mode=="edit"%}save{% else %}edit{% endif %}" class="btn btn-primary ">
-                    {% if _mode=="new" %}Добавить пользователя
-                    {% elif _mode=="edit" %}Сохранить
-                    {% else %}Редактировать
-                    {% endif %}
-                </button>
-                {% endif %}
-                {% if _mode == "discharge" or _mode == "view"%}
-                <button type="submit" name="button" value="{% if _mode=="view" %}discharge{% elif _mode=="discharge" %}save_discharge{% endif %}" class="btn btn-primary ">{% if _mode=="view" %}Сброс пароля
-                    {% elif _mode=="discharge" %}Сохранить
-                    {% endif %}
-                </button>
-                {% endif %}
-            </div>
-        </div>
         </form>
 {% if _mode == 'view' %}
     <div class="row d-flex align-items-stretch bd-highlight">
@@ -283,6 +262,27 @@
         </div>
     </div>
 {% endif %}
+    <div class="row d-flex align-items-stretch bd-highlight" align="right">
+            <div class="col-12 p-2">
+                <a type="submit" name="button" href="{{ url_for('user_manager') }}" class="btn btn-primary ">
+                    {% if _mode != "view" %}Отмена{% else %}Назад{% endif %}
+                </a>
+                {% if _mode !="discharge" %}
+                <button form="add_user" type="submit" name="button" value="{% if _mode=="new" %}add{% elif _mode=="edit"%}save{% else %}edit{% endif %}" class="btn btn-primary ">
+                    {% if _mode=="new" %}Добавить пользователя
+                    {% elif _mode=="edit" %}Сохранить
+                    {% else %}Редактировать
+                    {% endif %}
+                </button>
+                {% endif %}
+                {% if _mode == "discharge" or _mode == "view"%}
+                <button form="add_user" type="submit" name="button" value="{% if _mode=="view" %}discharge{% elif _mode=="discharge" %}save_discharge{% endif %}" class="btn btn-primary ">{% if _mode=="view" %}Сброс пароля
+                    {% elif _mode=="discharge" %}Сохранить
+                    {% endif %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
 </div>
 {% endblock %}
 
