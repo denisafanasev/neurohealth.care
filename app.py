@@ -358,9 +358,9 @@ def user_profile():
                     else:
                         user['is_active'] = False
 
-                    error = page_controller.chenge_user(user["login"], user["name"], user["email"], user["role"],
+                    error = page_controller.chenge_user(user_id, user["login"], user["name"], user["email"], user["role"],
                                                 user["probationers_number"], user["created_date"],
-                                                user['education_module_expiration_date'], user['is_active'], user_id)
+                                                user['education_module_expiration_date'], user['is_active'], current_user_id)
                     if error is None:
                         session['error'] = "Изменения сохранены!"
                         session['error_type'] = "Successful"
@@ -369,43 +369,36 @@ def user_profile():
 
                     data_edit = user
 
-            elif request.form.get("button") == "discharge" or request.form.get("button") == "save_discharge":
-                if mode == "discharge":
-                    user = {}
-                    user["login"] = request.form["login"]
-                    user["password"] = request.form["password"]
-                    user["password2"] = request.form["password2"]
+            elif request.form.get("button") == "discharge":
+                user = {}
+                user["password"] = request.form["password"]
+                user["password2"] = request.form["password2"]
 
-                    error, error_type = page_controller.chenge_password(user_id, user["password"], user["password2"], current_user_id)
-                    if error_type == 'Successful':
-                        session['error'] = error
-                        session['error_type'] = error_type
+                error, error_type = page_controller.chenge_password(user_id, user["password"], user["password2"], current_user_id)
+                if error_type == 'Successful':
+                    session['error'] = error
+                    session['error_type'] = error_type
 
-                        return redirect(f'/user_profile?user_id={user_id}')
-
-                else:
-                    mode = "discharge"
+                    return redirect(f'/user_profile?user_id={user_id}')
 
             elif request.form.get("button") == "extension":
-                if mode == "edit":
-                    reference_point = request.form["reference_point"]
-                    period = request.form["period"]
-                    user_login = data['login']
-                    page_controller.access_extension(int(period), reference_point, user_login, current_user_id)
-                    # data_edit = page_controller.get_users_profile_view(user_id)
-                    return redirect(f'/user_profile?user_id={user_id}')
+                reference_point = request.form["reference_point"]
+                period = request.form["period"]
+                page_controller.access_extension(int(period), reference_point, user_id, current_user_id)
+
+                return redirect(f'/user_profile?user_id={user_id}')
 
             elif request.form.get("is_active"):
                 is_active = request.form.get("is_active")
                 if is_active == "true":
-                    session['error'] = page_controller.activation(data['login'], current_user_id)
+                    session['error'] = page_controller.activation(user_id, current_user_id)
                     data['active'] = True
                     session['error_type'] = 'Successful'
 
                     return redirect(f'/user_profile?user_id={user_id}')
 
                 elif is_active == 'false':
-                    session['error'] = page_controller.deactivation(data['login'], current_user_id)
+                    session['error'] = page_controller.deactivation(user_id, current_user_id)
                     data['active'] = False
                     session['error_type'] = 'Successful'
 

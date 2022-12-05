@@ -14,7 +14,6 @@
                 responsive: true,
                 lengthChange: !1,
                 pageLength: 5,
-                scrollX: true,
 
                 });
 
@@ -66,6 +65,10 @@
         }
 
     </script>
+    <style>
+    input[type="text"]:disabled { background-color: #eaeaea!important; }
+
+    </style>
 
 <script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>
 
@@ -91,134 +94,139 @@
     {% endif %}
 
 
-        {% if _mode == "edit" %}
-        <div class="row d-flex align-items-stretch bd-highlight">
-            <div class="col-12 p-2 bd-highlight">
-                <div class="card d-flex align-self-baseline" style="height: 100%;">
-                    <div class="card-header">
-                        <h5 class="card-title">Доступ к центру обучения</h5>
-                        <div class="col-sm-12 col-xl-6 mb-2">
-                        <form id="form" name="form" method="post" enctype="multipart/form-data">
-                            <div class="mb-2">
-
-                                <label class="form-label"><strong>Продление срока доступа</strong></label>
-                                <select id="period" required class="form-select" name="period">
-                                    <option selected disabled value="">Выберите продление срок доступа..</option>
-                                    {% for i in _settings['education_module_expiration_date'] %}
-                                        <option value="{{ i['amount'] }}">{{ i['name_period'] }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <select id="reference_point" required name="reference_point" class="form-select">
-                                    <option selected disabled value="">Выберите начальное время отсчета..</option>
-                                    {% for i_point in _settings['reference_point'] %}
-                                        <option value="{{ i_point['value'] }}">{{ i_point['name_point'] }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="p-2" align="right">
-                                <button type="submit" class="btn btn-primary " name="button" value="extension">Продлить</button>
-                            </div>
-                        </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
+{#        {% if _mode == "edit" %}#}
+{#        <div class="row d-flex align-items-stretch bd-highlight">#}
+{#            <div class="col-12 p-2 bd-highlight">#}
+{#                <div class="card d-flex align-self-baseline" style="height: 100%;">#}
+{#                    <div class="card-header">#}
+{#                        <h5 class="card-title">Доступ к центру обучения</h5>#}
+{#                        <div class="col-sm-12 col-xl-6 mb-2">#}
+{#                        <form id="form" name="form" method="post" enctype="multipart/form-data">#}
+{#                            <div class="mb-2">#}
+{##}
+{#                                <label class="form-label"><strong>Продление срока доступа</strong></label>#}
+{#                                <select id="period" required class="form-select" name="period">#}
+{#                                    <option selected disabled value="">Выберите продление срок доступа..</option>#}
+{#                                    {% for i in _settings['education_module_expiration_date'] %}#}
+{#                                        <option value="{{ i['amount'] }}">{{ i['name_period'] }}</option>#}
+{#                                    {% endfor %}#}
+{#                                </select>#}
+{#                            </div>#}
+{#                            <div class="mb-2">#}
+{#                                <select id="reference_point" required name="reference_point" class="form-select">#}
+{#                                    <option selected disabled value="">Выберите начальное время отсчета..</option>#}
+{#                                    {% for i_point in _settings['reference_point'] %}#}
+{#                                        <option value="{{ i_point['value'] }}">{{ i_point['name_point'] }}</option>#}
+{#                                    {% endfor %}#}
+{#                                </select>#}
+{#                            </div>#}
+{#                            <div class="p-2" align="right">#}
+{#                                <button type="submit" class="btn btn-primary " name="button" value="extension">Продлить</button>#}
+{#                            </div>#}
+{#                        </form>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#        {% endif %}#}
         <form id="add_user" name="add_user" method="post" class="was-validated" enctype="multipart/form-data" onsubmit="return checkPassword(this);">
-        <div class="row d-flex align-items-stretch bd-highlight">
-            <div class="col-sm-6 p-2 bd-highlight">
-                <div class="card d-flex align-self-baseline" style="height: 100%;">
-                    <div class="card-header">
-                        <h5 class="card-title">Учетные данные пользователя</h5>
 
-                        <div class="mb-2">
-                            <label class="form-label"><strong>Login</strong></label>
-                            <input required type="text" name="login" class="form-control" {% if _mode!="new" %} readonly {% endif %} {% if _data_edit['login'] != _data['login'] or _mode != "new" %} value="{{ _data_edit['login'] }}" {% else %} placeholder="Введите логин пользователя" {% endif %}>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label"><strong>Имя пользователя</strong></label>
-                            <input required type="text" name="user_name" class="form-control"  {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data_edit['name'] != _data['name'] or _mode != "new"%} value="{{ _data_edit['name'] }}" {% else %} placeholder="Введите имя пользователя" {% endif %}>
-                        </div>
-
-                        {% if _mode=="new" or _mode=="discharge" %}
+            <div class="row d-flex align-items-stretch bd-highlight">
+                <div class="col-sm-6 p-2 bd-highlight">
+                    <div class="card d-flex align-self-baseline" style="height: 100%;">
+                        <div class="card-header">
+                            <h5 class="card-title">Учетные данные пользователя</h5>
+                        <fieldset {% if _mode == 'view' %}disabled{% endif %}>
                             <div class="mb-2">
-                                <label class="form-label"><strong>Пароль</strong></label>
-                                <input required type="password" name="password" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
+                                <label class="form-label"><strong>Login</strong></label>
+                                <input required type="text" name="login" class="form-control" {% if _mode!="new" %} readonly {% endif %} {% if _data_edit['login'] != _data['login'] or _mode != "new" %} value="{{ _data_edit['login'] }}" {% else %} placeholder="Введите логин пользователя" {% endif %}>
                             </div>
 
                             <div class="mb-2">
-                                <label class="form-label"><strong>Повтор пароля</strong></label>
-                                <input required type="password" name="password2" class="form-control" {% if _data_edit['password2']!= _data['password2'] %} value="{{ _data_edit['password2'] }}" {% else %} placeholder="Повторно введите пароль" {% endif %}>
+                                <label class="form-label"><strong>Имя пользователя</strong></label>
+                                <input required type="text" name="user_name" class="form-control"  {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data_edit['name'] != _data['name'] or _mode != "new"%} value="{{ _data_edit['name'] }}" {% else %} placeholder="Введите имя пользователя" {% endif %}>
                             </div>
-                        {% endif %}
 
-                        <div class="mb-2">
-                            <label class="form-label"><strong>Email</strong></label>
-                            <input required type="email" name="email" class="form-control" {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data_edit['email'] != _data['email'] or _mode != "new"%} value="{{ _data_edit['email'] }}" {% else %} placeholder="Введите email пользователя" {% endif %}>
-                        </div>
+                            {% if _mode=="new" or _mode=="discharge" %}
+                                <div class="mb-2">
+                                    <label class="form-label"><strong>Пароль</strong></label>
+                                    <input required type="password" name="password" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
+                                </div>
 
-                        <div class="mb-2">
-                            <label class="form-label" style="height: 100%"><strong>Статус</strong></label>
-                            <div class="form-check form-switch">
-                                <input id="is_active" name="is_active" class="form-check-input" type="checkbox"
-                                       value="True"
-                                       {% if _data_edit['active'] == true %}checked{% endif %}
-                                        {% if _mode == "new" %}disabled{% endif %}
-                                        {% if _mode == "view" %} onchange="edit_is_active(); this.form.submit()" {% endif %}>
-                                <label class="form-check-label" for="is_active">{% if _data_edit['active'] == true %}Разблокирован{% else %}Заблокирован{% endif %}</label>
+                                <div class="mb-2">
+                                    <label class="form-label"><strong>Повтор пароля</strong></label>
+                                    <input required type="password" name="password2" class="form-control" {% if _data_edit['password2']!= _data['password2'] %} value="{{ _data_edit['password2'] }}" {% else %} placeholder="Повторно введите пароль" {% endif %}>
+                                </div>
+                            {% endif %}
+
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Email</strong></label>
+                                <input required type="email" name="email" class="form-control" {% if _mode=="view" or _mode=="discharge" %} readonly {% endif %} {% if _data_edit['email'] != _data['email'] or _mode != "new"%} value="{{ _data_edit['email'] }}" {% else %} placeholder="Введите email пользователя" {% endif %}>
+                            </div>
+                        </fieldset>
+                            <div class="mb-2">
+                                <label class="form-label" style="height: 100%"><strong>Статус</strong></label>
+                                <div class="form-check form-switch">
+                                    <input id="is_active" name="is_active" class="form-check-input" type="checkbox"
+                                           value="True"
+                                           {% if _data_edit['active'] == true %}checked{% endif %}
+                                            {% if _mode == "new" %}disabled{% endif %}
+                                            {% if _mode == "view" %} onchange="edit_is_active(); this.form.submit()" {% endif %}>
+                                    <label class="form-check-label" for="is_active">{% if _data_edit['active'] == true %}Разблокирован{% else %}Заблокирован{% endif %}</label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-sm-6 p-2 bd-highlight">
+                <div class="col-sm-6 p-2 bd-highlight">
 
-                <div class="card d-flex align-self-baseline" style="height: 100%;">
-                    
-                    <div class="card-header">
-                        <h5 class="card-title">Параметры доступа</h5>
-                        <div class="mb-2">
-                            <label class="form-label"><strong>Роль пользователя</strong></label>
-                            <select id="role" required type="text" name="role" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
-                                {% if _mode != "view" %}
-                                    <option value="">Выберите роль пользователя</option>
-                                    {% for i in _settings['role'] %}
-                                        <option {% if i == _data_edit['role'] %} selected {% endif %} value="{{ i }}">{{ i }}</option>
-                                    {% endfor %}
-                                {% else %}
-                                    <option>{{ _data_edit['role'] }}</option>
-                                {% endif %}
-                            </select>
-                        </div>
+                    <div class="card d-flex align-self-baseline" style="height: 100%;">
 
-                        <div class="mb-2">
-                            <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
-                            <select id="probationers_number" required type="text" name="probationers_number" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
-                                {% if _mode != "view" %}
-                                    <option value="">Выберите количество доступных тестируемых</option>
-                                    {% for i in _settings['probationers_number'] %}
-                                            <option {% if _data_edit['probationers_number'] == i %} selected {% endif %}value="{{ i }}"> {{ i }} </option>
-                                    {% endfor %}
-                                {% else %}
-                                    <option>{{ _data_edit['probationers_number'] }}</option>
-                                {% endif %}
-                            </select>
-                        </div>
-                        {% if _mode != "new" %}
+                        <div class="card-header">
+                            <h5 class="card-title">Параметры доступа</h5>
+                        <fieldset {% if _mode == 'view' %}disabled{% endif %}>
                             <div class="mb-2">
-                                <label class="form-label"><strong>Доступ к центру обучения</strong></label>
-                                <input class="form-control" disabled value="{{ _data_edit['education_module_expiration_date'] }}">
+                                <label class="form-label"><strong>Роль пользователя</strong></label>
+                                <select id="role" required type="text" name="role" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
+                                    {% if _mode != "view" %}
+                                        <option value="">Выберите роль пользователя</option>
+                                        {% for i in _settings['role'] %}
+                                            <option {% if i == _data_edit['role'] %} selected {% endif %} value="{{ i }}">{{ i }}</option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <option>{{ _data_edit['role'] }}</option>
+                                    {% endif %}
+                                </select>
                             </div>
-                        {% endif %}
+
+                            <div class="mb-2">
+                                <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
+                                <select id="probationers_number" required type="text" name="probationers_number" class="form-select" {% if _mode=="view" or _mode=="discharge" %} disabled {% endif %}>
+                                    {% if _mode != "view" %}
+                                        <option value="">Выберите количество доступных тестируемых</option>
+                                        {% for i in _settings['probationers_number'] %}
+                                                <option {% if _data_edit['probationers_number'] == i %} selected {% endif %}value="{{ i }}"> {{ i }} </option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <option>{{ _data_edit['probationers_number'] }}</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            {% if _mode != "new" %}
+                                <div class="mb-2">
+                                        <label class="form-label"><strong>Доступ к центру обучения</strong></label>
+                                    <input class="form-control" disabled value="{{ _data_edit['education_module_expiration_date'] }}">
+                                    <button class="btn btn-primary text-end" data-bs-toggle="modal" data-bs-target="#extension" style="margin-top: 1%;"
+                            onclick="document.getElementById('extension').style.display = 'block';">Продление доступа</button>
+                                </div>
+                            {% endif %}
+                        </fieldset>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         </form>
 {% if _mode == 'view' %}
     <div class="row d-flex align-items-stretch bd-highlight">
@@ -230,20 +238,20 @@
                     <div class="mb-2">
                         <table id="education_stream_table" class=" table dataTable border display nowrap" >
                             <thead>
-                            <tr class="text-center" style="text-align: center">
-{#                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"#}
-{#                                    style="width:20%;" aria-label="Position: activate to sort column ascending">Название#}
-{#                                </th>#}
-                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                            <tr>
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                    style="width:20%;" aria-label="Position: activate to sort column ascending">Название
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                     style="width:10%;" aria-label="Position: activate to sort column ascending">Преподаватель
                                 </th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                     style="width:5%;" aria-label="Position: activate to sort column ascending">Дата старта
                                 </th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                     style="width:5%;" aria-label="Position: activate to sort column ascending">Дата окончания
                                 </th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                     style="width:15%;" aria-label="Position: activate to sort column ascending">Обучающий курс
                                 </th>
                             </tr>
@@ -251,18 +259,19 @@
                             <tbody>
                             {% for education_stream in _education_streams_list %}
                                 <tr class="even">
-{#                                    <td>#}
+                                    <td>
 {#                                        <div style="text-align: center; margin-right: 21%">#}
 {#                                            <a href="/education_stream_card?id={{ education_stream['id'] }}">{{ education_stream['name'] }}</a>#}
 {#                                        </div>#}
-{#                                    </td>#}
-                                    <td>
-                                        <div style="text-align: center">{{ education_stream['teacher'] }}</div>
+                                        {{ education_stream['name'] }}
                                     </td>
-                                    <td class="text-center">{{ education_stream['date_start'] }}</td>
-                                    <td class="text-center">{{ education_stream['date_end'] }}</td>
                                     <td>
-                                        <div style="text-align: center">{{ education_stream['course'] }}</div>
+                                        <div style="">{{ education_stream['teacher'] }}</div>
+                                    </td>
+                                    <td>{{ education_stream['date_start'] }}</td>
+                                    <td>{{ education_stream['date_end'] }}</td>
+                                    <td>
+                                        <div>{{ education_stream['course'] }}</div>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -276,25 +285,129 @@
 {% endif %}
     <div class="row d-flex align-items-stretch bd-highlight" align="right">
             <div class="col-12 p-2">
-                <a type="submit" name="button" href="{{ url_for('user_manager') }}" class="btn btn-primary ">
+                <a type="submit" name="button" href="{{ url_for('user_profile', user_id=_data['user_id']) }}" class="btn btn-primary">
                     {% if _mode != "view" %}Отмена{% else %}Назад{% endif %}
                 </a>
                 {% if _mode !="discharge" %}
-                <button form="add_user" type="submit" name="button" value="{% if _mode=="new" %}add{% elif _mode=="edit"%}save{% else %}edit{% endif %}" class="btn btn-primary ">
-                    {% if _mode=="new" %}Добавить пользователя
-                    {% elif _mode=="edit" %}Сохранить
-                    {% else %}Редактировать
-                    {% endif %}
-                </button>
+                    <button form="add_user" type="submit" name="button"
+                            value="{% if _mode=="new" %}add{% elif _mode=="edit"%}save{% else %}edit{% endif %}" class="btn btn-primary">
+                        {% if _mode=="new" %}Добавить пользователя
+                        {% elif _mode=="edit" %}Сохранить
+                        {% else %}Редактировать
+                        {% endif %}
+                    </button>
                 {% endif %}
-                {% if _mode == "discharge" or _mode == "view"%}
-                <button form="add_user" type="submit" name="button" value="{% if _mode=="view" %}discharge{% elif _mode=="discharge" %}save_discharge{% endif %}" class="btn btn-primary ">{% if _mode=="view" %}Сброс пароля
-                    {% elif _mode=="discharge" %}Сохранить
-                    {% endif %}
-                </button>
+                {% if _mode == "view"%}
+                    <button name="button" value="{% if _mode=="view" %}discharge{% elif _mode=="discharge" %}save_discharge{% endif %}"
+                            class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#extension"
+                            onclick="document.getElementById('extension').style.display = 'none'; document.getElementById('reset').style.display = 'block';">Сброс пароля
+
+                    </button>
                 {% endif %}
             </div>
         </div>
+    <script>
+        // Get the modal
+        const modal_extension = document.getElementById('extension');
+        const modal_reset = document.getElementById('reset');
+        window.onclick = function (event) {
+            if (event.target === modal_extension) {
+                modal_extension.style.display = "none";
+            }
+            if (event.target === modal_reset) {
+                modal_reset.style.display = "none";
+            }
+        }
+    </script>
+    <div class="modal">
+        <div class="modal-content animate">
+            <h3 class="modal-title"></h3>
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <div class="alert-message">
+                        <strong>Ошибка</strong> {{ _error }}
+                    </div>
+                </div>
+        </div>
+    </div>
+    <div id="extension" class="modal">
+        <div class="modal-content animate " style="width: 31%">
+            <h3 class="modal-title">Доступ к центру обучения</h3>
+            <form id="extension" name="form" method="post" enctype="multipart/form-data" class="was-validated">
+                <div class="row d-flex align-items-stretch bd-highlight">
+                    <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto;">
+                        <div class="card-header">
+                            <div class="mb-2">
+
+                                <label class="form-label"><strong>Продление срока доступа</strong></label>
+                                <select id="period" required class="form-select" name="period">
+                                    <option selected disabled value="">
+                                        Выберите продление срок доступа..
+                                    </option>
+                                    {% for i in _settings['education_module_expiration_date'] %}
+                                        <option value="{{ i['amount'] }}">{{ i['name_period'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <select id="reference_point" required name="reference_point" class="form-select">
+                                    <option selected disabled value="">
+                                        Выберите начальное время отсчета..
+                                    </option>
+                                    {% for i_point in _settings['reference_point'] %}
+                                        <option value="{{ i_point['value'] }}">{{ i_point['name_point'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row d-flex align-items-stretch bd-highlight" align="right">
+                    <div class="p-1">
+                        <button type="submit" class="btn btn-primary" name="button" value="extension">
+                            Продлить
+                        </button>
+                        <a onclick="document.getElementById('extension').style.display='none'" type="submit" name="button" class="btn btn-primary cancelbtn">
+                            Отмена
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="reset" class="modal">
+        <div class="modal-content animate" style="width: 20%">
+            <h3 class="modal-title">Сброс пароля</h3>
+            <form id="reset_password" name="discharge" method="post" enctype="multipart/form-data"
+                    class="was-validated" onsubmit="return checkPasswordsMatched(this);">
+                <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; ">
+                    <div class="card-header">
+                        <div class="mb-2">
+                            <label class="form-label"><strong>Пароль</strong></label>
+                            <input id="password" required type="password" name="password" class="form-control"{% if _data_edit['password']!= _data['password'] %}
+                                    value="{{ _data_edit['password'] }}" {% else %}placeholder="Введите пароль" {% endif %}>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label"><strong>Повтор пароля</strong></label>
+                            <input id="password2" required type="password" name="password2" class="form-control"{% if _data_edit['password2']!= _data['password2'] %}
+                                    value="{{ _data_edit['password2'] }}" {% else %}placeholder="Повторно введите пароль" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
+                    <div class="p-1" align="right">
+                        <button type="submit" name="button" value="discharge" class="btn btn-primary">
+                            Сохранить
+                        </button>
+                        <a onclick="document.getElementById('reset').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
+                            Отмена
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
 

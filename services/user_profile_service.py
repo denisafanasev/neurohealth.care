@@ -66,7 +66,7 @@ class UserProfileService():
 
         return error
 
-    def chenge_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
+    def chenge_user(self, _user_id, _login, _name, _email, _role, _probationers_number, _created_date,
                     _education_module_expiration_date, _is_active,_current_user_id):
         """
         Обновляет информацию о пользователе и возвращает ее
@@ -84,12 +84,12 @@ class UserProfileService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        user = user_manager.chenge_user(_login, _name, _email, _role, _probationers_number, _created_date,
+        user = user_manager.chenge_user(_user_id, _login,_name, _email, _role, _probationers_number, _created_date,
                                         _education_module_expiration_date, _active=_is_active)
 
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
-        action_manager.add_notifications(_login, "изменил", 'данные', "user_manager", login_superuser)
+        action_manager.add_notifications(user.login, "изменил", 'данные', "user_manager", login_superuser)
 
         return user
 
@@ -118,37 +118,37 @@ class UserProfileService():
 
         return error
 
-    def activation(self, _login, _current_user_id):
+    def activation(self, _user_id, _current_user_id):
         """
         разблокировка пользователя
 
         Args:
-            _login(String): логин пользователя
+            _user_id(String): логин пользователя
         """
 
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        user_manager.activation(_login)
+        user_manager.activation(_user_id)
 
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
-        action_manager.add_notifications(_login, "изменил", 'доступ', "user_manager", login_superuser)
+        action_manager.add_notifications(_user_id, "изменил", 'доступ', "user_manager", login_superuser)
 
-    def deactivation(self, _login, _current_user_id):
+    def deactivation(self, _user_id, _current_user_id):
         """
         Блокировка пользователя
 
         Args:
-            _login(String): логин пользователя
+            _user_id(String): логин пользователя
         """
 
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        active = user_manager.deactivation(_login)
+        active = user_manager.deactivation(_user_id)
 
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
-        action_manager.add_notifications(_login, "изменил", 'доступ', "user_manager", login_superuser)
+        action_manager.add_notifications(_user_id, "изменил", 'доступ', "user_manager", login_superuser)
 
         return active
 
@@ -164,22 +164,22 @@ class UserProfileService():
 
         return user_manager.get_user_by_id(_current_user_id).role
 
-    def access_extension(self, _period, _reference_point, _login, _current_user_id):
+    def access_extension(self, _period, _reference_point, _user_id, _current_user_id):
         """
         Продление срока доступа пользователя к центру обучения
 
         Args:
             _period(Int): количество месяцев, на которое продлевают срок доступа пользователю
             _reference_point(String): начальное время отсчета
-            _login(String): логин пользователя, которому продлевают срок доступа
+            _user_id(Int): ID пользователя, которому продлевают срок доступа
         """
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        user_manager.access_extension(_period, _reference_point, _login)
+        user_manager.access_extension(_period, _reference_point, _user_id)
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
-        action_manager.add_notifications(_login, "продлил", 'срок доступа', "user_manager", login_superuser)
+        action_manager.add_notifications(_user_id, "продлил", 'срок доступа', "user_manager", login_superuser)
 
     def get_education_streams_list(self, _user_id, _role_user):
 

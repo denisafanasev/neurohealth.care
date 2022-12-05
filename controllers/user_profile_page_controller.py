@@ -83,7 +83,7 @@ class UserProfilePageController():
 
         return user_id
 
-    def chenge_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
+    def chenge_user(self, _user_id, _login, _name, _email, _role, _probationers_number, _created_date,
                     _education_module_expiration_date, _is_active, _current_user_id):
         """
         Обновляет информацию о пользователе и возвращает ее
@@ -101,7 +101,7 @@ class UserProfilePageController():
         user_profile_service = UserProfileService()
 
         try:
-            user_profile_service.chenge_user(_login, _name, _email, _role, _probationers_number, _created_date,
+            user_profile_service.chenge_user(_user_id, _login, _name, _email, _role, _probationers_number, _created_date,
                                          _education_module_expiration_date, _is_active,_current_user_id)
 
         except UserManagerException as error:
@@ -129,12 +129,12 @@ class UserProfilePageController():
 
         return "Пароль успешно изменен!", 'Successful'
 
-    def activation(self, _login, _current_user_id):
+    def activation(self, _user_id, _current_user_id):
         """
         разблокировка пользователя
 
         Args:
-            _login(String): логин пользователя
+            _user_id(String): логин пользователя
 
         Returns:
             _active (bool): Активирован/заблокирован пользователь
@@ -142,16 +142,16 @@ class UserProfilePageController():
 
         user_profile_service = UserProfileService()
 
-        user_profile_service.activation(_login, _current_user_id)
+        user_profile_service.activation(_user_id, _current_user_id)
 
         return "Пользователь успешно разблокирован!"
 
-    def deactivation(self, _login, _current_user_id):
+    def deactivation(self, _user_id, _current_user_id):
         """
         Блокировка пользователя
 
         Args:
-            _login(String): логин пользователя
+            _user_id(String): логин пользователя
 
         Returns:
             _active (bool): Активирован/заблокирован пользователь
@@ -159,7 +159,7 @@ class UserProfilePageController():
 
         user_profile_service = UserProfileService()
 
-        user_profile_service.deactivation(_login, _current_user_id)
+        user_profile_service.deactivation(_user_id, _current_user_id)
 
         return "Пользователь успешно заблокирован!"
 
@@ -180,19 +180,20 @@ class UserProfilePageController():
 
         return settings_user
 
-    def access_extension(self, _period, _reference_point, _login, _current_user_id):
+    def access_extension(self, _period, _reference_point, _user_id, _current_user_id):
         """
         Продление доступа пользователя к центру обучения
 
         Args:
             _period(Int): количество месяцев
             _reference_point(String): точка отсчета
-            _login(String): логин пользователя
+            _user_id(Int): ID пользователя
+            _current_user_id(Int): ID текущего пользователя
         """
 
         user_profile_service = UserProfileService()
 
-        user_profile_service.access_extension(_period, _reference_point, _login, _current_user_id)
+        user_profile_service.access_extension(_period, _reference_point, _user_id, _current_user_id)
         error = "Доступ пользователя к обучающей программе успешно изменен!"
 
         return error
@@ -214,6 +215,7 @@ class UserProfilePageController():
         education_streams_list_view = []
         for education_stream in education_streams_list:
             education_stream_view = {
+                'name': education_stream.name,
                 'course': education_stream.course,
                 'date_start': education_stream.date_start.strftime('%d/%m/%Y'),
                 'date_end': education_stream.date_end.strftime('%d/%m/%Y'),
