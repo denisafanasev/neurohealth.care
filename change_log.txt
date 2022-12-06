@@ -1,3 +1,24 @@
+[1.2.8]
+Общие изменения
+- Карточка пользователя перенесена на отдельную страницу
+- Изменено расположение кнопок на странице "Профиль пользователя"
+
+Исправлены ошибки
+- Исправлено редактирование пользователя
+- Исправлены смена пароля и активация/деактивация пользователя
+- Исправлена карточка "Доступ к центру обучения" на странице "Профиль пользователя" для мобильной версии
+- Исправлена мобильная версия страницы "Профиль пользователя"
+
+General changes
+- User Card page moved to a separate
+- Changed the location of the points on the "User Profile" page
+
+Bugs fixed
+- Fixed user editing
+- Fixed password change and user activation/deactivation
+- Fixed "Learning Center Access" card on "User Profile" page for mobile version.
+- Fixed mobile version of the "User Profile" page
+
 [1.2.7]
 Общие изменения
 - Добавлено уведомление об успешном создании/редактирование обучающего потока
