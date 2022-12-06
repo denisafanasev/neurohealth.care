@@ -386,13 +386,13 @@ class UserManager():
 
         return user_role
 
-    def chenge_user(self, _login, _name, _email, _role, _probationers_number, _created_date,
+    def chenge_user(self, _user_id, _login, _name, _email, _role, _probationers_number, _created_date,
                     _education_module_expiration_date="", _token="", _email_confirmed=False, _active=True):
         """
         Обновляет информацию о пользователе и возвращает ее
 
         Args:
-            _login (String): логин пользователя
+            _user_id (Int): ID пользователя
             _name (String): имя пользователя
             _email (String): email пользователя
             _role (String): роль пользователя [user/superuser]
@@ -408,7 +408,7 @@ class UserManager():
             if user.login != _login:
                 raise UserManagerException("Пользователь с таким email уже существует")
 
-        user = User(_login=_login, _name=_name, _email=_email, _role=_role, _created_date=_created_date,
+        user = User(_user_id=_user_id, _login=_login, _name=_name, _email=_email, _role=_role, _created_date=_created_date,
                     _probationers_number=_probationers_number, _token=_token, _email_confirmed=_email_confirmed,
                     _education_module_expiration_date=_education_module_expiration_date, _active=_active)
 
@@ -421,12 +421,10 @@ class UserManager():
                      "education_module_expiration_date": education_module_expiration_date, "active": user.active,
                      "token": user.token, "email_confirmed": user.email_confirmed}
 
-        stored_user = self.get_user_by_login(user.login)
-        user_id = stored_user.user_id
-        data_store.update_row_by_id(user_data, user_id)
-        user = self.get_user_by_login(_login)
+        data_store.update_row_by_id(user_data, user.user_id)
+        user = data_store.get_row_by_id(user.user_id)
 
-        return user
+        return self.user_row_to_user(user)
 
     def chenge_password(self, _user_id, _password, _password2, _current_password=''):
         """
@@ -456,65 +454,62 @@ class UserManager():
 
         data_store.update_row_by_id(user_data, _user_id)
 
-    def activation(self, _login):
+    def activation(self, _user_id):
         """
-        Блокировка/разблокировка пользователя
+        Разблокировка пользователя
 
         Args:
-            _login(String): логин пользователя
+            _user_id(Int): ID пользователя
 
         Returns:
-            _active (bool): Активирован/заблокирован пользователь
+            _active (bool): Активирован пользователь
         """
 
-        user = self.get_user_by_login(_login)
+        user = self.get_user_by_id(_user_id)
         user.active = True
 
-        self.chenge_user(user.login, user.name, user.email, user.role, user.probationers_number,
+        self.chenge_user(user.user_id, user.login, user.name, user.email, user.role, user.probationers_number,
                          user.created_date, user.education_module_expiration_date,
                          user.token, user.email_confirmed, user.active)
 
-        return True
-
-    def deactivation(self, _login):
+    def deactivation(self, _user_id):
         """
-        Блокировка/разблокировка пользователя
+        Блокировка пользователя
 
         Args:
-            _login(String): логин пользователя
+            _user_id(Int): ID пользователя
 
         Returns:
-            _active (bool): Активирован/заблокирован пользователь
+            _active (bool): Заблокирован пользователь
         """
 
-        user = self.get_user_by_login(_login)
+        user = self.get_user_by_id(_user_id)
         user.active = False
 
-        self.chenge_user(user.login, user.name, user.email, user.role, user.probationers_number,
+        self.chenge_user(user.user_id, user.login, user.name, user.email, user.role, user.probationers_number,
                          user.created_date, user.education_module_expiration_date,
                          user.token, user.email_confirmed, user.active)
 
-        return False
-
-    def access_extension(self, _period, _reference_point, _login):
+    def access_extension(self, _period, _reference_point, _user_id):
         """
-        Ппродление срока доступа пользователя к центру обучения
+        Продление срока доступа пользователя к центру обучения
 
         Args:
             _period(Int): количество месяцев, на которое продлевают срок доступа пользователю
             _reference_point(String): начальное время отсчета
-            _login(String): логин пользователя, которому продлевают срок доступа
+            _user_id(Int): ID пользователя, которому продлевают срок доступа
         """
 
-        user = self.get_user_by_login(_login)
+        user = self.get_user_by_id(_user_id)
 
         if _reference_point == "end":
+            x = relativedelta(months=_period)
             user.education_module_expiration_date = (
                     user.education_module_expiration_date + relativedelta(months=_period)).strftime("%d/%m/%Y")
         elif _reference_point == "today":
             user.education_module_expiration_date = (datetime.now() + relativedelta(months=_period)).strftime(
                 "%d/%m/%Y")
 
-        self.chenge_user(user.login, user.name, user.email, user.role, user.probationers_number,
+        self.chenge_user(user.user_id, user.login, user.name, user.email, user.role, user.probationers_number,
                          user.created_date, user.education_module_expiration_date,
                          user.token, user.email_confirmed, user.active)
