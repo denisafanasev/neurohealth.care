@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
+
     <script src="https://snipp.ru/cdn/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://snipp.ru/cdn/select2/4.0.13/dist/js/select2.min.js"></script>
     <script src="https://snipp.ru/cdn/select2/4.0.13/dist/js/i18n/ru.js"></script>
@@ -38,19 +39,46 @@
             paging: true,
             searching: true
         });
-        {% for course in _courses_list %}
-            $("#modules_courses_{{ course['id'] }}").DataTable({
-                responsive: true,
-                lengthChange: !1,
-                scrollX: true,
-                fixedColumns: false,
-                fixedHeader: false
-            });
-        {% endfor %}
-        $("#modules_courses").DataTable({
-                scrollX: true,
-            });
-
+        {% if _mode != 'view' %}
+            {% for course in _courses_list %}
+                $("#modules_courses_{{ course['id'] }}").DataTable({
+                    responsive: true,
+                    paging: false,
+                    searching: false,
+                    dom: "<'ui stackable grid'"+
+                        "<'row'"+
+                            "<'eight wide column'l>"+
+                            "<'right aligned eight wide column'f>"+
+                        ">"+
+                        "<'row dt-table'"+
+                            "<'sixteen wide column'tr>"+
+                        ">"+
+                        "<'row'"+
+                            "<'right aligned nine wide column'p>"+
+                        ">"+
+                    ">"
+                });
+            {% endfor %}
+        {% else %}
+            $("#modules_courses").DataTable({
+                    responsive: true,
+                    paging: false,
+                    searching: false,
+                    dom: "<'ui stackable grid'"+
+                        "<'row'"+
+                            "<'eight wide column'l>"+
+                            "<'right aligned eight wide column'f>"+
+                        ">"+
+                        "<'row dt-table'"+
+                            "<'sixteen wide column'tr>"+
+                        ">"+
+                        "<'row'"+
+                            "<'right aligned nine wide column'p>"+
+                        ">"+
+                    ">"
+                });
+        {% endif %}
+        // перед отправкой данных, ищем всех отмеченных кураторов и студентов, а после проверяем данные
         $('#stream_data').on('submit', function(e) {
             var form = this;
             var students_params = students_table.$('input').serializeArray();
@@ -92,39 +120,40 @@
 
         flatpickr(date_start, {
             dateFormat: "d/m/Y",
-            wrap: true
+            wrap: true,
+            disableMobile: "true"
         });
         flatpickr(date_end, {
             dateFormat: "d/m/Y",
-            wrap: true
+            wrap: true,
+            disableMobile: "true"
         });
 
         $('#course').change(function(){
             var val = $(this).val();
-            //если элемент с id равным значению #select1 существует
+            //если элемент с id равным значению #course существует
             if($('#' + val).length){
-             //скрываем все селекты шага 2
+             //скрываем все модули курсов
                 $('#modules table').hide();
             //показываем нужный
                 $('#' + val).show();
             //в противном случае, если значение равняется "all"
             }else{
-            //показать все списки шага2
+            //скрыть все курсы
              $('#modules table').hide();
             }
-            })
+        })
+
         {% for course in _courses_list %}
             {% for module in course['modules'] %}
                 var date_start_module_{{ module['id'] }} = document.getElementById("date_start_module_{{ module['id'] }}")
                 flatpickr(date_start_module_{{ module['id'] }}, {
                     dateFormat: "d/m/Y",
-                    wrap: true
+                    wrap: true,
+                    disableMobile: "true"
                 });
             {% endfor %}
         {% endfor %}
-
-
-
     })
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
@@ -199,77 +228,6 @@
      }
     </script>
     <style>
-    .dataTables_scroll{
-        overflow: auto;
-    }
-    .modal {
-            display: none; /* Hidden by default */
-            z-index: 99; /* Sit on top */
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0, 0, 0); /* Fallback color */
-            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        /* Modal Content/Box */
-        .modal-content {
-
-            margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
-            border: gray;
-            width: 80%; /* Could be more or less, depending on screen size */
-            padding: 16px;
-        }
-
-        .modal-backdrop{
-            display: none;
-        }
-        /* The Close Button (x) */
-
-        .close:hover,
-        .close:focus {
-            color: red;
-            cursor: pointer;
-        }
-
-        /* Add Zoom Animation */
-        .animate {
-            -webkit-animation: animatezoom 0.6s;
-            animation: animatezoom 0.6s
-        }
-
-        @-webkit-keyframes animatezoom {
-            from {
-                -webkit-transform: scale(0)
-            }
-            to {
-                -webkit-transform: scale(1)
-            }
-        }
-
-        @keyframes animatezoom {
-            from {
-                transform: scale(0)
-            }
-            to {
-                transform: scale(1)
-            }
-        }
-
-        /* Change styles for span and cancel button on extra small screens */
-        @media screen and (max-width: 300px) {
-            span.psw {
-                display: block;
-                float: none;
-            }
-            .cancelbtn {
-                width: 100%;
-            }
-        }
 
     .choices__list, .choices__list--dropdown, .is-active{
         z-index: 37!important;
@@ -287,21 +245,19 @@
         <form id="stream_data" name="stream_data" method="post" enctype="multipart/form-data">
         
             <div class="row">
-
                 <div class="col-12 col-xl-6">
+                    <fieldset {% if _mode == 'view' %} disabled {% endif %}>
                     <div class="card">
                         <div class="card-body">
-
                             <div class="mb-2">
                                 <label class="form-label"><strong>Название потока</strong></label>
-                                <input id="name_stream" name="name" class="form-control" {% if _mode=="view" %} disabled {% endif %} {% if
-                                    _mode=='new' %} placeholder="Введите название потока.." {% else %} value="{{ _education_stream['name'] }}" {%
-                                    endif %}>
+                                <input id="name_stream" name="name" class="form-control" {% if _mode=='new' %} placeholder="Введите название потока.."
+                                {% else %} value="{{ _education_stream['name'] }}" {% endif %}>
                             </div>
-                            
+
                             <div class="mb-2">
                                 <label class="form-label"><strong>Курс</strong></label>
-                                <select id="course" name="course" class="form-select" {% if _mode=='view' %} disabled {% endif %} style="z-index: auto">
+                                <select id="course" name="course" class="form-select" {% if _mode == 'view' %} disabled {% endif %}  style="z-index: auto">
                                     {% if _mode == 'new' %}<option selected disabled value="placeholder">Выберите курс..</option>{% endif %}
                                     {% for course in _courses_list %}
                                     <option {% if course['id']==_education_stream['course']['id'] %} selected {% endif %}
@@ -312,7 +268,7 @@
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Преподаватель</strong></label>
-                                <select id="teacher" name="teacher" class="form-select" {% if _mode=="view" %} disabled {% endif %}>
+                                <select id="teacher" name="teacher" class="form-select" {% if _mode == 'view' %} disabled {% endif %}>
                                     {% if _mode == 'new' %}
                                         <option selected disabled value="placeholder">Выберите преподавателя</option>
                                     {% endif %}
@@ -327,9 +283,9 @@
                             <div class="row mb-2">
                                 <div class="col-sm-6" style="display: inline-grid;float: left">
                                     <label class="form-label"><strong>Дата старта</strong></label>
-                            
+
                                     <div id="date_start" class="flatpickr input-group mb-3">
-                                        <input {% if _mode=='view' %} disabled {% endif %} name="date_start" type="text"
+                                        <input name="date_start" type="text"
                                             class="form-control" value="{{ _education_stream['date_start'] }}" data-input>
                                         <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle> </a>
                                     </div>
@@ -337,111 +293,86 @@
                                 </div>
                                 <div class="col-sm-6" style="display: block; justify-content: right">
                                     <label class="form-label"><strong>Дата окончания</strong></label>
-                            
+
                                     <div id="date_end" class="flatpickr input-group mb-3">
-                                        <input {% if _mode=='view' %} disabled {% endif %} name="date_ends" type="text"
+                                        <input name="date_ends" type="text"
                                             class="form-control" value="{{ _education_stream['date_end'] }}" data-input>
                                         <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle> </a>
                                     </div>
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
+                    </fieldset>
                 </div>
 
-                <div class="col-12 col-xl-6">
-                    <div class="card">
-                        <div class="card-body">
-
-                            <div class="mb-2">
-                                <label class="form-label"><strong>Кураторы</strong></label>
-                                <table id="curators_table" class="table dataTable border display">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
-                                                colspan="1">#</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Имя пользователя</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for curator in _curators_list %}
-                                        <tr>
-                                            <td>
-                                                <input {% if _mode=="view" %} disabled {% endif %} {% if _mode != 'new' %} {% if curator['id'] in
-                                                    _education_stream['curators_list'] %}checked {% endif %}{% endif %} name="user_{{ curator['id'] }}"
-                                                    type="checkbox" value="{{ curator['id'] }}">
-                                            </td>
-                                            <td>{{ curator['login'] }}</td>
-                                            <td>{{ curator['name'] }}</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 col-xl-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="mb-2">
-                                <label class="form-label"><strong>Доступные модули</strong></label>
-                                <div id="modules">
-                                {% if _mode != 'view' %}
-                                    {% for course in _courses_list %}
-                                        <table id="modules_courses_{{ course['id'] }}" class="table dataTable border display" style="width: 100%; {% if _education_stream['course']['id'] != course['id'] %}display: none{% endif %}">
-                                            <thead>
-                                                <tr>
-                                                    <th class="sorting" style="width: 60%" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
-                                                        colspan="1">Название модуля</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
-                                                        rowspan="1" colspan="1">Дата начала</th>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-                                                {% for module in course['modules'] %}
-                                                    <tr>
-                                                        <td>{{ module['name'] }}</td>
-                                                        <td>
-                                                            <div id="date_start_module_{{ module['id'] }}" class="flatpickr input-group mb-3">
-                                                                <input name="date_start_module_{{ module['id'] }}" type="text"
-                                                                    class="form-control" value="{% if module['date_start'] %}{{ module['date_start'] }}{% else %}{{ _education_stream['date_start'] }}{% endif %}" data-input>
-                                                                <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle></a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    {% endfor %}
-                                {% elif _mode == 'view' %}
-                                    <table id="modules_courses" class="table dataTable border display dataTables_scroll nowrap" style="width: 100%;">
+                    <div class="col-12 col-xl-6">
+                    <fieldset {% if _mode == 'view' %} disabled {% endif %}>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    <label class="form-label"><strong>Кураторы</strong></label>
+                                    <table id="curators_table" class="table dataTable border display">
                                         <thead>
                                             <tr>
-                                                <th class="sorting" tabindex="0" style="width: 70%!important;" aria-controls="datatables-buttons" rowspan="1"
-                                                    colspan="1">Название модуля</th>
-                                                <th class="sorting" tabindex="0" style="width: 30%!important;" aria-controls="datatables-buttons"
+                                                <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                                    colspan="1">#</th>
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Имя пользователя</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for curator in _curators_list %}
+                                            <tr>
+                                                <td>
+                                                    <input {% if _mode != 'new' %}{% if curator['id'] in _education_stream['curators_list'] %}checked {% endif %}{% endif %}
+                                                            name="user_{{ curator['id'] }}" type="checkbox" value="{{ curator['id'] }}">
+                                                </td>
+                                                <td>{{ curator['login'] }}</td>
+                                                <td>{{ curator['name'] }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <label class="form-label"><strong>Доступные модули</strong></label>
+                            <div id="modules">
+                            {% if _mode != 'view' %}
+                                {% for course in _courses_list %}
+                                    <table id="modules_courses_{{ course['id'] }}" class="table table-striped dataTable display"
+                                           style="width: 100%; font-size: 13px; {% if _education_stream['course']['id'] != course['id'] %}display: none{% endif %}">
+                                        <thead>
+                                            <tr>
+{#                                                <th class="sorting" style="width: 5%!important;" tabindex="0" aria-controls="datatables-buttons"#}
+{#                                                    rowspan="1" colspan="1">#</th>#}
+                                                <th class="sorting" style="width: 50%;max-width: 60%;" tabindex="0" aria-controls="datatables-buttons"
+                                                    rowspan="1" colspan="1">Название модуля</th>
+                                                <th class="sorting" style="width: 40%;max-width: 50%;" tabindex="0" aria-controls="datatables-buttons"
                                                     rowspan="1" colspan="1">Дата начала</th>
                                             </tr>
                                         </thead>
 
                                         <tbody>
-                                            {% for timetable in _timetables_list %}
+                                            {% for module in course['modules'] %}
                                                 <tr>
+{#                                                <td></td>#}
+                                                    <td>{{ module['name'] }}</td>
                                                     <td>
-                                                        {{ timetable['module']['name'] }}
-                                                    </td>
-                                                    <td>
-                                                        <div id="date_start_module_{{ timetable['module']['id'] }}" class="flatpickr input-group mb-3">
-                                                            <input disabled name="date_end" type="text"
-                                                                class="form-control" value="{{ timetable['date_start'] }}" data-input>
+                                                        <div id="date_start_module_{{ module['id'] }}" class="flatpickr input-group">
+                                                            <input name="date_start_module_{{ module['id'] }}" type="text"
+                                                                   class="form-control"
+                                                                   value="{% if module['date_start'] %}{{ module['date_start'] }}{% else %}{{ _education_stream['date_start'] }}{% endif %}" data-input>
                                                             <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle></a>
                                                         </div>
                                                     </td>
@@ -449,8 +380,40 @@
                                             {% endfor %}
                                         </tbody>
                                     </table>
-                                {% endif %}
-                                </div>
+                                {% endfor %}
+                            {% elif _mode == 'view' %}
+                                <table id="modules_courses" class="table table-striped dataTable display"
+                                       style="width: 100%; font-size: 13px;">
+                                    <thead>
+                                        <tr>
+{#                                            <th class="sorting" style="width: 0" tabindex="0" aria-controls="datatables-buttons"#}
+{#                                                    rowspan="1" colspan="1">#</th>#}
+                                            <th class="sorting" tabindex="0" style="width: 70%!important;" aria-controls="datatables-buttons" rowspan="1"
+                                                colspan="1">Название модуля</th>
+                                            <th class="sorting" tabindex="0" style="width: 30%!important;" aria-controls="datatables-buttons"
+                                                rowspan="1" colspan="1">Дата начала</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for timetable in _timetables_list %}
+                                            <tr>
+{#                                            <td></td>#}
+                                                <td>
+                                                    {{ timetable['module']['name'] }}
+                                                </td>
+                                                <td>
+                                                    <div id="date_start_module_{{ timetable['module']['id'] }}" class="flatpickr input-group mb-3">
+                                                        <input disabled name="date_end" type="text"
+                                                            class="form-control" value="{{ timetable['date_start'] }}" data-input>
+                                                        <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
                             </div>
                         </div>
                     </div>

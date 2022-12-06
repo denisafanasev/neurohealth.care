@@ -278,14 +278,7 @@ def user_profile():
     if user_id is not None and not request.form.get("button"):
         mode = "view"
     else:
-        try:
-            if request.form["button"] == "save_discharge":
-                mode = "discharge"
-            else:
-                mode = "edit"
-        except exceptions.BadRequestKeyError:
-            mode = "view"
-        pass
+        mode = "edit"
 
     error = session.get('error')
     error_type = session.get('error_type')
@@ -389,20 +382,21 @@ def user_profile():
                 return redirect(f'/user_profile?user_id={user_id}')
 
             elif request.form.get("is_active"):
-                is_active = request.form.get("is_active")
-                if is_active == "true":
-                    session['error'] = page_controller.activation(user_id, current_user_id)
-                    data['active'] = True
-                    session['error_type'] = 'Successful'
+                if mode == 'view':
+                    is_active = request.form.get("is_active")
+                    if is_active == "true":
+                        session['error'] = page_controller.activation(user_id, current_user_id)
+                        data['active'] = True
+                        session['error_type'] = 'Successful'
 
-                    return redirect(f'/user_profile?user_id={user_id}')
+                        return redirect(f'/user_profile?user_id={user_id}')
 
-                elif is_active == 'false':
-                    session['error'] = page_controller.deactivation(user_id, current_user_id)
-                    data['active'] = False
-                    session['error_type'] = 'Successful'
+                    elif is_active == 'false':
+                        session['error'] = page_controller.deactivation(user_id, current_user_id)
+                        data['active'] = False
+                        session['error_type'] = 'Successful'
 
-                    return redirect(f'/user_profile?user_id={user_id}')
+                        return redirect(f'/user_profile?user_id={user_id}')
 
             else:
                 return redirect("user_manager")

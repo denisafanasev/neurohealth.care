@@ -23,18 +23,8 @@ class UserProfileService():
         """
 
         user_manager = UserManager()
-        stream_manager = EducationStreamManager()
 
         user = user_manager.get_user_by_id(user_id)
-        # education_streams = stream_manager.get_education_streams_list_by_id_user(user.user_id, user.role)
-        # if user is not None:
-        #     if user.role == "user":
-        #         education_stream_list = []
-        #         for id_education_stream in education_streams:
-        #             education_stream_list.append(stream_manager.get_education_stream(id_education_stream))
-        #         user.education_stream_list = education_stream_list
-        #     else:
-        #         user.education_stream_list = None
 
         return user
 
@@ -61,7 +51,7 @@ class UserProfileService():
         error = user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
 
-        if error is None:
+        if isinstance(error, int):
             action_manager.add_notifications(_login, "добавил", 'нового', "user_manager", login_superuser)
 
         return error
@@ -72,10 +62,16 @@ class UserProfileService():
         Обновляет информацию о пользователе и возвращает ее
 
         Args:
+            _user_id(Int): ID пользователя
             _login (String): логин пользователя
             _name (String): имя пользователя
             _email (String): email пользователя
             _role (String): роль пользователя [user/superuser]
+            _probationers_number(String): количество доступных тестируемых
+            _created_date(String): дата создания пользователя
+            _education_module_expiration_date(String): дата до которой пользователь активен
+            _is_active(String): активирован/заблокирован пользователь
+            _current_user_id(Int): ID текущего пользователя
 
         Returns:
             Dict: словарь с информацией о пользователе
@@ -102,6 +98,7 @@ class UserProfileService():
             _password (String): пароль пользователя
             _password2 (String): контрольный ввод пароля пользователя
             _current_user_id(Integer): ID текущего пользователя
+            _current_password(String): текущий пароль пользователя, у которого меняют пароль
 
         Returns:
             String: ошибка при обновлении пароля пользователя
@@ -120,19 +117,21 @@ class UserProfileService():
 
     def activation(self, _user_id, _current_user_id):
         """
-        разблокировка пользователя
+        Разблокировка пользователя
 
         Args:
             _user_id(String): логин пользователя
+            _current_user_id(Integer): ID текущего пользователя
         """
 
         user_manager = UserManager()
         action_manager = ActionManager()
 
         user_manager.activation(_user_id)
+        login_user = user_manager.get_user_by_id(_user_id).login
 
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
-        action_manager.add_notifications(_user_id, "изменил", 'доступ', "user_manager", login_superuser)
+        action_manager.add_notifications(login_user, "изменил", 'доступ', "user_manager", login_superuser)
 
     def deactivation(self, _user_id, _current_user_id):
         """
@@ -140,21 +139,26 @@ class UserProfileService():
 
         Args:
             _user_id(String): логин пользователя
+            _current_user_id(Integer): ID текущего пользователя
         """
 
         user_manager = UserManager()
         action_manager = ActionManager()
 
         active = user_manager.deactivation(_user_id)
+        login_user = user_manager.get_user_by_id(_user_id).login
 
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
-        action_manager.add_notifications(_user_id, "изменил", 'доступ', "user_manager", login_superuser)
+        action_manager.add_notifications(login_user, "изменил", 'доступ', "user_manager", login_superuser)
 
         return active
 
     def get_current_user_role(self, _current_user_id):
         """
         Возвращает роль текущего пользователя
+
+        Args:
+            _current_user_id(Int): ID текущего пользователя
 
         Return:
             role(String): роль текущего пользователя
@@ -172,17 +176,28 @@ class UserProfileService():
             _period(Int): количество месяцев, на которое продлевают срок доступа пользователю
             _reference_point(String): начальное время отсчета
             _user_id(Int): ID пользователя, которому продлевают срок доступа
+            _current_user_id(Int): ID текущего пользователя
         """
         user_manager = UserManager()
         action_manager = ActionManager()
 
         user_manager.access_extension(_period, _reference_point, _user_id)
         login_superuser = user_manager.get_user_by_id(_current_user_id).login
+        login_user = user_manager.get_user_by_id(_user_id).login
 
-        action_manager.add_notifications(_user_id, "продлил", 'срок доступа', "user_manager", login_superuser)
+        action_manager.add_notifications(login_user, "продлил", 'срок доступа', "user_manager", login_superuser)
 
     def get_education_streams_list(self, _user_id, _role_user):
+        """
+        Возвращает список обучающих потоков, в которых есть пользователя
 
+        Args:
+            _user_id(Int): ID пользователя
+            _role_user(String): роль пользователя [user/superuser]
+
+        Returns:
+            List(EducationStream): список обучающих потоков
+        """
         education_stream_manager = EducationStreamManager()
         user_manager = UserManager()
         course_manager = EducationCourseManager()

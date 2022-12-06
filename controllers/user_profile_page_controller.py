@@ -215,6 +215,7 @@ class UserProfilePageController():
         education_streams_list_view = []
         for education_stream in education_streams_list:
             education_stream_view = {
+                'id': education_stream.id,
                 'name': education_stream.name,
                 'course': education_stream.course,
                 'date_start': education_stream.date_start.strftime('%d/%m/%Y'),
