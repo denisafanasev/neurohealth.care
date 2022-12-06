@@ -308,12 +308,12 @@
                 </div>
 
                     <div class="col-12 col-xl-6">
-                    <fieldset {% if _mode == 'view' %} disabled {% endif %}>
                         <div class="card">
                             <div class="card-body">
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Кураторы</strong></label>
-                                    <table id="curators_table" class="table dataTable border display">
+                                    <table id="curators_table" class="table table-striped dataTable no-footer dtr-inline"
+                                       style="width:100%; font-size: 13px">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
@@ -326,7 +326,8 @@
                                             {% for curator in _curators_list %}
                                             <tr>
                                                 <td>
-                                                    <input {% if _mode != 'new' %}{% if curator['id'] in _education_stream['curators_list'] %}checked {% endif %}{% endif %}
+                                                    <input {% if _mode=='view' %} disabled {% endif %}
+                                                            {% if _mode != 'new' %}{% if curator['id'] in _education_stream['curators_list'] %}checked {% endif %}{% endif %}
                                                             name="user_{{ curator['id'] }}" type="checkbox" value="{{ curator['id'] }}">
                                                 </td>
                                                 <td>{{ curator['login'] }}</td>
@@ -338,7 +339,6 @@
                                 </div>
                             </div>
                         </div>
-                    </fieldset>
                     </div>
 
             </div>
@@ -403,7 +403,7 @@
                                                     {{ timetable['module']['name'] }}
                                                 </td>
                                                 <td>
-                                                    <div id="date_start_module_{{ timetable['module']['id'] }}" class="flatpickr input-group mb-3">
+                                                    <div id="date_start_module_{{ timetable['module']['id'] }}" class="flatpickr input-group">
                                                         <input disabled name="date_end" type="text"
                                                             class="form-control" value="{{ timetable['date_start'] }}" data-input>
                                                         <a class="input-button btn btn-secondary dropdown-toggle" title="toggle" type="button" data-toggle></a>
@@ -428,7 +428,8 @@
                             <div class="mb-2">
                                 <label class="form-label"><strong>Ученики</strong></label>
                             {% if _students_list != [] %}
-                                <table id="students_table" class="table dataTable border display" style="width: 100%">
+                                <table id="students_table" class="table table-striped dataTable no-footer dtr-inline"
+                                       style="width:100%; font-size: 13px">
                                     <thead>
                                         <tr>
                                             <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
