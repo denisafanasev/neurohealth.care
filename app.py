@@ -338,7 +338,7 @@ def user_profile():
             elif request.form.get("button") == "save":
                 if mode == "edit":
                     user = {}
-                    user["login"] = request.form["login"]
+                    user["login"] = data['login']
                     user["name"] = request.form["user_name"]
                     user["email"] = request.form["email"]
                     user["role"] = request.form["role"]
