@@ -25,6 +25,7 @@ class EducationStreamPageController():
                     'id': i_student.user_id,
                     'login': i_student.login,
                     'name': i_student.name,
+                    'email': i_student.email
                 }
 
                 students_list.append(student)
@@ -34,6 +35,7 @@ class EducationStreamPageController():
                         'id': i_student.user_id,
                         'login': i_student.login,
                         'name': i_student.name,
+                        'email': i_student.email
                     }
 
                     students_list.append(student)
@@ -61,6 +63,7 @@ class EducationStreamPageController():
                     'id': i_curator.user_id,
                     'login': i_curator.login,
                     'name': i_curator.name,
+                    'email': i_curator.email
                 }
 
                 curators_list.append(curator)
@@ -70,6 +73,7 @@ class EducationStreamPageController():
                         'id': i_curator.user_id,
                         'login': i_curator.login,
                         'name': i_curator.name,
+                        'email': i_curator.email
                     }
 
                     curators_list.append(curator)

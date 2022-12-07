@@ -320,6 +320,7 @@
                                                     colspan="1">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Имя пользователя</th>
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Email</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -332,6 +333,7 @@
                                                 </td>
                                                 <td>{{ curator['login'] }}</td>
                                                 <td>{{ curator['name'] }}</td>
+                                                <td>{{ curator['email'] }}</td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -436,6 +438,7 @@
                                                 colspan="1">#</th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Имя пользователя</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Email</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -449,6 +452,7 @@
                                             </td>
                                             <td>{{ student['login'] }}</td>
                                             <td>{{ student['name'] }}</td>
+                                            <td>{{ student['email'] }}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>

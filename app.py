@@ -1343,7 +1343,6 @@ def education_stream_card():
             mode = "edit"
 
         elif request.form.get('button') == "save":
-            x = request.form
             education_stream_new = {
                 "id": education_stream['id'],
                 "name": request.form.get("name"),
