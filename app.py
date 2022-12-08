@@ -280,13 +280,13 @@ def user_profile():
     else:
         mode = "edit"
 
-    error = session.get('error')
-    error_type = session.get('error_type')
-    if error_type is not None:
-        session.pop('error_type')
+    message_error = session.get('message_error')
+    status_code = session.get('status_code')
+    if status_code is not None:
+        session.pop('status_code')
 
-    if error is not None:
-        session.pop('error')
+    if message_error is not None:
+        session.pop('message_error')
 
     settings_user = page_controller.get_settings_user()
     # страница доступна только администратору
@@ -320,14 +320,14 @@ def user_profile():
                     user["probationers_number"] = int(request.form["probationers_number"])
                     user['active'] = True
 
-                    error = page_controller.create_user(user["login"], user["name"], user["password"],
+                    message_error = page_controller.create_user(user["login"], user["name"], user["password"],
                                                         user["password2"], user["email"], user["role"],
                                                         user["probationers_number"], current_user_id)
-                    if isinstance(error, int):
-                        session['error'] = "Пользователь сохранён!"
-                        session['error_type'] = "Successful"
+                    if isinstance(message_error, int):
+                        session['message_error'] = "Пользователь сохранён!"
+                        session['status_code'] = "Successful"
 
-                        return redirect(f'/user_profile?user_id={error}')
+                        return redirect(f'/user_profile?user_id={message_error}')
 
                     data_edit = user
 
@@ -338,7 +338,7 @@ def user_profile():
             elif request.form.get("button") == "save":
                 if mode == "edit":
                     user = {}
-                    user["login"] = request.form["login"]
+                    user["login"] = data['login']
                     user["name"] = request.form["user_name"]
                     user["email"] = request.form["email"]
                     user["role"] = request.form["role"]
@@ -351,33 +351,39 @@ def user_profile():
                     else:
                         user['is_active'] = False
 
-                    error = page_controller.chenge_user(user_id, user["login"], user["name"], user["email"], user["role"],
+                    message_error = page_controller.chenge_user(user_id, user["login"], user["name"], user["email"], user["role"],
                                                 user["probationers_number"], user["created_date"],
                                                 user['education_module_expiration_date'], user['is_active'], current_user_id)
-                    if error is None:
-                        session['error'] = "Изменения сохранены!"
-                        session['error_type'] = "Successful"
+                    if message_error is None:
+                        session['message_error'] = "Изменения сохранены!"
+                        session['status_code'] = "Successful"
 
                         return redirect(f'/user_profile?user_id={user_id}')
 
                     data_edit = user
 
-            elif request.form.get("button") == "discharge":
+            elif request.form.get("button") == "reset":
                 user = {}
                 user["password"] = request.form["password"]
                 user["password2"] = request.form["password2"]
 
-                error, error_type = page_controller.chenge_password(user_id, user["password"], user["password2"], current_user_id)
-                if error_type == 'Successful':
-                    session['error'] = error
-                    session['error_type'] = error_type
-
+                session['message_error'], session['status_code'] = page_controller.chenge_password(user_id, user["password"], user["password2"], current_user_id)
+                if session['status_code'] == 'Successful':
                     return redirect(f'/user_profile?user_id={user_id}')
+                else:
+                    data_edit = data.copy()
+                    data_edit['password'] = user["password"]
+                    data_edit['password2'] = user['password2']
+                    message_error = session.pop('message_error')
+                    status_code = session.pop('status_code')
+
+                mode = 'view'
 
             elif request.form.get("button") == "extension":
                 reference_point = request.form["reference_point"]
                 period = request.form["period"]
-                page_controller.access_extension(int(period), reference_point, user_id, current_user_id)
+                session['message_error'] = page_controller.access_extension(int(period), reference_point, user_id, current_user_id)
+                session['status_code'] = "Successful"
 
                 return redirect(f'/user_profile?user_id={user_id}')
 
@@ -385,16 +391,16 @@ def user_profile():
                 if mode == 'view':
                     is_active = request.form.get("is_active")
                     if is_active == "true":
-                        session['error'] = page_controller.activation(user_id, current_user_id)
+                        session['message_error'] = page_controller.activation(user_id, current_user_id)
                         data['active'] = True
-                        session['error_type'] = 'Successful'
+                        session['status_code'] = 'Successful'
 
                         return redirect(f'/user_profile?user_id={user_id}')
 
                     elif is_active == 'false':
-                        session['error'] = page_controller.deactivation(user_id, current_user_id)
+                        session['message_error'] = page_controller.deactivation(user_id, current_user_id)
                         data['active'] = False
-                        session['error_type'] = 'Successful'
+                        session['status_code'] = 'Successful'
 
                         return redirect(f'/user_profile?user_id={user_id}')
 
@@ -411,7 +417,7 @@ def user_profile():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data_edit=data_edit, _data=data, _settings=settings_user,
                            _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _mode=mode, _error=error, _error_type=error_type,
+                           _mode=mode, _message_error=message_error, _status_code=status_code,
                            _education_streams_list=education_streams_list)
 
 
@@ -431,28 +437,37 @@ def main_page():
 
     user = page_controller.get_user_view_by_user_id(user_id)
     endpoint = request.endpoint
-    error = None
-    error_type = None
+    message_error = session.get('message_error')
+    status_code = session.get('status_code')
+    if message_error is not None:
+        session.pop('message_error')
+
+    if status_code is not None:
+        session.pop('status_code')
+
     password = ''
     password2 = ''
 
     if request.method == "POST":
-        if request.form.get("button") == "discharge":
+        if request.form.get("button") == "reset":
 
             password = request.form['password']
             password2 = request.form["password2"]
             current_password = request.form['current_password']
 
-            error = page_controller.chenge_password(user['user_id'], password, password2, current_password)
-            if error is None:
-                error = "Пароль успешно изменен!"
-                error_type = "Successful"
+            message_error = page_controller.chenge_password(user['user_id'], password, password2, current_password)
+            if message_error is None:
+                session['message_error'] = "Пароль успешно изменен!"
+                session['status_code'] = "Successful"
             else:
-                error_type = "Error"
+                session['message_error'] = str(message_error)
+                session['status_code'] = "Error"
+
+            return redirect('main_page')
 
     return render_template('main_page.html', view="main_page", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=page_controller.get_actions(user["user_id"]), _user=user, _error=error, _error_type=error_type,
+                           _data=page_controller.get_actions(user["user_id"]), _user=user, _message_error=message_error, _status_code=status_code,
                            _password=password, _password2=password2)
 
 
@@ -723,10 +738,10 @@ def education_home_task_card():
 
     user = page_controller.get_user_by_id(user_id)
     homework_chat = None
-    error_message = session.get('error_message')
+    message_error = session.get('message_error')
     status_code = session.get('status_code')
-    if session.get('error_message') is not None:
-        session.pop('error_message')
+    if session.get('message_error') is not None:
+        session.pop('message_error')
 
     if session.get('status_code') is not None:
         session.pop('status_code')
@@ -735,17 +750,17 @@ def education_home_task_card():
         if request.form.get("send"):
             text = request.form.get("text")
             if text is not None:
-                session['error_message'] = page_controller.add_message({"text": text, "id_user": user_id}, data['module']['lesson']['id'],
+                session['message_error'] = page_controller.add_message({"text": text, "id_user": user_id}, data['module']['lesson']['id'],
                                                       data['user']["id"])
-                if session['error_message'] is not None:
+                if session['message_error'] is not None:
                     session['status_code'] = "Error"
 
         elif request.form.get("button") == "answer":
             answer = request.form.get("answer")
             if answer == "True":
-                session['error_message'], session['status_code'] = page_controller.homework_answer_accepted(homework["id"], user_id)
+                session['message_error'], session['status_code'] = page_controller.homework_answer_accepted(homework["id"], user_id)
             elif answer == "False":
-                session['error_message'], session['status_code'] = page_controller.homework_answer_no_accepted(homework["id"], user_id)
+                session['message_error'], session['status_code'] = page_controller.homework_answer_no_accepted(homework["id"], user_id)
 
         if homework is None:
             return redirect(f'/education_home_task_card?id_chat={id_homework_chat}')
@@ -761,7 +776,7 @@ def education_home_task_card():
 
     return render_template('education_home_task_card.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _homework_chat=homework_chat,
-                           _homework=homework, _data=data, _error_message=error_message, _status_code=status_code)
+                           _homework=homework, _data=data, _message_error=message_error, _status_code=status_code)
 
 
 @app.route('/corrections', methods=['GET', 'POST'])
@@ -1335,7 +1350,7 @@ def education_stream_card():
                             'date_start': request.form.get(f'date_start_module_{module["id"]}')
                         })
 
-            id_education_stream, session['message_error'], session['status_code'] = page_controller.create_education_stream(education_stream_new, timetables_list)
+            id_education_stream, session['message_error'], session['status_code'] = page_controller.create_education_stream(education_stream_new, timetables_list, user_id)
 
             return redirect(f"/education_stream_card?id={id_education_stream}")
 
@@ -1343,7 +1358,6 @@ def education_stream_card():
             mode = "edit"
 
         elif request.form.get('button') == "save":
-            x = request.form
             education_stream_new = {
                 "id": education_stream['id'],
                 "name": request.form.get("name"),
@@ -1367,7 +1381,7 @@ def education_stream_card():
             if education_stream_new['teacher'] not in education_stream_new['curators_list']:
                 education_stream_new['curators_list'].append(education_stream_new['teacher'])
 
-            session['message_error'], session['status_code'] = page_controller.save_education_stream(education_stream_new, timetables_list)
+            session['message_error'], session['status_code'] = page_controller.save_education_stream(education_stream_new, timetables_list, user_id)
 
             return redirect(f"/education_stream_card?id={id_education_stream}")
 

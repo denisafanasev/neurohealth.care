@@ -3,19 +3,35 @@
 {% block main_block %}
     <link href="https://cdn.quilljs.com/1.1.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.1.6/quill.js"></script>
+{#    <script>#}
+{#    document.addEventListener("DOMContentLoaded", function () {#}
+{#        var message = document.getElementById('message');#}
+{#        {% if _status_code == "Error" %}#}
+{#            document.querySelector('h3[id=title_message]').textContent = 'Ошибка';#}
+{#            document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";#}
+{#            message.style.display = "block";#}
+{#        {% elif _status_code == 'Successful' %}#}
+{#            document.querySelector('h3[id=title_message]').textContent = 'Успешно';#}
+{#            document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";#}
+{#            message.style.display = "block";#}
+{#        {% endif %}#}
+{#    });#}
+{#    </script>#}
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var message = document.getElementById('message');
-        {% if _status_code == "Error" %}
+    // Проверяем выбрал ли пользователя ответ перед отправкой
+    function checkAnswer(form) {
+        const answer = form.answer.value;
+        const message = document.getElementById('message');
+
+        if (answer !== '') {
+            return true;
+        } else {
             document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-            document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";
+            document.querySelector('p[id=text_message]').textContent = "Выберите ответ(принято/не принято) на домашние задание";
             message.style.display = "block";
-        {% elif _status_code == 'Successful' %}
-            document.querySelector('h3[id=title_message]').textContent = 'Успешно';
-            document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";
-            message.style.display = "block";
-        {% endif %}
-        });
+            return false;
+        }
+    }
     </script>
 
     <style>
@@ -33,6 +49,19 @@
         <div class="mb-3">
             <h1 class="h3 d-inline align-middle">Домашняя работа и чат</h1>
         </div>
+        {% if _status_code=='Successful' %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <div class="alert-message">
+                    <strong>Успешно</strong> {{ _message_error }}
+                </div>
+            </div>
+        {% elif _status_code=='Error' %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <div class="alert-message">
+                    <strong>Ошибка</strong> {{ _message_error }}
+                </div>
+            </div>
+        {% endif %}
 
         <div class="row d-flex align-items-stretch bd-highlight">
             <div class="align-self-baseline border-0" style="background: fixed;">
@@ -73,7 +102,7 @@
                             <div class="card d-flex align-self-baseline border p-4">
                                 <h4>Домашняя работа</h4>
                                 <div class="card-header">
-                                    <form id="homework" name="homework" method="post" enctype="multipart/form-data" class="was-validated">
+                                    <form id="homework" name="homework" method="post" enctype="multipart/form-data" onsubmit="return checkAnswer(this);">
                                         <div class="mb-2">
                                             <div class="mb-2">
                                                 {{ _homework['text'] }}
@@ -87,13 +116,13 @@
                                         <div class="mb-0">
                                             <label class="form-label"><strong>Ответ</strong></label>
                                             <div class="">
-                                              <input  name="answer" type="radio" value="True" id="answer_true">
+                                              <input  name="answer" type="radio" value="True">
                                               <label class="form-check-label" for="answer_true">
                                                 Принято
                                               </label>
                                             </div>
                                             <div class="">
-                                              <input   name="answer" type="radio" value="False" id="answer_false">
+                                              <input  name="answer" type="radio" value="False">
                                               <label class="form-check-label" for="answer_false">
                                                 Не принято
                                               </label>
