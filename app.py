@@ -328,6 +328,8 @@ def user_profile():
                         session['status_code'] = "Successful"
 
                         return redirect(f'/user_profile?user_id={message_error}')
+                    else:
+                        status_code = 'Error'
 
                     data_edit = user
 
