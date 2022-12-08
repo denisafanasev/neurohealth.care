@@ -2,6 +2,14 @@
 Общие изменения
 - Карточка пользователя перенесена на отдельную страницу
 - Изменено расположение кнопок на странице "Профиль пользователя"
+- Исправлена проверка на клиенте при регистрации/создании/редактирование пользователя
+- Добавлен столбец "Email" в таблицы "Ученики" и "Кураторы" на странице "Карточка обучающего потока"
+- Удален столбец "#" и изменены размеры столбцов на странице "Список обучающих потоков"
+- Добавлена возможность просматривания пароля при регистрации пользователя на странице "Регистрация", при сбросе пароля на странице "Рабочий стол", при создании/редактирование пользователя на странице "Профиль пользователя"
+- Добавлены запись действий "Создание/Редактирование обучающего потока"
+- Изменен внешний вид значений в столбце "Статус" на странице "Список обучающих потоков"
+- Добавлена проверка текущего пароля пользователя на странице "Рабочий стол"
+- Добавлена проверка выбора ответа на домашнее задание на странице "Проверка домашнего задания"
 
 Исправлены ошибки
 - Исправлено редактирование пользователя
@@ -10,13 +18,21 @@
 - Исправлена мобильная версия страницы "Профиль пользователя"
 
 General changes
-- User Card page moved to a separate
-- Changed the location of the points on the "User Profile" page
+- User card moved to a separate page
+- Changed the location of the buttons on the "User Profile" page
+- Fixed checking on the client when registering/creating/editing a user
+- Added "Email" column to the "Students" and "Curators" tables on the "Learning Stream Card" page
+- Removed "#" column and resized columns on "Training Streams List" page
+- Added the ability to view the password when registering a user on the "Registration" page, when resetting the password on the "Desktop" page, when creating / editing a user on the "User Profile" page
+- Added action record "Create/Edit training stream"
+- Changed the appearance of the values in the "Status" column on the "List of training streams" page
+- Added verification of the current user password on the "Desktop" page
+- Added a check of the choice of the answer to the homework on the page "Checking the homework"
 
 Bugs fixed
 - Fixed user editing
 - Fixed password change and user activation/deactivation
-- Fixed "Learning Center Access" card on "User Profile" page for mobile version.
+- Fixed "Learning Center Access" card on "User Profile" page for mobile version
 - Fixed mobile version of the "User Profile" page
 
 [1.2.7]
