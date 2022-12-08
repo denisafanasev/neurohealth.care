@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block main_block %}
-    <script src="https://snipp.ru/cdn/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://snipp.ru/cdn/select2/4.0.13/dist/js/select2.min.js"></script>
     <script src="https://snipp.ru/cdn/select2/4.0.13/dist/js/i18n/ru.js"></script>
     <link rel="stylesheet" href="https://snipp.ru/cdn/select2/4.0.13/dist/css/select2.min.css">
@@ -24,27 +23,6 @@
 
         });
 
-        $(document).on('click', '.password-control', function(){
-            if ($('#password').attr('type') === 'password'){
-                $(this).addClass('view');
-                $('#password').attr('type', 'text');
-            } else {
-                $(this).removeClass('view');
-                $('#password').attr('type', 'password');
-            }
-            return false;
-        });
-
-        $(document).on('click', '.password-control2', function(){
-            if ($('#password2').attr('type') === 'password'){
-                $(this).addClass('view');
-                $('#password2').attr('type', 'text');
-            } else {
-                $(this).removeClass('view');
-                $('#password2').attr('type', 'password');
-            }
-            return false;
-        });
     </script>
 {#    <script>#}
 {#    flatpickr(".flatpickr-minimum");#}
@@ -137,24 +115,6 @@
         }
 
     </script>
-    <style>
-    input[type="text"]:disabled { background-color: #eaeaea!important; }
-    .password {
-        position: relative;
-    }
-    .password-control, .password-control2 {
-        top: 50%;
-        width: 30px;
-        right: -4px;
-        height: 60%;
-        position: absolute;
-        transform: translateY(-50%);
-        background: url(/static/img/icons/view.svg) 0 0 no-repeat;
-    }
-    .password-control.view, .password-control2.view {
-        background: url(/static/img/icons/no-view.svg) 0 0 no-repeat;
-    }
-    </style>
 
 <script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>
 
@@ -165,16 +125,16 @@
             {% else %}Редактирование {% endif %} пользователя</h1>
     </div>
 
-    {% if _error_type=='Successful' %}
+    {% if _status_code=='Successful' %}
         <div class="alert alert-success alert-dismissible" role="alert">
             <div class="alert-message">
-                <strong>Успешно</strong> {{ _error }}
+                <strong>Успешно</strong> {{ _message_error }}
             </div>
         </div>
-    {% elif _error %}
+    {% elif _status_code=='Error' %}
         <div class="alert alert-danger alert-dismissible" role="alert">
             <div class="alert-message">
-                <strong>Ошибка</strong> {{ _error }}
+                <strong>Ошибка</strong> {{ _message_error }}
             </div>
         </div>
     {% endif %}
@@ -374,20 +334,10 @@
             }
         }
     </script>
-    <div class="modal">
-        <div class="modal-content animate">
-            <h3 class="modal-title"></h3>
-                <div class="alert alert-danger alert-dismissible" role="alert">
-                    <div class="alert-message">
-                        <strong>Ошибка</strong> {{ _error }}
-                    </div>
-                </div>
-        </div>
-    </div>
     <div id="extension" class="modal">
         <div class="modal-content animate " style="width: 31%">
             <h3 class="modal-title">Доступ к центру обучения</h3>
-            <form id="extension" name="form" method="post" enctype="multipart/form-data" class="was-validated" onsubmit="return checkExtension(this);">
+            <form id="extension" name="form" method="post" enctype="multipart/form-data" onsubmit="return checkExtension(this);">
                 <div class="row d-flex align-items-stretch bd-highlight">
                     <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto;">
                         <div class="card-header">
@@ -433,29 +383,29 @@
         <div class="modal-content animate" style="width: 20%">
             <h3 class="modal-title">Сброс пароля</h3>
             <form id="reset_password" name="discharge" method="post" enctype="multipart/form-data"
-                    class="was-validated" onsubmit="return checkPasswordsMatched(this);">
+                    onsubmit="return checkPasswordsMatched(this);">
                 <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; ">
                     <div class="card-header">
                         <div class="mb-2">
                             <label class="form-label"><strong>Пароль</strong></label>
                             <div class="password">
                                 <input id="password" type="password" name="password" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
-                                <div style="float: right"><span id="password-control" class="password-control" ></span></div>
+                                <div style="float: right"><a id="password-control" class="password-control" ></a></div>
                             </div>
                         </div>
 
                         <div class="mb-2">
                             <label class="form-label"><strong>Повтор пароля</strong></label>
                             <div class="password">
-                                <input id="password2" type="password" name="password2" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
-                                <div style="float: right"><span href="#" class="password-control2" ></span></div>
+                                <input id="password2" type="password" name="password2" class="form-control" {% if _data_edit['password2']!= _data['password2']%} value="{{ _data_edit['password2'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
+                                <div style="float: right"><a href="#" class="password-control2" ></a></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
                     <div class="p-1" align="right">
-                        <button type="submit" name="button" value="discharge" class="btn btn-primary">
+                        <button type="submit" name="button" value="reset" class="btn btn-primary">
                             Сохранить
                         </button>
                         <a onclick="document.getElementById('reset').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
@@ -466,7 +416,6 @@
             </form>
         </div>
     </div>
-
 </div>
 {% endblock %}
 

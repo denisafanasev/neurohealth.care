@@ -95,6 +95,9 @@ class MainPageController():
 
         main_page_service = MainPageService()
 
+        if _current_password == '':
+            _current_password = None
+
         try:
             main_page_service.chenge_password(_user_id, _password, _password2, _current_password)
         except UserManagerException as error:

@@ -70,6 +70,12 @@ class ActionManager():
 
             comment_action = f"Урок {_action_place}"
 
+        elif _name_place == "education_stream_manager":
+            _name_place = f"обучающий поток {_action_place}"
+
+
+            comment_action = f"по курсу {_place}"
+
         action = "{user} {action} {name_place}".format(
             user=_user,
             action=_action,

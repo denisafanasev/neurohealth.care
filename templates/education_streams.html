@@ -118,7 +118,11 @@
                                                             <div style="text-align: center; margin-right: 15%">{{ education_stream['count_students'] }}</div>
                                                         </td>
                                                         <td>
-                                                            <div style="text-align: center; margin-right: 15%">{{ education_stream['status'] }}</div>
+                                                            <div class='badge {% if education_stream['status'] == "идет" %} bg-success
+                                                            {% elif education_stream['status'] == "запланирован" %} bg-info
+                                                            {% elif education_stream['status'] == "закончен" %} bg-danger {% endif %} bg-gradient text-light' style="display: block;text-align: center; margin-right: 15%">
+                                                                {{ education_stream['status'] }}
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 {% endif %}

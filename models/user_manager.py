@@ -445,10 +445,12 @@ class UserManager():
         password = self.hash_password(_password)
         data_store = DataStore("users")
         if _current_password != "":
+            if _current_password is None:
+                raise UserManagerException('Введите текущий пароль')
             current_password = self.hash_password(_current_password)
             user = data_store.get_row_by_id(_user_id)
             if current_password != user['password']:
-                raise UserManagerException("введенный текущий пароль неправильный")
+                raise UserManagerException("Введенный текущий пароль неправильный")
 
         user_data = {"password": password}
 

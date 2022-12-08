@@ -59,13 +59,24 @@ class EducationStreamManager():
 
         data_store = DataStore("education_streams")
 
-        id_education_stream = data_store.insert_row({'name': _education_stream['name'], 'date_start': _education_stream['date_start'],
-                               "date_end": _education_stream['date_end'], "teacher": _education_stream['teacher'],
-                               "id_course": _education_stream['id_course'],
-                               "curators_list": _education_stream['curators_list'],
-                               "students_list": _education_stream['students_list']})
+        education_stream = EducationStream(_name=_education_stream['name'], _id_course=_education_stream['id_course'],
+                                           _teacher=_education_stream['teacher'],
+                                           _date_start=_education_stream['date_start'],
+                                           _date_end=_education_stream['date_end'],
+                                           _curators_list=_education_stream['curators_list'],
+                                           _students_list=_education_stream['students_list'])
 
-        return id_education_stream
+        id_education_stream = data_store.insert_row({'name': education_stream.name,
+                                                     'date_start': education_stream.date_start.strftime('%d/%m/%Y'),
+                                                     "date_end": education_stream.date_end.strftime('%d/%m/%Y'),
+                                                     "teacher": education_stream.teacher,
+                                                     "id_course": education_stream.course,
+                                                     "curators_list": education_stream.curators_list,
+                                                     "students_list": education_stream.students_list})
+
+        education_stream = data_store.get_row_by_id(id_education_stream)
+
+        return self.education_stream_row_to_education_stream(education_stream)
 
     def get_education_streams(self):
         """
