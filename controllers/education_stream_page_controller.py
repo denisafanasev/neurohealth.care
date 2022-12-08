@@ -25,6 +25,7 @@ class EducationStreamPageController():
                     'id': i_student.user_id,
                     'login': i_student.login,
                     'name': i_student.name,
+                    'email': i_student.email
                 }
 
                 students_list.append(student)
@@ -34,6 +35,7 @@ class EducationStreamPageController():
                         'id': i_student.user_id,
                         'login': i_student.login,
                         'name': i_student.name,
+                        'email': i_student.email
                     }
 
                     students_list.append(student)
@@ -61,6 +63,7 @@ class EducationStreamPageController():
                     'id': i_curator.user_id,
                     'login': i_curator.login,
                     'name': i_curator.name,
+                    'email': i_curator.email
                 }
 
                 curators_list.append(curator)
@@ -70,6 +73,7 @@ class EducationStreamPageController():
                         'id': i_curator.user_id,
                         'login': i_curator.login,
                         'name': i_curator.name,
+                        'email': i_curator.email
                     }
 
                     curators_list.append(curator)
@@ -174,30 +178,33 @@ class EducationStreamPageController():
 
         return education_stream_view
     
-    def create_education_stream(self, _education_stream, _timetables_list):
+    def create_education_stream(self, _education_stream, _timetables_list, _current_user_id):
         """
         Создает обучающий поток
 
         Args:
             _education_stream(Dict): обучающий поток
             _timetables_list(List): расписание открытия модулей для обучающего потока
+            _current_user_id(Int): ID текущего пользователя
 
         Returns:
             id(Int): идентификатор обучающего потока
         """
         education_stream_manager = EducationStreamService()
 
-        id_education_stream = education_stream_manager.create_education_stream(_education_stream, _timetables_list)
+        id_education_stream = education_stream_manager.create_education_stream(_education_stream, _timetables_list,
+                                                                               _current_user_id)
 
         return id_education_stream, 'Обучающий поток успешно создан.', 'Successful'
 
-    def save_education_stream(self, _education_stream, _timetables_list):
+    def save_education_stream(self, _education_stream, _timetables_list, _current_user_id):
         """
         Изменяет данные обучающего потока
 
         Args:
             _education_stream(Dict): обновленные атрибуты обучающего потока
             _timetables_list(List): список расписаний открытия модулей для потока
+            _current_user_id(Int): ID текущего пользователя
 
         Returns:
             None
@@ -205,7 +212,7 @@ class EducationStreamPageController():
 
         education_stream_service = EducationStreamService()
 
-        education_stream_service.save_education_stream(_education_stream, _timetables_list)
+        education_stream_service.save_education_stream(_education_stream, _timetables_list, _current_user_id)
 
         _education_stream['course'] = _education_stream.pop("id_course")
 

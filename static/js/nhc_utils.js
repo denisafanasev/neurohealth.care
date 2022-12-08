@@ -20,10 +20,10 @@ function checkPasswordsMatched(form) {
         message.style.display = 'block'
         return false;
     }else {
-        if (button === 'discharge'){
+        if (button === 'reset'){
             return true
         } else {
-            return checkLogin(form);
+            return true;
         }
     }
   }
@@ -42,7 +42,7 @@ function checkLogin(form) {
         message.style.display = 'block'
       return false;
     }else{
-        return validate(form);
+        return checkPasswordsMatched(form);
     }
   }
 
@@ -57,7 +57,7 @@ function checkRole(form) {
         message.style.display = 'block'
         return false;
     }else{
-        return true;
+        return validate(form);
     }
   }
 
@@ -87,8 +87,15 @@ function validate(form) {
     var text = "Ошибка: ошибка корректности указанного email"
     var message = document.getElementById('message');
 
+    if (email === '') {
+        document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+        document.querySelector('p[id=text_message]').textContent = 'Введите email';
+        message.style.display = 'block'
+        return false;
+    }
+
     if (validateEmail(email)) {
-        return checkRole(form);
+        return checkLogin(form);
     } else {
         document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
         document.querySelector('p[id=text_message]').textContent = text;

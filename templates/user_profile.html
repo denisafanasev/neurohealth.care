@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block main_block %}
-    <script src="https://snipp.ru/cdn/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://snipp.ru/cdn/select2/4.0.13/dist/js/select2.min.js"></script>
     <script src="https://snipp.ru/cdn/select2/4.0.13/dist/js/i18n/ru.js"></script>
     <link rel="stylesheet" href="https://snipp.ru/cdn/select2/4.0.13/dist/css/select2.min.css">
@@ -23,31 +22,83 @@
 
 
         });
+
     </script>
+{#    <script>#}
+{#    flatpickr(".flatpickr-minimum");#}
+{#        flatpickr(".flatpickr-datetime", {#}
+{#            enableTime: true,#}
+{#            dateFormat: "Y-m-d H:i",#}
+{#        });#}
+{#        flatpickr(".flatpickr-human", {#}
+{#            altInput: true,#}
+{#            altFormat: "F j, Y",#}
+{#            dateFormat: "Y-m-d",#}
+{#        });#}
+{#        flatpickr(".flatpickr-multiple", {#}
+{#            mode: "multiple",#}
+{#            dateFormat: "Y-m-d"#}
+{#        });#}
+{#        flatpickr(".flatpickr-range", {#}
+{#            mode: "range",#}
+{#            dateFormat: "Y-m-d"#}
+{#        });#}
+{#        flatpickr(".flatpickr-time", {#}
+{#            enableTime: true,#}
+{#            noCalendar: true,#}
+{#            dateFormat: "H:i",#}
+{#        });#}
+{#    </script>#}
     <script>
-    flatpickr(".flatpickr-minimum");
-        flatpickr(".flatpickr-datetime", {
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
-        });
-        flatpickr(".flatpickr-human", {
-            altInput: true,
-            altFormat: "F j, Y",
-            dateFormat: "Y-m-d",
-        });
-        flatpickr(".flatpickr-multiple", {
-            mode: "multiple",
-            dateFormat: "Y-m-d"
-        });
-        flatpickr(".flatpickr-range", {
-            mode: "range",
-            dateFormat: "Y-m-d"
-        });
-        flatpickr(".flatpickr-time", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-        });
+        function checkData(form){
+            const role = form.role.value;
+            const probationers_number = form.probationers_number.value;
+            const user_name = form.user_name.value;
+            const message = document.getElementById('message');
+
+            if (role === 'placeholder') {
+                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                document.querySelector('p[id=text_message]').textContent = "Выберите роль пользователю.";
+                message.style.display = 'block'
+                return false;
+            }
+            if (probationers_number === 'placeholder') {
+                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                document.querySelector('p[id=text_message]').textContent = "Выберите количество доступных тестируемых для пользователя.";
+                message.style.display = 'block'
+                return false;
+            }
+            if (user_name === '') {
+                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                document.querySelector('p[id=text_message]').textContent = "Введите имя пользователя";
+                message.style.display = 'block'
+                return false;
+            }
+
+            return checkRole(form);
+        }
+
+        function checkExtension(form) {
+            const period = form.period.value;
+            const reference_point = form.reference_point.value;
+            const message = document.getElementById('message');
+
+            if (period === 'placeholder'){
+                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                document.querySelector('p[id=text_message]').textContent = "Выберите срок, на который хотите продлить доступ пользователю.";
+                message.style.display = 'block'
+                return false;
+            }
+
+            if (reference_point === 'placeholder'){
+                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+                document.querySelector('p[id=text_message]').textContent = "Выберите начальное время отсчета.";
+                message.style.display = 'block'
+                return false;
+            }
+
+            return true;
+        }
     </script>
     <script>
         function edit_is_active() {
@@ -64,10 +115,6 @@
         }
 
     </script>
-    <style>
-    input[type="text"]:disabled { background-color: #eaeaea!important; }
-
-    </style>
 
 <script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>
 
@@ -78,21 +125,21 @@
             {% else %}Редактирование {% endif %} пользователя</h1>
     </div>
 
-    {% if _error_type=='Successful' %}
+    {% if _status_code=='Successful' %}
         <div class="alert alert-success alert-dismissible" role="alert">
             <div class="alert-message">
-                <strong>Успешно</strong> {{ _error }}
+                <strong>Успешно</strong> {{ _message_error }}
             </div>
         </div>
-    {% elif _error %}
+    {% elif _status_code=='Error' %}
         <div class="alert alert-danger alert-dismissible" role="alert">
             <div class="alert-message">
-                <strong>Ошибка</strong> {{ _error }}
+                <strong>Ошибка</strong> {{ _message_error }}
             </div>
         </div>
     {% endif %}
 
-        <form id="add_user" name="add_user" method="post" class="was-validated" enctype="multipart/form-data" onsubmit="return checkPassword(this);">
+        <form id="add_user" name="add_user" method="post" enctype="multipart/form-data" onsubmit="return checkData(this);">
 
             <div class="row d-flex align-items-stretch bd-highlight">
                 <div class="col-sm-6 p-2 bd-highlight">
@@ -102,29 +149,35 @@
                         <fieldset {% if _mode == 'view' %}disabled{% endif %}>
                             <div class="mb-2">
                                 <label class="form-label"><strong>Login</strong></label>
-                                <input required type="text" name="login" class="form-control" {% if _mode!="new" %} disabled {% endif %} {% if _data_edit['login'] != _data['login'] or _mode != "new" %} value="{{ _data_edit['login'] }}" {% else %} placeholder="Введите логин пользователя" {% endif %}>
+                                <input type="text" name="login" class="form-control" {% if _mode!="new" %} disabled {% endif %} {% if _data_edit['login'] != _data['login'] or _mode != "new" %} value="{{ _data_edit['login'] }}" {% else %} placeholder="Введите логин пользователя" {% endif %}>
                             </div>
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Имя пользователя</strong></label>
-                                <input required type="text" name="user_name" class="form-control" {% if _data_edit['name'] != _data['name'] or _mode != "new"%} value="{{ _data_edit['name'] }}" {% else %} placeholder="Введите имя пользователя" {% endif %}>
+                                <input type="text" name="user_name" class="form-control" {% if _data_edit['name'] != _data['name'] or _mode != "new"%} value="{{ _data_edit['name'] }}" {% else %} placeholder="Введите имя пользователя" {% endif %}>
                             </div>
 
                             {% if _mode=="new" %}
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Пароль</strong></label>
-                                    <input required type="password" name="password" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
+                                    <div class="password">
+                                        <input id="password" type="password" name="password" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
+                                        <div style="float: right"><a class="password-control" ></a></div>
+                                    </div>
                                 </div>
 
                                 <div class="mb-2">
                                     <label class="form-label"><strong>Повтор пароля</strong></label>
-                                    <input required type="password" name="password2" class="form-control" {% if _data_edit['password2']!= _data['password2'] %} value="{{ _data_edit['password2'] }}" {% else %} placeholder="Повторно введите пароль" {% endif %}>
+                                    <div class="password">
+                                        <input id="password2" type="password" name="password2" class="form-control" {% if _data_edit['password2']!= _data['password2'] %} value="{{ _data_edit['password2'] }}" {% else %} placeholder="Повторно введите пароль" {% endif %}>
+                                        <a href="#" class="password-control2" ></a>
+                                    </div>
                                 </div>
                             {% endif %}
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Email</strong></label>
-                                <input required type="email" name="email" class="form-control"  {% if _data_edit['email'] != _data['email'] or _mode != "new"%} value="{{ _data_edit['email'] }}" {% else %} placeholder="Введите email пользователя" {% endif %}>
+                                <input type="email" name="email" class="form-control"  {% if _data_edit['email'] != _data['email'] or _mode != "new"%} value="{{ _data_edit['email'] }}" {% else %} placeholder="Введите email пользователя" {% endif %}>
                             </div>
                         </fieldset>
                             <div class="mb-2">
@@ -151,9 +204,9 @@
                         <fieldset {% if _mode == 'view' %}disabled{% endif %}>
                             <div class="mb-2">
                                 <label class="form-label"><strong>Роль пользователя</strong></label>
-                                <select id="role" required type="text" name="role" class="form-select" {% if _mode=="view" %} disabled {% endif %}>
+                                <select id="role" type="text" name="role" class="form-select" {% if _mode=="view" %} disabled {% endif %}>
                                     {% if _mode != "view" %}
-                                        <option value="">Выберите роль пользователя</option>
+                                        <option value="placeholder">Выберите роль пользователя</option>
                                         {% for i in _settings['role'] %}
                                             <option {% if i == _data_edit['role'] %} selected {% endif %} value="{{ i }}">{{ i }}</option>
                                         {% endfor %}
@@ -165,9 +218,9 @@
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
-                                <select id="probationers_number" required type="text" name="probationers_number" class="form-select" {% if _mode=="view" %} disabled {% endif %}>
+                                <select id="probationers_number" type="text" name="probationers_number" class="form-select" {% if _mode=="view" %} disabled {% endif %}>
                                     {% if _mode != "view" %}
-                                        <option value="">Выберите количество доступных тестируемых</option>
+                                        <option value="placeholder">Выберите количество доступных тестируемых</option>
                                         {% for i in _settings['probationers_number'] %}
                                                 <option {% if _data_edit['probationers_number'] == i %} selected {% endif %}value="{{ i }}"> {{ i }} </option>
                                         {% endfor %}
@@ -179,7 +232,7 @@
                         </fieldset>
                             {% if _mode == "view" %}
                                 <div class="mb-2">
-                                        <label class="form-label"><strong>Доступ к центру обучения</strong></label>
+                                    <label class="form-label"><strong>Доступ к центру обучения</strong></label>
                                     <input class="form-control" disabled value="{{ _data_edit['education_module_expiration_date'] }}">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#extension" style="float: right; margin-top: 1%"
                             onclick="document.getElementById('extension').style.display = 'block';">Продление доступа</button>
@@ -281,20 +334,10 @@
             }
         }
     </script>
-    <div class="modal">
-        <div class="modal-content animate">
-            <h3 class="modal-title"></h3>
-                <div class="alert alert-danger alert-dismissible" role="alert">
-                    <div class="alert-message">
-                        <strong>Ошибка</strong> {{ _error }}
-                    </div>
-                </div>
-        </div>
-    </div>
     <div id="extension" class="modal">
         <div class="modal-content animate " style="width: 31%">
             <h3 class="modal-title">Доступ к центру обучения</h3>
-            <form id="extension" name="form" method="post" enctype="multipart/form-data" class="was-validated">
+            <form id="extension" name="form" method="post" enctype="multipart/form-data" onsubmit="return checkExtension(this);">
                 <div class="row d-flex align-items-stretch bd-highlight">
                     <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto;">
                         <div class="card-header">
@@ -302,7 +345,7 @@
 
                                 <label class="form-label"><strong>Продление срока доступа</strong></label>
                                 <select id="period" required class="form-select" name="period">
-                                    <option selected disabled value="">
+                                    <option selected disabled value="placeholder">
                                         Выберите продление срок доступа..
                                     </option>
                                     {% for i in _settings['education_module_expiration_date'] %}
@@ -312,7 +355,7 @@
                             </div>
                             <div class="mb-2">
                                 <select id="reference_point" required name="reference_point" class="form-select">
-                                    <option selected disabled value="">
+                                    <option selected disabled value="placeholder">
                                         Выберите начальное время отсчета..
                                     </option>
                                     {% for i_point in _settings['reference_point'] %}
@@ -340,25 +383,29 @@
         <div class="modal-content animate" style="width: 20%">
             <h3 class="modal-title">Сброс пароля</h3>
             <form id="reset_password" name="discharge" method="post" enctype="multipart/form-data"
-                    class="was-validated" onsubmit="return checkPasswordsMatched(this);">
+                    onsubmit="return checkPasswordsMatched(this);">
                 <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; ">
                     <div class="card-header">
                         <div class="mb-2">
                             <label class="form-label"><strong>Пароль</strong></label>
-                            <input id="password" required type="password" name="password" class="form-control"{% if _data_edit['password']!= _data['password'] %}
-                                    value="{{ _data_edit['password'] }}" {% else %}placeholder="Введите пароль" {% endif %}>
+                            <div class="password">
+                                <input id="password" type="password" name="password" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
+                                <div style="float: right"><a id="password-control" class="password-control" ></a></div>
+                            </div>
                         </div>
 
                         <div class="mb-2">
                             <label class="form-label"><strong>Повтор пароля</strong></label>
-                            <input id="password2" required type="password" name="password2" class="form-control"{% if _data_edit['password2']!= _data['password2'] %}
-                                    value="{{ _data_edit['password2'] }}" {% else %}placeholder="Повторно введите пароль" {% endif %}>
+                            <div class="password">
+                                <input id="password2" type="password" name="password2" class="form-control" {% if _data_edit['password2']!= _data['password2']%} value="{{ _data_edit['password2'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
+                                <div style="float: right"><a href="#" class="password-control2" ></a></div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
                     <div class="p-1" align="right">
-                        <button type="submit" name="button" value="discharge" class="btn btn-primary">
+                        <button type="submit" name="button" value="reset" class="btn btn-primary">
                             Сохранить
                         </button>
                         <a onclick="document.getElementById('reset').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
@@ -369,7 +416,6 @@
             </form>
         </div>
     </div>
-
 </div>
 {% endblock %}
 

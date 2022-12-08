@@ -1,3 +1,4 @@
+from models.action_manager import ActionManager
 from models.education_stream_manager import EducationStreamManager
 from models.user_manager import UserManager
 from models.course_manager import EducationCourseManager
@@ -107,39 +108,60 @@ class EducationStreamService():
 
         return education_stream
 
-    def create_education_stream(self, _education_stream, _timetables_list):
+    def create_education_stream(self, _education_stream, _timetables_list, _current_user_id):
         """
-        Создает обучающий поток
+        Создает обучающий поток и создает событие "Создан обучающий поток"
 
         Args:
             _education_stream(Dict): обучающий поток
             _timetables_list(List): расписание открытия модулей для обучающего потока
+            _current_user_id(Int): ID текущего пользователя
 
         Returns:
             id(Int): идентификатор обучающего потока
         """
         education_stream_manager = EducationStreamManager()
         timetable_manager = TimetableManager()
+        action_manager = ActionManager()
+        user_manager = UserManager()
+        course_manager = EducationCourseManager()
 
-        id_education_stream = education_stream_manager.create_education_stream(_education_stream)
-        timetable_manager.create_timetable(_timetables_list, id_education_stream)
+        education_stream = education_stream_manager.create_education_stream(_education_stream)
+        timetable_manager.create_timetable(_timetables_list, education_stream.id)
 
-        return id_education_stream
+        current_user = user_manager.get_user_by_id(_current_user_id)
+        course = course_manager.get_course_by_id(_education_stream['id_course'])
+        action_manager.add_notifications(course.name, 'создал', education_stream.name, 'education_stream_manager',
+                                         current_user.login)
 
-    def save_education_stream(self, _education_stream, _timetables_list):
+        return education_stream.id
+
+    def save_education_stream(self, _education_stream, _timetables_list, _current_user_id):
         """
-        Изменяет данные обучающего потока
+        Изменяет данные обучающего потока и создает событие "Изменен обучающий поток"
 
         Args:
             _education_stream(Dict): обучающий поток
             _timetables_list(List): список расписаний открытия модулей для потока
+            _current_user_id(Int): ID текущего пользователя
+
+        Returns:
+            None
         """
 
         education_stream_manager = EducationStreamManager()
         timetable_manager = TimetableManager()
+        user_manager = UserManager()
+        action_manager = ActionManager()
+        course_manager = EducationCourseManager()
 
         education_stream = education_stream_manager.save_education_stream(_education_stream)
         timetable_manager.save_timetable(_timetables_list, education_stream.id)
+
+        current_user = user_manager.get_user_by_id(_current_user_id)
+        course = course_manager.get_course_by_id(_education_stream['id_course'])
+        action_manager.add_notifications(course.name, 'отредактировал', education_stream.name,
+                                         'education_stream_manager', current_user.login)
 
     def get_education_streams_by_login_user(self, _login_user, _role_user):
         """_summary_

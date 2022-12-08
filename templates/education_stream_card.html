@@ -13,16 +13,15 @@
     <script src="{{ url_for('static' , filename="js/datatables.js") }}"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var message = document.getElementById('message');
-        {% if _status_code == "Error" %}
-            document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-            document.querySelector('p[id=text_message]').textContent = "{{ _message_error }}";
-            message.style.display = "block";
-        {% elif _status_code == 'Successful' %}
-            document.querySelector('h3[id=title_message]').textContent = 'Успешно';
-            document.querySelector('p[id=text_message]').textContent = "{{ _message_error }}";
-            message.style.display = "block";
-        {% endif %}
+{#        {% if _status_code == "Error" %}#}
+{#            document.querySelector('h3[id=title_message]').textContent = 'Ошибка';#}
+{#            document.querySelector('p[id=text_message]').textContent = "{{ _message_error }}";#}
+{#            message.style.display = "block";#}
+{#        {% elif _status_code == 'Successful' %}#}
+{#            document.querySelector('h3[id=title_message]').textContent = 'Успешно';#}
+{#            document.querySelector('p[id=text_message]').textContent = "{{ _message_error }}";#}
+{#            message.style.display = "block";#}
+{#        {% endif %}#}
 
         var students_table = $("#students_table").DataTable({
             responsive: true,
@@ -241,6 +240,19 @@
             <h1 class="h3 d-inline align-middle">{% if _mode == "view" %}Просмотр {% elif _mode == "new" %}Создание
                 {% else %}Редактирование {% endif %} карточки обучающего потока</h1>
         </div>
+        {% if _status_code=='Successful' %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <div class="alert-message">
+                    <strong>Успешно</strong> {{ _message_error }}
+                </div>
+            </div>
+        {% elif _status_code=='Error' %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <div class="alert-message">
+                    <strong>Ошибка</strong> {{ _message_error }}
+                </div>
+            </div>
+        {% endif %}
 
         <form id="stream_data" name="stream_data" method="post" enctype="multipart/form-data">
         
@@ -320,6 +332,7 @@
                                                     colspan="1">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Имя пользователя</th>
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Email</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -332,6 +345,7 @@
                                                 </td>
                                                 <td>{{ curator['login'] }}</td>
                                                 <td>{{ curator['name'] }}</td>
+                                                <td>{{ curator['email'] }}</td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -436,6 +450,7 @@
                                                 colspan="1">#</th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Имя пользователя</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Email</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -449,6 +464,7 @@
                                             </td>
                                             <td>{{ student['login'] }}</td>
                                             <td>{{ student['name'] }}</td>
+                                            <td>{{ student['email'] }}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
