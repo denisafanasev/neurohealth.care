@@ -55,8 +55,8 @@ class UserManager():
             UserManagerException: ошибка корректности значения пароля
         """
 
-        if (len(_password) < 3) or (len(_password) > 20):
-            raise UserManagerException("неверная длинная пароля, укажите минимум 4 и максимум 20 символов")
+        if (len(_password) < 5) or (len(_password) > 20):
+            raise UserManagerException("неверная длинная пароля, укажите минимум 5 и максимум 20 символов")
 
     def validate_role(self, _role):
         """
@@ -83,7 +83,7 @@ class UserManager():
             UserManagerException: ошибка корректности указанного логина пользователя
         """
 
-        if (len(_login) < 4) or (len(_login) > 10):
+        if (len(_login) < 3) or (len(_login) > 10):
             raise UserManagerException("неверная длинная логина пользователя, укажите минимум 4 символа и максимум 10")
 
     def user_row_to_user(self, _data_row):
@@ -329,6 +329,11 @@ class UserManager():
         Returns:
             _error (List): список ошибок при создании пользователя
         """
+        self.validate_password(_password)
+        self.validate_login(_login)
+
+        if len(_email) == 0:
+            raise UserManagerException('Введите email')
 
         password = self.hash_password(_password)
         password2 = self.hash_password(_password2)
@@ -402,6 +407,8 @@ class UserManager():
         Returns:
             Dict: словарь с информацией о пользователе
         """
+        if len(_email) == 0:
+            raise UserManagerException('Введите email')
 
         user = self.get_user_by_email(_email)
         if user is not None:

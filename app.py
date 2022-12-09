@@ -347,20 +347,22 @@ def user_profile():
                     user["probationers_number"] = int(request.form["probationers_number"])
                     user["created_date"] = data["created_date"]
                     user['education_module_expiration_date'] = data["education_module_expiration_date"]
-                    user['is_active'] = request.form.get('is_active')
-                    if user['is_active'] is not None:
-                        user['is_active'] = True
+                    user['active'] = request.form.get('is_active')
+                    if user['active'] is not None:
+                        user['active'] = True
                     else:
-                        user['is_active'] = False
+                        user['active'] = False
 
                     message_error = page_controller.chenge_user(user_id, user["login"], user["name"], user["email"], user["role"],
                                                 user["probationers_number"], user["created_date"],
-                                                user['education_module_expiration_date'], user['is_active'], current_user_id)
+                                                user['education_module_expiration_date'], user['active'], current_user_id)
                     if message_error is None:
                         session['message_error'] = "Изменения сохранены!"
                         session['status_code'] = "Successful"
 
                         return redirect(f'/user_profile?user_id={user_id}')
+                    else:
+                        status_code = 'Error'
 
                     data_edit = user
 
