@@ -84,7 +84,7 @@ class UserManager():
         """
 
         if (len(_login) < 3) or (len(_login) > 10):
-            raise UserManagerException("неверная длинная логина пользователя, укажите минимум 4 символа и максимум 10")
+            raise UserManagerException("неверная длинная логина пользователя, укажите минимум 3 символа и максимум 10")
 
     def user_row_to_user(self, _data_row):
         """
