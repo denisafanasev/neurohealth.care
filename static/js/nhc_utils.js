@@ -1,7 +1,7 @@
 function checkPasswordsMatched(form) {
     var password = form.password.value;
     var password2 = form.password2.value;
-    var text = "Ошибка: неверная длинная пароля, укажите минимум 5 и максимум 20 символов"
+    var text = "Ошибка: неверная длина пароля, укажите минимум 5 и максимум 20 символов"
     var text2 = "Ошибка: введенные пароли не совпадают"
     var message = document.getElementById('message');
     var button = document.activeElement.getAttribute('value');
