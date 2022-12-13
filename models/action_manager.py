@@ -87,7 +87,7 @@ class ActionManager():
         data_store.insert_row({"id": action.id, "login": action.user_login, "action": action.action,
                             "comment_action": action.comment_action, "created_date": action.created_date.strftime("%d/%m/%Y %H:%M:%S")})
 
-    def get_actions(self, _user):
+    def get_last_ten_actions(self, _user):
         """
         Возвращает список действий, сделанных авторизованным пользователем(если авторизованный пользователь админ,
         то возвращает список действий всех пользователей, которые есть в системе)
@@ -164,6 +164,23 @@ class ActionManager():
 
             actions.append(actions_list[i_action])
 
-
-
         return actions
+
+    def get_actions(self, _login):
+        """
+        Возвращает все действия пользователя по логину
+
+        Args:
+            _login(String): логин пользователя
+
+        Returns:
+            List(Action): список действий пользователя
+        """
+        data_store = DataStore('action')
+
+        actions_list_data = data_store.get_rows({'login': _login})
+        actions_list = []
+        for action_data in actions_list_data:
+            actions_list.append(self.action_row_to_action(action_data))
+
+        return actions_list

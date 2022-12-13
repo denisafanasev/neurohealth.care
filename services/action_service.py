@@ -22,7 +22,7 @@ class ActionService():
 
         action_manager = ActionManager()
 
-        return action_manager.get_actions(_user_id)
+        return action_manager.get_last_ten_actions(_user_id)
 
     '''
     def get_current_user(self):

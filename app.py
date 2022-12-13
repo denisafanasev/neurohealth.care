@@ -37,6 +37,7 @@ from controllers.education_streams_page_controller import EducationStreamsPageCo
 from controllers.education_stream_page_controller import EducationStreamPageController
 from controllers.education_program_subscription_page_controller import EducationProgramSubscriptionPageController
 from controllers.maintenance_page_controller import MaintenancePageController
+from controllers.user_actions_page_controller import UserActionsPageController
 
 
 from error import UserManagerException
@@ -261,7 +262,7 @@ def user_manager():
                            _error=error, _error_type=error_type, _num_page=num_page)
 
 
-@app.route('/user_profile', methods=['GET', 'POST'])
+@app.route('/user_profile/profile', methods=['GET', 'POST'])
 @login_required
 def user_profile():
     """
@@ -417,12 +418,48 @@ def user_profile():
     if data_edit == {}:
         data_edit = data
 
-    return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
+    menu_user_profile = config.USER_PROFILE_MENU
+
+    return render_template('user_profile_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data_edit=data_edit, _data=data, _settings=settings_user,
-                           _is_current_user_admin=flask_login.current_user.is_admin(),
+                           _is_current_user_admin=flask_login.current_user.is_admin(), _user_id=user_id,
                            _mode=mode, _message_error=message_error, _status_code=status_code,
-                           _education_streams_list=education_streams_list)
+                           _education_streams_list=education_streams_list, _menu_user_profile=menu_user_profile)
+
+
+@app.route('/user_profile/actions', methods=['GET', 'POST'])
+@login_required
+def user_actions():
+    """
+    Просмотр действий пользователя
+
+    Returns:
+        None
+    """
+
+    page_controller = UserActionsPageController()
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
+
+    endpoint = "actions"
+    user_id = request.args.get('user_id')
+    current_user_id = flask_login.current_user.user_id
+
+    if not flask_login.current_user.is_admin():
+        return redirect('main_page')
+
+    mode = 'actions'
+    if user_id is not None:
+        user_id = int(user_id)
+
+    data = page_controller.get_actions(user_id)
+
+    menu_user_profile = config.USER_PROFILE_MENU
+
+    return render_template('user_profile_actions.html', view="user_profile", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _data=data, _is_current_user_admin=flask_login.current_user.is_admin(),
+                           _menu_user_profile=menu_user_profile, _user_id=user_id, _mode=mode)
 
 
 @app.route('/main_page', methods=['GET', 'POST'])

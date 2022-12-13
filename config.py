@@ -83,6 +83,11 @@ SETTINGS_MENU = [
     {"name": "Справочник диапазонов возрастов", "endpoint": "age_range_list"},
 ]
 
+USER_PROFILE_MENU = [
+    {"name": "Профиль", "endpoint": "user_profile"},
+    {"name": "Действия", "endpoint": "user_actions"},
+]
+
 AMOUNT_EDUCATION_STREAMS = 5
 
 
