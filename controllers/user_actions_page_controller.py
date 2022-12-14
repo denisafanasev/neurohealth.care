@@ -1,3 +1,4 @@
+import config
 from services.user_actions_service import UserActionsService
 
 
@@ -30,3 +31,18 @@ class UserActionsPageController():
             actions_list_view.append(action_view)
 
         return actions_list_view
+
+    def get_menu_user_profile(self):
+        """
+        Возвращает список меню на странице "Профиль пользователя"
+        """
+        user_profile_menu = []
+        for item in config.USER_PROFILE_MENU:
+            if item['endpoint'] == 'user_actions':
+                item['is_active'] = True
+            else:
+                item['is_active'] = False
+
+            user_profile_menu.append(item)
+
+        return user_profile_menu

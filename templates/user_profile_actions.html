@@ -19,7 +19,7 @@
                             <tr>
                                 <th rowspan="1" colspan="1">Действие</th>
                                 <th rowspan="1" colspan="1">Комментарий</th>
-                                <th rowspan="1" colspan="1">Дата создания</th>
+                                <th class="text-center" rowspan="1" colspan="1">Дата создания</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -27,7 +27,7 @@
                             <tr>
                                 <td>{{ action.action }}</td>
                                 <td>{{ action.comment_action }}</td>
-                                <td>{{ action.created_date }}</td>
+                                <td><div style="text-align: center; margin-right: 13%;">{{ action.created_date }}</div></td>
                             </tr>
                         {% endfor %}
                         </tbody>

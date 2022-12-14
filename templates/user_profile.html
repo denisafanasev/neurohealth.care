@@ -26,9 +26,9 @@
             </div>
         {% endif %}
         <ul class="nav nav-tabs">
-            {% for item in _menu_user_profile %}
+            {% for item in _user_profile_menu %}
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{ url_for(item['endpoint'], user_id=_user_id) }}">{{ item['name'] }}</a>
+                    <a class="nav-link{% if item['is_active'] %} active{% endif %}" aria-current="page" href="{{ url_for(item['endpoint'], user_id=_user_id) }}">{{ item['name'] }}</a>
                 </li>
             {% endfor %}
         </ul>

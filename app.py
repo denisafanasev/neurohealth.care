@@ -328,7 +328,7 @@ def user_profile():
                         session['message_error'] = "Пользователь сохранён!"
                         session['status_code'] = "Successful"
 
-                        return redirect(f'/user_profile?user_id={message_error}')
+                        return redirect(f'/user_profile/profile?user_id={message_error}')
                     else:
                         status_code = 'Error'
 
@@ -361,7 +361,7 @@ def user_profile():
                         session['message_error'] = "Изменения сохранены!"
                         session['status_code'] = "Successful"
 
-                        return redirect(f'/user_profile?user_id={user_id}')
+                        return redirect(f'/user_profile/profile?user_id={user_id}')
                     else:
                         status_code = 'Error'
 
@@ -374,7 +374,7 @@ def user_profile():
 
                 session['message_error'], session['status_code'] = page_controller.chenge_password(user_id, user["password"], user["password2"], current_user_id)
                 if session['status_code'] == 'Successful':
-                    return redirect(f'/user_profile?user_id={user_id}')
+                    return redirect(f'/user_profile/profile?user_id={user_id}')
                 else:
                     data_edit = data.copy()
                     data_edit['password'] = user["password"]
@@ -390,7 +390,7 @@ def user_profile():
                 session['message_error'] = page_controller.access_extension(int(period), reference_point, user_id, current_user_id)
                 session['status_code'] = "Successful"
 
-                return redirect(f'/user_profile?user_id={user_id}')
+                return redirect(f'/user_profile/profile?user_id={user_id}')
 
             elif request.form.get("is_active"):
                 if mode == 'view':
@@ -400,14 +400,14 @@ def user_profile():
                         data['active'] = True
                         session['status_code'] = 'Successful'
 
-                        return redirect(f'/user_profile?user_id={user_id}')
+                        return redirect(f'/user_profile/profile?user_id={user_id}')
 
                     elif is_active == 'false':
                         session['message_error'] = page_controller.deactivation(user_id, current_user_id)
                         data['active'] = False
                         session['status_code'] = 'Successful'
 
-                        return redirect(f'/user_profile?user_id={user_id}')
+                        return redirect(f'/user_profile/profile?user_id={user_id}')
 
             else:
                 return redirect("user_manager")
@@ -418,14 +418,15 @@ def user_profile():
     if data_edit == {}:
         data_edit = data
 
-    menu_user_profile = config.USER_PROFILE_MENU
+    user_profile_menu = page_controller.get_user_profile_menu()
 
     return render_template('user_profile_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data_edit=data_edit, _data=data, _settings=settings_user,
                            _is_current_user_admin=flask_login.current_user.is_admin(), _user_id=user_id,
                            _mode=mode, _message_error=message_error, _status_code=status_code,
-                           _education_streams_list=education_streams_list, _menu_user_profile=menu_user_profile)
+                           _education_streams_list=education_streams_list, _user_profile_menu=user_profile_menu,
+                           _endpoint=endpoint)
 
 
 @app.route('/user_profile/actions', methods=['GET', 'POST'])
@@ -441,7 +442,7 @@ def user_actions():
     page_controller = UserActionsPageController()
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
-    endpoint = "actions"
+    endpoint = "user_manager"
     user_id = request.args.get('user_id')
     current_user_id = flask_login.current_user.user_id
 
@@ -453,13 +454,14 @@ def user_actions():
         user_id = int(user_id)
 
     data = page_controller.get_actions(user_id)
+    x = request.full_path.split('/')
 
-    menu_user_profile = config.USER_PROFILE_MENU
+    user_profile_menu = page_controller.get_menu_user_profile()
 
     return render_template('user_profile_actions.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=data, _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _menu_user_profile=menu_user_profile, _user_id=user_id, _mode=mode)
+                           _user_profile_menu=user_profile_menu, _user_id=user_id, _mode=mode)
 
 
 @app.route('/main_page', methods=['GET', 'POST'])
