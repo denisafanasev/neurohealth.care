@@ -1,0 +1,39 @@
+{% extends 'user_profile.html' %}
+
+{% block user_profile_block %}
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const action_table = $("#action_table").DataTable({
+            responsive: false,
+            lengthChange: !1,
+            pageLength: 10,
+        });
+    })
+    </script>
+    <div class="row d-flex align-items-stretch bd-highlight">
+        <div class="col-sm-12 bd-highlight">
+            <div class="card d-flex align-self-baseline" style="height: 100%;">
+                <div class="card-header">
+                    <table id="action_table" class="table table-striped dataTable no-footer dtr-inline" style="font-size: 13px">
+                        <thead>
+                            <tr>
+                                <th rowspan="1" colspan="1">Действие</th>
+                                <th rowspan="1" colspan="1">Комментарий</th>
+                                <th class="text-center" rowspan="1" colspan="1">Дата создания</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for action in _data %}
+                            <tr>
+                                <td>{{ action.action }}</td>
+                                <td>{{ action.comment_action }}</td>
+                                <td><div style="text-align: center; margin-right: 13%;">{{ action.created_date }}</div></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
