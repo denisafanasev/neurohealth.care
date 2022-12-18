@@ -71,4 +71,4 @@ class MainPageService():
 
         user = user_manager.get_user_by_id(_user_id)
 
-        return action_manager.get_actions(user)
+        return action_manager.get_last_ten_actions(user)
