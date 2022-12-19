@@ -228,15 +228,3 @@ class UserProfilePageController():
 
         return education_streams_list_view
 
-    def get_user_profile_menu(self):
-
-        user_profile_menu = []
-        for item in config.USER_PROFILE_MENU:
-            if item['endpoint'] == 'user_profile':
-                item['is_active'] = True
-            else:
-                item['is_active'] = False
-
-            user_profile_menu.append(item)
-
-        return user_profile_menu
