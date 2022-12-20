@@ -102,3 +102,41 @@ class MainPageController():
             main_page_service.chenge_password(_user_id, _password, _password2, _current_password)
         except UserManagerException as error:
             return error
+
+    def get_available_courses_list(self, _user_id):
+        """
+        Возвращает список курсов, доступных для текущего пользователя(если есть в списке основной курс, то возвращает количество
+        сданных/не сданных домашних работ)
+
+        Args:
+            _user_id(Int): ID
+
+        Returns:
+            course_list_view(List): список доступных для текущего пользователя
+        """
+
+        main_page_service = MainPageService()
+
+        user = main_page_service.get_user_by_id(_user_id)
+        course_list = main_page_service.get_available_courses(_user_id)
+        course_list_view = []
+        for course in course_list:
+            course_view = {
+                'id': course.id,
+                'name': course.name,
+                'type': course.type,
+                'homeworks': None
+            }
+            if user.role == 'user':
+                if course.type == 'main':
+
+                    count_accepted_homeworks, count_no_accepted_homeworks = main_page_service.get_count_accepted_homeworks(_user_id,
+                                                                                                               course.id)
+                    course_view['homeworks'] = {
+                        'accepted': count_accepted_homeworks,
+                        'no_accepted': count_no_accepted_homeworks
+                    }
+
+            course_list_view.append(course_view)
+
+        return course_list_view

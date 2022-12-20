@@ -486,6 +486,7 @@ def main_page():
 
     password = ''
     password2 = ''
+    available_courses_list = page_controller.get_available_courses_list(user_id)
 
     if request.method == "POST":
         if request.form.get("button") == "reset":
@@ -507,7 +508,8 @@ def main_page():
     return render_template('main_page.html', view="main_page", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=page_controller.get_actions(user["user_id"]), _user=user, _message_error=message_error,
-                           _status_code=status_code, _password=password, _password2=password2)
+                           _status_code=status_code, _password=password, _password2=password2,
+                           _available_courses_list=available_courses_list)
 
 
 @app.route('/empty_function', methods=['GET', 'POST'])
@@ -589,7 +591,6 @@ def education_list_courses():
     user_id = flask_login.current_user.user_id
 
     data = page_controller.get_courses()
-
     user = page_controller.get_user_view_by_id(user_id)
 
     return render_template('education_list_courses.html', view="corrections", _menu=mpc.get_main_menu(),

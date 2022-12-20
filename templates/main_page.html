@@ -133,6 +133,25 @@
                         </tbody>
                     </table>
 
+                    <strong>Доступные курсы</strong>
+
+                <table class="table table-sm mt-2 mb-4" style="table-layout: fixed; margin: 0px">
+                    <tbody>
+                        {% for course in _available_courses_list %}
+                        <tr>
+                            <th><a href="{{ url_for('education_course', id_course=course['id']) }}">{{ course['name'] }}</a></th>
+                            {% if _user['role'] == 'superuser' %}
+                                <td>Нет домашних работ</td>
+                            {% elif course['type'] == 'main' %}
+                                <td>Сдано: {{ course['homeworks']['accepted'] }}  Не сдано: {{ course['homeworks']['no_accepted'] }}</td>
+                            {% elif course['type'] == 'additional' %}
+                                <td>Нет домашних работ</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
                     <strong>Лента активностей</strong>
 
                     <ul class="timeline mt-2 mb-0">
