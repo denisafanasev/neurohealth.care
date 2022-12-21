@@ -133,19 +133,17 @@
                         </tbody>
                     </table>
 
-                    <strong>Доступные курсы</strong>
+                    <strong>Мои обучающие потоки</strong>
 
                 <table class="table table-sm mt-2 mb-4" style="table-layout: fixed; margin: 0px">
                     <tbody>
-                        {% for course in _available_courses_list %}
+                        {% for education_stream in _education_streams_list %}
                         <tr>
-                            <th><a href="{{ url_for('education_course', id_course=course['id']) }}">{{ course['name'] }}</a></th>
+                            <th><a href="{{ url_for('education_course', id_course=education_stream['course_id']) }}">{{ education_stream['name'] }}</a></th>
                             {% if _user['role'] == 'superuser' %}
                                 <td>Нет домашних работ</td>
-                            {% elif course['type'] == 'main' %}
-                                <td>Сдано: {{ course['homeworks']['accepted'] }}  Не сдано: {{ course['homeworks']['no_accepted'] }}</td>
-                            {% elif course['type'] == 'additional' %}
-                                <td>Нет домашних работ</td>
+                            {% else %}
+                                <td>Сдано: {{ education_stream['homeworks']['accepted'] }}  Не сдано: {{ education_stream['homeworks']['no_accepted'] }}</td>
                             {% endif %}
                         </tr>
                         {% endfor %}

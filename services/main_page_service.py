@@ -6,7 +6,7 @@ from models.homework_manager import HomeworkManager
 from models.lesson_manager import EducationLessonManager
 from models.module_manager import EducationModuleManager
 from models.user_manager import UserManager
-from models.course_manager import EducationCourseManager
+from models.education_stream_manager import EducationStreamManager
 class MainPageService():
     """
     MainPageService - класс бизнес-логики сервиса управления настройками приложения
@@ -80,7 +80,7 @@ class MainPageService():
 
         return action_manager.get_last_ten_actions(user)
 
-    def get_available_courses(self, _user_id):
+    def get_education_streams(self, _user_id):
         """
         Возвращает список курсов, которые доступны пользователю
 
@@ -90,33 +90,16 @@ class MainPageService():
         Returns:
             List(Course): список доступных пользователю курсов
         """
-        course_manager = EducationCourseManager()
+        education_stream_manager = EducationStreamManager()
 
         user = self.get_user_by_id(_user_id)
-        courses_list = course_manager.get_courses()
-        courses = []
-        for course in courses_list:
-            if user.role == 'superuser':
-                courses.append(course)
+        education_streams_list = education_stream_manager.get_education_streams_list_by_id_user(user.user_id, user.role)
+        education_streams = []
+        for education_stream in education_streams_list:
+            if education_stream.status == 'идет':
+                education_streams.append(education_stream)
 
-            elif course.type == 'main':
-                # если основной курс, то ищем логин пользователя в списках обучающих потоков
-                users_login_list = []
-                for id_education_stream in range(1, config.AMOUNT_EDUCATION_STREAMS + 1):
-                    with open(config.DATA_FOLDER + f'course_1/s{id_education_stream}_users.txt') as f:
-                        users_login_list.extend(f.read().splitlines())
-
-                for course_user in users_login_list:
-                    if course_user.lower() == user.login:
-                        courses.append(course)
-                        break
-
-            elif course.type == 'additional':
-                # если дополнительный курс, то проверяем доступность курса для пользователя по наличию у него общей подписки
-                if user.education_module_expiration_date >= datetime.now():
-                    courses.append(course)
-
-        return courses
+        return education_streams
 
     def get_count_accepted_homeworks(self, _user_id, _id_course):
         """

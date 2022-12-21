@@ -486,11 +486,10 @@ def main_page():
 
     password = ''
     password2 = ''
-    available_courses_list = page_controller.get_available_courses_list(user_id)
+    education_streams_list = page_controller.get_education_streams(user_id)
 
     if request.method == "POST":
         if request.form.get("button") == "reset":
-
             password = request.form['password']
             password2 = request.form["password2"]
             current_password = request.form['current_password']
@@ -509,7 +508,7 @@ def main_page():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=page_controller.get_actions(user["user_id"]), _user=user, _message_error=message_error,
                            _status_code=status_code, _password=password, _password2=password2,
-                           _available_courses_list=available_courses_list)
+                           _education_streams_list=education_streams_list)
 
 
 @app.route('/empty_function', methods=['GET', 'POST'])
