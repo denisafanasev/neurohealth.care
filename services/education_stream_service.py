@@ -100,10 +100,11 @@ class EducationStreamService():
 
         education_stream_manager = EducationStreamManager()
         course_manager = EducationCourseManager()
+        user_manager = UserManager()
 
         education_stream = education_stream_manager.get_education_stream(_id)
-
         if education_stream is not None:
+            education_stream.teacher = user_manager.get_user_by_id(education_stream.teacher)
             education_stream.course = course_manager.get_course_by_id(education_stream.course)
 
         return education_stream

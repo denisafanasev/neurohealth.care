@@ -185,3 +185,23 @@ class EducationStreamManager():
                 if _id_user in education_stream.students_list:
                     return education_stream
 
+    def get_education_streams_by_teacher(self, _user_id):
+        """
+        Возвращает список обучающих потоков, в которых superuser является учителем
+
+        Args:
+            _user_id(Int): ID gjkmpjdfntkz
+
+        Returns:
+            List(EducationStream): список обучающих потоков
+        """
+        data_store = DataStore('education_streams')
+
+        education_streams_list = data_store.get_rows({'teacher': _user_id})
+        education_streams = []
+        if education_streams_list:
+            for education_stream in education_streams_list:
+                if _user_id not in education_stream['curators_list']:
+                    education_streams.append(self.education_stream_row_to_education_stream(education_stream))
+
+        return education_streams

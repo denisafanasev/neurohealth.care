@@ -1378,9 +1378,6 @@ def education_stream_card():
                 "date_end": request.form.get("date_ends")
             }
 
-            if education_stream_new['teacher'] not in education_stream_new['curators_list']:
-                education_stream_new['curators_list'].append(education_stream_new['teacher'])
-
             timetables_list = []
             for course in courses_list:
                 if course['id'] == education_stream_new['id_course']:
@@ -1417,9 +1414,6 @@ def education_stream_card():
                             "id_module": module['id'],
                             'date_start': request.form.get(f'date_start_module_{module["id"]}')
                         })
-
-            if education_stream_new['teacher'] not in education_stream_new['curators_list']:
-                education_stream_new['curators_list'].append(education_stream_new['teacher'])
 
             session['message_error'], session['status_code'] = page_controller.save_education_stream(education_stream_new, timetables_list, user_id)
 

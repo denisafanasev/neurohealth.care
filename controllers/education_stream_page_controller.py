@@ -147,7 +147,11 @@ class EducationStreamPageController():
                 "date_end": education_stream.date_end.strftime("%d/%m/%Y"),
                 "curators_list": education_stream.curators_list,
                 "students_list": education_stream.students_list,
-                "teacher": education_stream.teacher,
+                "teacher": {
+                    'id': education_stream.teacher.user_id,
+                    'login': education_stream.teacher.login,
+                    'email': education_stream.teacher.email
+                },
                 "status": education_stream.status
             }
             # for student in education_stream.students_list:

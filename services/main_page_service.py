@@ -94,6 +94,9 @@ class MainPageService():
 
         user = self.get_user_by_id(_user_id)
         education_streams_list = education_stream_manager.get_education_streams_list_by_id_user(user.user_id, user.role)
+        if user.role == 'superuser':
+            education_streams_list.extend(education_stream_manager.get_education_streams_by_teacher(user.user_id))
+
         education_streams = []
         for education_stream in education_streams_list:
             if education_stream.status == 'идет':
