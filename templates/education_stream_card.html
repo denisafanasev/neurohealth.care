@@ -281,14 +281,15 @@
                             <div class="mb-2">
                                 <label class="form-label"><strong>Преподаватель</strong></label>
                                 <select id="teacher" name="teacher" class="form-select" {% if _mode == 'view' %} disabled {% endif %}>
-                                    {% if _mode == 'new' %}
+                                    {% if _mode != 'view' %}
                                         <option selected disabled value="placeholder">Выберите преподавателя</option>
+                                        {% for teacher in _curators_list %}
+                                            <option {% if teacher['id']==_education_stream['teacher']['id'] %} selected {% endif %}
+                                                value="{{ teacher['id'] }}">{{ teacher['login'] }}</option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <option selected value="{{ _education_stream['teacher']['id'] }}">{{ _education_stream['teacher']['login'] }}</option>
                                     {% endif %}
-
-                                    {% for teacher in _curators_list %}
-                                    <option {% if teacher['id']==_education_stream['teacher'] %} selected {% endif %}
-                                        value="{{ teacher['id'] }}">{{ teacher['login'] }}</option>
-                                    {% endfor %}
                                 </select>
                             </div>
 

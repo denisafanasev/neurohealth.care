@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block main_block %}
+
+    <script src="{{ url_for('static' , filename="js/datatables.js") }}"></script>
+    <script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>
+
+    <div class="container-fluid p-0">
+
+        <div class="mb-3">
+            <h1 class="h3 d-inline align-middle">{% if _mode == "view" %}Просмотр {% elif _mode == "new" %}Создание
+                {% elif _mode =='edit' %}Редактирование{% elif _mode == 'actions' %}Действия {% endif %} пользователя</h1>
+        </div>
+
+        {% if _status_code=='Successful' %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <div class="alert-message">
+                    <strong>Успешно</strong> {{ _message_error }}
+                </div>
+            </div>
+        {% elif _status_code=='Error' %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <div class="alert-message">
+                    <strong>Ошибка</strong> {{ _message_error }}
+                </div>
+            </div>
+        {% endif %}
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link{% if _active_tab == 'user_profile' %} active{% endif %} {% if _mode == 'new' %} disabled {% endif %}" aria-current="page" href="{{ url_for('user_profile', user_id=_user_id) }}">Профиль</a>
+            </li>
+
+            <li class="nav-item {% if _mode == 'new' %} disabled {% endif %}">
+                <a  class="nav-link{% if _active_tab == 'user_actions' %} active{% endif %} {% if _mode == 'new' %} disabled {% endif %}" aria-current="page" href="{{ url_for('user_actions', user_id=_user_id) }}">Действия</a>
+            </li>
+        </ul>
+
+        {% block user_profile_block %}
+        {% endblock %}
+    </div>
+
+{% endblock %}

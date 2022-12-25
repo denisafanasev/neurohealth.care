@@ -203,6 +203,9 @@ class UserProfileService():
         course_manager = EducationCourseManager()
 
         education_streams = education_stream_manager.get_education_streams_list_by_id_user(_user_id, _role_user)
+        if _role_user == 'superuser':
+            education_streams.extend(education_stream_manager.get_education_streams_by_teacher(_user_id))
+
         education_streams_list = []
         for education_stream in education_streams:
             education_stream.teacher = user_manager.get_user_by_id(education_stream.teacher).name

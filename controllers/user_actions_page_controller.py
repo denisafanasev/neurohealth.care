@@ -25,24 +25,10 @@ class UserActionsPageController():
                 'id': action.id,
                 'action': action.action,
                 'comment_action': action.comment_action,
-                'created_date': action.created_date.strftime('%d/%m/%Y')
+                'created_date': action.created_date.strftime('%d/%m/%Y'),
+                'created_time': action.created_date.strftime('%H:%M')
             }
 
             actions_list_view.append(action_view)
 
         return actions_list_view
-
-    def get_menu_user_profile(self):
-        """
-        Возвращает список меню на странице "Профиль пользователя"
-        """
-        user_profile_menu = []
-        for item in config.USER_PROFILE_MENU:
-            if item['endpoint'] == 'user_actions':
-                item['is_active'] = True
-            else:
-                item['is_active'] = False
-
-            user_profile_menu.append(item)
-
-        return user_profile_menu

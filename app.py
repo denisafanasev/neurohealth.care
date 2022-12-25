@@ -262,7 +262,7 @@ def user_manager():
                            _error=error, _error_type=error_type, _num_page=num_page)
 
 
-@app.route('/user_profile/profile', methods=['GET', 'POST'])
+@app.route('/user_profile', methods=['GET', 'POST'])
 @login_required
 def user_profile():
     """
@@ -304,6 +304,7 @@ def user_profile():
     data = page_controller.get_users_profile_view(user_id)
     education_streams_list = page_controller.get_education_streams_list(user_id, data['role'])
     data_edit = {}
+    active_tab = 'user_profile'
 
     try:
         if request.method == 'POST':
@@ -328,7 +329,7 @@ def user_profile():
                         session['message_error'] = "Пользователь сохранён!"
                         session['status_code'] = "Successful"
 
-                        return redirect(f'/user_profile/profile?user_id={message_error}')
+                        return redirect(f'/user_profile?user_id={message_error}')
                     else:
                         status_code = 'Error'
 
@@ -361,7 +362,7 @@ def user_profile():
                         session['message_error'] = "Изменения сохранены!"
                         session['status_code'] = "Successful"
 
-                        return redirect(f'/user_profile/profile?user_id={user_id}')
+                        return redirect(f'/user_profile?user_id={user_id}')
                     else:
                         status_code = 'Error'
 
@@ -374,7 +375,7 @@ def user_profile():
 
                 session['message_error'], session['status_code'] = page_controller.chenge_password(user_id, user["password"], user["password2"], current_user_id)
                 if session['status_code'] == 'Successful':
-                    return redirect(f'/user_profile/profile?user_id={user_id}')
+                    return redirect(f'/user_profile?user_id={user_id}')
                 else:
                     data_edit = data.copy()
                     data_edit['password'] = user["password"]
@@ -390,7 +391,7 @@ def user_profile():
                 session['message_error'] = page_controller.access_extension(int(period), reference_point, user_id, current_user_id)
                 session['status_code'] = "Successful"
 
-                return redirect(f'/user_profile/profile?user_id={user_id}')
+                return redirect(f'/user_profile?user_id={user_id}')
 
             elif request.form.get("is_active"):
                 if mode == 'view':
@@ -400,14 +401,14 @@ def user_profile():
                         data['active'] = True
                         session['status_code'] = 'Successful'
 
-                        return redirect(f'/user_profile/profile?user_id={user_id}')
+                        return redirect(f'/user_profile?user_id={user_id}')
 
                     elif is_active == 'false':
                         session['message_error'] = page_controller.deactivation(user_id, current_user_id)
                         data['active'] = False
                         session['status_code'] = 'Successful'
 
-                        return redirect(f'/user_profile/profile?user_id={user_id}')
+                        return redirect(f'/user_profile?user_id={user_id}')
 
             else:
                 return redirect("user_manager")
@@ -418,18 +419,15 @@ def user_profile():
     if data_edit == {}:
         data_edit = data
 
-    user_profile_menu = page_controller.get_user_profile_menu()
-
-    return render_template('user_profile_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
+    return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data_edit=data_edit, _data=data, _settings=settings_user,
                            _is_current_user_admin=flask_login.current_user.is_admin(), _user_id=user_id,
                            _mode=mode, _message_error=message_error, _status_code=status_code,
-                           _education_streams_list=education_streams_list, _user_profile_menu=user_profile_menu,
-                           _endpoint=endpoint)
+                           _education_streams_list=education_streams_list, _active_tab=active_tab)
 
 
-@app.route('/user_profile/actions', methods=['GET', 'POST'])
+@app.route('/user_actions', methods=['GET', 'POST'])
 @login_required
 def user_actions():
     """
@@ -443,6 +441,7 @@ def user_actions():
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     endpoint = "user_manager"
+    active_tab = 'user_actions'
     user_id = request.args.get('user_id')
     current_user_id = flask_login.current_user.user_id
 
@@ -454,14 +453,11 @@ def user_actions():
         user_id = int(user_id)
 
     data = page_controller.get_actions(user_id)
-    x = request.full_path.split('/')
 
-    user_profile_menu = page_controller.get_menu_user_profile()
-
-    return render_template('user_profile_actions.html', view="user_profile", _menu=mpc.get_main_menu(),
+    return render_template('user_actions.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=data, _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _user_profile_menu=user_profile_menu, _user_id=user_id, _mode=mode)
+                           _user_id=user_id, _mode=mode, _active_tab=active_tab)
 
 
 @app.route('/main_page', methods=['GET', 'POST'])
@@ -490,10 +486,10 @@ def main_page():
 
     password = ''
     password2 = ''
+    education_streams_list = page_controller.get_education_streams(user_id)
 
     if request.method == "POST":
         if request.form.get("button") == "reset":
-
             password = request.form['password']
             password2 = request.form["password2"]
             current_password = request.form['current_password']
@@ -510,8 +506,9 @@ def main_page():
 
     return render_template('main_page.html', view="main_page", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=page_controller.get_actions(user["user_id"]), _user=user, _message_error=message_error, _status_code=status_code,
-                           _password=password, _password2=password2)
+                           _data=page_controller.get_actions(user["user_id"]), _user=user, _message_error=message_error,
+                           _status_code=status_code, _password=password, _password2=password2,
+                           _education_streams_list=education_streams_list)
 
 
 @app.route('/empty_function', methods=['GET', 'POST'])
@@ -1381,9 +1378,6 @@ def education_stream_card():
                 "date_end": request.form.get("date_ends")
             }
 
-            if education_stream_new['teacher'] not in education_stream_new['curators_list']:
-                education_stream_new['curators_list'].append(education_stream_new['teacher'])
-
             timetables_list = []
             for course in courses_list:
                 if course['id'] == education_stream_new['id_course']:
@@ -1420,9 +1414,6 @@ def education_stream_card():
                             "id_module": module['id'],
                             'date_start': request.form.get(f'date_start_module_{module["id"]}')
                         })
-
-            if education_stream_new['teacher'] not in education_stream_new['curators_list']:
-                education_stream_new['curators_list'].append(education_stream_new['teacher'])
 
             session['message_error'], session['status_code'] = page_controller.save_education_stream(education_stream_new, timetables_list, user_id)
 

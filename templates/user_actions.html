@@ -1,4 +1,4 @@
-{% extends 'user_profile.html' %}
+{% extends 'profile_main_page.html' %}
 
 {% block user_profile_block %}
     <script>
@@ -6,7 +6,7 @@
         const action_table = $("#action_table").DataTable({
             responsive: false,
             lengthChange: !1,
-            pageLength: 10,
+            pageLength: 20,
         });
     })
     </script>
@@ -20,6 +20,7 @@
                                 <th rowspan="1" colspan="1">Действие</th>
                                 <th rowspan="1" colspan="1">Комментарий</th>
                                 <th class="text-center" rowspan="1" colspan="1">Дата создания</th>
+                                <th class="text-center" rowspan="1" colspan="1">Время создания</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -28,6 +29,7 @@
                                 <td>{{ action.action }}</td>
                                 <td>{{ action.comment_action }}</td>
                                 <td><div style="text-align: center; margin-right: 13%;">{{ action.created_date }}</div></td>
+                                <td><div style="text-align: center; margin-right: 13%;">{{ action.created_time }}</div></td>
                             </tr>
                         {% endfor %}
                         </tbody>

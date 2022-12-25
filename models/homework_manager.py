@@ -74,7 +74,7 @@ class HomeworkManager():
 
     def get_homeworks_list_by_id_lesson_no_verified(self, _id_lesson, _id_user):
         """
-        Возвращает список домашних работ по ID урока и ID пользователя
+        Возвращает список непроверенных домашних работ по ID урока и ID пользователя
 
         Args:
             _id_lesson(Int): ID урока
@@ -167,3 +167,13 @@ class HomeworkManager():
         homework = data_store.get_row_by_id(_id_homework)
 
         return self.homework_row_to_homework(homework)
+
+    def is_accepted_homework(self, _user_id, _id_lesson):
+
+        homework_list = self.get_homeworks_list_by_id_lesson(_id_lesson, _user_id)
+        if homework_list is not None:
+            for homework in homework_list:
+                if homework.status is True:
+                    return True
+
+        return False

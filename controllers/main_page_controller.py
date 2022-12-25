@@ -102,3 +102,38 @@ class MainPageController():
             main_page_service.chenge_password(_user_id, _password, _password2, _current_password)
         except UserManagerException as error:
             return error
+
+    def get_education_streams(self, _user_id):
+        """
+        Возвращает список обучающих потоков, в которых есть текущего пользователя
+
+        Args:
+            _user_id(Int): ID
+
+        Returns:
+            education_streams_list_view(List): список обучающих потока
+        """
+
+        main_page_service = MainPageService()
+
+        user = main_page_service.get_user_by_id(_user_id)
+        education_streams_list = main_page_service.get_education_streams(_user_id)
+        education_streams_list_view = []
+        for education_stream in education_streams_list:
+            education_stream_view = {
+                'id':  education_stream.id,
+                'name': education_stream.name,
+                'course_id': education_stream.course,
+                'homeworks': None
+            }
+            if user.role == 'user':
+                count_accepted_homeworks, count_no_accepted_homeworks = main_page_service.get_count_accepted_homeworks(_user_id,
+                                                                                                           education_stream.course)
+                education_stream_view['homeworks'] = {
+                    'accepted': count_accepted_homeworks,
+                    'no_accepted': count_no_accepted_homeworks
+                }
+
+            education_streams_list_view.append(education_stream_view)
+
+        return education_streams_list_view

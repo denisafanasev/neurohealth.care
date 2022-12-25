@@ -133,6 +133,23 @@
                         </tbody>
                     </table>
 
+                    <strong>Мои обучающие потоки</strong>
+
+                <table class="table table-sm mt-2 mb-4" style="table-layout: fixed; margin: 0px">
+                    <tbody>
+                        {% for education_stream in _education_streams_list %}
+                        <tr>
+                            <th><a href="{{ url_for('education_course', id_course=education_stream['course_id']) }}">{{ education_stream['name'] }}</a></th>
+                            {% if _user['role'] == 'superuser' %}
+                                <td>Нет домашних работ</td>
+                            {% else %}
+                                <td>Сдано: {{ education_stream['homeworks']['accepted'] }}  Не сдано: {{ education_stream['homeworks']['no_accepted'] }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
                     <strong>Лента активностей</strong>
 
                     <ul class="timeline mt-2 mb-0">
