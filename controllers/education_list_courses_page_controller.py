@@ -68,3 +68,9 @@ class EducationListCoursesPageController():
 
         return {"login": user.login, "role": user.role, "active_education_module": user.active_education_module,
                 "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y"))}
+
+    def get_modules_passed(self, _user_id):
+
+        course_service = EducationListCoursesService()
+
+        return course_service.get_modules_passed(_user_id)
