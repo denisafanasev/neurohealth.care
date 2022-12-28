@@ -95,18 +95,48 @@
                                             <th>Срок доступа</th>
                                             <td>{{ _user['education_module_expiration_date'] }}</td>
                                         </tr>
-                                        <tr>
-                                            <th>Домашние задания</th>
-                                            <td>-</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Пройдено курсов</th>
-                                            <td>-</td>
-                                        </tr>   
+{#                                        {% for progress in _user_education_progress %}#}
+{#                                            <tr>#}
+{#                                                <th>Поток</th>#}
+{#                                                <td>{{ progress['education_stream_name'] }}</td>#}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <th>Домашние задания</th>#}
+{#                                                <td>Сдано: {{ progress['amount_homework_accepted'] }}  Не сдано: {{ progress['amount_homework_no_accepted'] }}</td>#}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <th>Пройдено модулей</th>#}
+{#                                                <td>{{ progress['amount_modules_passed'] }}/Осталось {{ progress['amount_modules_no_passed'] }}</td>#}
+{#                                            </tr>#}
+{#                                        {% endfor %}#}
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                        {% for progress in _user_education_progress %}
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <table class="table table-sm mt-2 mb-4">
+                                        <tbody>
+
+                                                <tr>
+                                                    <th>Поток</th>
+                                                    <td>{{ progress['education_stream_name'] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Домашние задания</th>
+                                                    <td>Сдано: {{ progress['amount_homework_accepted'] }}  Не сдано: {{ progress['amount_homework_no_accepted'] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Пройдено модулей</th>
+                                                    <td>{{ progress['amount_modules_passed'] }} (Осталось {{ progress['amount_modules_no_passed'] }})</td>
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        {% endfor %}
             
                         <div class="card">
                             <div class="card-header">
@@ -137,9 +167,6 @@
                         </div>
                     
                     </div>
-                    
-                </div>
-
         {% else %}
             <div class="text-center">
                 <h2>Данная страница недоступна из-за отсутсвия нужного файла.</h2>

@@ -65,7 +65,29 @@ class EducationListCoursesService():
 
         return user
 
-    def get_modules_passed(self, _user_id):
+    def get_education_streams(self, _user_id):
+        """
+        Возвращает количество активных обучающих потоков, в которых текущий пользователь есть
+
+        Args:
+            _user_id(Int): ID текущего пользователя
+
+        Returns:
+            List(EducationStream): список обучающих потоков
+        """
+        education_stream_manager = EducationStreamManager()
+
+        user = self.get_user_by_id(_user_id)
+        if user.role == 'user':
+            education_streams = education_stream_manager.get_education_streams_list_by_id_user(_user_id, user.role)
+            education_streams_list = []
+            for education_stream in education_streams:
+                if education_stream.status == 'идет':
+                    education_streams_list.append(education_stream)
+
+            return education_streams_list
+
+    def get_user_education_progress(self, _user_id, _id_course):
         """
         Возвращает количество сданных/не сданных модулей, а также количество сданных/не сданных домашних работ
         у текущего пользователя
@@ -76,37 +98,32 @@ class EducationListCoursesService():
         Returns:
             data(Dict): словарь с количествами сданных/не сданных модулей и сданных/не сданных домашних работ
         """
-        course_manager = EducationCourseManager()
+
         module_manager = EducationModuleManager()
         lesson_manager = EducationLessonManager()
         homework_manager = HomeworkManager()
 
-        courses_list = course_manager.get_courses()
-        modules_list = []
-        for course in courses_list:
-            if course.type == "main":
-                modules_list = module_manager.get_course_modules_list(course.id)
+        modules_list = module_manager.get_course_modules_list(_id_course)
 
-        data = {
-            'count_modules_passed': 0,
-            'count_modules_no_passed': 0,
-            'count_homework_accepted': 0,
-            'count_homework_no_accepted': 0
-        }
+        amount_modules_passed = 0
+        amount_modules_no_passed = 0
+        amount_homework_accepted = 0
+        amount_homework_no_accepted = 0
         for module in modules_list:
             lessons_list = lesson_manager.get_lessons_list_by_id_module(module.id)
             is_passed = True
             for lesson in lessons_list:
-                homework_accepted = homework_manager.is_accepted_homework(_user_id, lesson.id)
-                if not homework_accepted:
-                    is_passed = False
-                    data['count_homework_no_accepted'] += 1
-                else:
-                    data['count_homework_accepted'] += 1
+                if lesson.task is not None:
+                    homework_accepted = homework_manager.is_accepted_homework(_user_id, lesson.id)
+                    if not homework_accepted:
+                        is_passed = False
+                        amount_homework_no_accepted += 1
+                    else:
+                        amount_homework_accepted += 1
 
             if is_passed:
-                data['count_modules_passed'] += 1
+                amount_modules_passed += 1
             else:
-                data['count_modules_no_passed'] += 1
+                amount_modules_no_passed += 1
 
-        return data
+        return amount_modules_passed, amount_modules_no_passed, amount_homework_accepted, amount_homework_no_accepted

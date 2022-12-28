@@ -591,10 +591,11 @@ def education_list_courses():
 
     data = page_controller.get_courses()
     user = page_controller.get_user_view_by_id(user_id)
-    modulespassed = page_controller
+    user_education_progress = page_controller.get_user_education_progress(user_id)
 
     return render_template('education_list_courses.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data, _user=user)
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data, _user=user,
+                           _user_education_progress=user_education_progress)
 
 
 @app.route('/education_course', methods=['GET', 'POST'])
