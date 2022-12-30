@@ -4,7 +4,7 @@
     <script>
     document.addEventListener("DOMContentLoaded", function () {
         const action_table = $("#action_table").DataTable({
-            responsive: false,
+            responsive: true,
             lengthChange: !1,
             pageLength: 20,
         });
@@ -13,14 +13,14 @@
     <div class="row d-flex align-items-stretch bd-highlight">
         <div class="col-sm-12 bd-highlight">
             <div class="card d-flex align-self-baseline" style="height: 100%;">
-                <div class="card-header">
+                <div class="col-sm-12 card-header">
                     <table id="action_table" class="table table-striped dataTable no-footer dtr-inline" style="font-size: 13px">
                         <thead>
                             <tr>
-                                <th rowspan="1" colspan="1">Действие</th>
-                                <th rowspan="1" colspan="1">Комментарий</th>
-                                <th class="text-center" rowspan="1" colspan="1">Дата создания</th>
-                                <th class="text-center" rowspan="1" colspan="1">Время создания</th>
+                                <th rowspan="1" colspan="1" style="width: 30%">Действие</th>
+                                <th rowspan="1" colspan="1" style="width: 30%">Комментарий</th>
+                                <th class="text-center" rowspan="1" colspan="1" style="width: 20%">Дата создания</th>
+                                <th class="text-center" rowspan="1" colspan="1" style="width: 20%">Время создания</th>
                             </tr>
                         </thead>
                         <tbody>
