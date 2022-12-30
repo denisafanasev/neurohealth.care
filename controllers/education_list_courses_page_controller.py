@@ -68,3 +68,26 @@ class EducationListCoursesPageController():
 
         return {"login": user.login, "role": user.role, "active_education_module": user.active_education_module,
                 "education_module_expiration_date": str(user.education_module_expiration_date.strftime("%d/%m/%Y"))}
+
+    def get_user_education_progress(self, _user_id):
+        """
+
+        """
+        course_service = EducationListCoursesService()
+
+        education_streams_list = course_service.get_education_streams(_user_id)
+        data_list_view = []
+        if education_streams_list is not None:
+            for education_stream in education_streams_list:
+                amount_modules_passed, amount_modules_no_passed, amount_homework_accepted, amount_homework_no_accepted = course_service.get_user_education_progress(_user_id, education_stream.course)
+                data_view = {
+                    'education_stream_name': education_stream.name,
+                    'amount_modules_passed': amount_modules_passed,
+                    'amount_modules_no_passed': amount_modules_no_passed,
+                    'amount_homework_accepted': amount_homework_accepted,
+                    'amount_homework_no_accepted': amount_homework_no_accepted
+                }
+
+                data_list_view.append(data_view)
+
+        return data_list_view
