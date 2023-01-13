@@ -144,7 +144,7 @@ class HomeworksService():
 
             return courses
 
-    def get_users_list_in_education_streams(self, _id_education_stream):
+    def get_users_list_in_education_streams_file(self, _id_education_stream):
         """
         Возвращает список пользователей, которые находятся в обучающем потоке
 
@@ -281,3 +281,34 @@ class HomeworksService():
         education_stream = EducationStreamManager()
 
         return education_stream.get_education_streams()
+
+    def get_users_list_by_id_education_streams(self, _id_education_stream):
+        """
+        Возвращает список пользователей из данного потока
+
+        Args:
+            _id_education_stream(Int): ID
+
+        Returns:
+            List(User): список пользователей
+        """
+
+        user_manager = UserManager()
+        lesson_manager = EducationLessonManager()
+        homework_chat_manager = HomeworkChatManager()
+        message_manager = MessageManager()
+
+        users_list_data = self.get_users_list_in_education_streams_file(_id_education_stream)
+        lessons_list = lesson_manager.get_lessons()
+        users_list = []
+        for login_user in users_list_data:
+            user = login_user
+            user.unread_message_amount = 0
+            for lesson in lessons_list:
+                homework_chat = homework_chat_manager.get_homework_chat(user.user_id, lesson.id)
+                if homework_chat is not None:
+                    user.unread_message_amount += message_manager.get_unread_messages_amount(homework_chat.id, user.user_id)
+
+            users_list.append(user)
+
+        return users_list

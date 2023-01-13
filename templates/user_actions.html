@@ -1,29 +1,32 @@
 {% extends 'profile_main_page.html' %}
 
 {% block user_profile_block %}
+    <script src="{{ url_for('static' , filename="js/datatables.js") }}"></script>
+    <script type="text/javascript" language="javascript" src="https://nightly.datatables.net/responsive/js/dataTables.responsive.min.js">
+</script>
     <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const action_table = $("#action_table").DataTable({
+        $("#action_table").DataTable({
             responsive: true,
             lengthChange: !1,
             pageLength: 20,
         });
     })
     </script>
+
     <div class="row d-flex align-items-stretch bd-highlight">
         <div class="col-sm-12 bd-highlight">
-            <div class="card d-flex align-self-baseline" style="height: 100%;">
-                <div class="col-sm-12 card-header">
-                    <table id="action_table" class="table table-striped dataTable no-footer dtr-inline" style="font-size: 13px">
-                        <thead>
-                            <tr>
-                                <th rowspan="1" colspan="1" style="width: 30%">Действие</th>
-                                <th rowspan="1" colspan="1" style="width: 30%">Комментарий</th>
-                                <th class="text-center" rowspan="1" colspan="1" style="width: 20%">Дата создания</th>
-                                <th class="text-center" rowspan="1" colspan="1" style="width: 20%">Время создания</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            <div class="card card-body" style="height: 100%;">
+                <table id="action_table" class="table table-striped dataTable no-footer dtr-inline" style="font-size: 13px">
+                    <thead>
+                        <tr>
+                            <th rowspan="1" colspan="1" style="width: 30%">Действие</th>
+                            <th rowspan="1" colspan="1" style="width: 30%">Комментарий</th>
+                            <th class="text-center" rowspan="1" colspan="1" style="width: 20%">Дата создания</th>
+                            <th class="text-center" rowspan="1" colspan="1" style="width: 20%">Время создания</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         {% for action in _data %}
                             <tr>
                                 <td>{{ action.action }}</td>
@@ -32,9 +35,8 @@
                                 <td><div style="text-align: center; margin-right: 13%;">{{ action.created_time }}</div></td>
                             </tr>
                         {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
