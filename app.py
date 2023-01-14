@@ -731,27 +731,33 @@ def education_home_tasks():
         return redirect("main_page")
 
     user_id = request.args.get('user_id')
-
+    x = request.form
     data_option = request.form.get('data_option')
-    id_education_stream = 5
-    if request.method == "POST":
-        if request.form.get('education_stream'):
-            id_education_stream = int(request.form['education_stream'])
 
-    users_list = page_controller.get_users_list_by_id_education_stream(id_education_stream)
-    if data_option == 'chat_without_homework':
-        data = page_controller.get_chat_without_homework(current_user_id, id_education_stream, user_id)
-    elif data_option == 'homework_verified':
-        data = page_controller.get_homework_verified(current_user_id, id_education_stream, user_id)
+    if request.form.get('education_stream'):
+        id_education_stream = int(request.form['education_stream'])
     else:
-        data = page_controller.get_data(current_user_id, id_education_stream, user_id)
+        id_education_stream = 5
+
+    user = None
+    data = None
+    course_name = None
+    users_list = page_controller.get_users_list_by_id_education_stream(id_education_stream, current_user_id)
+    if user_id is not None:
+        user = page_controller.get_user(user_id)
+        if data_option == 'chat_without_homework':
+            data, course_name = page_controller.get_chat_without_homework(current_user_id, id_education_stream, user_id)
+        elif data_option == 'homework_verified':
+            data, course_name = page_controller.get_homework_verified(current_user_id, id_education_stream, user_id)
+        else:
+            data, course_name = page_controller.get_data(current_user_id, id_education_stream, user_id)
 
     amount_education_streams = config.AMOUNT_EDUCATION_STREAMS
 
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
                            _amount_education_streams=amount_education_streams, _id_education_stream=id_education_stream,
-                           _users_list=users_list)
+                           _users_list=users_list, _course_name=course_name, _user=user)
 
 
 @app.route('/education_home_task_card', methods=['GET', 'POST'])

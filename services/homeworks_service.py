@@ -282,33 +282,26 @@ class HomeworksService():
 
         return education_stream.get_education_streams()
 
-    def get_users_list_by_id_education_streams(self, _id_education_stream):
+    def is_unread_messages(self, _lesson_id, _user_id, _current_user_id):
         """
-        Возвращает список пользователей из данного потока
+        Возвращает True, если есть хотя бы одно непрочитанное сообщение
 
         Args:
-            _id_education_stream(Int): ID
+            _lesson_id(Int): ID урока
+            _user_id(Int): ID пользователя
+            _current_user_id(Int): ID текущего пользователя
 
         Returns:
             List(User): список пользователей
         """
 
-        user_manager = UserManager()
-        lesson_manager = EducationLessonManager()
         homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()
 
-        users_list_data = self.get_users_list_in_education_streams_file(_id_education_stream)
-        lessons_list = lesson_manager.get_lessons()
-        users_list = []
-        for login_user in users_list_data:
-            user = login_user
-            user.unread_message_amount = 0
-            for lesson in lessons_list:
-                homework_chat = homework_chat_manager.get_homework_chat(user.user_id, lesson.id)
-                if homework_chat is not None:
-                    user.unread_message_amount += message_manager.get_unread_messages_amount(homework_chat.id, user.user_id)
+        homework_chat = homework_chat_manager.get_homework_chat(_user_id, _lesson_id)
+        if homework_chat is not None:
+            is_unread_message = message_manager.is_unread_messages(homework_chat.id, _current_user_id)
+            if is_unread_message:
+                return True
 
-            users_list.append(user)
-
-        return users_list
+        return False
