@@ -4,12 +4,30 @@
 - Изменен url-адрес страницы "Профиль пользователя"(теперь url-адрес "/user_profile/profile/user_id=")
 - Добавлен шаблон для страницы "Профиль пользователя"
 - Отредактирован внешний вид таблицы со списком действий пользователя
+- Добавлены методы для подсчета сданных/не сданных домашних работ/модулей
+- На странице "Я-Нейромама" добавлена возможность просмотра прогресса обучения текущего пользователя
 
 Исправлены ошибки
 - Добавлены проверки на наличие логина, пароля и email при создании/редактирование пользователя на случай, если не будет проверок на клиенте
 - Исправление создания пользователя на странице "Профиль пользователя"
 - Изменен текст сообщения ошибки о неверной длине логина
 - Исправлено меню на странице "Профиль пользователя" 
+- Исправлена мобильная версия таблиц на странице "Профиль пользователя" и "Действия пользователя"
+
+General changes
+- Added page with user actions
+- Changed the url of the "User Profile" page (now the url is "/user_profile/profile/user_id=")
+- Added template for "User Profile" page
+- Edited appearance of the table with a list of user actions
+- Added methods for counting passed/failed homework/modules
+- On the page "I am Neuromama" added the ability to view the learning progress of the current user
+
+Bugs fixed
+- Added checks for the presence of a login, password and email when creating / editing a user in case there are no checks on the client
+- Fixed user creation on the "User Profile" page
+- Changed the text of the error message about the wrong length of the login
+- Fixed menu on the "User Profile" page
+- Fixed mobile version of tables on the page "User profile" and "User actions"
 
 
 [1.2.8]
