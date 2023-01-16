@@ -54,7 +54,6 @@ class HomeworkManager():
                                "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"), "text": homework.text,
                                "id_user": homework.id_user, "id_lesson": homework.id_lesson, "status": homework.status})
 
-
     def get_homeworks(self):
         """
         Возвращает список домашних работ пользователей
@@ -169,7 +168,16 @@ class HomeworkManager():
         return self.homework_row_to_homework(homework)
 
     def is_accepted_homework(self, _user_id, _id_lesson):
+        """
+        Проверяет, есть ли принятые домашние работы у пользователя.
 
+        Args:
+            _user_id(Int): ID пользователя
+            _id_lesson(Int): ID урока
+
+        Returns:
+            Если есть, возвращает True, иначе False
+        """
         homework_list = self.get_homeworks_list_by_id_lesson(_id_lesson, _user_id)
         if homework_list is not None:
             for homework in homework_list:

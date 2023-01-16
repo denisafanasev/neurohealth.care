@@ -72,11 +72,33 @@ class HomeworksService():
 
         return module
 
-    # def get_education_stream(self, _id_education_stream):
-    #
-    #     stream_service = education_stream_service.EducationStreamService()
-    #
-    #     return stream_service.get_education_stream(_id_education_stream)
+    def get_education_stream(self, _id_education_stream):
+        """
+        Возвращает данные обучающего потока по его ID
+
+        Args:
+            _id_education_stream(Int): ID
+
+        Returns:
+            EducationStream: обучающий поток
+        """
+
+        education_stream_manager = EducationStreamManager()
+        user_manager = UserManager()
+        course_manager = EducationCourseManager()
+
+        education_stream = education_stream_manager.get_education_stream(_id_education_stream)
+        students_list = []
+        for user_id in education_stream.students_list:
+            user = user_manager.get_user_by_id(user_id)
+            if user is not None:
+                students_list.append(user)
+
+        education_stream.students_list = students_list
+        education_stream.course = course_manager.get_course_by_id(education_stream.course)
+
+        return education_stream
+
 
     def get_user_by_id(self, _id_user):
         """
@@ -157,18 +179,6 @@ class HomeworksService():
         with open(config.DATA_FOLDER + f'course_1/s{_id_education_stream}_users.txt') as f:
             users_login_list.extend(f.read().splitlines())
 
-        # with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
-        #     users_login_list.extend(f.read().splitlines())
-        #
-        # with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
-        #     users_login_list.extend(f.read().splitlines())
-        #
-        # with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
-        #     users_login_list.extend(f.read().splitlines())
-        #
-        # with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
-        #     users_login_list.extend(f.read().splitlines())
-
         users_list = []
         for user_login in users_login_list:
             user = user_manager.get_user_by_login(user_login)
@@ -229,7 +239,7 @@ class HomeworksService():
         if homework_list:
             return homework_list
 
-    def get_lessons(self):
+    def get_lessons_by_id_course(self, _id_course):
         """
         Возвращает данные всех уроков, которые есть в базе данных
 
@@ -237,8 +247,14 @@ class HomeworksService():
             List(Lesson): список уроков
         """
         lesson_manager = EducationLessonManager()
+        module_mamanger = EducationModuleManager()
 
-        return lesson_manager.get_lessons()
+        modules_list = module_mamanger.get_course_modules_list(_id_course)
+        lessons_list = []
+        for module in modules_list:
+            lessons_list.extend(lesson_manager.get_lessons_list_by_id_module(module.id))
+
+        return lessons_list
 
     def get_module_by_id(self, _id):
         """
@@ -305,3 +321,22 @@ class HomeworksService():
                 return True
 
         return False
+
+    def get_amount_accepted_homework(self, _user_id, _id_lessons_list):
+        """
+
+        """
+
+        homework_manager = HomeworkManager()
+
+        count_accepted_homework = 0
+        count_no_accepted_homework = 0
+        for lesson in _id_lessons_list:
+            if lesson.task:
+                is_accepted_homework = homework_manager.is_accepted_homework(_user_id, lesson.id)
+                if is_accepted_homework:
+                    count_accepted_homework += 1
+                else:
+                    count_no_accepted_homework += 1
+
+        return count_accepted_homework, count_no_accepted_homework

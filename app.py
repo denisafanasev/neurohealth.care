@@ -730,34 +730,48 @@ def education_home_tasks():
     if not flask_login.current_user.is_admin():
         return redirect("main_page")
 
+    education_streams_list = page_controller.get_education_streams_list()
     user_id = request.args.get('user_id')
-    x = request.form
-    data_option = request.form.get('data_option')
+    data_option = session.get('data_option')
+    if data_option is not None:
+        session.pop('data_option')
 
-    if request.form.get('education_stream'):
-        id_education_stream = int(request.form['education_stream'])
+    id_education_stream = session.get('id_education_stream')
+    if id_education_stream is not None:
+        session.pop('id_education_stream')
     else:
-        id_education_stream = 5
+        id_education_stream = education_streams_list[0]['id']
+
+    if request.method == 'POST':
+        session['data_option'] = request.form.get('data_option')
+        session['education_stream'] = int(request.form['education_stream'])
+
+        return redirect(f'/education_home_tasks?user_id={user_id}')
+
 
     user = None
     data = None
-    course_name = None
-    users_list = page_controller.get_users_list_by_id_education_stream(id_education_stream, current_user_id)
+    import time
+
+    start = time.time()
+    current_education_stream = page_controller.get_current_education_stream(id_education_stream, current_user_id)
     if user_id is not None:
         user = page_controller.get_user(user_id)
         if data_option == 'chat_without_homework':
-            data, course_name = page_controller.get_chat_without_homework(current_user_id, id_education_stream, user_id)
+            data = page_controller.get_chat_without_homework(current_user_id, id_education_stream, user_id)
         elif data_option == 'homework_verified':
-            data, course_name = page_controller.get_homework_verified(current_user_id, id_education_stream, user_id)
+            data = page_controller.get_homework_verified(current_user_id, id_education_stream, user_id)
         else:
-            data, course_name = page_controller.get_data(current_user_id, id_education_stream, user_id)
+            data = page_controller.get_data(current_user_id, id_education_stream, user_id)
 
-    amount_education_streams = config.AMOUNT_EDUCATION_STREAMS
+    end = time.time() - start  ## собственно время работы программы
+
+    print(end)
 
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
-                           _amount_education_streams=amount_education_streams, _id_education_stream=id_education_stream,
-                           _users_list=users_list, _course_name=course_name, _user=user)
+                           _education_streams_list=education_streams_list, _id_education_stream=id_education_stream,
+                           _current_education_stream=current_education_stream, _user=user, _data_option=data_option)
 
 
 @app.route('/education_home_task_card', methods=['GET', 'POST'])

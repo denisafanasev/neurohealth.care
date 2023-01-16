@@ -22,14 +22,16 @@ class EducationHomeTasksPageController():
             List: данные
         """
         homeworks_service = HomeworksService()
+
         if _id_user is None:
             return None
+
         user = homeworks_service.get_user_by_id(_id_user)
-        lessons_list = homeworks_service.get_lessons()
+        education_stream = homeworks_service.get_education_stream(_id_education_stream)
+        lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
         data_list = []
         for lesson in lessons_list:
             module = homeworks_service.get_module_by_id(lesson.id_module)
-            course = homeworks_service.get_course_by_id(module.id_course)
             homework_list = homeworks_service.get_homeworks_list_by_id_user_no_verified(lesson.id, user.user_id)
             if homework_list is None:
                 continue
@@ -77,9 +79,7 @@ class EducationHomeTasksPageController():
 
                 data_list.append(data)
 
-        course_name = course.name
-
-        return data_list, course_name
+        return data_list
 
     def get_chat_without_homework(self, _id_current_user, _id_education_stream, _id_user):
         """
@@ -93,12 +93,13 @@ class EducationHomeTasksPageController():
             List: данные
         """
         homeworks_service = HomeworksService()
+
         user = homeworks_service.get_user_by_id(_id_user)
-        lessons_list = homeworks_service.get_lessons()
+        education_stream = homeworks_service.get_education_stream(_id_education_stream)
+        lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
         data_list = []
         for lesson in lessons_list:
             module = homeworks_service.get_module_by_id(lesson.id_module)
-            course = homeworks_service.get_course_by_id(module.id_course)
             homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(lesson.id, user.user_id)
             if homework_list is not None:
                 continue
@@ -124,9 +125,7 @@ class EducationHomeTasksPageController():
 
             data_list.append(data)
 
-        course_name = course.name
-
-        return data_list, course_name
+        return data_list
 
     def get_homework_verified(self, _id_current_user, _id_education_stream, _id_user):
         """
@@ -140,12 +139,13 @@ class EducationHomeTasksPageController():
             List: данные
         """
         homeworks_service = HomeworksService()
+
         user = homeworks_service.get_user_by_id(_id_user)
-        lessons_list = homeworks_service.get_lessons()
+        education_stream = homeworks_service.get_education_stream(_id_education_stream)
+        lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
         data_list = []
         for lesson in lessons_list:
             module = homeworks_service.get_module_by_id(lesson.id_module)
-            course = homeworks_service.get_course_by_id(module.id_course)
             homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(lesson.id, user.user_id)
             if homework_list is None:
                 continue
@@ -181,10 +181,6 @@ class EducationHomeTasksPageController():
                 data['homework_chat'] = None
 
             if data['homework_list'] is not None or data['homework_chat'] is not None:
-                data['course'] = {
-                    "id": course.id,
-                    "name": course.name
-                }
                 data['module'] = {
                     "id": module.id,
                     "name": module.name
@@ -196,9 +192,7 @@ class EducationHomeTasksPageController():
 
                 data_list.append(data)
 
-        course_name = course.name
-
-        return data_list, course_name
+        return data_list
 
     def get_education_streams_list(self):
         """
@@ -221,9 +215,9 @@ class EducationHomeTasksPageController():
 
         return education_streams_list_view
 
-    def get_users_list_by_id_education_stream(self, _id_education_stream, _current_user_id):
+    def get_current_education_stream(self, _id_education_stream, _current_user_id):
         """
-        Возвращает список пользователей данного потока
+        Возвращает данные текущего потока потока
 
         Args:
             _id_education_stream(Int): ID образовательного потока
@@ -233,24 +227,30 @@ class EducationHomeTasksPageController():
             List: список пользователей
         """
 
-        homework_service = HomeworksService()
+        homeworks_service = HomeworksService()
 
-        users_list = homework_service.get_users_list_in_education_streams_file(_id_education_stream)
-        lessons_list = homework_service.get_lessons()
-        users_list_view = []
-        for user_data in users_list:
+        education_stream = homeworks_service.get_education_stream(_id_education_stream)
+        education_stream_view = {
+            'id': education_stream.id,
+            'name': education_stream.name,
+            'students_list': [],
+            'course_name': education_stream.course.name
+        }
+        lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
+        for user_data in education_stream.students_list:
             user_view = {
                 "id": user_data.user_id,
                 'name': user_data.name
             }
             for lesson in lessons_list:
-                user_view['is_unread_message'] = homework_service.is_unread_messages(lesson.id, user_data.user_id, _current_user_id)
+                user_view['is_unread_message'] = homeworks_service.is_unread_messages(lesson.id, user_data.user_id, _current_user_id)
                 if user_view['is_unread_message']:
                     break
 
-            users_list_view.append(user_view)
+                user_view['amount_accepted_homeworks'], user_view['amount_no_accepted_homeworks'] = homeworks_service.get_amount_accepted_homework(user_data.user_id, lessons_list)
+            education_stream_view['students_list'].append(user_view)
 
-        return users_list_view
+        return education_stream_view
 
     def get_user(self, _user_id):
         """

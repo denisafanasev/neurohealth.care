@@ -23,7 +23,7 @@
                 paging: true,
                 fixedHeader: false,
                 fixedColumns: false,
-                pageLength: 20,
+                pageLength: 10,
                 ordering: true,
                 orderMulti: true,
                 orderFixed: [[0, 'asc'], [1 , "asc"]],
@@ -48,6 +48,7 @@
                 pageLength: 20,
                 paging: false,
                 scrollY: '500px',
+                searching: true,
             });
 
             jQuery.extend( jQuery.fn.dataTableExt.oSort, {
@@ -88,19 +89,20 @@
             <h1 class="h3 d-inline align-middle">Проверка домашних заданий</h1>
         </div>
 
-        <div class="card">
-            <form method="post" enctype="multipart/form-data" class="row g-0">
-                <div class="col-12 col-lg-3 col-xl-4 border-end">
 
-                    <div class="px-4 d-none d-md-block">
+            <form method="post" enctype="multipart/form-data" class="row">
+                <div class="col-sm-12 col-md-4 col-xl-4 border card">
+
+                    <div class="d-md-block border-bottom m-2">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
                                 <div class="row">
-                                    <label class="form-label" for="education_stream">Выберите поток:</label>
+                                    <h3 class="form-label">Поток</h3>
 
                                         <select class="form-select" onchange="this.form.submit();" name="education_stream" id="education_stream">
-                                            {% for education_stream in range(1, _amount_education_streams + 1) %}
-                                                <option {% if education_stream == _id_education_stream %}selected{% endif %} value="{{ education_stream }}">{{ education_stream }}</option>
+                                            {% for education_stream in _education_streams_list %}
+                                                <option {% if education_stream['id'] == _id_education_stream %}selected{% endif %}
+                                                        value="{{ education_stream['id'] }}">{{ education_stream['name'] }}</option>
                                             {% endfor %}
                                         </select>
 
@@ -109,17 +111,28 @@
                         </div>
                     </div>
                     <div style="width: 100%">
+                        <h3>Список учеников</h3>
                         <table id="users_list" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
+                        <thead>
+                            <tr>
+                                <th class="sorting" style="width:10%" tabindex="0" aria-controls="datatables-homeworks"
+                                        aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Имя пользователя</th>
+                                <th class="sorting text-center" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
+                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Домашние работы</th>
+                                <th class="sorting text-center" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
+                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Новые сообщения</th>
+                            </tr>
+                        </thead>
                             <tbody>
-                            {% for user in _users_list %}
+                            {% for user in _current_education_stream['students_list'] %}
                                 <tr>
                                     <td>
                                         <a href="{{ url_for('education_home_tasks', user_id=user['id']) }}" class="border-0">
                                                 {{ user['name'] }}
                                         </a>
                                     </td>
-                                    <td></td>
-                                    <td>{% if user['is_unread_message'] is true %}<span class="fas fa-circle chat-offline"></span>{% endif %}</td>
+                                    <td>Сдано: {{ user['amount_accepted_homeworks'] }}/ Не сдано: {{ user['amount_no_accepted_homeworks'] }}</td>
+                                    <td class="text-center">{% if user['is_unread_message'] is true %}<span class="fas fa-circle chat-offline"></span>{% endif %}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -127,43 +140,47 @@
                     </div>
                     <hr class="d-block d-lg-none mt-1 mb-0" />
                 </div>
-                <div class="col-12 col-lg col-xl-8">
+                <div class="col-sm-12 col-md col-xl-8 border card">
                     <div class="py-2 px-4 mb-2 border-bottom d-none d-lg-block">
                         <div class="d-flex align-items-center py-1 row">
-                            {% if _course_name is not none %}
-                                <div class="flex-grow-1 ps-3 mb-2">
-                                    <strong>{{ _course_name }}</strong>{% if _user is not none %}({{ _user['name'] }}){% endif %}
+                            {% if _current_education_stream['course_name'] is not none %}
+                                <div class="flex-grow-1 mb-2">
+                                    <strong>{{ _current_education_stream['course_name'] }}</strong>{% if _user is not none %}({{ _user['name'] }}){% endif %}
                                 </div>
+
                             {% endif %}
                             <div>
                                 <input id="chat_without_homework" class="pb-1 form-check-input" type="radio"
-                                       name="data_option" value="chat_without_homework" onchange="this.form.submit();">
+                                       name="data_option" value="chat_without_homework" onchange="this.form.submit();"
+                                       {% if _data_option == 'chat_without_homework' %} checked {% endif %}>
                                 <label class="form-check-label" for="chat_without_homework">Чаты без домашних работ</label>
 
                                 <input id="homework_verified" class="pb-1 form-check-input" type="radio"
-                                       name="data_option" value="homework_verified" onchange="this.form.submit();">
+                                       name="data_option" value="homework_verified" onchange="this.form.submit();"
+                                       {% if _data_option == 'homework_verified' %} checked {% endif %}>
                                 <label class="form-check-label" for="homework_verified">Проверенные домашние работы</label>
 
                                 <input id="education_home_tasks" class="pb-1 form-check-input" type="radio"
-                                       name="data_option" value="education_home_tasks" onchange="this.form.submit();">
+                                       name="data_option" value="education_home_tasks" onchange="this.form.submit();"
+                                       {% if _data_option == 'education_home_tasks' %} checked {% endif %}>
                                 <label class="form-check-label" for="education_home_tasks">Не проверенные домашние работы</label>
                             </div>
                         </div>
                     </div>
                     <div class="position-relative">
                         <table id="datatables-homeworks" class="table dataTable no-footer nowrap"
-                               aria-describedby="datatables-buttons_info" style="width: 100%">
+                               aria-describedby="datatables-buttons_info" style="width: 100%; font-size: 13px">
                             <thead>
                                 <tr role="row">
                                     <th rowspan="1" colspan="1" style="width: 5%">Модуль</th>
-                                    <th rowspan="1" colspan="1" style="width: 20%">Урок</th>
+                                    <th rowspan="1" colspan="1" style="width: 30%">Урок</th>
                                     <th class="sorting" style="width:10%" tabindex="0" aria-controls="datatables-homeworks"
                                         aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Дата сдачи</th>
-                                    <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
+                                    <th class="sorting text-center" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
                                         aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Статус</th>
-                                    <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
+                                    <th class="sorting text-center" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
                                         aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Ответ</th>
-                                    <th class="sorting" style="width:20%; text-align: center" tabindex="0" aria-controls="datatables-homeworks"
+                                    <th class="sorting" style="width:10%; text-align: center" tabindex="0" aria-controls="datatables-homeworks"
                                         aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Домашняя работа</th>
                                     <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
                                         aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Новые сообщения</th>
@@ -176,14 +193,18 @@
                                         {% for homework in item['homework_list'] %}
                                             <tr>
                                                 <td data-value="{{ item['module']['id'] }}">{{ item['module']['name'] }}</td>
-                                                <td data-value="{{ item['lesson']['id'] }}">Урок: {{ item['lesson']['name'] }}</td>
+                                                <td style="white-space: break-spaces" data-value="{{ item['lesson']['id'] }}">Урок: {{ item['lesson']['name'] }}</td>
                                                 <td>{{ homework['date_delivery'] }}</td>
-                                                <td>
+                                                <td style="text-align: center">
                                                     <div class='badge {% if homework['status'] == "Не проверено" %} bg-info {% else %} bg-success {% endif %} bg-gradient text-light'>
                                                         {% if homework['status'] == "Не проверено" %}{{ homework['status'] }}{% else %}Проверено{% endif %}
                                                     </div>
                                                 </td>
-                                                <td><div class='badge {% if homework['status'] == "Принято" %} bg-success {% elif homework['status'] == "Не принято" %} bg-danger {% elif homework['status'] == "Не проверено" %} bg-info {% endif %} bg-gradient text-light'>{{ homework['status'] }}</div></td>
+                                                <td style="text-align: center">
+                                                    <div class='text-center badge {% if homework['status'] == "Принято" %} bg-success {% elif homework['status'] == "Не принято" %} bg-danger {% elif homework['status'] == "Не проверено" %} bg-info {% endif %} bg-gradient text-light'
+                                                    >{{ homework['status'] }}
+                                                    </div>
+                                                </td>
                                                 <td style="text-align: center">
                                                     <a href="/education_home_task_card?id_homework={{ homework['id'] }}" >
                                                         Перейти
@@ -247,5 +268,5 @@
                 </div>
             </form>
             </div>
-        </div>
+
 {% endblock %}
