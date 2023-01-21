@@ -169,9 +169,6 @@ class EducationHomeTasksPageController():
 
                     data['homework_list'].append(homework)
 
-            else:
-                continue
-
             if homework_chat is not None:
                 data['homework_chat'] = {
                     "id": homework_chat.id,
@@ -237,6 +234,7 @@ class EducationHomeTasksPageController():
             'course_name': education_stream.course.name
         }
         lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
+        id_lessons_list = [lesson.id for lesson in lessons_list]
         for user_data in education_stream.students_list:
             user_view = {
                 "id": user_data.user_id,
@@ -247,7 +245,7 @@ class EducationHomeTasksPageController():
                 if user_view['is_unread_message']:
                     break
 
-                user_view['amount_accepted_homeworks'], user_view['amount_no_accepted_homeworks'] = homeworks_service.get_amount_accepted_homework(user_data.user_id, lessons_list)
+            user_view['amount_accepted_homeworks'], user_view['amount_no_accepted_homeworks'] = homeworks_service.get_amount_accepted_homework(user_data.user_id, id_lessons_list)
             education_stream_view['students_list'].append(user_view)
 
         return education_stream_view

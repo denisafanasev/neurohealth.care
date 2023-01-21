@@ -736,24 +736,21 @@ def education_home_tasks():
     if data_option is not None:
         session.pop('data_option')
 
-    id_education_stream = session.get('id_education_stream')
-    if id_education_stream is not None:
-        session.pop('id_education_stream')
-    else:
+    id_education_stream = request.args.get('education_stream_id')
+    if id_education_stream is None:
         id_education_stream = education_streams_list[0]['id']
+    else:
+        id_education_stream = int(id_education_stream)
 
     if request.method == 'POST':
-        session['data_option'] = request.form.get('data_option')
-        session['education_stream'] = int(request.form['education_stream'])
+        if user_id is not None:
+            session['data_option'] = request.form.get('data_option')
 
-        return redirect(f'/education_home_tasks?user_id={user_id}')
-
+        return redirect(f'/education_home_tasks?education_stream_id={id_education_stream}&user_id={user_id}')
 
     user = None
     data = None
-    import time
 
-    start = time.time()
     current_education_stream = page_controller.get_current_education_stream(id_education_stream, current_user_id)
     if user_id is not None:
         user = page_controller.get_user(user_id)
@@ -763,10 +760,6 @@ def education_home_tasks():
             data = page_controller.get_homework_verified(current_user_id, id_education_stream, user_id)
         else:
             data = page_controller.get_data(current_user_id, id_education_stream, user_id)
-
-    end = time.time() - start  ## собственно время работы программы
-
-    print(end)
 
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,

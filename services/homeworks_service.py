@@ -18,40 +18,6 @@ class HomeworksService():
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def get_homeworks_list(self):
-        """
-        Возвращает список домашних работ пользователей
-
-        Returns:
-            List: список домашних работ
-        """
-
-        homework_manager = HomeworkManager()
-
-        homework_list = homework_manager.get_homeworks()
-
-        return homework_list
-
-    def get_course(self, _id_lesson):
-        """
-        Возвращает данные курса
-
-        Args:
-            _id_lesson(Int): id урока
-
-        Returns:
-            Course: курс
-        """
-
-        course_manager = EducationCourseManager()
-        module_manager = EducationModuleManager()
-        lesson_manager = EducationLessonManager()
-
-        lesson = lesson_manager.get_lesson_by_id(_id_lesson)
-        module = module_manager.get_module_by_id(lesson.id_module)
-
-        return course_manager.get_course_by_id(module.id_course)
-
     def get_lesson(self, _id_lesson):
         """
         Возвращает данные урока
@@ -99,7 +65,6 @@ class HomeworksService():
 
         return education_stream
 
-
     def get_user_by_id(self, _id_user):
         """
         Возвращает данные пользователя по ID
@@ -136,35 +101,6 @@ class HomeworksService():
             homework_chat.unread_message_amount = message_manager.get_unread_messages_amount(homework_chat.id, _id_current_user)
 
         return homework_chat
-
-    def get_courses_list(self):
-        """
-        Возвращает список основных курсов и их модули
-
-        Returns:
-            List: список курсов
-        """
-        course_manager = EducationCourseManager()
-        module_manager = EducationModuleManager()
-        lesson_manager = EducationLessonManager()
-
-        courses_list = course_manager.get_courses()
-        if courses_list is not None:
-            courses = []
-            for i_course in courses_list:
-                # нужны только основные курсы, так как только по ним сдаются домашние работы
-                if i_course.type == 'main':
-                    modules_list = module_manager.get_course_modules_list(i_course.id)
-                    if modules_list is not None:
-                        modules = []
-                        for i_module in modules_list:
-                            i_module.lessons = lesson_manager.get_lessons_list_by_id_module(i_module.id)
-                            modules.append(i_module)
-
-                    i_course.modules = modules_list
-                    courses.append(i_course)
-
-            return courses
 
     def get_users_list_in_education_streams_file(self, _id_education_stream):
         """
@@ -247,12 +183,15 @@ class HomeworksService():
             List(Lesson): список уроков
         """
         lesson_manager = EducationLessonManager()
-        module_mamanger = EducationModuleManager()
+        module_manager = EducationModuleManager()
 
-        modules_list = module_mamanger.get_course_modules_list(_id_course)
+        modules_list = module_manager.get_course_modules_list(_id_course)
         lessons_list = []
         for module in modules_list:
-            lessons_list.extend(lesson_manager.get_lessons_list_by_id_module(module.id))
+            lessons_list_data = lesson_manager.get_lessons_list_by_id_module(module.id)
+            for lesson in lessons_list_data:
+                if lesson.task is not None:
+                    lessons_list.append(lesson)
 
         return lessons_list
 
@@ -324,19 +263,33 @@ class HomeworksService():
 
     def get_amount_accepted_homework(self, _user_id, _id_lessons_list):
         """
+        Возвращает количества принятых/не принятых домашних работ у пользователя
 
+        Args:
+            _user_id(Int): ID пользователя
+            _id_lessons_list(List): список ID уроков курса
+
+        Returns:
+            count_accepted_homework(Int): количество принятых домашних работ
+            count_no_accepted_homework(Int): количество не принятых домашних работ
         """
 
         homework_manager = HomeworkManager()
 
         count_accepted_homework = 0
-        count_no_accepted_homework = 0
-        for lesson in _id_lessons_list:
-            if lesson.task:
-                is_accepted_homework = homework_manager.is_accepted_homework(_user_id, lesson.id)
-                if is_accepted_homework:
-                    count_accepted_homework += 1
-                else:
-                    count_no_accepted_homework += 1
+        # for lesson in _id_lessons_list:
+        #     if lesson.task:
+        #         is_accepted_homework = homework_manager.is_accepted_homework(_user_id, lesson.id)
+        #         if is_accepted_homework:
+        #             count_accepted_homework += 1
+        #         else:
+        #             count_no_accepted_homework += 1
+
+        homeworks_list = homework_manager.get_accepted_homeworks(_user_id)
+        for homework in homeworks_list:
+            if homework.id_lesson in _id_lessons_list:
+                count_accepted_homework += 1
+
+        count_no_accepted_homework = len(_id_lessons_list) - count_accepted_homework
 
         return count_accepted_homework, count_no_accepted_homework

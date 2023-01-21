@@ -185,3 +185,17 @@ class HomeworkManager():
                     return True
 
         return False
+
+    def get_accepted_homeworks(self, _user_id):
+        """
+
+        """
+        data_store = DataStore('homeworks')
+
+        homeworks_list_data = data_store.get_rows({'id_user': _user_id, 'status': True})
+        homeworks_list = []
+        if homeworks_list_data:
+            for homework_data in homeworks_list_data:
+                homeworks_list.append(self.homework_row_to_homework(homework_data))
+
+        return homeworks_list
