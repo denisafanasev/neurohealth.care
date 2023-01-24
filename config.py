@@ -4,7 +4,7 @@ app configuration
 import yaml
 import pathlib
 
-VERSION = "1.2.8"
+VERSION = "1.2.9"
 APP_NAME = "NeuroHealth"
 
 if str(pathlib.Path().resolve()).find("prod")!=-1:
