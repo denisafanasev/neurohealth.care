@@ -177,7 +177,7 @@ class HomeworksService():
 
     def get_lessons_by_id_course(self, _id_course):
         """
-        Возвращает данные всех уроков, которые есть в базе данных
+        Возвращает все уроки курса, у которых есть задание
 
         Return:
             List(Lesson): список уроков
@@ -277,14 +277,6 @@ class HomeworksService():
         homework_manager = HomeworkManager()
 
         count_accepted_homework = 0
-        # for lesson in _id_lessons_list:
-        #     if lesson.task:
-        #         is_accepted_homework = homework_manager.is_accepted_homework(_user_id, lesson.id)
-        #         if is_accepted_homework:
-        #             count_accepted_homework += 1
-        #         else:
-        #             count_no_accepted_homework += 1
-
         homeworks_list = homework_manager.get_accepted_homeworks(_user_id)
         for homework in homeworks_list:
             if homework.id_lesson in _id_lessons_list:

@@ -240,6 +240,8 @@ class EducationHomeTasksPageController():
                 "id": user_data.user_id,
                 'name': user_data.name
             }
+            # проверяем есть ли непрочитанные сообщения у текущего пользователя и
+            # сколько принято/не принято домашних работ у пользователей потока
             for lesson in lessons_list:
                 user_view['is_unread_message'] = homeworks_service.is_unread_messages(lesson.id, user_data.user_id, _current_user_id)
                 if user_view['is_unread_message']:

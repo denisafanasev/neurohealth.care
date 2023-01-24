@@ -733,33 +733,43 @@ def education_home_tasks():
     education_streams_list = page_controller.get_education_streams_list()
     user_id = request.args.get('user_id')
     data_option = session.get('data_option')
-    if data_option is not None:
-        session.pop('data_option')
 
     id_education_stream = request.args.get('education_stream_id')
+    # если ID обучающего потока не найден, то берем ID первого обучающего потока из списка
     if id_education_stream is None:
         id_education_stream = education_streams_list[0]['id']
     else:
         id_education_stream = int(id_education_stream)
 
     if request.method == 'POST':
-        if user_id is not None:
+        if request.form.get('button') is not None:
+            if data_option is not None:
+                session.pop('data_option')
+
+            user_id = int(request.form.get('button'))
+
+        elif user_id is not None:
             session['data_option'] = request.form.get('data_option')
 
         return redirect(f'/education_home_tasks?education_stream_id={id_education_stream}&user_id={user_id}')
 
     user = None
     data = None
-
     current_education_stream = page_controller.get_current_education_stream(id_education_stream, current_user_id)
+    # если есть ID пользователя, то возвращаем список домашних работ по фильтрам
+    # (по умолчанию - непроверенные домашние работы)
     if user_id is not None:
         user = page_controller.get_user(user_id)
+        # список чатов по урокам, по которым не сданы домашние работы
         if data_option == 'chat_without_homework':
             data = page_controller.get_chat_without_homework(current_user_id, id_education_stream, user_id)
+        # список проверенных домашних работ
         elif data_option == 'homework_verified':
             data = page_controller.get_homework_verified(current_user_id, id_education_stream, user_id)
+        # список непроверенных домашних работ
         else:
             data = page_controller.get_data(current_user_id, id_education_stream, user_id)
+            data_option = 'education_home_tasks'
 
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,

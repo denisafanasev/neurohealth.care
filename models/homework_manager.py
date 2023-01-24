@@ -188,7 +188,13 @@ class HomeworkManager():
 
     def get_accepted_homeworks(self, _user_id):
         """
+        Возвращает список принятых домашних работ у пользователя
 
+        Args:
+            _user_id(Int): ID пользователя
+
+        Returns:
+            List(Homework): список принятых домашних работ
         """
         data_store = DataStore('homeworks')
 

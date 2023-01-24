@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
 {% block main_block %}
-{#    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">#}
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.1.4/css/rowGroup.dataTables.min.css">
+
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="{{ url_for('static' , filename="js/datatables.js")}}"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
@@ -17,26 +17,23 @@
             $("#datatables-homeworks").DataTable({
                 responsive: true,
                 lengthChange: !1,
-                {#scrollY: "500px",#}
-                {#scrollCollapse: true,#}
-                scrollX: true,
                 paging: true,
                 fixedHeader: false,
                 fixedColumns: false,
                 pageLength: 10,
                 ordering: true,
-                orderMulti: true,
-                orderFixed: [[0, 'asc'], [1 , "asc"]],
+                orderMulti: false,
+                orderFixed: [[0, 'asc']],
                 rowGroup: {
-                    dataSrc: [0]
+                    dataSrc: [2]
                 },
                 columnDefs: [
                     {
-                        "targets": [ 0 ],
+                        "targets": [ 0, 1, 2 ],
                         "visible": false
                     },
                     {
-                      "targets": 2 ,
+                      "targets": 4 ,
                       "sType": "date-uk"
                     }
                 ]
@@ -70,12 +67,33 @@
         });
     </script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script>
+        $(document).ready(function() {
+            {#$('#teacher').select2({#}
+            {#    placeholder: "Выберите преподавателя",#}
+            {#    maximumSelectionLength: 2,#}
+            {#    language: "ru",});#}
+            const  education_stream_list  =  new  Choices ( $ ( '#education_stream_list' ) [ 0 ] ) ;
 
+        });
+        $(document).ready(function() {
+            {#$('#course_list').select2({#}
+            {#    placeholder: "Выберите преподавателя",#}
+            {#    maximumSelectionLength: 2,#}
+            {#    language: "ru"});#}
+        });
     </script>
     <style>
-    .dataTables_scroll{
-        overflow: auto;
+    .btn-outline-primary{
+        border:none;
+        color: #3b7ddd!important;
+        --bs-btn-hover-bg: none;
+        --bs-btn-active-bg: none;
+        --bs-btn-border: none;
+        --bs-btn-focus-box-shadow: none;
+        text-align: start
     }
     </style>
 
@@ -87,36 +105,31 @@
 
 
         <form method="post" enctype="multipart/form-data" class="row">
-            <div class="col-sm-12 col-md-5 col-xl-4 border card">
-
-                <div class="d-md-block border-bottom m-2">
+        <!--Карточка для выбора обучающего потока и пользователя из соответствующих списков -->
+            <div class="col-md-4 border card">
+                <!--Select со списком обучающих потоков -->
+                <div class="d-md-block border-bottom">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
-                            <div class="row">
-                                <h3 class="form-label">Поток</h3>
-                                <select class="form-select" onchange="top.location.href = this.options[this.selectedIndex].value;" name="education_stream" id="education_stream">
+
+                                <label class="form-label" for="education_stream_list"><h3>Поток</h3></label>
+                                <select class="form-select" onchange="top.location.href = this.options[this.selectedIndex].value;" name="education_stream" id="education_stream_list">
                                     {% for education_stream in _education_streams_list %}
                                         <option {% if education_stream['id'] == _id_education_stream %}selected{% endif %}
                                                 value="{{ url_for('education_home_tasks', education_stream_id=education_stream['id']) }}">{{ education_stream['name'] }}</option>
                                     {% endfor %}
                                 </select>
-{#                                <select class="form-select" name="education_stream" id="education_stream">#}
-{#                                    {% for education_stream in _education_streams_list %}#}
-{#                                        <option {% if education_stream['id'] == _id_education_stream %}selected{% endif %}>#}
-{#                                            <a href="{{ url_for('education_home_tasks', education_stream_id=_id_education_stream) }}">{{ education_stream['name'] }}</a>#}
-{#                                        </option>#}
-{#                                    {% endfor %}#}
-{#                                </select>#}
-                            </div>
+
                         </div>
                     </div>
                 </div>
+                <!--Таблица с пользователями из обучающего потока -->
                 <div style="width: 100%">
                     <h3>Список учеников</h3>
                     <table id="users_list" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
                     <thead>
                         <tr>
-                            <th class="sorting" style="width:30%" tabindex="0" aria-controls="datatables-homeworks"
+                            <th class="sorting" style="width:35%" tabindex="0" aria-controls="datatables-homeworks"
                                     aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Имя пользователя</th>
                             <th class="sorting text-center" style="width:35%" tabindex="0" aria-controls="datatables-homeworks"
                                 aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Домашние работы</th>
@@ -128,9 +141,9 @@
                         {% for user in _current_education_stream['students_list'] %}
                             <tr>
                                 <td>
-                                    <a href="{{ url_for('education_home_tasks', education_stream_id=_id_education_stream, user_id=user['id']) }}" class="border-0">
+                                    <button name="button" type="submit" value="{{ user['id'] }}" class="btn btn-sm btn-outline-primary">
                                             {{ user['name'] }}
-                                    </a>
+                                    </button>
                                 </td>
                                 <td>Сдано: {{ user['amount_accepted_homeworks'] }}/ Не сдано: {{ user['amount_no_accepted_homeworks'] }}</td>
                                 <td class="text-center">{% if user['is_unread_message'] is true %}<span class="fas fa-circle chat-offline"></span>{% endif %}</td>
@@ -141,16 +154,18 @@
                 </div>
                 <hr class="d-block d-lg-none mt-1 mb-0" />
             </div>
-            <div class="col-sm-12 col-md col-xl-8 border card">
+        <!--Карточка с фильтрами для домашних заданий и таблицей с ответами на домашние задания от пользователя из потока -->
+            <div class="col-md border card">
                 <div class="py-2 px-4 mb-2 border-bottom d-none d-lg-block">
                     <div class="d-flex align-items-center py-1 row">
                         {% if _current_education_stream['course_name'] is not none %}
                             <div class="flex-grow-1 mb-2">
                                 <h3>{{ _current_education_stream['course_name'] }}</h3>
-                                <p>Ученик: {% if _user is not none %}({{ _user['name'] }}){% endif %}</p>
+                                <p>Ученик: {% if _user is not none %}{{ _user['name'] }}{% endif %}</p>
                             </div>
 
                         {% endif %}
+                    <!--Фильтры для домашних работ -->
                         <div>
                             <input id="chat_without_homework" class="pb-1 form-check-input" type="radio"
                                    {% if _user is none %}disabled{% endif %}
@@ -177,6 +192,8 @@
                            aria-describedby="datatables-buttons_info" style="width: 100%; font-size: 13px">
                         <thead>
                             <tr role="row">
+                                <th rowspan="1" colspan="1" style="width: 5%"></th>
+                                <th rowspan="1" colspan="1" style="width: 30%"></th>
                                 <th rowspan="1" colspan="1" style="width: 5%">Модуль</th>
                                 <th rowspan="1" colspan="1" style="width: 30%">Урок</th>
                                 <th class="sorting" style="width:10%" tabindex="0" aria-controls="datatables-homeworks"
@@ -197,8 +214,10 @@
                                 {% if item['homework_list'] is not none %}
                                     {% for homework in item['homework_list'] %}
                                         <tr>
-                                            <td data-value="{{ item['module']['id'] }}">{{ item['module']['name'] }}</td>
-                                            <td style="white-space: break-spaces" data-value="{{ item['lesson']['id'] }}">Урок: {{ item['lesson']['name'] }}</td>
+                                            <td>{{ item['module']['id'] }}</td>
+                                            <td>{{ item['lesson']['id'] }}</td>
+                                            <td>{{ item['module']['name'] }}</td>
+                                            <td style="white-space: break-spaces">Урок: {{ item['lesson']['name'] }}</td>
                                             <td>{{ homework['date_delivery'] }}</td>
                                             <td style="text-align: center">
                                                 <div class='badge {% if homework['status'] == "Не проверено" %} bg-info {% else %} bg-success {% endif %} bg-gradient text-light'>
@@ -236,8 +255,10 @@
                                     {% endfor %}
                                 {% else %}
                                     <tr>
-                                        <td data-value="{{ item['module']['id'] }}">{{ item['module']['name'] }}</td>
-                                        <td style="white-space: break-spaces" data-value="{{ item['lesson']['id'] }}">Урок: {{ item['lesson']['name'] }}</td>
+                                        <td>{{ item['module']['id'] }}</td>
+                                        <td>{{ item['lesson']['id'] }}</td>
+                                        <td>{{ item['module']['name'] }}</td>
+                                        <td style="white-space: break-spaces">Урок: {{ item['lesson']['name'] }}</td>
                                         <td></td>
                                         <td>
                                             <div class='badge bg-warning bg-gradient text-light'>
