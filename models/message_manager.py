@@ -105,3 +105,24 @@ class MessageManager():
                 amount += 1
 
         return amount
+
+    def is_unread_messages(self, _id_homework_chat, _id_user):
+        """
+        Возвращает True, если есть хотя бы одно непрочитанное сообщение
+
+        Args:
+            _id_homework_chat(Integer): ID комнаты чата
+            _id_user(Integer): ID текущего пользователя
+
+        Return:
+            Integer: количество непрочитанных сообщений
+        """
+
+        data_store = DataStore("message")
+
+        messages_data_list = data_store.get_rows({"read": False, "id_homework_chat": _id_homework_chat})
+        for message_data in messages_data_list:
+            if message_data['id_user'] != _id_user:
+                return True
+
+        return False

@@ -18,40 +18,6 @@ class HomeworksService():
     Взаимодейтвует с классами слоя моделей, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def get_homeworks_list(self):
-        """
-        Возвращает список домашних работ пользователей
-
-        Returns:
-            List: список домашних работ
-        """
-
-        homework_manager = HomeworkManager()
-
-        homework_list = homework_manager.get_homeworks()
-
-        return homework_list
-
-    def get_course(self, _id_lesson):
-        """
-        Возвращает данные курса
-
-        Args:
-            _id_lesson(Int): id урока
-
-        Returns:
-            Course: курс
-        """
-
-        course_manager = EducationCourseManager()
-        module_manager = EducationModuleManager()
-        lesson_manager = EducationLessonManager()
-
-        lesson = lesson_manager.get_lesson_by_id(_id_lesson)
-        module = module_manager.get_module_by_id(lesson.id_module)
-
-        return course_manager.get_course_by_id(module.id_course)
-
     def get_lesson(self, _id_lesson):
         """
         Возвращает данные урока
@@ -72,11 +38,32 @@ class HomeworksService():
 
         return module
 
-    # def get_education_stream(self, _id_education_stream):
-    #
-    #     stream_service = education_stream_service.EducationStreamService()
-    #
-    #     return stream_service.get_education_stream(_id_education_stream)
+    def get_education_stream(self, _id_education_stream):
+        """
+        Возвращает данные обучающего потока по его ID
+
+        Args:
+            _id_education_stream(Int): ID
+
+        Returns:
+            EducationStream: обучающий поток
+        """
+
+        education_stream_manager = EducationStreamManager()
+        user_manager = UserManager()
+        course_manager = EducationCourseManager()
+
+        education_stream = education_stream_manager.get_education_stream(_id_education_stream)
+        students_list = []
+        for user_id in education_stream.students_list:
+            user = user_manager.get_user_by_id(user_id)
+            if user is not None:
+                students_list.append(user)
+
+        education_stream.students_list = students_list
+        education_stream.course = course_manager.get_course_by_id(education_stream.course)
+
+        return education_stream
 
     def get_user_by_id(self, _id_user):
         """
@@ -115,36 +102,7 @@ class HomeworksService():
 
         return homework_chat
 
-    def get_courses_list(self):
-        """
-        Возвращает список основных курсов и их модули
-
-        Returns:
-            List: список курсов
-        """
-        course_manager = EducationCourseManager()
-        module_manager = EducationModuleManager()
-        lesson_manager = EducationLessonManager()
-
-        courses_list = course_manager.get_courses()
-        if courses_list is not None:
-            courses = []
-            for i_course in courses_list:
-                # нужны только основные курсы, так как только по ним сдаются домашние работы
-                if i_course.type == 'main':
-                    modules_list = module_manager.get_course_modules_list(i_course.id)
-                    if modules_list is not None:
-                        modules = []
-                        for i_module in modules_list:
-                            i_module.lessons = lesson_manager.get_lessons_list_by_id_module(i_module.id)
-                            modules.append(i_module)
-
-                    i_course.modules = modules_list
-                    courses.append(i_course)
-
-            return courses
-
-    def get_users_list_in_education_streams(self, _id_education_stream):
+    def get_users_list_in_education_streams_file(self, _id_education_stream):
         """
         Возвращает список пользователей, которые находятся в обучающем потоке
 
@@ -156,18 +114,6 @@ class HomeworksService():
         users_login_list = []
         with open(config.DATA_FOLDER + f'course_1/s{_id_education_stream}_users.txt') as f:
             users_login_list.extend(f.read().splitlines())
-
-        # with open(config.DATA_FOLDER + 'course_1/s4_users.txt') as f:
-        #     users_login_list.extend(f.read().splitlines())
-        #
-        # with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
-        #     users_login_list.extend(f.read().splitlines())
-        #
-        # with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
-        #     users_login_list.extend(f.read().splitlines())
-        #
-        # with open(config.DATA_FOLDER + 'course_1/s1_users.txt') as f:
-        #     users_login_list.extend(f.read().splitlines())
 
         users_list = []
         for user_login in users_login_list:
@@ -229,16 +175,25 @@ class HomeworksService():
         if homework_list:
             return homework_list
 
-    def get_lessons(self):
+    def get_lessons_by_id_course(self, _id_course):
         """
-        Возвращает данные всех уроков, которые есть в базе данных
+        Возвращает все уроки курса, у которых есть задание
 
         Return:
             List(Lesson): список уроков
         """
         lesson_manager = EducationLessonManager()
+        module_manager = EducationModuleManager()
 
-        return lesson_manager.get_lessons()
+        modules_list = module_manager.get_course_modules_list(_id_course)
+        lessons_list = []
+        for module in modules_list:
+            lessons_list_data = lesson_manager.get_lessons_list_by_id_module(module.id)
+            for lesson in lessons_list_data:
+                if lesson.task is not None:
+                    lessons_list.append(lesson)
+
+        return lessons_list
 
     def get_module_by_id(self, _id):
         """
@@ -281,3 +236,52 @@ class HomeworksService():
         education_stream = EducationStreamManager()
 
         return education_stream.get_education_streams()
+
+    def is_unread_messages(self, _lesson_id, _user_id, _current_user_id):
+        """
+        Возвращает True, если есть хотя бы одно непрочитанное сообщение
+
+        Args:
+            _lesson_id(Int): ID урока
+            _user_id(Int): ID пользователя
+            _current_user_id(Int): ID текущего пользователя
+
+        Returns:
+            List(User): список пользователей
+        """
+
+        homework_chat_manager = HomeworkChatManager()
+        message_manager = MessageManager()
+
+        homework_chat = homework_chat_manager.get_homework_chat(_user_id, _lesson_id)
+        if homework_chat is not None:
+            is_unread_message = message_manager.is_unread_messages(homework_chat.id, _current_user_id)
+            if is_unread_message:
+                return True
+
+        return False
+
+    def get_amount_accepted_homework(self, _user_id, _id_lessons_list):
+        """
+        Возвращает количества принятых/не принятых домашних работ у пользователя
+
+        Args:
+            _user_id(Int): ID пользователя
+            _id_lessons_list(List): список ID уроков курса
+
+        Returns:
+            count_accepted_homework(Int): количество принятых домашних работ
+            count_no_accepted_homework(Int): количество не принятых домашних работ
+        """
+
+        homework_manager = HomeworkManager()
+
+        count_accepted_homework = 0
+        homeworks_list = homework_manager.get_accepted_homeworks(_user_id)
+        for homework in homeworks_list:
+            if homework.id_lesson in _id_lessons_list:
+                count_accepted_homework += 1
+
+        count_no_accepted_homework = len(_id_lessons_list) - count_accepted_homework
+
+        return count_accepted_homework, count_no_accepted_homework
