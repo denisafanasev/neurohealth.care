@@ -36,7 +36,8 @@
                       "targets": 4 ,
                       "sType": "date-uk"
                     }
-                ]
+                ],
+                buttons: true
             });
 
             $("#users_list").DataTable({
@@ -85,6 +86,16 @@
             {#    language: "ru"});#}
         });
     </script>
+    <script>
+    function button_click(id){
+        {#const button = document.getElementById(id)#}
+        {#return document.querySelector(id).click()#}
+        var about = document.querySelector('input[name=user_id]');
+        about.value = id;
+        var form = document.querySelector('form[name=form]')
+        HTMLFormElement.prototype.submit.call(form);
+    }
+    </script>
     <style>
     .btn-outline-primary{
         border:none;
@@ -104,7 +115,7 @@
         </div>
 
 
-        <form method="post" enctype="multipart/form-data" class="row">
+        <form name="form" method="post" enctype="multipart/form-data" class="row">
         <!--Карточка для выбора обучающего потока и пользователя из соответствующих списков -->
             <div class="col-md-4 border card">
                 <!--Select со списком обучающих потоков -->
@@ -126,6 +137,7 @@
                 <!--Таблица с пользователями из обучающего потока -->
                 <div style="width: 100%">
                     <h3>Список учеников</h3>
+                    <input type="hidden" name="user_id">
                     <table id="users_list" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
                     <thead>
                         <tr>
@@ -139,9 +151,9 @@
                     </thead>
                         <tbody>
                         {% for user in _current_education_stream['students_list'] %}
-                            <tr>
+                            <tr onclick="button_click({{ user['id'] }});">
                                 <td>
-                                    <button name="button" type="submit" value="{{ user['id'] }}" class="btn btn-sm btn-outline-primary">
+                                    <button id="user_{{ user['id'] }}" name="button" type="submit" value="{{ user['id'] }}" class="btn btn-sm btn-outline-primary">
                                             {{ user['name'] }}
                                     </button>
                                 </td>

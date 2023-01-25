@@ -742,11 +742,11 @@ def education_home_tasks():
         id_education_stream = int(id_education_stream)
 
     if request.method == 'POST':
-        if request.form.get('button') is not None:
+        if request.form.get('user_id') is not None:
             if data_option is not None:
                 session.pop('data_option')
 
-            user_id = int(request.form.get('button'))
+            user_id = int(request.form.get('user_id'))
 
         elif user_id is not None:
             session['data_option'] = request.form.get('data_option')
