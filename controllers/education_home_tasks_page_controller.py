@@ -237,7 +237,7 @@ class EducationHomeTasksPageController():
         id_lessons_list = [lesson.id for lesson in lessons_list]
         for user_data in education_stream.students_list:
             user_view = {
-                "id": user_data.user_id,
+                "user_id": user_data.user_id,
                 'name': user_data.name
             }
             # проверяем есть ли непрочитанные сообщения у текущего пользователя и
@@ -267,7 +267,7 @@ class EducationHomeTasksPageController():
 
         user = homeworks_service.get_user_by_id(_user_id)
         user_view = {
-            'id': user.user_id,
+            'user_id': user.user_id,
             'name': user.name
         }
 
