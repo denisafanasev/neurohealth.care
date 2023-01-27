@@ -759,7 +759,7 @@ def education_home_tasks():
     if user_id is not None:
         user = page_controller.get_user(user_id)
     else:
-        user = page_controller.get_user(current_education_stream['students_list'][0]['id'])
+        user = page_controller.get_user(current_education_stream['students_list'][0]['user_id'])
 
     # список чатов по урокам, по которым не сданы домашние работы
     if data_option == 'chat_without_homework':

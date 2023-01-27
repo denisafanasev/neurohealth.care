@@ -48,6 +48,13 @@
                 scrollY: '600px',
                 {#searching: true,#}
                 select: true,
+                orderFixed: [[0, 'asc']],
+                columnDefs: [
+                    {
+                        "targets": [0],
+                        "visible": false
+                    },
+                ]
             });
 
             jQuery.extend( jQuery.fn.dataTableExt.oSort, {
@@ -80,9 +87,6 @@
     function button_click(id)
     {
         <!--Присваиваем input ID выбранного пользователя и после вызываем событие submit для отправки данных-->
-        var elem = document.querySelector('a[id=user_'+id+']');
-        elem.style.color = 'white!important;';
-
         var about = document.querySelector('input[name=user_id]');
         about.value = id;
 
@@ -100,11 +104,9 @@
         --bs-btn-focus-box-shadow: none;
         text-align: start
     }
-    a:hover{
-            color: white;
-            text-decoration: none;
-        }
-    {#th.sorting input {display: inline }#}
+    tr.selected a{
+        color: #fff!important;
+    }
     </style>
 
     <div class="container-fluid p-0">
@@ -116,20 +118,18 @@
 
         <form name="form" method="post" enctype="multipart/form-data" class="row">
         <!--Карточка для выбора обучающего потока и пользователя из соответствующих списков -->
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-4 col-lg-4">
                 <!--Select со списком обучающих потоков -->
                 <div class="border card">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1 m-2">
-
-                                <label class="form-label" for="education_stream_list"><h3>Поток</h3></label>
-                                <select class="form-select" onchange="top.location.href = this.options[this.selectedIndex].value;" name="education_stream" id="education_stream_list">
-                                    {% for education_stream in _education_streams_list %}
-                                        <option {% if education_stream['id'] == _id_education_stream %}selected{% endif %}
-                                                value="{{ url_for('education_home_tasks', education_stream_id=education_stream['id']) }}">{{ education_stream['name'] }}</option>
-                                    {% endfor %}
-                                </select>
-
+                            <label class="form-label" for="education_stream_list"><h3>Поток</h3></label>
+                            <select class="form-select" onchange="top.location.href = this.options[this.selectedIndex].value;" name="education_stream" id="education_stream_list">
+                                {% for education_stream in _education_streams_list %}
+                                    <option {% if education_stream['id'] == _id_education_stream %}selected{% endif %}
+                                            value="{{ url_for('education_home_tasks', education_stream_id=education_stream['id']) }}">{{ education_stream['name'] }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -141,6 +141,8 @@
                         <table id="users_list" class="table table-striped dataTable no-footer dtr-inline mx-1" style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
                         <thead>
                             <tr>
+                                <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
+                                        aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">#</th>
                                 <th class="sorting" style="width:35%" tabindex="0" aria-controls="datatables-homeworks"
                                         aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Имя пользователя</th>
                                 <th class="sorting text-center" style="width:40%" tabindex="0" aria-controls="datatables-homeworks"
@@ -155,11 +157,9 @@
                                         {% if _user['user_id'] == user['user_id'] %}
                                             class="selected"
                                         {% endif %}>
+                                    <td>{{ user['user_id'] }}</td>
                                     <td>
-                                        <a id="user_{{ user['user_id'] }}" class="btn btn-sm"
-                                        {% if _user['user_id'] == user['user_id'] %}
-                                            style="color: #fff!important;"
-                                        {% endif %}>
+                                        <a id="user_{{ user['user_id'] }}">
                                             {{ user['name'] }}
                                         </a>
                                     </td>
@@ -173,7 +173,7 @@
                 </div>
             </div>
         <!--Карточка с фильтрами для домашних заданий и таблицей с ответами на домашние задания от пользователя из потока -->
-            <div class="col-12 col-md">
+            <div class="col-12 col-md col-lg">
                 <div class="col-12 border card py-2" style="height: 100%">
                     <div class="mx-2 mb-2 border-bottom">
                         <div class="align-items-center row">
