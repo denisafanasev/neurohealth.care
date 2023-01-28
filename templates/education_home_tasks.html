@@ -95,9 +95,9 @@
     }
     </script>
     <style>
-    .btn{
+    a.student{
         border:none;
-        color: #3b7ddd;
+        color: #3b7ddd!important;
         --bs-btn-hover-bg: none;
         --bs-btn-active-bg: none;
         --bs-btn-border: none;
@@ -159,7 +159,7 @@
                                         {% endif %}>
                                     <td>{{ user['user_id'] }}</td>
                                     <td>
-                                        <a id="user_{{ user['user_id'] }}">
+                                        <a id="user_{{ user['user_id'] }}" class="student">
                                             {{ user['name'] }}
                                         </a>
                                     </td>

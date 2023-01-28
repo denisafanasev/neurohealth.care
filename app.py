@@ -738,16 +738,17 @@ def education_home_tasks():
     # если ID обучающего потока не найден, то берем ID первого обучающего потока из списка
     if id_education_stream is None:
         id_education_stream = education_streams_list[0]['id']
+
+        return redirect(f'/education_home_tasks?education_stream_id={id_education_stream}')
     else:
         id_education_stream = int(id_education_stream)
 
     if request.method == 'POST':
-        if request.form.get('user_id') is not None:
+        if request.form.get('user_id') != '':
             if data_option is not None:
                 session.pop('data_option')
 
-            user_id = int(request.form.get('user_id'))
-
+            user_id = request.form.get('user_id')
         elif user_id is not None:
             session['data_option'] = request.form.get('data_option')
 
@@ -759,7 +760,10 @@ def education_home_tasks():
     if user_id is not None:
         user = page_controller.get_user(user_id)
     else:
-        user = page_controller.get_user(current_education_stream['students_list'][0]['user_id'])
+        if id_education_stream is not None:
+            user_id = current_education_stream['students_list'][0]['user_id']
+
+            return redirect(f'/education_home_tasks?education_stream_id={id_education_stream}&user_id={user_id}')
 
     # список чатов по урокам, по которым не сданы домашние работы
     if data_option == 'chat_without_homework':
