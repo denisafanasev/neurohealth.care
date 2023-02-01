@@ -762,6 +762,8 @@ def education_home_tasks():
     else:
         if id_education_stream is not None:
             user_id = current_education_stream['students_list'][0]['user_id']
+            if data_option is not None:
+                session.pop('data_option')
 
             return redirect(f'/education_home_tasks?education_stream_id={id_education_stream}&user_id={user_id}')
 
