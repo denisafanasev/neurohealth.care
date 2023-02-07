@@ -775,7 +775,7 @@ def education_home_tasks():
         data = page_controller.get_homework_verified(current_user_id, id_education_stream, user_id)
     # список непроверенных домашних работ
     else:
-        data = page_controller.get_data(current_user_id, id_education_stream, user_id)
+        data = page_controller.get_homework_no_verified(current_user_id, id_education_stream, user_id)
         data_option = 'education_home_tasks'
 
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
