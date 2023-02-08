@@ -208,7 +208,7 @@ class UserProfileService():
 
         education_streams_list = []
         for education_stream in education_streams:
-            education_stream.teacher = user_manager.get_user_by_id(education_stream.teacher).name
+            education_stream.teacher = user_manager.get_user_by_id(education_stream.teacher)
             education_stream.course = course_manager.get_course_by_id(education_stream.course).name
             education_streams_list.append(education_stream)
 

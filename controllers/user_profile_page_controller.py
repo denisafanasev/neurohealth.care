@@ -212,16 +212,27 @@ class UserProfilePageController():
         user_profile_service = UserProfileService()
 
         education_streams_list = user_profile_service.get_education_streams_list(_user_id, _role_user)
+        role_selected_user = ''
+        if _role_user == 'user':
+            role_selected_user = 'учащийся'
+
         education_streams_list_view = []
         for education_stream in education_streams_list:
+            if _role_user == 'superuser':
+                if _user_id == education_stream.teacher.user_id:
+                    role_selected_user = 'учитель'
+                else:
+                    role_selected_user = 'куратор'
+
             education_stream_view = {
                 'id': education_stream.id,
                 'name': education_stream.name,
                 'course': education_stream.course,
                 'date_start': education_stream.date_start.strftime('%d/%m/%Y'),
                 'date_end': education_stream.date_end.strftime('%d/%m/%Y'),
-                'teacher': education_stream.teacher,
-                'status': education_stream.status
+                'teacher': education_stream.teacher.name,
+                'status': education_stream.status,
+                'role_selected_user': role_selected_user
             }
 
             education_streams_list_view.append(education_stream_view)

@@ -10,13 +10,14 @@ class EducationHomeTasksPageController():
     Взаимодейтвует с классами слоя сервисов, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def get_data(self, _id_current_user, _id_education_stream, _id_user):
+    def get_homework_no_verified(self, _id_current_user, _id_education_stream, _id_user):
         """
         Возвращает данные курсов и домашних заданий
 
         Args:
             _id_current_user(Integer): ID текущего пользователя
             _id_education_stream(Integer): ID образовательного потока
+            _id_user(Integer): ID пользователя, чьи ответы на домашние работы запросили
 
         Returns:
             List: данные
@@ -37,57 +38,20 @@ class EducationHomeTasksPageController():
                 continue
 
             homework_chat = homeworks_service.get_homework_chat(lesson.id, user.user_id, _id_current_user)
-            data = {}
-            if homework_list is not None:
-                data['homework_list'] = []
-                for homework in homework_list:
-                    if homework is not None:
-                        if homework.status is None:
-                            homework.status = "Не проверено"
-                        elif homework.status:
-                            homework.status = "Принято"
-                        else:
-                            homework.status = "Не принято"
-                    homework = {
-                        "id": homework.id,
-                        "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
-                        "status": homework.status,
-                    }
+            data = self.get_view_data(homework_list, homework_chat, module, lesson)
 
-                    data['homework_list'].append(homework)
-
-            else:
-                continue
-
-            if homework_chat is not None:
-                data['homework_chat'] = {
-                    "id": homework_chat.id,
-                    "unread_message_amount": homework_chat.unread_message_amount
-                }
-            else:
-                data['homework_chat'] = None
-
-            if data['homework_list'] is not None or data['homework_chat'] is not None:
-                data['module'] = {
-                    "id": module.id,
-                    "name": module.name
-                }
-                data['lesson'] = {
-                    "id": lesson.id,
-                    "name": lesson.name,
-                }
-
-                data_list.append(data)
+            data_list.append(data)
 
         return data_list
 
     def get_chat_without_homework(self, _id_current_user, _id_education_stream, _id_user):
         """
-        Возвращает данные курсов, домашних заданий и чатов
+        Возвращает чаты, по урокам которых не были сданы домашние работы
 
         Args:
             _id_current_user(Integer): ID текущего пользователя
             _id_education_stream(Integer): ID образовательного потока
+            _id_user(Integer): ID пользователя, чьи ответы на домашние работы запросили
 
         Returns:
             List: данные
@@ -108,20 +72,7 @@ class EducationHomeTasksPageController():
             if homework_chat is None:
                 continue
 
-            data = {}
-            data['homework_list'] = None
-            data['homework_chat'] = {
-                "id": homework_chat.id,
-                "unread_message_amount": homework_chat.unread_message_amount
-            }
-            data['module'] = {
-                "id": module.id,
-                "name": module.name
-            }
-            data['lesson'] = {
-                "id": lesson.id,
-                "name": lesson.name,
-            }
+            data = self.get_view_data(homework_list, homework_chat, module, lesson)
 
             data_list.append(data)
 
@@ -129,11 +80,12 @@ class EducationHomeTasksPageController():
 
     def get_homework_verified(self, _id_current_user, _id_education_stream, _id_user):
         """
-        Возвращает данные курсов, домашних заданий и чатов
+        Возвращает данные проверенных домашних работ пользователя
 
         Args:
             _id_current_user(Integer): ID текущего пользователя
             _id_education_stream(Integer): ID образовательного потока
+            _id_user(Integer): ID пользователя, чьи ответы на домашние работы запросили
 
         Returns:
             List: данные
@@ -151,45 +103,64 @@ class EducationHomeTasksPageController():
                 continue
 
             homework_chat = homeworks_service.get_homework_chat(lesson.id, user.user_id, _id_current_user)
-            data = {}
-            if homework_list is not None:
-                data['homework_list'] = []
-                for homework in homework_list:
-                    if homework is not None:
-                        if homework.status:
-                            homework.status = "Принято"
-                        else:
-                            homework.status = "Не принято"
+            data = self.get_view_data(homework_list, homework_chat, module, lesson)
 
-                    homework = {
-                        "id": homework.id,
-                        "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
-                        "status": homework.status,
-                    }
-
-                    data['homework_list'].append(homework)
-
-            if homework_chat is not None:
-                data['homework_chat'] = {
-                    "id": homework_chat.id,
-                    "unread_message_amount": homework_chat.unread_message_amount
-                }
-            else:
-                data['homework_chat'] = None
-
-            if data['homework_list'] is not None or data['homework_chat'] is not None:
-                data['module'] = {
-                    "id": module.id,
-                    "name": module.name
-                }
-                data['lesson'] = {
-                    "id": lesson.id,
-                    "name": lesson.name,
-                }
-
-                data_list.append(data)
+            data_list.append(data)
 
         return data_list
+
+    def get_view_data(self, _homework_list, _homework_chat, _module, _lesson):
+        """
+        Возвращает представление домашних работ, чатов, модулей и уроков пользователя
+
+        Args:
+            _homework_list(List): список домашних работ по уроку
+            _homework_chat(HomeworkChat): чат
+            _module(Module): модуль
+            _lesson(Lesson): урок, по которому сдали домашние работы пользователь
+
+        Returns:
+            data_view: представление данных
+        """
+
+        data_view = {'homework_list': []}
+        if _homework_list is None:
+            data_view['homework_list'] = None
+        else:
+            for homework in _homework_list:
+                if homework is not None:
+                    if homework.status:
+                        homework.status = "Принято"
+                    else:
+                        homework.status = "Не принято"
+
+                homework = {
+                    "id": homework.id,
+                    "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
+                    "status": homework.status,
+                }
+
+                data_view['homework_list'].append(homework)
+
+        if _homework_chat is not None:
+            data_view['homework_chat'] = {
+                "id": _homework_chat.id,
+                "unread_message_amount": _homework_chat.unread_message_amount
+            }
+        else:
+            data_view['homework_chat'] = None
+
+        if data_view['homework_list'] is not None or data_view['homework_chat'] is not None:
+            data_view['module'] = {
+                "id": _module.id,
+                "name": _module.name
+            }
+            data_view['lesson'] = {
+                "id": _lesson.id,
+                "name": _lesson.name,
+            }
+
+        return data_view
 
     def get_education_streams_list(self):
         """
@@ -237,7 +208,7 @@ class EducationHomeTasksPageController():
         id_lessons_list = [lesson.id for lesson in lessons_list]
         for user_data in education_stream.students_list:
             user_view = {
-                "id": user_data.user_id,
+                "user_id": user_data.user_id,
                 'name': user_data.name
             }
             # проверяем есть ли непрочитанные сообщения у текущего пользователя и
@@ -267,7 +238,7 @@ class EducationHomeTasksPageController():
 
         user = homeworks_service.get_user_by_id(_user_id)
         user_view = {
-            'id': user.user_id,
+            'user_id': user.user_id,
             'name': user.name
         }
 
