@@ -129,7 +129,9 @@ class EducationHomeTasksPageController():
         else:
             for homework in _homework_list:
                 if homework is not None:
-                    if homework.status:
+                    if homework.status is None:
+                        homework.status = "Не проверено"
+                    elif homework.status:
                         homework.status = "Принято"
                     else:
                         homework.status = "Не принято"
