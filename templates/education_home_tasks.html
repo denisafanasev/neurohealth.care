@@ -14,7 +14,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // DataTables with Buttons
-            $("#datatables-homeworks").DataTable({
+            var homeworks_table = $("#datatables-homeworks").DataTable({
                 responsive: true,
                 lengthChange: !1,
                 paging: true,
@@ -107,6 +107,10 @@
     tr.selected a{
         color: #fff!important;
     }
+    tr.dtrg-group td {
+        white-space: break-spaces!important;
+    }
+
     </style>
 
     <div class="container-fluid p-0">
@@ -118,7 +122,7 @@
 
         <form name="form" method="post" enctype="multipart/form-data" class="row">
         <!--Карточка для выбора обучающего потока и пользователя из соответствующих списков -->
-            <div class="col-12 col-md-4 col-lg-4">
+            <div class="col-12 col-sm col-lg-4" style="margin-bottom: 2%;">
                 <!--Select со списком обучающих потоков -->
                 <div class="border card">
                     <div class="d-flex align-items-center">
@@ -145,8 +149,8 @@
                                         aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">#</th>
                                 <th class="sorting" style="width:35%" tabindex="0" aria-controls="datatables-homeworks"
                                         aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Имя пользователя</th>
-                                <th class="sorting text-center" style="width:40%" tabindex="0" aria-controls="datatables-homeworks"
-                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Домашние работы</th>
+                                <th class="sorting" style="width:40%" tabindex="0" aria-controls="datatables-homeworks"
+                                    aria-label="Position: activate to sort column ascending" rowspan=1 colspan="1">Домашние работы</th>
                                 <th class="sorting text-center" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
                                     aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Новые сообщения</th>
                             </tr>
@@ -173,8 +177,8 @@
                 </div>
             </div>
         <!--Карточка с фильтрами для домашних заданий и таблицей с ответами на домашние задания от пользователя из потока -->
-            <div class="col-12 col-md col-lg">
-                <div class="col-12 border card py-2" style="height: 100%">
+            <div class="col col-sm col-lg" style="margin-bottom: 2%;">
+                <div class="col-12 border card py-2" style="height: 100%; ">
                     <div class="mx-2 mb-2 border-bottom">
                         <div class="align-items-center row">
                             {% if _current_education_stream['course_name'] is not none %}
@@ -205,7 +209,7 @@
                                        {% if _user is none %}disabled{% endif %}
                                        name="data_option" value="education_home_tasks" onchange="this.form.submit();"
                                        {% if _data_option == 'education_home_tasks' %} checked {% endif %}>
-                                <label class="form-check-label" for="education_home_tasks">Не проверенные домашние работы</label>
+                                <label class="form-check-label" for="education_home_tasks">Непроверенные домашние работы</label>
                             </div>
                             </div>
                         </div>
@@ -239,7 +243,7 @@
                                             <tr>
                                                 <td>{{ item['module']['id'] }}</td>
                                                 <td>{{ item['lesson']['id'] }}</td>
-                                                <td>{{ item['module']['name'] }}</td>
+                                                <td style="white-space: break-spaces">{{ item['module']['name'] }}</td>
                                                 <td style="white-space: break-spaces">Урок: {{ item['lesson']['name'] }}</td>
                                                 <td>{{ homework['date_delivery'] }}</td>
                                                 <td style="text-align: center">
