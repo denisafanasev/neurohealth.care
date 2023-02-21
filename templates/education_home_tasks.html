@@ -2,13 +2,15 @@
 
 {% block main_block %}
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.1.4/css/rowGroup.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/rowgroup/1.1.4/css/rowGroup.dataTables.min.css">
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="{{ url_for('static' , filename="js/datatables.js")}}"></script>
+    <script src="{{ url_for('static' , filename="js/datatables.js") }}"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.1.4/js/dataTables.rowGroup.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/rowgroup/1.1.4/js/dataTables.rowGroup.min.js"></script>
 
 
     <script>
@@ -29,12 +31,12 @@
                 },
                 columnDefs: [
                     {
-                        "targets": [ 0, 1, 2 ],
+                        "targets": [0, 1, 2],
                         "visible": false
                     },
                     {
-                      "targets": 4 ,
-                      "sType": "date-uk"
+                        "targets": 4,
+                        "sType": "date-uk"
                     }
                 ],
                 buttons: true
@@ -54,62 +56,76 @@
                         "targets": [0],
                         "visible": false
                     },
-                ]
+                ],
+                dom: "<'row'<'col-sm-12 col-md'><'col-sm-12 col-md-12'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+
+                // "paging":   false,
+                "lengthMenu": [[10, 50, 100, 150], [10, 50, 100, 150]],
+                // scrollY: 400
+                });
+
+            jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+                "date-uk-pre": function (a) {
+                    var ukDatea = a.split('/');
+                    return (ukDatea[2] + ukDatea[1] + ukDatea[0]) * 1;
+                },
+
+                "date-uk-asc": function (a, b) {
+                    return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+                },
+
+                "date-uk-desc": function (a, b) {
+                    return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+                }
             });
 
-            jQuery.extend( jQuery.fn.dataTableExt.oSort, {
-                "date-uk-pre": function ( a ) {
-                var ukDatea = a.split('/');
-                return (ukDatea[2] + ukDatea[1] + ukDatea[0]) * 1;
-                },
-
-                "date-uk-asc": function ( a, b ) {
-                return ((a < b) ? -1 : ((a > b) ? 1 : 0));
-                },
-
-                "date-uk-desc": function ( a, b ) {
-                return ((a < b) ? 1 : ((a > b) ? -1 : 0));
-                }
-            } );
-
             {#datatableshomeworks.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");#}
-        });
+        })
+            ;
     </script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script>
-        $(document).ready(function() {
-            const  education_stream_list  =  new  Choices ( $ ( '#education_stream_list' ) [ 0 ] ) ;
+        $(document).ready(function () {
+            const education_stream_list = new Choices($('#education_stream_list') [0]);
         });
     </script>
     <script>
-    function button_click(id)
-    {
-        <!--Присваиваем input ID выбранного пользователя и после вызываем событие submit для отправки данных-->
-        var about = document.querySelector('input[name=user_id]');
-        about.value = id;
+        function button_click(id) {
+            <!--Присваиваем input ID выбранного пользователя и после вызываем событие submit для отправки данных-->
+            var about = document.querySelector('input[name=user_id]');
+            about.value = id;
 
-        var form = document.querySelector('form[name=form]')
-        HTMLFormElement.prototype.submit.call(form);
-    }
+            var form = document.querySelector('form[name=form]')
+            HTMLFormElement.prototype.submit.call(form);
+        }
     </script>
     <style>
-    a.student{
-        border:none;
-        color: #3b7ddd!important;
-        --bs-btn-hover-bg: none;
-        --bs-btn-active-bg: none;
-        --bs-btn-border: none;
-        --bs-btn-focus-box-shadow: none;
-        text-align: start
-    }
-    tr.selected a{
-        color: #fff!important;
-    }
-    tr.dtrg-group td {
-        white-space: break-spaces!important;
-    }
+        .dataTables_wrapper .dataTables_filter {
+            float: none;
+            text-align: right;
+        }
+
+        a.student {
+            border: none;
+            color: #3b7ddd !important;
+            --bs-btn-hover-bg: none;
+            --bs-btn-active-bg: none;
+            --bs-btn-border: none;
+            --bs-btn-focus-box-shadow: none;
+            text-align: start
+        }
+
+        tr.selected a {
+            color: #fff !important;
+        }
+
+        tr.dtrg-group td {
+            white-space: break-spaces !important;
+        }
 
     </style>
 
@@ -121,14 +137,16 @@
 
 
         <form name="form" method="post" enctype="multipart/form-data" class="row">
-        <!--Карточка для выбора обучающего потока и пользователя из соответствующих списков -->
+            <!--Карточка для выбора обучающего потока и пользователя из соответствующих списков -->
             <div class="col-12 col-sm col-lg-4" style="margin-bottom: 2%;">
                 <!--Select со списком обучающих потоков -->
                 <div class="border card">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1 m-2">
                             <label class="form-label" for="education_stream_list"><h3>Поток</h3></label>
-                            <select class="form-select" onchange="top.location.href = this.options[this.selectedIndex].value;" name="education_stream" id="education_stream_list">
+                            <select class="form-select"
+                                    onchange="top.location.href = this.options[this.selectedIndex].value;"
+                                    name="education_stream" id="education_stream_list">
                                 {% for education_stream in _education_streams_list %}
                                     <option {% if education_stream['id'] == _id_education_stream %}selected{% endif %}
                                             value="{{ url_for('education_home_tasks', education_stream_id=education_stream['id']) }}">{{ education_stream['name'] }}</option>
@@ -142,24 +160,33 @@
                     <div class="my-2">
                         <label class="mx-2" for="users_list"><h3>Список учеников</h3></label>
                         <input type="hidden" name="user_id">
-                        <table id="users_list" class="table table-striped dataTable no-footer dtr-inline mx-1" style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
-                        <thead>
+                        <table id="users_list" class="table table-striped dataTable no-footer dtr-inline mx-1"
+                               style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
+                            <thead>
                             <tr>
                                 <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
-                                        aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">#</th>
+                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">#
+                                </th>
                                 <th class="sorting" style="width:35%" tabindex="0" aria-controls="datatables-homeworks"
-                                        aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Имя пользователя</th>
+                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Имя
+                                    пользователя
+                                </th>
                                 <th class="sorting" style="width:40%" tabindex="0" aria-controls="datatables-homeworks"
-                                    aria-label="Position: activate to sort column ascending" rowspan=1 colspan="1">Домашние работы</th>
-                                <th class="sorting text-center" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
-                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Новые сообщения</th>
+                                    aria-label="Position: activate to sort column ascending" rowspan=1 colspan="1">
+                                    Домашние работы
+                                </th>
+                                <th class="sorting text-center" style="width:5%" tabindex="0"
+                                    aria-controls="datatables-homeworks"
+                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">
+                                    Новые сообщения
+                                </th>
                             </tr>
-                        </thead>
+                            </thead>
                             <tbody>
                             {% for user in _current_education_stream['students_list'] %}
                                 <tr onclick="button_click({{ user['user_id'] }});"
                                         {% if _user['user_id'] == user['user_id'] %}
-                                            class="selected"
+                                    class="selected"
                                         {% endif %}>
                                     <td>{{ user['user_id'] }}</td>
                                     <td>
@@ -167,8 +194,10 @@
                                             {{ user['name'] }}
                                         </a>
                                     </td>
-                                    <td>Сдано: {{ user['amount_accepted_homeworks'] }}/ Не сдано: {{ user['amount_no_accepted_homeworks'] }}</td>
-                                    <td class="text-center">{% if user['is_unread_message'] is true %}<span class="fas fa-circle chat-offline"></span>{% endif %}</td>
+                                    <td>Сдано: {{ user['amount_accepted_homeworks'] }}/ Не
+                                        сдано: {{ user['amount_no_accepted_homeworks'] }}</td>
+                                    <td class="text-center">{% if user['is_unread_message'] is true %}
+                                        <span class="fas fa-circle chat-offline"></span>{% endif %}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -176,7 +205,7 @@
                     </div>
                 </div>
             </div>
-        <!--Карточка с фильтрами для домашних заданий и таблицей с ответами на домашние задания от пользователя из потока -->
+            <!--Карточка с фильтрами для домашних заданий и таблицей с ответами на домашние задания от пользователя из потока -->
             <div class="col col-sm col-lg" style="margin-bottom: 2%;">
                 <div class="col-12 border card py-2" style="height: 100%; ">
                     <div class="mx-2 mb-2 border-bottom">
@@ -188,29 +217,34 @@
                                 </div>
 
                             {% endif %}
-                        <!--Фильтры для домашних работ -->
+                            <!--Фильтры для домашних работ -->
                             <div style="display: table">
-                            <div class="form-check" style="display: table-cell">
-                                <input id="chat_without_homework" class="pb-1 form-check-input" type="radio"
-                                       {% if _user is none %}disabled{% endif %}
-                                       name="data_option" value="chat_without_homework" onchange="this.form.submit();"
-                                       {% if _data_option == 'chat_without_homework' %} checked {% endif %}>
-                                <label class="form-check-label" for="chat_without_homework">Чаты без домашних работ</label>
-                            </div>
-                            <div class="form-check" style="display: table-cell">
-                                <input id="homework_verified" class="pb-1 form-check-input" type="radio"
-                                       {% if _user is none %}disabled{% endif %}
-                                       name="data_option" value="homework_verified" onchange="this.form.submit();"
-                                       {% if _data_option == 'homework_verified' %} checked {% endif %}>
-                                <label class="form-check-label" for="homework_verified">Проверенные домашние работы</label>
-                            </div>
-                            <div class="form-check" style="display: table-cell">
-                                <input id="education_home_tasks" class="pb-1 form-check-input" type="radio"
-                                       {% if _user is none %}disabled{% endif %}
-                                       name="data_option" value="education_home_tasks" onchange="this.form.submit();"
-                                       {% if _data_option == 'education_home_tasks' %} checked {% endif %}>
-                                <label class="form-check-label" for="education_home_tasks">Непроверенные домашние работы</label>
-                            </div>
+                                <div class="form-check form-check-inline">
+                                    <input id="chat_without_homework" class="pb-1 form-check-input" type="radio"
+                                           {% if _user is none %}disabled{% endif %}
+                                           name="data_option" value="chat_without_homework"
+                                           onchange="this.form.submit();"
+                                            {% if _data_option == 'chat_without_homework' %} checked {% endif %}>
+                                    <label class="form-check-label" for="chat_without_homework">Чаты без домашних
+                                        работ</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input id="homework_verified" class="pb-1 form-check-input" type="radio"
+                                           {% if _user is none %}disabled{% endif %}
+                                           name="data_option" value="homework_verified" onchange="this.form.submit();"
+                                            {% if _data_option == 'homework_verified' %} checked {% endif %}>
+                                    <label class="form-check-label" for="homework_verified">Проверенные домашние
+                                        работы</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input id="education_home_tasks" class="pb-1 form-check-input" type="radio"
+                                           {% if _user is none %}disabled{% endif %}
+                                           name="data_option" value="education_home_tasks"
+                                           onchange="this.form.submit();"
+                                            {% if _data_option == 'education_home_tasks' %} checked {% endif %}>
+                                    <label class="form-check-label" for="education_home_tasks">Непроверенные домашние
+                                        работы</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -218,22 +252,35 @@
                         <table id="datatables-homeworks" class="table dataTable no-footer nowrap"
                                aria-describedby="datatables-buttons_info" style="width: 100%; font-size: 13px">
                             <thead>
-                                <tr role="row">
-                                    <th rowspan="1" colspan="1" style="width: 5%"></th>
-                                    <th rowspan="1" colspan="1" style="width: 30%"></th>
-                                    <th rowspan="1" colspan="1" style="width: 5%">Модуль</th>
-                                    <th rowspan="1" colspan="1" style="width: 30%">Урок</th>
-                                    <th class="sorting" style="width:10%" tabindex="0" aria-controls="datatables-homeworks"
-                                        aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Дата сдачи</th>
-                                    <th class="sorting text-center" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
-                                        aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Статус</th>
-                                    <th class="sorting text-center" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
-                                        aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Ответ</th>
-                                    <th class="sorting" style="width:10%; text-align: center" tabindex="0" aria-controls="datatables-homeworks"
-                                        aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Домашняя работа</th>
-                                    <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
-                                        aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Новые сообщения</th>
-                                </tr>
+                            <tr role="row">
+                                <th rowspan="1" colspan="1" style="width: 5%"></th>
+                                <th rowspan="1" colspan="1" style="width: 30%"></th>
+                                <th rowspan="1" colspan="1" style="width: 5%">Модуль</th>
+                                <th rowspan="1" colspan="1" style="width: 30%">Урок</th>
+                                <th class="sorting" style="width:10%" tabindex="0" aria-controls="datatables-homeworks"
+                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">
+                                    Дата сдачи
+                                </th>
+                                <th class="sorting text-center" style="width:5%" tabindex="0"
+                                    aria-controls="datatables-homeworks"
+                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">
+                                    Статус
+                                </th>
+                                <th class="sorting text-center" style="width:5%" tabindex="0"
+                                    aria-controls="datatables-homeworks"
+                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">
+                                    Ответ
+                                </th>
+                                <th class="sorting" style="width:10%; text-align: center" tabindex="0"
+                                    aria-controls="datatables-homeworks"
+                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">
+                                    Домашняя работа
+                                </th>
+                                <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
+                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">
+                                    Новые сообщения
+                                </th>
+                            </tr>
                             </thead>
                             <tbody class="table-bordered">
                             {% if _data is not none %}
@@ -244,11 +291,13 @@
                                                 <td>{{ item['module']['id'] }}</td>
                                                 <td>{{ item['lesson']['id'] }}</td>
                                                 <td style="white-space: break-spaces">{{ item['module']['name'] }}</td>
-                                                <td style="white-space: break-spaces">Урок: {{ item['lesson']['name'] }}</td>
+                                                <td style="white-space: break-spaces">
+                                                    Урок: {{ item['lesson']['name'] }}</td>
                                                 <td>{{ homework['date_delivery'] }}</td>
                                                 <td style="text-align: center">
                                                     <div class='badge {% if homework['status'] == "Не проверено" %} bg-info {% else %} bg-success {% endif %} bg-gradient text-light'>
-                                                        {% if homework['status'] == "Не проверено" %}{{ homework['status'] }}{% else %}Проверено{% endif %}
+                                                        {% if homework['status'] == "Не проверено" %}
+                                                            {{ homework['status'] }}{% else %}Проверено{% endif %}
                                                     </div>
                                                 </td>
                                                 <td style="text-align: center">
@@ -257,13 +306,13 @@
                                                     </div>
                                                 </td>
                                                 <td style="text-align: center">
-                                                    <a href="/education_home_task_card?id_homework={{ homework['id'] }}" >
+                                                    <a href="/education_home_task_card?id_homework={{ homework['id'] }}">
                                                         Перейти
                                                     </a>
                                                 </td>
                                                 {% if item['homework_chat'] %}
                                                     {% if item['homework_chat']['unread_message_amount'] != 0 %}
-                                                        {% if item['homework_chat']['unread_message_amount']%}
+                                                        {% if item['homework_chat']['unread_message_amount'] %}
                                                             <td style="display: revert; text-align: center">
                                                                 <div class="badge bg-danger" style="text-align: center">
                                                                     {{ item['homework_chat']['unread_message_amount'] }}
@@ -273,8 +322,8 @@
                                                             <td></td>
                                                         {% endif %}
                                                     {% else %}
-                                                    <td></td>
-                                                {% endif %}
+                                                        <td></td>
+                                                    {% endif %}
                                                 {% else %}
                                                     <td></td>
                                                 {% endif %}
@@ -285,7 +334,8 @@
                                             <td>{{ item['module']['id'] }}</td>
                                             <td>{{ item['lesson']['id'] }}</td>
                                             <td>{{ item['module']['name'] }}</td>
-                                            <td style="white-space: break-spaces">Урок: {{ item['lesson']['name'] }}</td>
+                                            <td style="white-space: break-spaces">
+                                                Урок: {{ item['lesson']['name'] }}</td>
                                             <td></td>
                                             <td>
                                                 <div class='badge bg-warning bg-gradient text-light'>
@@ -294,7 +344,7 @@
                                             </td>
                                             <td></td>
                                             <td style="text-align: center">
-                                                <a href="/education_home_task_card?id_chat={{ item['homework_chat']['id'] }}" >
+                                                <a href="/education_home_task_card?id_chat={{ item['homework_chat']['id'] }}">
                                                     Чат
                                                 </a>
                                             </td>
@@ -305,7 +355,7 @@
                                                             {{ item['homework_chat']['unread_message_amount'] }}
                                                         </div>
                                                     </td>
-                                                    {% else %}
+                                                {% else %}
                                                     <td></td>
                                                 {% endif %}
                                             {% else %}
