@@ -60,11 +60,11 @@
                 dom: "<'row'<'col-sm-12 col-md'><'col-sm-12 col-md-12'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-
-                // "paging":   false,
-                "lengthMenu": [[10, 50, 100, 150], [10, 50, 100, 150]],
+                {##}
+                {#// "paging":   false,#}
+                {#"lengthMenu": [[10, 50, 100, 150], [10, 50, 100, 150]],#}
                 // scrollY: 400
-                });
+            });
 
             jQuery.extend(jQuery.fn.dataTableExt.oSort, {
                 "date-uk-pre": function (a) {
@@ -79,20 +79,13 @@
                 "date-uk-desc": function (a, b) {
                     return ((a < b) ? 1 : ((a > b) ? -1 : 0));
                 }
-            });
+            })
 
-            {#datatableshomeworks.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");#}
         })
-            ;
     </script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            const education_stream_list = new Choices($('#education_stream_list') [0]);
-        });
-    </script>
     <script>
         function button_click(id) {
             <!--Присваиваем input ID выбранного пользователя и после вызываем событие submit для отправки данных-->
@@ -142,9 +135,11 @@
                 <!--Select со списком обучающих потоков -->
                 <div class="border card">
                     <div class="d-flex align-items-center">
-                        <div class="flex-grow-1 m-2">
+                        <div class="card-header">
                             <label class="form-label" for="education_stream_list"><h3>Поток</h3></label>
-                            <select class="form-select"
+{#                        </div>#}
+{#                        <div class="card-body">#}
+                            <select class="form-control form-select"
                                     onchange="top.location.href = this.options[this.selectedIndex].value;"
                                     name="education_stream" id="education_stream_list">
                                 {% for education_stream in _education_streams_list %}
@@ -158,97 +153,113 @@
                 <!--Таблица с пользователями из обучающего потока -->
                 <div class="card border" style="margin-bottom: 0;">
                     <div class="my-2">
-                        <label class="mx-2" for="users_list"><h3>Список учеников</h3></label>
-                        <input type="hidden" name="user_id">
-                        <table id="users_list" class="table table-striped dataTable no-footer dtr-inline mx-1"
-                               style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
-                            <thead>
-                            <tr>
-                                <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
-                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">#
-                                </th>
-                                <th class="sorting" style="width:35%" tabindex="0" aria-controls="datatables-homeworks"
-                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">Имя
-                                    пользователя
-                                </th>
-                                <th class="sorting" style="width:40%" tabindex="0" aria-controls="datatables-homeworks"
-                                    aria-label="Position: activate to sort column ascending" rowspan=1 colspan="1">
-                                    Домашние работы
-                                </th>
-                                <th class="sorting text-center" style="width:5%" tabindex="0"
-                                    aria-controls="datatables-homeworks"
-                                    aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">
-                                    Новые сообщения
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for user in _current_education_stream['students_list'] %}
-                                <tr onclick="button_click({{ user['user_id'] }});"
-                                        {% if _user['user_id'] == user['user_id'] %}
-                                    class="selected"
-                                        {% endif %}>
-                                    <td>{{ user['user_id'] }}</td>
-                                    <td>
-                                        <a id="user_{{ user['user_id'] }}" class="student">
-                                            {{ user['name'] }}
-                                        </a>
-                                    </td>
-                                    <td>Сдано: {{ user['amount_accepted_homeworks'] }}/ Не
-                                        сдано: {{ user['amount_no_accepted_homeworks'] }}</td>
-                                    <td class="text-center">{% if user['is_unread_message'] is true %}
-                                        <span class="fas fa-circle chat-offline"></span>{% endif %}</td>
+                        <div class="card-header">
+                            <label class="mx-2" for="users_list"><h3>Список учеников</h3></label>
+                        </div>
+                        <div class="card-body">
+                            <input type="hidden" name="user_id">
+                            <table id="users_list" class="table table-striped dataTable no-footer dtr-inline mx-1"
+                                   style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
+                                <thead>
+                                <tr>
+                                    <th class="sorting" style="width:5%" tabindex="0"
+                                        aria-controls="datatables-homeworks"
+                                        aria-label="Position: activate to sort column ascending" rowspan="1"
+                                        colspan="1">#
+                                    </th>
+                                    <th class="sorting" style="width:35%" tabindex="0"
+                                        aria-controls="datatables-homeworks"
+                                        aria-label="Position: activate to sort column ascending" rowspan="1"
+                                        colspan="1">Имя пользователя
+                                    </th>
+                                    <th class="sorting" style="width:40%" tabindex="0"
+                                        aria-controls="datatables-homeworks"
+                                        aria-label="Position: activate to sort column ascending" rowspan=1 colspan="1">
+                                        Домашние работы
+                                    </th>
+                                    <th class="sorting text-center" style="width:5%" tabindex="0"
+                                        aria-controls="datatables-homeworks"
+                                        aria-label="Position: activate to sort column ascending" rowspan="1"
+                                        colspan="1">
+                                        Новые сообщения
+                                    </th>
                                 </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                {% for user in _current_education_stream['students_list'] %}
+                                    <tr onclick="button_click({{ user['user_id'] }});"
+                                            {% if _user['user_id'] == user['user_id'] %}
+                                        class="selected"
+                                            {% endif %}>
+                                        <td>{{ user['user_id'] }}</td>
+                                        <td>
+                                            <a id="user_{{ user['user_id'] }}" class="student">
+                                                {{ user['name'] }}
+                                            </a>
+                                        </td>
+                                        <td>Сдано: {{ user['amount_accepted_homeworks'] }}/ Не
+                                            сдано: {{ user['amount_no_accepted_homeworks'] }}</td>
+                                        <td class="text-center">{% if user['is_unread_message'] is true %}
+                                            <span class="fas fa-circle chat-offline"></span>{% endif %}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
             <!--Карточка с фильтрами для домашних заданий и таблицей с ответами на домашние задания от пользователя из потока -->
             <div class="col col-sm col-lg" style="margin-bottom: 2%;">
                 <div class="col-12 border card py-2" style="height: 100%; ">
-                    <div class="mx-2 mb-2 border-bottom">
+                    <div class="card-header mx-2 mb-2 border-bottom">
                         <div class="align-items-center row">
                             {% if _current_education_stream['course_name'] is not none %}
-                                <div class="flex-grow-1">
+                                <div class="flex-grow-1 col-8">
                                     <h3>{{ _current_education_stream['course_name'] }}</h3>
                                     <p>Ученик: {% if _user is not none %}{{ _user['name'] }}{% endif %}</p>
                                 </div>
 
                             {% endif %}
                             <!--Фильтры для домашних работ -->
-                            <div style="display: table">
-                                <div class="form-check form-check-inline">
-                                    <input id="chat_without_homework" class="pb-1 form-check-input" type="radio"
-                                           {% if _user is none %}disabled{% endif %}
-                                           name="data_option" value="chat_without_homework"
-                                           onchange="this.form.submit();"
-                                            {% if _data_option == 'chat_without_homework' %} checked {% endif %}>
-                                    <label class="form-check-label" for="chat_without_homework">Чаты без домашних
-                                        работ</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input id="homework_verified" class="pb-1 form-check-input" type="radio"
-                                           {% if _user is none %}disabled{% endif %}
-                                           name="data_option" value="homework_verified" onchange="this.form.submit();"
-                                            {% if _data_option == 'homework_verified' %} checked {% endif %}>
-                                    <label class="form-check-label" for="homework_verified">Проверенные домашние
-                                        работы</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input id="education_home_tasks" class="pb-1 form-check-input" type="radio"
-                                           {% if _user is none %}disabled{% endif %}
-                                           name="data_option" value="education_home_tasks"
-                                           onchange="this.form.submit();"
-                                            {% if _data_option == 'education_home_tasks' %} checked {% endif %}>
-                                    <label class="form-check-label" for="education_home_tasks">Непроверенные домашние
-                                        работы</label>
-                                </div>
+                            <div class="col-4">
+                            <label class="form-label" for="filter_for_homework"><h3>Фильтр</h3></label>
+                            <select class="form-select" onchange="this.form.submit()" name="filter_for_homework"
+                                    id="filter_for_homework">
+                                <option value="chat_without_homework">Чаты без домашних работ</option>
+                                <option value="homework_verified">Проверенные домашние работы<</option>
+                                <option value="education_home_tasks">Непроверенные домашние работы</option>
+                            </select>
+{#                                <div class="form-check form-check-inline">#}
+{#                                    <input id="chat_without_homework" class="pb-1 form-check-input" type="radio"#}
+{#                                           {% if _user is none %}disabled{% endif %}#}
+{#                                           name="data_option" value="chat_without_homework"#}
+{#                                           onchange="this.form.submit();"#}
+{#                                            {% if _data_option == 'chat_without_homework' %} checked {% endif %}>#}
+{#                                    <label class="form-check-label" for="chat_without_homework">Чаты без домашних#}
+{#                                        работ</label>#}
+{#                                </div>#}
+{#                                <div class="form-check form-check-inline">#}
+{#                                    <input id="homework_verified" class="pb-1 form-check-input" type="radio"#}
+{#                                           {% if _user is none %}disabled{% endif %}#}
+{#                                           name="data_option" value="homework_verified" onchange="this.form.submit();"#}
+{#                                            {% if _data_option == 'homework_verified' %} checked {% endif %}>#}
+{#                                    <label class="form-check-label" for="homework_verified">Проверенные домашние#}
+{#                                        работы</label>#}
+{#                                </div>#}
+{#                                <div class="form-check form-check-inline">#}
+{#                                    <input id="education_home_tasks" class="pb-1 form-check-input" type="radio"#}
+{#                                           {% if _user is none %}disabled{% endif %}#}
+{#                                           name="data_option" value="education_home_tasks"#}
+{#                                           onchange="this.form.submit();"#}
+{#                                            {% if _data_option == 'education_home_tasks' %} checked {% endif %}>#}
+{#                                    <label class="form-check-label" for="education_home_tasks">Непроверенные домашние#}
+{#                                        работы</label>#}
+{#                                </div>#}
                             </div>
                         </div>
                     </div>
-                    <div class="position-relative">
+                    <div class="card-body position-relative">
                         <table id="datatables-homeworks" class="table dataTable no-footer nowrap"
                                aria-describedby="datatables-buttons_info" style="width: 100%; font-size: 13px">
                             <thead>
