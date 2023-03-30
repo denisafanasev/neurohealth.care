@@ -169,7 +169,7 @@
 
             <nav id="sidebar" class="sidebar js-sidebar">
                 <div class="sidebar-content js-simplebar">
-                    <a class="sidebar-brand" href="{{ url_for('index')}}">
+                    <a class="sidebar-brand" href="{{ url_for('multilingual.index')}}">
                         <img src="{{ url_for('static' , filename="img/logo/nhc_logo_transparent_white.png")}}" width="100%"></img>
                     </a>
 
@@ -182,7 +182,7 @@
                             {% endif %}
                             {% for item in module[1] %}
                                 <li class="sidebar-item" value={{ item['value'] }}>
-                                    <a class="sidebar-link" href="{{ url_for(item['endpoint'])}}">
+                                    <a class="sidebar-link" href="{{ url_for('multilingual.' + item['endpoint'])}}">
                                         <i class="align-middle" data-feather={{ item['icon'] }}></i> <span
                                             class="align-middle">{{ item['name'] }}</span>
                                     </a>
@@ -222,17 +222,37 @@
 
             <div class="main">
                 <nav class="navbar navbar-expand navbar-light navbar-bg">
-                    
+
                     <a class="sidebar-toggle js-sidebar-toggle">
                         <i class="hamburger align-self-center"></i>
                     </a>
 
-                    <div class="navbar-collapse collapse" style="justify-content: flex-end">
-
+                    <div class="navbar-nav navbar-collapse navbar-align collapse" style="justify-content: flex-end">
+                        <li class="nav-item dropdown">
+                            <a class="nav-flag dropdown-toggle" href="#" id="languageDropdown" data-bs-toggle="dropdown">
+                                {% if _lang_code == 'en' %}
+                                    <img src="{{ url_for('static' , filename="img/flags/us.png") }}" alt="English">
+                                {% elif _lang_code == 'ru' %}
+                                    <img src="{{ url_for('static' , filename="img/flags/ru.png") }}" alt="Russian">
+                                {% endif %}
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                                {% for language in _languages %}
+                                    <a class="dropdown-item" href="{{ '/'+language['lang_code']+'/' + (request.path.split('/')[2:])|join("/")}}">
+                                        <img src="{{ url_for('static' , filename="img/flags/" + language['img_name']) }}" alt="English" width="20" class="align-middle me-1">
+                                        <span class="align-middle">{{ language['title'] }}</span>
+                                    </a>
+                                {% endfor %}
+{#                                <a class="dropdown-item" href="{{ '/ru/' + (request.path.split('/')[2:])|join("/")}}">#}
+{#                                    <img src="{{ url_for('static' , filename="img/flags/ru.png") }}" alt="Russian" width="20" class="align-middle me-1">#}
+{#                                    <span class="align-middle">Russian</span>#}
+{#                                </a>#}
+                            </div>
+                        </li>
                         <div class="p-2">
                             <span class="text-dark"><b>Имя пользователя:</b> {{ current_user.name }}{% if current_user.role == 'superuser' %} <b>роль:</b> {{ current_user.role }}{% endif %}</span>
                         </div>
-                        
+
                         <div class="btn-group">
                             <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button" data-bs-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
@@ -262,7 +282,7 @@
                                         </svg>
                                         Канал поддержки
                                     </a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <li><a class="dropdown-item" href="{{ url_for('multilingual.logout') }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                         class="feather feather-log-out align-middle me-2">
@@ -299,7 +319,7 @@
         </div>
 
         <!-- modal error window -->
-        
+
         <div id="message" class="modal">
             <div class="modal-content" style="width: 25%">
                 <h3 id="title_message" class="modal-title"></h3>
@@ -318,6 +338,6 @@
         </div>
 
         {% include 'message_form.html' %}
-        
+
     </body>
 </html>

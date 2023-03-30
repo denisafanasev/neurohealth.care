@@ -78,8 +78,9 @@ login_manager.init_app(app)
 
 def get_locale():
     # if a user is logged in, use the locale from the user settings
+    languages = [lang['lang_code'] for lang in config.LANGUAGES]
     if not g.get('lang_code', None):
-        g.lang_code = request.accept_languages.best_match(config.LANGUAGES)
+        g.lang_code = request.accept_languages.best_match(languages)
     return g.lang_code
 
 
@@ -98,7 +99,8 @@ def pull_lang_code(endpoint, values):
 
 @multilingual.before_request
 def before_request():
-    if g.lang_code not in config.LANGUAGES:
+    languages = [lang['lang_code'] for lang in config.LANGUAGES]
+    if g.lang_code not in languages:
         adapter = app.url_map.bind('')
         try:
             endpoint, args = adapter.match(
@@ -553,7 +555,8 @@ def main_page():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=page_controller.get_actions(user["user_id"]), _user=user, _message_error=message_error,
                            _status_code=status_code, _password=password, _password2=password2,
-                           _education_streams_list=education_streams_list, _lang_code=get_locale())
+                           _education_streams_list=education_streams_list, _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/empty_function', methods=['GET', 'POST'])
@@ -596,7 +599,8 @@ def education_program_subscription():
     _data = page_controller.get_page_data(1)
 
     return render_template('education_program_subscription.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=_data)
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=_data, _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/evolution_centre_dummy', methods=['GET', 'POST'])
@@ -616,7 +620,8 @@ def evolution_centre_dummy():
 
     return render_template('evolution_centre_dummy.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data="")
+                               endpoint), _data="", _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 # @app.route('/education_list_courses', methods=['GET', 'POST'])
@@ -642,7 +647,8 @@ def education_list_courses():
     return render_template('education_list_courses.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data, _user=user,
                            _user_education_progress=user_education_progress, full_path=request.full_path,
-                           _lang_code=get_locale())
+                           _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/education_course', methods=['GET', 'POST'])
@@ -677,7 +683,8 @@ def education_course():
 
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
-                           _user=user, _course_type=course.get('type'), _course_name=course.get('name'))
+                           _user=user, _course_type=course.get('type'), _course_name=course.get('name'), _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/education_course/lesson', methods=['GET', 'POST'])
@@ -757,7 +764,8 @@ def education_course_lesson():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _homework=homework,
                            _data=data, _homework_chat=homework_chat, _user=user, _course=course,
                            _error_message=error_message,
-                           _neighboring_lessons=neighboring_lessons, _status_code=status_code)
+                           _neighboring_lessons=neighboring_lessons, _status_code=status_code, _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/education_home_tasks', methods=['GET', 'POST'])
@@ -788,20 +796,30 @@ def education_home_tasks():
         id_education_stream = education_streams_list[0]['id']
 
         education_stream = page_controller.get_current_education_stream(id_education_stream, current_user_id)
+        if education_stream['students_list']:
+            user_id = education_stream['students_list'][0]['user_id']
+        else:
+            return redirect(url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream))
 
         return redirect(url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream,
-                                user_id=education_stream['students_list'][0]['id']))
+                                user_id=user_id))
     else:
         id_education_stream = int(id_education_stream)
 
     if request.method == 'POST':
         if request.form.get('button') == 'id_education_stream':
-            id_education_stream = request.form['button_education_stream']
+            id_education_stream = request.form['education_stream']
             education_stream = page_controller.get_current_education_stream(id_education_stream, current_user_id)
-            user_id = education_stream['students_list'][0]['id']
+            if education_stream['students_list']:
+                user_id = education_stream['students_list'][0]['user_id']
+            else:
+                return redirect(url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream))
 
             return redirect(
                 url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream, user_id=user_id))
+
+        elif request.form.get('button') == 'filter_homework':
+            filter_homework = request.form['filter_homework']
 
         elif request.form.get('user_id'):
             user_id = request.form.get('user_id')
@@ -809,8 +827,15 @@ def education_home_tasks():
             return redirect(
                 url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream, user_id=user_id))
 
-        elif request.form.get('button') == 'filter_homework':
-            filter_homework = request.form['filter_homework']
+        elif request.form.get('homework_id'):
+            homework_id = request.form['homework_id']
+
+            return redirect(url_for('multilingual.education_home_task_card', id_homework=homework_id))
+
+        elif request.form.get('homework_chat_id'):
+            homework_chat_id = request.form['homework_chat_id']
+
+            return redirect(url_for('multilingual.education_home_task_card', id_chat=homework_chat_id))
 
     # если есть ID пользователя, то возвращаем список домашних работ по фильтрам
     # (по умолчанию - непроверенные домашние работы)
@@ -840,7 +865,8 @@ def education_home_tasks():
                            _education_streams_list=education_streams_list, _id_education_stream=id_education_stream,
                            _current_education_stream=current_education_stream, _user=user,
                            _current_filter_homework=filter_homework,
-                           _filters_homework_list=config.FILTERS_HOMEWORK_LIST)
+                           _filters_homework_list=config.FILTERS_HOMEWORK_LIST, _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/education_home_task_card', methods=['GET', 'POST'])
@@ -913,7 +939,7 @@ def education_home_task_card():
 
     return render_template('education_home_task_card.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _homework_chat=homework_chat,
+                           _homework_chat=homework_chat, _lang_code=get_locale(), _languages=config.LANGUAGES,
                            _homework=homework, _data=data, _message_error=message_error, _status_code=status_code)
 
 
@@ -937,7 +963,8 @@ def corrections():
 
     return render_template('corrections.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=page_controller.get_data())
+                               endpoint), _data=page_controller.get_data(), _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/probes', methods=['GET', 'POST'])
@@ -962,7 +989,9 @@ def probes():
 
     return render_template('protocols.html', view="probes", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=page_controller.get_probes(), _is_probationer=page_controller.is_probationers(user_id))
+                           _data=page_controller.get_probes(), _is_probationer=page_controller.is_probationers(user_id),
+                           _lang_code=get_locale(), _languages=config.LANGUAGES
+                           )
 
 
 @multilingual.route('/probe_profile', methods=['GET', 'POST'])
@@ -1038,7 +1067,8 @@ def probe_profile():
     return render_template('probe_profile.html', view="probe_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _probationers_list=probationers, _data=data,
-                           _mode=mode, _probes=test_list, _protocol=protocol)
+                           _mode=mode, _probes=test_list, _protocol=protocol, _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/results', methods=['GET', 'POST'])
@@ -1061,7 +1091,8 @@ def results():
 
     return render_template('results.html', view="results", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data=page_controller.get_data())
+                               endpoint), _data=page_controller.get_data(), _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/probationers', methods=['GET', 'POST'])
@@ -1200,7 +1231,8 @@ def probationers():
                            _probationers_list=probationers_list,
                            _is_current_user_admin=flask_login.current_user.is_admin(), _mode=mode,
                            _data=data, _data_edit=data_edit, _error=error, _error_type=error_type,
-                           _settings=profile_page_controller.get_settings_probationer(), _num_page=num_page)
+                           _settings=profile_page_controller.get_settings_probationer(), _num_page=num_page,
+                           _lang_code=get_locale(), _languages=config.LANGUAGES)
 
 
 @multilingual.route('/probationer_card', methods=['GET', 'POST'])
@@ -1301,7 +1333,8 @@ def probationer_card():
     return render_template('probationer_card.html', view="probationer_card", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
                            _mode=mode, _data_begin=data_begin, _error=error, _error_type=error_type,
-                           _settings=page_controller.get_settings_probationer())
+                           _settings=page_controller.get_settings_probationer(), _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/settings/age_range_list', methods=['GET', 'POST'])
@@ -1325,7 +1358,8 @@ def age_range_list():
     return render_template('age_range_list.html', view="age_range_list", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _ranges_age=page_controller.get_age_ranges(),
-                           _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
+                           _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint,
+                           _lang_code=get_locale(), _languages=config.LANGUAGES)
 
 
 @multilingual.route('/settings/maintenance', methods=['GET', 'POST'])
@@ -1357,7 +1391,8 @@ def maintenance():
 
     return render_template('maintenance.html', view="maintenance", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _endpoint=endpoint, _page_data=upload_users_from_json_to_sql_page_data)
+                           _endpoint=endpoint, _page_data=upload_users_from_json_to_sql_page_data, _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/settings/estimated_values', methods=['GET', 'POST'])
@@ -1401,7 +1436,8 @@ def estimated_values():
     return render_template('estimated_values.html', view="estimated_values", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=data, _ranges_age=page_controller.get_age_ranges(), _id_file_name=int(id_file_name),
-                           _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint)
+                           _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint,
+                           _lang_code=get_locale(), _languages=config.LANGUAGES)
 
 
 @multilingual.route('/education_streams', methods=['GET', 'POST'])
@@ -1416,7 +1452,8 @@ def education_streams():
 
     return render_template('education_streams.html', view="education_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _education_streams_list=education_streams_list, _endpoint=endpoint)
+                           _education_streams_list=education_streams_list, _endpoint=endpoint, _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/education_stream_card', methods=['GET', 'POST'])
@@ -1526,7 +1563,8 @@ def education_stream_card():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _endpoint=endpoint,
                            _curators_list=curators_list, _students_list=students_list, _courses_list=courses_list,
                            _mode=mode, _education_stream=education_stream, _timetables_list=timetables_list,
-                           _message_error=message_error, _status_code=status_code)
+                           _message_error=message_error, _status_code=status_code, _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/download', methods=['GET', 'POST'])
@@ -1550,7 +1588,8 @@ def download():
 def change_language():
     lang_code = request.args.get('lang_code')
     if lang_code is not None:
-        if lang_code in config.LANGUAGES:
+        languages = [lang['lang_code'] for lang in config.LANGUAGES]
+        if lang_code in languages:
             session['lang_code'] = lang_code
             return lang_code
 
@@ -1572,9 +1611,7 @@ def not_found(e):
 
 
 app.register_blueprint(multilingual)
-babel = Babel(app, locale_selector=get_locale)
-
-# title = gettext('Hello')
+babel = Babel(app, locale_selector=get_locale, default_translation_directories=config.DATA_FOLDER + 'translations')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

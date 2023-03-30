@@ -39,7 +39,10 @@
                         "sType": "date-uk"
                     }
                 ],
-                buttons: true
+                buttons: true,
+                dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
             });
 
             $("#users_list").DataTable({
@@ -48,7 +51,7 @@
                 pageLength: 20,
                 paging: false,
                 scrollY: '600px',
-                {#searching: true,#}
+                {#searching: false,#}
                 select: true,
                 orderFixed: [[0, 'asc']],
                 columnDefs: [
@@ -57,14 +60,13 @@
                         "visible": false
                     },
                 ],
-                dom: "<'row'<'col-sm-12 col-md'><'col-sm-12 col-md-12'f>>" +
+                dom: "<'row'<'col-sm-12 col-md-12 d-flex justify-content-center'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-                {##}
-                {#// "paging":   false,#}
-                {#"lengthMenu": [[10, 50, 100, 150], [10, 50, 100, 150]],#}
-                // scrollY: 400
             });
+
+            {#var myVar = "This is dynamic data";#}
+            {#$('#users_list').append('<caption style="caption-side: inherit">'+myVar+'</caption>');#}
 
             jQuery.extend(jQuery.fn.dataTableExt.oSort, {
                 "date-uk-pre": function (a) {
@@ -84,8 +86,6 @@
         })
     </script>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script>
         function button_click_user_id(id) {
             <!--Присваиваем input ID выбранного пользователя и после вызываем событие submit для отправки данных-->
@@ -99,6 +99,15 @@
         function button_click_homework_id(id) {
             <!--Присваиваем input ID выбранного пользователя и после вызываем событие submit для отправки данных-->
             var about = document.querySelector('input[name=homework_id]');
+            about.value = id;
+
+            var form = document.querySelector('form[name=form]')
+            HTMLFormElement.prototype.submit.call(form);
+        }
+
+        function button_click_homework_chat_id(id) {
+            <!--Присваиваем input ID выбранного пользователя и после вызываем событие submit для отправки данных-->
+            var about = document.querySelector('input[name=homework_chat_id]');
             about.value = id;
 
             var form = document.querySelector('form[name=form]')
@@ -135,7 +144,7 @@
 
     </style>
 
-    <div class="container-fluid p-0">
+    <div class="container-fluid p-0 ">
 
         <div class="mb-3">
             <h1 class="h3 d-inline align-middle">Проверка домашних заданий</h1>
@@ -154,7 +163,7 @@
                         <select class="form-select" name="education_stream" id="education_stream_list">
                             {% for education_stream in _education_streams_list %}
                                 <option {% if education_stream['id'] == _id_education_stream %}selected{% endif %}
-                                        value="{{ url_for('education_home_tasks', education_stream_id=education_stream['id']) }}">{{ education_stream['name'] }}</option>
+                                        value="{{ education_stream['id'] }}">{{ education_stream['name'] }}</option>
                             {% endfor %}
                         </select>
                         <button name="button" value="id_education_stream" class="btn btn-primary">Показать</button>
@@ -164,26 +173,26 @@
                 <!--Таблица с пользователями из обучающего потока -->
                 <div class="card border" style="margin-bottom: 0;">
                     <div class="my-2">
-                        <div class="card-header">
-                            <label class="mx-2" for="users_list"><h3>Список учеников</h3></label>
-                        </div>
+
                         <div class="card-body">
                             <input type="hidden" name="user_id">
-                            <table id="users_list" class="table table-striped dataTable no-footer dtr-inline"
+                            <label class="mx-2" for="users_list"><h3>Список учеников</h3></label>
+                            <table id="users_list"
+                                   class="table table-striped dataTable no-footer dtr-inline"
                                    style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
                                 <thead>
                                 <tr>
-                                    <th class="sorting" style="width:5%" tabindex="0"
+                                    <th class="sorting" style="width: 0" tabindex="0"
                                         aria-controls="datatables-homeworks"
                                         aria-label="Position: activate to sort column ascending" rowspan="1"
                                         colspan="1">#
                                     </th>
-                                    <th class="sorting" style="width:35%" tabindex="0"
+                                    <th class="sorting" style="width: 30%" tabindex="0"
                                         aria-controls="datatables-homeworks"
                                         aria-label="Position: activate to sort column ascending" rowspan="1"
                                         colspan="1">Имя пользователя
                                     </th>
-                                    <th class="sorting" style="width:40%" tabindex="0"
+                                    <th class="sorting" style="width: 65%" tabindex="0"
                                         aria-controls="datatables-homeworks"
                                         aria-label="Position: activate to sort column ascending" rowspan=1 colspan="1">
                                         Домашние работы
@@ -238,7 +247,7 @@
                                         id="filter_for_homework">
                                     {% for filter, name_filter in _filters_homework_list.items() %}
                                         <option {% if _current_filter_homework == filter %} selected {% endif %}
-                                                value="{{ filter }}">{{ name_filter }}</option>
+                                                                                            value="{{ filter }}">{{ name_filter }}</option>
                                     {% endfor %}
                                 </select>
                                 <button name="button" value="filter_homework" class="btn btn-primary">Показать</button>
@@ -247,14 +256,15 @@
                     </div>
                     <div class="card-body position-relative">
                         <input type="hidden" name="homework_id">
+                        <input type="hidden" name="homework_chat_id">
                         <table id="datatables-homeworks" class="table dataTable no-footer nowrap"
                                aria-describedby="datatables-buttons_info" style="width: 100%; font-size: 13px">
                             <thead>
                             <tr role="row">
-                                <th rowspan="1" colspan="1" style="width: 5%"></th>
-                                <th rowspan="1" colspan="1" style="width: 30%"></th>
-                                <th rowspan="1" colspan="1" style="width: 5%">Модуль</th>
-                                <th rowspan="1" colspan="1" style="width: 30%">Урок</th>
+                                <th rowspan="1" colspan="1" style="width: 0"></th>
+                                <th rowspan="1" colspan="1" style="width: 0"></th>
+                                <th rowspan="1" colspan="1" style="width: 0">Модуль</th>
+                                <th rowspan="1" colspan="1" style="width: 75%">Урок</th>
                                 <th class="sorting" style="width:10%" tabindex="0" aria-controls="datatables-homeworks"
                                     aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">
                                     Дата сдачи
@@ -314,11 +324,11 @@
                                             </tr>
                                         {% endfor %}
                                     {% else %}
-                                        <tr>
+                                        <tr onclick="button_click_homework_chat_id({{ item['homework_chat']['id'] }});">
                                             <td>{{ item['module']['id'] }}</td>
                                             <td>{{ item['lesson']['id'] }}</td>
                                             <td>{{ item['module']['name'] }}</td>
-                                            <td style="white-space: break-spaces">
+                                            <td style="white-space: inherit">
                                                 Урок: {{ item['lesson']['name'] }}</td>
                                             <td></td>
                                             <td>

@@ -189,9 +189,8 @@ class HomeworksService():
         lessons_list = []
         for module in modules_list:
             lessons_list_data = lesson_manager.get_lessons_list_by_id_module(module.id)
-            for lesson in lessons_list_data:
-                if lesson.task is not None:
-                    lessons_list.append(lesson)
+            lessons_list_with_task = [lesson for lesson in lessons_list_data if lesson.task is not None]
+            lessons_list.extend(lessons_list_with_task)
 
         return lessons_list
 
@@ -256,8 +255,7 @@ class HomeworksService():
         homework_chat = homework_chat_manager.get_homework_chat(_user_id, _lesson_id)
         if homework_chat is not None:
             is_unread_message = message_manager.is_unread_messages(homework_chat.id, _current_user_id)
-            if is_unread_message:
-                return True
+            return is_unread_message
 
         return False
 
@@ -276,12 +274,9 @@ class HomeworksService():
 
         homework_manager = HomeworkManager()
 
-        count_accepted_homework = 0
-        homeworks_list = homework_manager.get_accepted_homeworks(_user_id)
-        for homework in homeworks_list:
-            if homework.id_lesson in _id_lessons_list:
-                count_accepted_homework += 1
+        id_lessons_set = homework_manager.get_accepted_homeworks(_user_id)
 
+        count_accepted_homework = len(id_lessons_set.intersection(_id_lessons_list))
         count_no_accepted_homework = len(_id_lessons_list) - count_accepted_homework
 
         return count_accepted_homework, count_no_accepted_homework

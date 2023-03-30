@@ -207,7 +207,7 @@ class EducationHomeTasksPageController():
             'course_name': education_stream.course.name
         }
         lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
-        id_lessons_list = [lesson.id for lesson in lessons_list]
+        id_lessons_list = set(lesson.id for lesson in lessons_list)
         for user_data in education_stream.students_list:
             user_view = {
                 "user_id": user_data.user_id,

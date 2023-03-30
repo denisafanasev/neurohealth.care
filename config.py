@@ -32,7 +32,18 @@ MAIL_PORT = 465
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
 
-LANGUAGES = ['ru', 'en']
+LANGUAGES = [
+    {
+        'lang_code': 'ru',
+        'img_name': 'ru.png',
+        'title': 'Русский'
+    },
+    {
+        'lang_code': 'en',
+        'img_name': 'us.png',
+        'title': 'English'
+    }
+]
 
 # mail accounts
 MAIL_DEFAULT_SENDER = 'from@example.com'
