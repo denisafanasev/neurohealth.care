@@ -126,3 +126,13 @@ class MessageManager():
                 return True
 
         return False
+
+    def get_unread_messages_by_id_user(self, _id_user):
+
+        data_store = DataStore('message')
+
+        unread_messages_data_list = data_store.get_rows({'read': False, 'id_user': _id_user})
+
+        unread_messages_list = [self.message_row_to_message(unread_message) for unread_message in unread_messages_data_list]
+
+        return unread_messages_list

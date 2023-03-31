@@ -791,6 +791,8 @@ def education_home_tasks():
     user_id = request.args.get('user_id')
     filter_homework = 'education_home_tasks'
     id_education_stream = request.args.get('education_stream_id')
+    import time
+
     # если ID обучающего потока не найден, то берем ID первого обучающего потока из списка
     if id_education_stream is None:
         id_education_stream = education_streams_list[0]['id']
@@ -839,7 +841,13 @@ def education_home_tasks():
 
     # если есть ID пользователя, то возвращаем список домашних работ по фильтрам
     # (по умолчанию - непроверенные домашние работы)
+    start = time.time()  ## точка отсчета времени
+
     current_education_stream = page_controller.get_current_education_stream(id_education_stream, current_user_id)
+    end = time.time() - start  ## собственно время работы программы
+
+    print('Данные потока:', end)  ## вывод времени
+
     if user_id is None:
         user_id = current_education_stream['students_list'][0]['user_id']
 
@@ -853,6 +861,7 @@ def education_home_tasks():
         data = page_controller.get_chat_without_homework(current_user_id, id_education_stream, user_id)
     # список проверенных домашних работ
     elif filter_homework == 'homework_verified':
+
         data = page_controller.get_homework_verified(current_user_id, id_education_stream, user_id)
     # список непроверенных домашних работ
     elif filter_homework == 'education_home_tasks':
@@ -926,9 +935,9 @@ def education_home_task_card():
                     homework["id"], user_id)
 
         if homework is None:
-            return redirect(f'/education_home_task_card?id_chat={id_homework_chat}')
+            return redirect(url_for('multilingual.education_home_task_card', id_chat=id_homework_chat))
         else:
-            return redirect(f'/education_home_task_card?id_homework={id_homework}')
+            return redirect(url_for('multilingual.education_home_task_card', id_homework=id_homework))
 
     if data is not None:
         if id_homework is not None:

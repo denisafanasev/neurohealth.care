@@ -215,10 +215,11 @@ class EducationHomeTasksPageController():
             }
             # проверяем есть ли непрочитанные сообщения у текущего пользователя и
             # сколько принято/не принято домашних работ у пользователей потока
-            for lesson in lessons_list:
-                user_view['is_unread_message'] = homeworks_service.is_unread_messages(lesson.id, user_data.user_id, _current_user_id)
-                if user_view['is_unread_message']:
-                    break
+            # for lesson in lessons_list:
+            #     user_view['is_unread_message'] = homeworks_service.is_unread_messages(lesson.id, user_data.user_id, _current_user_id)
+            #     if user_view['is_unread_message']:
+            #         break
+            user_view['is_unread_message'] = homeworks_service.is_unread_messages(id_lessons_list, user_data.user_id)
 
             user_view['amount_accepted_homeworks'], user_view['amount_no_accepted_homeworks'] = homeworks_service.get_amount_accepted_homework(user_data.user_id, id_lessons_list)
             education_stream_view['students_list'].append(user_view)
