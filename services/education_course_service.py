@@ -1,5 +1,6 @@
 import os
 
+from flask import url_for
 from werkzeug.utils import redirect
 
 from models.homework_chat_manager import HomeworkChatManager
@@ -251,7 +252,7 @@ class EducationCourseService():
 
         homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson)
         if homework_chat is not None:
-            homework_chat.unread_message_amount = message_manager.get_unread_messages_amount(homework_chat.id, _id_user)
+            homework_chat.unread_message_amount = message_manager.get_unread_messages_amount_for_user(homework_chat.id, _id_user)
 
             return homework_chat
 
@@ -277,4 +278,4 @@ class EducationCourseService():
             if user.role != "superuser":
                 action_manager.add_notifications(module, "посмотрел", '', "course_manager", user.login)
 
-            return redirect(f"/education_course/lesson?id_lesson={lesson.id}&id_video=1")
+            return redirect(url_for("multilingual.education_course_lesson", id_lesson=lesson.id, id_video=1))

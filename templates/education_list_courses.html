@@ -27,7 +27,7 @@
     }
     </style>
 
-    <h1 class="h3 mb-2">Образовательная программа "Я - НейроМама"</h1>
+    <h1 class="h3 mb-2">{{_('Образовательная программа "Я - НейроМама"')}}</h1>
 
     
         {% if _data %}
@@ -38,17 +38,21 @@
                         <div class="card">
                             <div class="card-header">
                                 
-                            <h6 class="text-muted">Программа курса составлена с применением методов, которые используются в
-                                детской нейропсихологии.
-                                Курс поможет вам разобраться с высшими психическими функциями ребенка. Вы сможете самостоятельно составить
-                                программу
-                                именно для вашего ребенка, по которой будете развивать все необходимые для учебы базовые познавательные
-                                функции. <a href="http://neurohealth.care/programms/iamaneuromama" target="_blank">Полное описание образовательной программы</a></h6>
+                            <h6 class="text-muted">{{_('Программа курса составлена с применением методов, которые
+                                    используются в
+                                    детской нейропсихологии.
+                                    Курс поможет вам разобраться с высшими психическими функциями ребенка. Вы сможете
+                                    самостоятельно составить
+                                    программу
+                                    именно для вашего ребенка, по которой будете развивать все необходимые для учебы базовые
+                                    познавательные
+                                    функции.')}} <a href="http://neurohealth.care/programms/iamaneuromama" target="_blank">{{_('Полное
+                                    описание образовательной программы')}}</a></h6>
                             </div>
                         </div>
                         <div class="card">
                             <div class="card-header">
-                                <h2 class="card-title mb-0">Основной обучающий курс</h2>
+                                <h2 class="card-title mb-0">{{_('Основной обучающий курс')}}</h2>
                             </div>
                             <div class="card-body">
                                 {% for i_course in _data %}
@@ -59,13 +63,13 @@
                                                 src="/static/img/photos/{% if i_course['image'] != '' %}{{ i_course['image'] }}{% else %}unsplash-3.jpg{% endif %}"
                                                 alt="Unsplash">
                                             <div class="card-header">
-                                                <h2 class="card-title mb-0">{{ i_course['name'] }}</h2>
+                                                <h2 class="card-title mb-0">{{ _(i_course['name']) }}</h2>
                                             </div>
                                     
                                             <div class="card-body">
-                                                <p class="card-text">{{ i_course['description'] }}</p>
-                                                <a href="/education_course?id_course={{ i_course['id'] }}" class="btn btn-primary">
-                                                    Перейти к курсу
+                                                <p class="card-text">{{ _(i_course['description']) }}</p>
+                                                <a href="{{ url_for('multilingual.education_course', id_course=i_course['id']) }}" class="btn btn-primary">
+                                                    {{_('Перейти к курсу')}}
                                                 </a>
                                             </div>
                                         </div>
@@ -82,17 +86,17 @@
                                 <table class="table table-sm mt-2 mb-4">
                                     <tbody>
                                         <tr>
-                                            <th>Режим доступа</th>
+                                            <th>{{_('Режим доступа')}}</th>
                                             <td>
                                                 {% if _user['active_education_module'] == 'active' or _user['active_education_module'] == 'ends' %}
-                                                    <span class="badge bg-success">Режим самостоятельного обучения</span>
+                                                    <span class="badge bg-success">{{_("Режим самостоятельного обучения")}}</span>
                                                 {% elif _user['active_education_module'] == 'inactive' %}
-                                                    <span class="badge bg-warning">Режим ознакомления</span>
+                                                    <span class="badge bg-warning">{{_("Режим ознакомления")}}</span>
                                                 {% endif %}
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Срок доступа</th>
+                                            <th>{{_('Срок доступа')}}</th>
                                             <td>{{ _user['education_module_expiration_date'] }}</td>
                                         </tr>
 {#                                        {% for progress in _user_education_progress %}#}
@@ -121,16 +125,17 @@
                                         <tbody>
 
                                                 <tr>
-                                                    <th>Поток</th>
+                                                    <th>{{_("Поток")}}</th>
                                                     <td>{{ progress['education_stream_name'] }}</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Домашние задания</th>
-                                                    <td>Сдано: {{ progress['amount_homework_accepted'] }}  Не сдано: {{ progress['amount_homework_no_accepted'] }}</td>
+                                                    <th>{{_("Домашние задания")}}</th>
+                                                    <td>{{_('Сдано:')}} {{ progress['amount_homework_accepted'] }} {{_("Не
+                                                            сдано:")}} {{ progress['amount_homework_no_accepted'] }}</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Пройдено модулей</th>
-                                                    <td>{{ progress['amount_modules_passed'] }} (Осталось {{ progress['amount_modules_no_passed'] }})</td>
+                                                    <th>{{_("Пройдено модулей")}}</th>
+                                                    <td>{{ progress['amount_modules_passed'] }} ({{_("Осталось")}} {{ progress['amount_modules_no_passed'] }})</td>
                                                 </tr>
                                         </tbody>
                                     </table>
@@ -140,7 +145,7 @@
             
                         <div class="card">
                             <div class="card-header">
-                                <h2 class="card-title mb-0">Дополнительные курсы</h2>
+                                <h2 class="card-title mb-0">{{_("Дополнительные курсы")}}</h2>
                             </div>
                             <div class="card-body">
                                 {% for i_course in _data %}
@@ -155,8 +160,8 @@
                                         </div>
                                         <div class="card-body">
                                             <p class="card-text">{{ i_course['description'] }}</p>
-                                            <a href="/education_course?id_course={{ i_course['id'] }}" class="btn btn-primary">
-                                                Перейти к курсу
+                                                <a href="{{ url_for('multilingual.education_course', id_course=i_course['id']) }}" class="btn btn-primary">
+                                                {{_('Перейти к курсу')}}
                                             </a>
                                         </div>
                                     </div>
@@ -169,7 +174,7 @@
                     </div>
         {% else %}
             <div class="text-center">
-                <h2>Данная страница недоступна из-за отсутсвия нужного файла.</h2>
+                <h2>{{_("Данная страница недоступна из-за отсутсвия нужного файла.")}}</h2>
             </div>
         {% endif %}
 

@@ -158,23 +158,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script>
-        $(document).ready(function() {
-            {#$('#teacher').select2({#}
-            {#    placeholder: "Выберите преподавателя",#}
-            {#    maximumSelectionLength: 2,#}
-            {#    language: "ru",});#}
-            const  teachers  =  new  Choices ( $ ( '#teacher' ) [ 0 ]) ;
-            const  course_list  =  new  Choices ( $ ( '#course' ) [ 0 ] ) ;
-
-        });
-        $(document).ready(function() {
-            {#$('#course_list').select2({#}
-            {#    placeholder: "Выберите преподавателя",#}
-            {#    maximumSelectionLength: 2,#}
-            {#    language: "ru"});#}
-        });
-    </script>
-    <script>
         var message = document.getElementById('message');
         window.onclick = function (event) {
             if (event.target === message) {
@@ -489,7 +472,7 @@
                     <button type="submit" name="button" value="{% if _mode == 'new' %}new{% elif _mode == "view" %}edit{% else %}save{% endif %}" class="btn btn-primary ">
                         {% if _mode == 'new' %}Создать{% elif _mode == "view" %}Редактировать{% else %}Сохранить{% endif %}
                     </button>
-                    <a href="{{ url_for('education_streams') }}" class="btn btn-primary cancelbtn">
+                    <a href="{{ url_for('multilingual.education_streams') }}" class="btn btn-primary cancelbtn">
                         Отмена
                     </a>
                 </div>

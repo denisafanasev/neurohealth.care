@@ -15,12 +15,12 @@
                                 <div class="col-sm-12 col-md-6">
                                     <div class="dt-buttons btn-group flex-wrap">
                                         {% if _is_probationer %}
-                                            <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('probe_profile')}}">
+                                            <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('multilingual.probe_profile')}}">
                                                 <span>Добавить пробу</span>
                                             </a>
                                         {% else %}
                                             <div>
-                                                <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('probationer_card')}}">
+                                                <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('multilingual.probationer_card')}}">
                                                     <span>Добавить тестируемого</span>
                                                 </a>
                                             </div>
@@ -56,7 +56,7 @@
                                                 <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg")}}" width="32" height="32"
                                                         class="rounded-circle my-n1" alt="Avatar"></td>
 
-                                                <td class="sorting_1 dtr-control"><a href="{{ url_for('probe_profile')}}?probationer_id={{ item["probationer_id"] }}&probe_id={{ item["probe_id"] }}&test_id=1">{{ item['name_probationer'] }}</a></td>
+                                                <td class="sorting_1 dtr-control"><a href="{{ url_for('multilingual.probe_profile',probationer_id=item["probationer_id"], probe_id=item["probe_id"], test_id=1) }}">{{ item['name_probationer'] }}</a></td>
                                                 <td>{{ item['date_test'] }}</td>
                                                 <td>{{ item['date_protocol'] }}</td>
                                                 {% if item['protocol_status']=="draft" %}

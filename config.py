@@ -32,6 +32,19 @@ MAIL_PORT = 465
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
 
+LANGUAGES = [
+    {
+        'lang_code': 'ru',
+        'img_name': 'ru.png',
+        'title': 'Русский'
+    },
+    {
+        'lang_code': 'en',
+        'img_name': 'us.png',
+        'title': 'English'
+    }
+]
+
 # mail accounts
 MAIL_DEFAULT_SENDER = 'from@example.com'
 
@@ -45,6 +58,12 @@ EDUCATIONAL_INSTITUSION = ["Гимназия", "Массовая школа", "�
 # user settings
 PROBATIONERS_NUMBER = [5, 10, 15, 20, 25, 30]
 ROLE = ["user", "superuser"]
+
+FILTERS_HOMEWORK_LIST = {
+    'chat_without_homework': 'Чаты без домашних работ',
+    'homework_verified': 'Проверенные домашние работы',
+    'education_home_tasks': 'Непроверенные домашние работы',
+}
 
 EDUCATION_MODULE_EXPIRATION_DATE = [{"name_period": "1 месяц", "amount": 1},
                                     {"name_period": "2 месяц", "amount": 2},

@@ -1,4 +1,8 @@
 import json
+
+from flask import request
+
+import config
 import utils.ada as ada
 from services.main_menu_service import MainMenuService
 
@@ -60,3 +64,15 @@ class MainMenuPageController():
         main_menu_service = MainMenuService()
         active_menu_item = main_menu_service.get_active_menu_item_number(self.user_id, _endpoind)
         return active_menu_item
+
+    def get_languages_list(self):
+        """
+        Возвращает список доступных языков.
+        """
+        if not 'app' in request.host_url:
+            languages = config.LANGUAGES
+        else:
+            languages = [config.LANGUAGES[0]]
+
+        return languages
+

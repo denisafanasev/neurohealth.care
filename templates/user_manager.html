@@ -59,7 +59,7 @@
                                     <div class="col-sm-12 col-md-6">
                                         <div class="dt-buttons btn-group flex-wrap">
                                             <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
-                                            href="{{ url_for('user_profile') }}">
+                                            href="{{ url_for('multilingual.user_profile') }}">
                                                 <span>Добавить пользователя</span>
                                             </a>
                                         </div>
@@ -109,7 +109,7 @@
 
                                                 <td class="sorting_1 dtr-control" style="display: flex">
                                                     <div class="col{% if item['role'] == "superuser" %} bg-primary {% else %} bg-success {% endif %} bg-gradient" style="text-align: center;position: center; margin-right: 16%; color: white">
-                                                        <a style="display: inline-block; width: 100%"  href="{{ url_for('user_profile', user_id=item['user_id']) }}">
+                                                        <a style="display: inline-block; width: 100%"  href="{{ url_for('multilingual.user_profile', user_id=item['user_id']) }}">
                                                             <span class="">{{ item['login'] }}</span>
                                                         </a>
                                                     </div>

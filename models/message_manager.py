@@ -34,7 +34,7 @@ class MessageManager():
 
         return message
 
-    def get_messages(self, _id_homework_chat, _id_user):
+    def get_messages_for_user(self, _id_homework_chat, _id_user):
         """
         Возвращает все сообщения из чата по ID комнаты чата
 
@@ -55,6 +55,34 @@ class MessageManager():
             if not message.read:
                 # если сообщение отправил не текущий пользователь, то отмечается как прочитанное
                 if message.id_user != _id_user:
+                    message.read = True
+                    data_store.update_row_by_id({"read": True}, message.id)
+
+            message_list.append(message)
+
+        return message_list
+
+    def get_messages_for_superuser(self, _id_homework_chat, _id_user):
+        """
+        Возвращает все сообщения из чата по ID комнаты чата
+
+        Args:
+            _id_homework_chat(Int): ID комнаты чата
+            _id_user(Int): ID текущего пользователя
+
+        Return:
+            List: список сообщений чата
+        """
+
+        data_store = DataStore("message")
+
+        messages_data = data_store.get_rows({"id_homework_chat": _id_homework_chat})
+        message_list = []
+        for i_message in messages_data:
+            message = self.message_row_to_message(i_message)
+            if not message.read:
+                # если сообщение отправил не текущий пользователь, то отмечается как прочитанное
+                if message.id_user == _id_user:
                     message.read = True
                     data_store.update_row_by_id({"read": True}, message.id)
 
@@ -85,7 +113,7 @@ class MessageManager():
 
         return message
 
-    def get_unread_messages_amount(self, _id_homework_chat, _id_user):
+    def get_unread_messages_amount_for_user(self, _id_homework_chat, _id_user):
         """
         Возвращает количество непрочитанных сообщений
 
@@ -106,9 +134,9 @@ class MessageManager():
 
         return amount
 
-    def is_unread_messages(self, _id_homework_chat, _id_user):
+    def get_unread_messages_amount_for_superuser(self, _id_homework_chat, _id_user):
         """
-        Возвращает True, если есть хотя бы одно непрочитанное сообщение
+        Возвращает количество непрочитанных сообщений
 
         Args:
             _id_homework_chat(Integer): ID комнаты чата
@@ -117,12 +145,26 @@ class MessageManager():
         Return:
             Integer: количество непрочитанных сообщений
         """
-
         data_store = DataStore("message")
 
-        messages_data_list = data_store.get_rows({"read": False, "id_homework_chat": _id_homework_chat})
-        for message_data in messages_data_list:
-            if message_data['id_user'] != _id_user:
-                return True
+        amount_unread_messages = data_store.get_rows_count({"read": False, "id_user": _id_user, "id_homework_chat": _id_homework_chat})
 
-        return False
+        return amount_unread_messages
+
+    def get_unread_messages_by_id_user(self, _id_user):
+        """
+        Возвращает список непрочитанных суперпользователями сообщений от пользователя
+
+        Args:
+            _id_user(Int): ID пользователя
+
+        Return:
+            unread_messages_list(List(Message)): список непрочитанных сообщений
+        """
+        data_store = DataStore('message')
+
+        unread_messages_data_list = data_store.get_rows({'read': False, 'id_user': _id_user})
+
+        unread_messages_list = [self.message_row_to_message(unread_message) for unread_message in unread_messages_data_list]
+
+        return unread_messages_list

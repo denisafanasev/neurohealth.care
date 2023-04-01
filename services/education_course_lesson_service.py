@@ -64,7 +64,7 @@ class EducationCourseLessonService():
 
         homework_chat = homework_chat_manager.homework_chat_entry(int(_id_homework_chat))
         if homework_chat is not None:
-            homework_chat.message = message_manager.get_messages(homework_chat.id, _id_user)
+            homework_chat.message = message_manager.get_messages_for_user(homework_chat.id, _id_user)
 
         return homework_chat
 
@@ -337,6 +337,6 @@ class EducationCourseLessonService():
 
         homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson)
         if homework_chat is not None:
-            homework_chat.message = message_manager.get_messages(homework_chat.id, _id_user)
+            homework_chat.message = message_manager.get_messages_for_user(homework_chat.id, _id_user)
 
         return homework_chat

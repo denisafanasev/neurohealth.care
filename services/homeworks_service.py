@@ -98,7 +98,7 @@ class HomeworksService():
 
         homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson)
         if homework_chat is not None:
-            homework_chat.unread_message_amount = message_manager.get_unread_messages_amount(homework_chat.id, _id_current_user)
+            homework_chat.unread_message_amount = message_manager.get_unread_messages_amount_for_superuser(homework_chat.id, _id_user)
 
         return homework_chat
 
@@ -189,9 +189,8 @@ class HomeworksService():
         lessons_list = []
         for module in modules_list:
             lessons_list_data = lesson_manager.get_lessons_list_by_id_module(module.id)
-            for lesson in lessons_list_data:
-                if lesson.task is not None:
-                    lessons_list.append(lesson)
+            lessons_list_with_task = [lesson for lesson in lessons_list_data if lesson.task is not None]
+            lessons_list.extend(lessons_list_with_task)
 
         return lessons_list
 
@@ -237,26 +236,24 @@ class HomeworksService():
 
         return education_stream.get_education_streams()
 
-    def is_unread_messages(self, _lesson_id, _user_id, _current_user_id):
+    def is_unread_messages(self, _id_lessons_list, _user_id):
         """
-        Возвращает True, если есть хотя бы одно непрочитанное сообщение
-
+        Проверяет на наличие непрочитанных суперпользователями сообщений.
         Args:
-            _lesson_id(Int): ID урока
+            _id_lessons_list(Int): список ID уроков курса
             _user_id(Int): ID пользователя
-            _current_user_id(Int): ID текущего пользователя
 
-        Returns:
-            List(User): список пользователей
+        Return:
+            True - если есть хотя одно непрочитанное сообщение
+            False - если нет непрочитанных сообщений
         """
-
         homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()
 
-        homework_chat = homework_chat_manager.get_homework_chat(_user_id, _lesson_id)
-        if homework_chat is not None:
-            is_unread_message = message_manager.is_unread_messages(homework_chat.id, _current_user_id)
-            if is_unread_message:
+        unread_messages_list = message_manager.get_unread_messages_by_id_user(_user_id)
+        for unread_message in unread_messages_list:
+            homework_chat = homework_chat_manager.homework_chat_entry(unread_message.id_homework_chat)
+            if homework_chat.id_lesson in _id_lessons_list:
                 return True
 
         return False
@@ -276,12 +273,9 @@ class HomeworksService():
 
         homework_manager = HomeworkManager()
 
-        count_accepted_homework = 0
-        homeworks_list = homework_manager.get_accepted_homeworks(_user_id)
-        for homework in homeworks_list:
-            if homework.id_lesson in _id_lessons_list:
-                count_accepted_homework += 1
+        id_lessons_set = homework_manager.get_accepted_homeworks(_user_id)
 
+        count_accepted_homework = len(id_lessons_set.intersection(_id_lessons_list))
         count_no_accepted_homework = len(_id_lessons_list) - count_accepted_homework
 
         return count_accepted_homework, count_no_accepted_homework
