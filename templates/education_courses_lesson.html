@@ -19,7 +19,7 @@
 
         });
         let message = document.getElementById('message');
-        let error_homework = "Ошибка: не заполнено поле для отправки домашнего задания!";
+        let error_homework = "{{_('Ошибка: не заполнено поле для отправки домашнего задания!')}}";
 
         var form_homework = document.getElementById("homework");
         form_homework.onsubmit = function () {
@@ -45,8 +45,8 @@
         {
             var fsize = elem.files[i].size;
             if (fsize > elem.getAttribute("size")){
-                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                document.querySelector('p[id=text_message]').textContent = "Превышен лимит одного из загруженных файлов";
+                document.querySelector('h3[id=title_message]').textContent = '{{_("Ошибка")}}';
+                document.querySelector('p[id=text_message]').textContent = "{{_("Превышен лимит одного из загруженных файлов")}}";
                 message.style.display = 'block';
                 return false;
             }
@@ -58,7 +58,7 @@
     document.addEventListener("DOMContentLoaded", function () {
         var message = document.getElementById('message');
         {% if _status_code == "Error" %}
-            document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
+            document.querySelector('h3[id=title_message]').textContent = '{{_("Ошибка")}}';
             document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";
             message.style.display = "block";
         {% endif %}
@@ -116,7 +116,7 @@
     <h1 class="h3 mb-2">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/education_course?id_course={{ _data['id_course'] }}">Курс "{{ _course['name'] }}"</a></li>
+                <li class="breadcrumb-item"><a href="{{url_for('multilingual.education_course', id_course=_data['id_course'] )}}">{{_("Курс")}} "{{ _course['name'] }}"</a></li>
                 {% if _data['name'] != '' %}
                 <li class="breadcrumb-item">{{ _data['name'] }}</li>
                 {% endif %}
@@ -130,7 +130,7 @@
         <div class="card border">
             <div class="card-header">
                 <h4>
-                    Материалы урока
+                    {{_("Материалы урока")}}
                 </h4>
             </div>
 
@@ -159,19 +159,19 @@
                                     <div class="pagination" >
 
                                             <a class="border" style="margin-right: auto"
-                                                    href="{% if request.args.get('id_video')|int >= 2 %}/education_course/lesson?id_course={{ _data['id_course'] }}&id_lesson={{ _data['lesson']['id'] }}&id_module={{ _data['id_module'] }}&id_video={{ request.args.get('id_video')|int - 1 }}{% endif %}">
+                                                    href="{% if request.args.get('id_video')|int >= 2 %}{{ url_for('multilingual.education_course_lesson', id_lesson=_data['lesson']['id'], id_video=request.args.get('id_video')|int - 1 )}}{% endif %}">
                                                 <<
                                             </a>
 
                                         {% for i_video in _data['lesson']['link'] %}
                                             <a class="{% if i_video['video'] %}active{% endif %} border" style="margin: auto"
-                                                    href="/education_course/lesson?id_course={{ _data['id_course'] }}&id_lesson={{ _data['lesson']['id'] }}&id_module={{ _data['id_module'] }}&id_video={{ i_video['id'] }}">
+                                                    href="{{ url_for('multilingual.education_course_lesson', id_lesson=_data['lesson']['id'], id_video=i_video['id'] )}}">
                                                 {{ i_video['id'] }}
                                             </a>
                                         {% endfor %}
 
                                             <a class="border" style="margin-left: auto"
-                                                    href="{% if request.args.get('id_video')|int <= _data['lesson']['link']|count - 1 %}/education_course/lesson?id_course={{ _data['id_course'] }}&id_lesson={{ _data['lesson']['id'] }}&id_module={{ _data['id_module'] }}&id_video={{ request.args.get('id_video')|int + 1 }}{% endif %}">
+                                                    href="{% if request.args.get('id_video')|int <= _data['lesson']['link']|count - 1 %}{{ url_for('multilingual.education_course_lesson', id_lesson=_data['lesson']['id'], id_video=request.args.get('id_video')|int + 1 )}}{% endif %}">
                                                 >>
                                             </a>
                                         </div>
@@ -186,7 +186,7 @@
                                     <thead>
                                         <tr>
                                             <th style="width:10%"></th>
-                                            <th style="width:30%">Статус обучения</th>
+                                            <th style="width:30%">{{_("Статус обучения")}}</th>
                                             <th style="width:30%"></th>
                                             <th style="width:30%"></th>
                                         </tr>
@@ -196,7 +196,7 @@
                                             <td class="table-action">
                                                 <i class="align-middle me-2 fas fa-fw fa-calendar-alt"></i>
                                             </td>
-                                            <td>Срок доступа</td>
+                                            <td>{{_("Срок доступа")}}</td>
                                             <td></td>
                                             <td class="d-none d-md-table-cell">{{ _user['education_module_expiration_date'] }}</td>
                                         </tr>
@@ -205,18 +205,18 @@
                                             <td class="table-action">
                                                 <i class="align-middle me-2 fas fa-fw fa-couch"></i>
                                             </td>
-                                            <td>Домашнее задание</td>
+                                            <td>{{_("Домашнее задание")}}</td>
                                             <td>
                                                 <div  class="badge text-light {% if _homework is none %} bg-warning {% else %} bg-success {% endif %}">
-                                                    {% if _homework is not none %}Сдано: {{ _homework.get('date_delivery') }}{% else %}Не сдано{% endif %}
+                                                    {% if _homework is not none %}{{_("Сдано:")}} {{ _homework.get('date_delivery') }}{% else %}{{_("Не сдано")}}{% endif %}
                                                 </div>
                                             </td>
                                             <td class="d-none d-md-table-cell">
                                                 <div class='badge {% if _homework is none %}
                                                 {% elif _homework['status'] == "Принято" %} bg-success
-                                                {% elif _homework['status'] == "не проверено" %} bg-info
+                                                {% elif _homework['status'] == "непроверенно" %} bg-info
                                                 {% elif _homework['status'] == "Не принято" %} bg-danger {% endif %} bg-gradient text-light'>
-                                                    {% if _homework is none %}{% elif _homework['status'] == "не проверено" %}Не проверено{% elif _homework is not none %}{{ _homework['status'] }}{% endif %}
+                                                    {% if _homework is none %}{% elif _homework['status'] == "не проверено" %}{{_("Непроверено")}}{% elif _homework is not none %}{{ _homework['status'] }}{% endif %}
                                                 </div>
                                             </td>
                                         </tr>
@@ -233,7 +233,7 @@
                                         <thead>
                                             <tr>
                                                 <th style="width:5%!important;"></th>
-                                                <th style="width:70%!important;">Дополнительные материалы</th>
+                                                <th style="width:70%!important;">{{_("Дополнительные материалы")}}</th>
                                                 <th style="width:25%!important"></th>
                                             </tr>
                                         </thead>
@@ -248,7 +248,7 @@
                                                 </td>
                                                 <td style="word-break: break-all;">{{ name_file }}</td>
                                                 <td>
-                                                    <a href="/download?name_file={{ i_materials }}&dataset=course&id_dataset={{ _data['id_course'] }}">Файл</a>
+                                                    <a href="{{ url_for('multilingual.download', name_file=i_materials, dataset='course', id_dataset=_data['id_course'])}}">Файл</a>
                                                 </td>
                                             </tr>
                                         {% endfor %}
@@ -282,7 +282,7 @@
                     <div class="col-sm-7 md-2 text-left bd-highlight">
                         <div class="card py-1 py-md-1 border">
                             <div class="card-header">
-                                <h4 class="form-label">Домашние задание</h4>
+                                <h4 class="form-label">{{_('Домашние задание')}}</h4>
 
                                 <p class="card-text">
                                     {{ _data['lesson']['task'] }}
@@ -293,14 +293,15 @@
                                     {% if _homework is none or _homework['status'] == "Не принято" %}
                                     <form id="homework" method="post" enctype="multipart/form-data">
                                         <div class="mb-2">
-                                            <label class="form-label" for="hometask">Ответ</label>
+                                            <label class="form-label" for="hometask">{{_("Ответ")}}</label>
                                             <div class="mb-2">
                                                 <div id="editor_homework" style="z-index: 0"><p></p></div>
                                                 <input type="hidden" id="hiddenInput" name="text_homework">
                                             </div>
                                             <input id="hometask" size="3145728" type="file" onchange="return checkFileSize(this);" multiple name="files" class="form-control mb-2">
                                             <div class="" align="right">
-                                                <button id="button" class="btn btn-primary" name="button" type="submit" value="homework">Отправить</button>
+                                                <button id="button" class="btn btn-primary" name="button" type="submit" value="homework">
+                                                    {{_("Отправить")}}</button>
                                             </div>
                                         </div>
                                     </form>
@@ -314,16 +315,16 @@
                         {% if _homework is not none %}
                             <div class="card py-1 py-md-1 border">
                                 <div class="card-header">
-                                    <h4 class="form-label">Ваш ответ</h4>
+                                    <h4 class="form-label">{{_("Ваш ответ")}}</h4>
                                     <div class="mb-1">
                                         <div class="mb-2">
-                                            <strong>Текст ответа:</strong> {{ _homework['text'] }}
+                                            <strong>{{_("Текст ответа:")}}</strong> {{ _homework['text'] }}
                                         </div>
                                     {% if _homework['users_files_list'] != [] %}
                                         <table class="table">
                                         <thead>
                                             <tr>
-                                                <th style="width: 60%">Приложенные файлы</th>
+                                                <th style="width: 60%">{{_("Приложенные файлы")}}</th>
                                                 <th style="width: 20%"></th>
                                                 <th style="width: 20%"></th>
                                             </tr>
@@ -333,7 +334,7 @@
                                                 <tr>
                                                     <td>{{ file['name_file_unique'] }}</td>
                                                     <td>{{ file['size'] }}</td>
-                                                    <td><a href="/download?name_file={{ file['name_file_unique'] }}&dataset=chat">Файл</a></td>
+                                                    <td><a href="{{url_for('multilingual.download', name_file=file['name_file_unique'], dataset=chat)}}">Файл</a></td>
                                                 </tr>
                                             {% endfor %}
                                         </tbody>
@@ -352,7 +353,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <h4>
-                                            Чат
+                                            {{_("Чат")}}
                                         </h4>
                                     </div>
                                 </div>
@@ -363,7 +364,7 @@
                                         <div class="card py-1 py-md-1">
                                             <div class="card-body">
                                                 <div class="text-center">
-                                                    <h2>Чат не доступен</h2>
+                                                    <h2>{{_("Чат не доступен")}}</h2>
                                                 </div>
                                             </div>
                                         </div>
@@ -377,7 +378,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <h4>
-                                            Чат
+                                            {{_("Чат")}}
                                         </h4>
                                     </div>
                                 </div>
@@ -388,7 +389,7 @@
                                         <div class="card py-1 py-md-1">
                                             <div class="card-body">
                                                 <div class="text-center">
-                                                    <h2>Чат не доступен</h2>
+                                                    <h2>{{_("Чат не доступен")}}</h2>
                                                 </div>
                                             </div>
                                         </div>
@@ -408,7 +409,7 @@
                 <div class="row d-flex align-items-stretch bd-highlight">
                     <div class="col">
                         <h4>
-                            Домашнее задание
+                            {{_("Домашнее задание")}}
                         </h4>
                     </div>
                 </div>
@@ -420,9 +421,9 @@
                             <div class="card-body">
                                 <div class="text-center">
                                     {% if not _data['lesson']['task']%}
-                                        <h2>Для данного урока нет домашнего задания</h2>
+                                        <h2>{{_("Для данного урока нет домашнего задания")}}</h2>
                                     {% else %}
-                                        <h2>Выполнение домашней работы недоступно.</h2>
+                                        <h2>{{_("Выполнение домашней работы недоступно")}}.</h2>
                                     {% endif %}
                                 </div>
                             </div>
@@ -434,12 +435,12 @@
             <div class="row d-flex align-items-stretch bd-highlight">
                 <div class="col d-grid gap-2 d-md-flex justify-content-md-start m-2">
                     {% if _neighboring_lessons['previous_lesson'] is not none %}
-                        <a class="btn btn-primary" href="/education_course/lesson?id_lesson={{ _neighboring_lessons['previous_lesson']['id'] }}&id_video=1">Предыдущий урок</a>
+                        <a class="btn btn-primary" href="{{url_for("multilingual.education_course_lesson", id_lesson=_neighboring_lessons['previous_lesson']['id'], id_video=1)}}">{{_("Предыдущий урок")}}</a>
                     {% endif %}
                 </div>
                 <div class="col d-grid gap-2 d-md-flex justify-content-md-end m-2">
                     {% if _neighboring_lessons['next_lesson'] is not none %}
-                        <a class="btn btn-primary" href="/education_course/lesson?id_lesson={{ _neighboring_lessons['next_lesson']['id'] }}&id_video=1">Следующий урок</a>
+                        <a class="btn btn-primary" href="{{url_for('multilingual.education_course_lesson', id_lesson=_neighboring_lessons['next_lesson']['id'], id_video=1)}}">{{_("Следующий урок")}}</a>
                     {% endif %}
                 </div>
             </div>
@@ -447,7 +448,7 @@
     </div>
     {% else %}
         <div class="text-center">
-            <h2>Данная страница недоступна из-за отсутствия нужного файла.</h2>
+            <h2>{{_("Данная страница недоступна из-за отсутствия нужного файла")}}.</h2>
         </div>
     {% endif %}
 {% endblock %}

@@ -230,16 +230,16 @@
                     <div class="navbar-nav navbar-collapse navbar-align collapse" style="justify-content: flex-end">
                         <li class="nav-item dropdown">
                             <a class="nav-flag dropdown-toggle" href="#" id="languageDropdown" data-bs-toggle="dropdown">
-                                {% if _lang_code == 'en' %}
-                                    <img src="{{ url_for('static' , filename="img/flags/us.png") }}" alt="English">
-                                {% elif _lang_code == 'ru' %}
-                                    <img src="{{ url_for('static' , filename="img/flags/ru.png") }}" alt="Russian">
+                            {% for language in _languages %}
+                                {% if _lang_code == language['lang_code'] %}
+                                    <img src="{{ url_for('static' , filename="img/flags/" + language['img_name']) }}">
                                 {% endif %}
+                            {% endfor %}
                             </a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
                                 {% for language in _languages %}
-                                    <a class="dropdown-item" href="{{ '/'+language['lang_code']+'/' + (request.path.split('/')[2:])|join("/")}}">
-                                        <img src="{{ url_for('static' , filename="img/flags/" + language['img_name']) }}" alt="English" width="20" class="align-middle me-1">
+                                    <a class="dropdown-item" href="{{ '/'+language['lang_code']+'/' + (request.full_path.split('/')[2:])|join("/")}}">
+                                        <img src="{{ url_for('static' , filename="img/flags/" + language['img_name']) }}" width="20" class="align-middle me-1">
                                         <span class="align-middle">{{ language['title'] }}</span>
                                     </a>
                                 {% endfor %}

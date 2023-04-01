@@ -27,11 +27,11 @@
         {% endif %}
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link{% if _active_tab == 'user_profile' %} active{% endif %} {% if _mode == 'new' %} disabled {% endif %}" aria-current="page" href="{{ url_for('user_profile', user_id=_user_id) }}">Профиль</a>
+                <a class="nav-link{% if _active_tab == 'user_profile' %} active{% endif %} {% if _mode == 'new' %} disabled {% endif %}" aria-current="page" href="{{ url_for('multilingual.user_profile', user_id=_user_id) }}">Профиль</a>
             </li>
 
             <li class="nav-item {% if _mode == 'new' %} disabled {% endif %}">
-                <a  class="nav-link{% if _active_tab == 'user_actions' %} active{% endif %} {% if _mode == 'new' %} disabled {% endif %}" aria-current="page" href="{{ url_for('user_actions', user_id=_user_id) }}">Действия</a>
+                <a  class="nav-link{% if _active_tab == 'user_actions' %} active{% endif %} {% if _mode == 'new' %} disabled {% endif %}" aria-current="page" href="{{ url_for('multilingual.user_actions', user_id=_user_id) }}">Действия</a>
             </li>
         </ul>
 

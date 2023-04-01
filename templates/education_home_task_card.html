@@ -26,8 +26,8 @@
         if (answer !== '') {
             return true;
         } else {
-            document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-            document.querySelector('p[id=text_message]').textContent = "Выберите ответ(принято/не принято) на домашние задание";
+            document.querySelector('h3[id=title_message]').textContent = '{{_("Ошибка")}}';
+            document.querySelector('p[id=text_message]').textContent = "{{_("Выберите ответ(принято/не принято) на домашние задание")}}";
             message.style.display = "block";
             return false;
         }
@@ -47,18 +47,18 @@
     <div class="container-fluid p-0">
 
         <div class="mb-3">
-            <h1 class="h3 d-inline align-middle">Домашняя работа и чат</h1>
+            <h1 class="h3 d-inline align-middle">{{_("Домашняя работа и чат")}}</h1>
         </div>
         {% if _status_code=='Successful' %}
             <div class="alert alert-success alert-dismissible" role="alert">
                 <div class="alert-message">
-                    <strong>Успешно</strong> {{ _message_error }}
+                    <strong>{{_("Успешно")}}</strong> {{ _message_error }}
                 </div>
             </div>
         {% elif _status_code=='Error' %}
             <div class="alert alert-danger alert-dismissible" role="alert">
                 <div class="alert-message">
-                    <strong>Ошибка</strong> {{ _message_error }}
+                    <strong>{{_("Ошибка")}}</strong> {{ _message_error }}
                 </div>
             </div>
         {% endif %}
@@ -69,11 +69,11 @@
                     <div class="col-md-6 bd-highlight">
 
                             <div class="card d-flex align-self-baseline border p-4">
-                                <h4>Данные ученика</h4>
+                                <h4>{{_("Данные ученика")}}</h4>
                                 <div class="card-header">
                                     {% if _data['user'] is mapping %}
                                         <p><strong>Login:</strong> {{ _data['user']['login'] }}</p>
-                                        <p><strong>Имя:</strong> {{ _data['user']['name'] }}</p>
+                                        <p><strong>{{_("Имя")}}:</strong> {{ _data['user']['name'] }}</p>
                                         <p><strong>Email:</strong> {{ _data['user']['email'] }}</p>
                                     {% else %}
                                         <p>{{ _data['user'] }}</p>
@@ -82,16 +82,16 @@
                             </div>
 
                             <div class="card d-flex align-self-baseline border p-4">
-                                <h4>Данные урока</h4>
+                                <h4>{{_("Данные урока")}}</h4>
                                 <div class="card-header">
                                 {% if _data['module'] is mapping %}
-                                    <p><strong>Курс: </strong>{{ _data['course']['name'] }}</p>
-                                    <p><strong>Модуль: </strong>{{ _data['module']['name'] }}</p>
-                                    <p><strong>Урок: </strong>{{ _data['module']['lesson']['name'] }}</p>
-                                    <p class="task"><strong>Задание: </strong>{{ _data['module']['lesson']['task'] }}</p>
-                                    <p><strong>Статус: </strong>
+                                    <p><strong>{{_("Курс")}}: </strong>{{ _data['course']['name'] }}</p>
+                                    <p><strong>{{_("Модуль")}}: </strong>{{ _data['module']['name'] }}</p>
+                                    <p><strong>{{_("Урок")}}: </strong>{{ _data['module']['lesson']['name'] }}</p>
+                                    <p class="task"><strong>{{_("Задание")}}: </strong>{{ _data['module']['lesson']['task'] }}</p>
+                                    <p><strong>{{_("Статус")}}: </strong>
                                         {% if request.args.get("id_homework") is not none %}{{ _homework["status"] }}
-                                        {% else %}Не сдано{% endif %}
+                                        {% else %}{{_("Не сдано")}}{% endif %}
                                     </p>
                                 {% else %}
                                     <p>{{ _data['module'] }}</p>
@@ -100,7 +100,7 @@
                             </div>
                         {% if request.args.get("id_homework") is not none %}
                             <div class="card d-flex align-self-baseline border p-4">
-                                <h4>Домашняя работа</h4>
+                                <h4>{{_("Домашняя работа")}}</h4>
                                 <div class="card-header">
                                     <form id="homework" name="homework" method="post" enctype="multipart/form-data" onsubmit="return checkAnswer(this);">
                                         <div class="mb-2">
@@ -108,7 +108,7 @@
                                                 {{ _homework['text'] }}
                                             </div>
                                             {% for file in _homework['users_files_list'] %}
-                                                <a download href="/download?name_file={{ file }}&dataset=chat">{{ file }}</a>
+                                                <a download href="{{ url_for('multilingual.download', name_file=file, dataset='chat') }}">{{ file }}</a>
                                             {% endfor %}
                                         </div>
 
@@ -118,13 +118,13 @@
                                             <div class="">
                                               <input  name="answer" type="radio" value="True">
                                               <label class="form-check-label" for="answer_true">
-                                                Принято
+                                                  {{_("Принято")}}
                                               </label>
                                             </div>
                                             <div class="">
                                               <input  name="answer" type="radio" value="False">
                                               <label class="form-check-label" for="answer_false">
-                                                Не принято
+                                                  {{_("Не принято")}}
                                               </label>
                                             </div>
                                         </div>
@@ -135,7 +135,7 @@
                                 <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto;">
                                     <div class="p-1" style="float: right">
                                         <button type="submit" form="homework" name="button" value="answer" class="btn btn-primary ">
-                                            Сохранить
+                                            {{_("Сохранить")}}
                                         </button>
                                     </div>
                                 </div>
@@ -153,7 +153,7 @@
     </div>
     {% else %}
         <div class="text-center">
-            <h2>Чат/домашняя работа не найдены</h2>
+            <h2>{{_("Чат/домашняя работа не найдены")}}</h2>
         </div>
     {% endif %}
 {% endblock %}

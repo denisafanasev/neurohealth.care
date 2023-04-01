@@ -72,13 +72,15 @@ app.secret_key = 'super secret key'
 app.debug = config.DEBUG
 
 login_manager = LoginManager()
-login_manager.login_view = "login"
+login_manager.login_view = "multilingual.login"
 login_manager.init_app(app)
-
 
 def get_locale():
     # if a user is logged in, use the locale from the user settings
-    languages = [lang['lang_code'] for lang in config.LANGUAGES]
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
+
+    languages_list = mpc.get_languages_list()
+    languages = [language['lang_code'] for language in languages_list]
     if not g.get('lang_code', None):
         g.lang_code = request.accept_languages.best_match(languages)
     return g.lang_code
@@ -99,12 +101,18 @@ def pull_lang_code(endpoint, values):
 
 @multilingual.before_request
 def before_request():
-    languages = [lang['lang_code'] for lang in config.LANGUAGES]
+    """
+
+    """
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
+
+    languages_list = mpc.get_languages_list()
+    languages = [language['lang_code'] for language in languages_list]
     if g.lang_code not in languages:
         adapter = app.url_map.bind('')
         try:
             endpoint, args = adapter.match(
-                '/en' + request.full_path.rstrip('/ ?'))
+                '/ru' + request.full_path.rstrip('/ ?'))
             return redirect(url_for(endpoint, **args), 301)
         except:
             abort(404)
@@ -186,7 +194,7 @@ def logout():
     """
 
     logout_user()
-    return redirect('main_page')
+    return redirect(url_for('multilingual.main_page'))
 
 
 @multilingual.route('/registration', methods=['GET', 'POST'])
@@ -251,7 +259,7 @@ def login():
     # если нет, то создаем первого суперпользователя
     if not login_page_controller.is_there_users():
         # пользователей нет, надо создать первого суперпользователя
-        return redirect('registration')
+        return redirect(url_for('multilingual.registration'))
 
     # пользователи есть, проходим процедуру идентификации
     login_error = False
@@ -268,7 +276,7 @@ def login():
                 login_error = user
             else:
                 login_user(user)
-                return redirect('main_page')
+                return redirect(url_for('multilingual.main_page'))
 
     return render_template('login.html', view="login", _login_error=login_error)
 
@@ -288,7 +296,7 @@ def user_manager():
 
     # страница доступна только администратору
     if not flask_login.current_user.is_admin():
-        return redirect("main_page")
+        return redirect(url_for("multilingual.main_page"))
 
     endpoint = request.endpoint
     users_list = page_controller.get_users_list_view(current_user_id)
@@ -300,7 +308,7 @@ def user_manager():
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _users_list=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _error=error, _error_type=error_type, _num_page=num_page)
+                           _error=error, _error_type=error_type, _num_page=num_page, _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/user_profile', methods=['GET', 'POST'])
@@ -333,7 +341,7 @@ def user_profile():
     settings_user = page_controller.get_settings_user()
     # страница доступна только администратору
     if not flask_login.current_user.is_admin():
-        return redirect("main_page")
+        return redirect(url_for("multilingual.main_page"))
 
     if user_id is None:
         mode = "new"
@@ -370,7 +378,7 @@ def user_profile():
                         session['message_error'] = "Пользователь сохранён!"
                         session['status_code'] = "Successful"
 
-                        return redirect(f'/user_profile?user_id={message_error}')
+                        return redirect(url_for('multilingual.user_profile', user_id=message_error))
                     else:
                         status_code = 'Error'
 
@@ -405,7 +413,7 @@ def user_profile():
                         session['message_error'] = "Изменения сохранены!"
                         session['status_code'] = "Successful"
 
-                        return redirect(f'/user_profile?user_id={user_id}')
+                        return redirect(url_for('multilingual.user_profile', user_id=user_id))
                     else:
                         status_code = 'Error'
 
@@ -421,7 +429,8 @@ def user_profile():
                                                                                                    user["password2"],
                                                                                                    current_user_id)
                 if session['status_code'] == 'Successful':
-                    return redirect(f'/user_profile?user_id={user_id}')
+                    return redirect(url_for('multilingual.user_profile', user_id=user_id))
+
                 else:
                     data_edit = data.copy()
                     data_edit['password'] = user["password"]
@@ -438,7 +447,7 @@ def user_profile():
                                                                             current_user_id)
                 session['status_code'] = "Successful"
 
-                return redirect(f'/user_profile?user_id={user_id}')
+                return redirect(url_for('multilingual.user_profile', user_id=user_id))
 
             elif request.form.get("is_active"):
                 if mode == 'view':
@@ -448,17 +457,14 @@ def user_profile():
                         data['active'] = True
                         session['status_code'] = 'Successful'
 
-                        return redirect(f'/user_profile?user_id={user_id}')
-
                     elif is_active == 'false':
                         session['message_error'] = page_controller.deactivation(user_id, current_user_id)
                         data['active'] = False
                         session['status_code'] = 'Successful'
 
-                        return redirect(f'/user_profile?user_id={user_id}')
-
+                    return redirect(url_for('multilingual.user_profile', user_id=user_id))
             else:
-                return redirect("user_manager")
+                return redirect(url_for("multilingual.user_manager"))
 
     except exceptions.BadRequestKeyError:
         mode = "view"
@@ -471,7 +477,8 @@ def user_profile():
                            _data_edit=data_edit, _data=data, _settings=settings_user,
                            _is_current_user_admin=flask_login.current_user.is_admin(), _user_id=user_id,
                            _mode=mode, _message_error=message_error, _status_code=status_code,
-                           _education_streams_list=education_streams_list, _active_tab=active_tab)
+                           _education_streams_list=education_streams_list, _active_tab=active_tab,
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/user_actions', methods=['GET', 'POST'])
@@ -493,7 +500,7 @@ def user_actions():
     current_user_id = flask_login.current_user.user_id
 
     if not flask_login.current_user.is_admin():
-        return redirect('main_page')
+        return redirect(url_for('multilingual.main_page'))
 
     mode = 'actions'
     if user_id is not None:
@@ -504,7 +511,7 @@ def user_actions():
     return render_template('user_actions.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=data, _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _user_id=user_id, _mode=mode, _active_tab=active_tab)
+                           _user_id=user_id, _mode=mode, _active_tab=active_tab, _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/main_page', methods=['GET', 'POST'])
@@ -549,14 +556,14 @@ def main_page():
                 session['message_error'] = str(message_error)
                 session['status_code'] = "Error"
 
-            return redirect('main_page')
+            return redirect(url_for('multilingual.main_page'))
 
     return render_template('main_page.html', view="main_page", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=page_controller.get_actions(user["user_id"]), _user=user, _message_error=message_error,
                            _status_code=status_code, _password=password, _password2=password2,
                            _education_streams_list=education_streams_list, _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/empty_function', methods=['GET', 'POST'])
@@ -600,7 +607,7 @@ def education_program_subscription():
 
     return render_template('education_program_subscription.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=_data, _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/evolution_centre_dummy', methods=['GET', 'POST'])
@@ -621,7 +628,7 @@ def evolution_centre_dummy():
     return render_template('evolution_centre_dummy.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data="", _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 # @app.route('/education_list_courses', methods=['GET', 'POST'])
@@ -648,7 +655,7 @@ def education_list_courses():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data, _user=user,
                            _user_education_progress=user_education_progress, full_path=request.full_path,
                            _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/education_course', methods=['GET', 'POST'])
@@ -673,7 +680,7 @@ def education_course():
         course = page_controller.get_course_by_id(course_id)
         data = page_controller.get_course_modules_list(int(course_id), user_id)
     else:
-        return redirect("education_list_courses")
+        return redirect(url_for("multilingual.education_list_courses"))
 
     if request.method == "POST":
         # если пользователь переходит на страницу урока, то записываем данное действие в базу данных
@@ -684,7 +691,7 @@ def education_course():
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
                            _user=user, _course_type=course.get('type'), _course_name=course.get('name'), _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/education_course/lesson', methods=['GET', 'POST'])
@@ -710,7 +717,7 @@ def education_course_lesson():
     try:
         id_video = int(request.args.get("id_video"))
     except (ValueError, TypeError) as e:
-        return redirect('/education_course/lesson?id_lesson={id_lesson}&id_video=1'.format(id_lesson=id_lesson))
+        return redirect(url_for('multilingual.education_course_lesson', id_video=1, id_lesson=id_lesson))
 
     user = page_controller.get_user_view_by_id(user_id)
     data = page_controller.get_lesson(user_id, id_lesson, id_video)
@@ -732,7 +739,7 @@ def education_course_lesson():
         neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
         if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
             if data['id_module'] > 1 and user['role'] != 'superuser' and not data['available']:
-                return redirect('/education_program_subscription')
+                return redirect(url_for('multilingual.education_program_subscription'))
 
     if id_video is None:
         id_video = 1
@@ -753,7 +760,7 @@ def education_course_lesson():
             if session.get('error_message') is not None:
                 session['status_code'] = 'Error'
 
-        return redirect(f"/education_course/lesson?&id_lesson={id_lesson}&id_video={id_video}")
+        return redirect(url_for('multilingual.education_course_lesson', id_video=1, id_lesson=id_lesson))
 
     if data is not None:
         if data['available']:
@@ -765,11 +772,10 @@ def education_course_lesson():
                            _data=data, _homework_chat=homework_chat, _user=user, _course=course,
                            _error_message=error_message,
                            _neighboring_lessons=neighboring_lessons, _status_code=status_code, _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/education_home_tasks', methods=['GET', 'POST'])
-@app.route('/education_home_tasks', methods=['GET', 'POST'])
 @login_required
 def education_home_tasks():
     """
@@ -785,13 +791,17 @@ def education_home_tasks():
     endpoint = request.endpoint
 
     if not flask_login.current_user.is_admin():
-        return redirect("main_page")
+        return redirect(url_for("multilingual.main_page"))
 
     education_streams_list = page_controller.get_education_streams_list()
     user_id = request.args.get('user_id')
-    filter_homework = 'education_home_tasks'
+    filter_homework = session.get('filter_homework')
+    if filter_homework is not None:
+        session.pop('filter_homework')
+    else:
+        filter_homework = 'education_home_tasks'
+
     id_education_stream = request.args.get('education_stream_id')
-    import time
 
     # если ID обучающего потока не найден, то берем ID первого обучающего потока из списка
     if id_education_stream is None:
@@ -817,17 +827,11 @@ def education_home_tasks():
             else:
                 return redirect(url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream))
 
-            return redirect(
-                url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream, user_id=user_id))
-
         elif request.form.get('button') == 'filter_homework':
-            filter_homework = request.form['filter_homework']
+            session['filter_homework'] = request.form['filter_homework']
 
         elif request.form.get('user_id'):
             user_id = request.form.get('user_id')
-
-            return redirect(
-                url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream, user_id=user_id))
 
         elif request.form.get('homework_id'):
             homework_id = request.form['homework_id']
@@ -839,15 +843,13 @@ def education_home_tasks():
 
             return redirect(url_for('multilingual.education_home_task_card', id_chat=homework_chat_id))
 
+        return redirect(
+            url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream, user_id=user_id))
+
     # если есть ID пользователя, то возвращаем список домашних работ по фильтрам
     # (по умолчанию - непроверенные домашние работы)
-    start = time.time()  ## точка отсчета времени
 
     current_education_stream = page_controller.get_current_education_stream(id_education_stream, current_user_id)
-    end = time.time() - start  ## собственно время работы программы
-
-    print('Данные потока:', end)  ## вывод времени
-
     if user_id is None:
         user_id = current_education_stream['students_list'][0]['user_id']
 
@@ -875,7 +877,7 @@ def education_home_tasks():
                            _current_education_stream=current_education_stream, _user=user,
                            _current_filter_homework=filter_homework,
                            _filters_homework_list=config.FILTERS_HOMEWORK_LIST, _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/education_home_task_card', methods=['GET', 'POST'])
@@ -891,7 +893,7 @@ def education_home_task_card():
     endpoint = "education_home_tasks"
 
     if not flask_login.current_user.is_admin():
-        return redirect("main_page")
+        return redirect(url_for("multilingual.main_page"))
 
     id_homework = request.args.get("id_homework")
     id_homework_chat = request.args.get("id_chat")
@@ -942,13 +944,13 @@ def education_home_task_card():
     if data is not None:
         if id_homework is not None:
             if homework is not None:
-                homework_chat = page_controller.get_homework_chat_by_id_homework(int(id_homework), user_id)
+                homework_chat = page_controller.get_homework_chat_by_id_homework(int(id_homework), homework['id_user'])
         else:
-            homework_chat = page_controller.homework_chat_entry(int(id_homework_chat), user_id)
+            homework_chat = page_controller.homework_chat_entry(int(id_homework_chat), data['user']['id'])
 
     return render_template('education_home_task_card.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _homework_chat=homework_chat, _lang_code=get_locale(), _languages=config.LANGUAGES,
+                           _homework_chat=homework_chat, _lang_code=get_locale(), _languages=mpc.get_languages_list(),
                            _homework=homework, _data=data, _message_error=message_error, _status_code=status_code)
 
 
@@ -968,12 +970,12 @@ def corrections():
     endpoint = request.endpoint
 
     if not flask_login.current_user.is_admin():
-        return redirect("evolution_centre_dummy")
+        return redirect(url_for("multilingual.evolution_centre_dummy"))
 
     return render_template('corrections.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data(), _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/probes', methods=['GET', 'POST'])
@@ -994,13 +996,12 @@ def probes():
     endpoint = "probes"
 
     if not flask_login.current_user.is_admin():
-        return redirect("evolution_centre_dummy")
+        return redirect(url_for("multilingual.evolution_centre_dummy"))
 
     return render_template('protocols.html', view="probes", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=page_controller.get_probes(), _is_probationer=page_controller.is_probationers(user_id),
-                           _lang_code=get_locale(), _languages=config.LANGUAGES
-                           )
+                           _lang_code=get_locale(), _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/probe_profile', methods=['GET', 'POST'])
@@ -1013,7 +1014,7 @@ def probe_profile():
     endpoint = "probes"
 
     if not flask_login.current_user.is_admin():
-        return redirect("evolution_centre_dummy")
+        return redirect(url_for("multilingual.evolution_centre_dummy"))
 
     probationer_id = request.args.get('probationer_id')
 
@@ -1045,10 +1046,7 @@ def probe_profile():
             date_of_birth = probationer["date_of_birth"]
 
             probe_id = page_controller.add_probe(name_probationer, probationer_id, date_of_birth, user_id)
-            return redirect("probe_profile?probationer_id={probationer_id}&probe_id={probe_id}&test_id=1".format(
-                probationer_id=probationer_id,
-                probe_id=probe_id
-            ))
+            return redirect(url_for("multilingual.probe_profile", probationer_id=probationer_id, probe_id=probe_id, test_id=1))
 
         elif mode == "add_value_tests":
             probe_id = request.args.get("probe_id")
@@ -1060,24 +1058,20 @@ def probe_profile():
                 protocol_status = request.form["button"]
                 page_controller.add_grades_in_probe(grades, int(probe_id), protocol_status)
 
-                return redirect("probes")
+                return redirect(url_for("multilingual.probes"))
 
             elif request.form["action"]:
                 page_controller.add_grades_in_probe(grades, int(probe_id))
                 next_test_id = int(request.form["action"])
 
                 return redirect(
-                    "probe_profile?probationer_id={probationer_id}&probe_id={probe_id}&test_id={test_id}".format(
-                        probationer_id=probationer_id,
-                        probe_id=probe_id,
-                        test_id=next_test_id
-                    ))
+                    url_for("multilingual.probe_profile", probationer_id=probationer_id, probe_id=probe_id, test_id=next_test_id))
 
     return render_template('probe_profile.html', view="probe_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _probationers_list=probationers, _data=data,
                            _mode=mode, _probes=test_list, _protocol=protocol, _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/results', methods=['GET', 'POST'])
@@ -1096,12 +1090,12 @@ def results():
     endpoint = "results"
 
     if not flask_login.current_user.is_admin():
-        return redirect("evolution_centre_dummy")
+        return redirect(url_for("multilingual.evolution_centre_dummy"))
 
     return render_template('results.html', view="results", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(
                                endpoint), _data=page_controller.get_data(), _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/probationers', methods=['GET', 'POST'])
@@ -1118,7 +1112,7 @@ def probationers():
     endpoint = "probationers"
 
     if not flask_login.current_user.is_admin():
-        return redirect("evolution_centre_dummy")
+        return redirect(url_for("multilingual.evolution_centre_dummy"))
 
     page_controller = ProbationersPageController()
     mpc = MainMenuPageController(flask_login.current_user.user_id)
@@ -1241,7 +1235,7 @@ def probationers():
                            _is_current_user_admin=flask_login.current_user.is_admin(), _mode=mode,
                            _data=data, _data_edit=data_edit, _error=error, _error_type=error_type,
                            _settings=profile_page_controller.get_settings_probationer(), _num_page=num_page,
-                           _lang_code=get_locale(), _languages=config.LANGUAGES)
+                           _lang_code=get_locale(), _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/probationer_card', methods=['GET', 'POST'])
@@ -1254,7 +1248,7 @@ def probationer_card():
     endpoint = "probationers"
 
     if not flask_login.current_user.is_admin():
-        return redirect("evolution_centre_dummy")
+        return redirect(url_for("multilingual.evolution_centre_dummy"))
 
     page_controller = ProbationerCardPageController()
     mpc = MainMenuPageController(flask_login.current_user.user_id)
@@ -1343,7 +1337,7 @@ def probationer_card():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
                            _mode=mode, _data_begin=data_begin, _error=error, _error_type=error_type,
                            _settings=page_controller.get_settings_probationer(), _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/settings/age_range_list', methods=['GET', 'POST'])
@@ -1360,7 +1354,7 @@ def age_range_list():
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     if not flask_login.current_user.is_admin():
-        return redirect("main_page")
+        return redirect(url_for("multilingual.main_page"))
 
     endpoint = request.endpoint
 
@@ -1368,7 +1362,7 @@ def age_range_list():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _ranges_age=page_controller.get_age_ranges(),
                            _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint,
-                           _lang_code=get_locale(), _languages=config.LANGUAGES)
+                           _lang_code=get_locale(), _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/settings/maintenance', methods=['GET', 'POST'])
@@ -1388,7 +1382,7 @@ def maintenance():
         current_user_id)
 
     if not flask_login.current_user.is_admin():
-        return redirect("main_page")
+        return redirect(url_for("multilingual.main_page"))
 
     endpoint = request.endpoint
 
@@ -1401,7 +1395,7 @@ def maintenance():
     return render_template('maintenance.html', view="maintenance", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _endpoint=endpoint, _page_data=upload_users_from_json_to_sql_page_data, _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/settings/estimated_values', methods=['GET', 'POST'])
@@ -1418,7 +1412,7 @@ def estimated_values():
     mpc = MainMenuPageController(user_id)
 
     if not flask_login.current_user.is_admin():
-        return redirect("main_page")
+        return redirect("multilingual.main_page")
 
     endpoint = request.endpoint
     id_file_name = request.args.get("id")
@@ -1426,7 +1420,7 @@ def estimated_values():
     if id_file_name is not None:
         data = page_controller.get_assessments(int(id_file_name))
     else:
-        return redirect("/settings/estimated_values?id=1")
+        return redirect(url_for("multilingual.estimated_values", id=1))
 
     if request.method == "POST":
         id_file_name = int(request.form["action"])
@@ -1440,13 +1434,13 @@ def estimated_values():
             page_controller.overwrite(id_file_name, criteria, user_id)
             data = page_controller.get_assessments(id_file_name)
         else:
-            return redirect("/settings/estimated_values?id={id}".format(id=id_file_name))
+            return redirect(url_for("multilingual.estimated_values", id=id_file_name))
 
     return render_template('estimated_values.html', view="estimated_values", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=data, _ranges_age=page_controller.get_age_ranges(), _id_file_name=int(id_file_name),
                            _is_current_user_admin=flask_login.current_user.is_admin(), _endpoint=endpoint,
-                           _lang_code=get_locale(), _languages=config.LANGUAGES)
+                           _lang_code=get_locale(), _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/education_streams', methods=['GET', 'POST'])
@@ -1462,7 +1456,7 @@ def education_streams():
     return render_template('education_streams.html', view="education_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _education_streams_list=education_streams_list, _endpoint=endpoint, _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/education_stream_card', methods=['GET', 'POST'])
@@ -1477,7 +1471,7 @@ def education_stream_card():
     user_id = flask_login.current_user.user_id
 
     if not flask_login.current_user.is_admin():
-        return redirect("main_page")
+        return redirect(url_for("multilingual.main_page"))
 
     id_education_stream = request.args.get('id')
     message_error = session.get('message_error')
@@ -1537,7 +1531,7 @@ def education_stream_card():
             id_education_stream, session['message_error'], session[
                 'status_code'] = page_controller.create_education_stream(education_stream_new, timetables_list, user_id)
 
-            return redirect(f"/education_stream_card?id={id_education_stream}")
+            return redirect(url_for("multilingual.education_stream_card", id=id_education_stream))
 
         elif request.form.get('button') == 'edit':
             mode = "edit"
@@ -1566,14 +1560,14 @@ def education_stream_card():
             session['message_error'], session['status_code'] = page_controller.save_education_stream(
                 education_stream_new, timetables_list, user_id)
 
-            return redirect(f"/education_stream_card?id={id_education_stream}")
+            return redirect(url_for("multilingual.education_stream_card", id=id_education_stream))
 
     return render_template('education_stream_card.html', view="education_streams", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _endpoint=endpoint,
                            _curators_list=curators_list, _students_list=students_list, _courses_list=courses_list,
                            _mode=mode, _education_stream=education_stream, _timetables_list=timetables_list,
                            _message_error=message_error, _status_code=status_code, _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=mpc.get_languages_list())
 
 
 @multilingual.route('/download', methods=['GET', 'POST'])
@@ -1595,9 +1589,15 @@ def download():
 @app.route('/change_language', methods=['GET'])
 @login_required
 def change_language():
+    """
+
+    """
+    mpc = MainMenuPageController(flask_login.current_user.user_id)
+
     lang_code = request.args.get('lang_code')
     if lang_code is not None:
-        languages = [lang['lang_code'] for lang in config.LANGUAGES]
+        languages_list = mpc.get_languages_list()
+        languages = [language['lang_code'] for language in languages_list]
         if lang_code in languages:
             session['lang_code'] = lang_code
             return lang_code

@@ -15,7 +15,7 @@
 
 
     {% if _data %}
-        <h1 class="h3 mb-2">Список модулей курса "{{_course_name}}"</h1>
+        <h1 class="h3 mb-2">{{_("Список модулей курса ")}}"{{_course_name}}"</h1>
         <form method="post">
         {% for i_course in _data %}
             <div class="card boarder">
@@ -27,11 +27,11 @@
                     <thead>
                         <tr>
                             <th style="width: 5%!important;"></th>
-                            <th style="width:40%!important;">Наименование урока</th>
-                            <th style="width:10%!important;">Ссылка</th>
-                            <th style="width:15%!important;">Домашние задание</th>
-                            <th style="width:10%!important;">Статус</th>
-                            <th class="d-none d-md-table-cell" style="width:15%!important;">Срок доступа</th>
+                            <th style="width:40%!important;">{{_('Наименование урока')}}</th>
+                            <th style="width:10%!important; text-align: center;">{{_("Ссылка")}}</th>
+                            <th style="width:15%!important; text-align: center;">{{_("Домашние задание")}}</th>
+                            <th style="width:10%!important;">{{_("Статус")}}</th>
+                            <th class="d-none d-md-table-cell" style="width:15%!important;">{{_("Срок доступа")}}</th>
                             <th style="width: 5%"></th>
                         </tr>
                     </thead>
@@ -54,20 +54,21 @@
                                     </svg>
                                 </td>
                                 <td>{{ i_lesson['name'] }}</td>
-                                <td>
-                                    <button type="submit" class="btn btn-link" name="button" value="{{ i_lesson['id'] }}">Выполнить</button>
+                                <td style="text-align: center">
+                                    <button type="submit" class="btn btn-link" name="button" value="{{ i_lesson['id'] }}">
+                                        {{_("Выполнить")}}</button>
                                 </td>
                                 <td style="text-align: center">
                                     <div style="display: inline-block" class="badge {% if i_lesson['task'] is not none %}
                                             {% if i_lesson['homework'] is not none %} bg-success {% else %} bg-warning {% endif %}
                                         {% else %} bg-secondary {% endif %} text-light bg-gradient">
-                                                            {% if i_lesson['task'] is not none %}
-                                                                {% if i_lesson['homework'] is not none %}
-                                                                    Сдано: {{ i_lesson['homework']['date_delivery'] }}
-                                                                {% else %}
-                                                                    Не сдано
-                                                                {% endif %}
-                                                            {% else %}Нет домашнего задания{% endif %}
+                                        {% if i_lesson['task'] is not none %}
+                                            {% if i_lesson['homework'] is not none %}
+                                                {{_("Сдано:")}} {{ i_lesson['homework']['date_delivery'] }}
+                                            {% else %}
+                                                {{_("Не сдано")}}
+                                            {% endif %}
+                                        {% else %}{{_("Нет домашнего задания")}}{% endif %}
                                     </div>
                                 </td>
                                 <td>
@@ -79,7 +80,7 @@
                                 </td>
                                 <td class="d-none d-md-table-cell">
                                     {% if module_first %}
-                                        Неограничен
+                                    {{_("Неограничен")}}
                                     {% else %}
                                         {% if _user['education_stream']['date_end'] %}
                                             {{ _user['education_stream']['date_end'] }}
@@ -98,8 +99,8 @@
                                     </svg>
                                 </td>
                                 <td class="table-warning">{{ i_lesson['name'] }}</td>
-                                <td class="table-warning"><a href="{{ url_for('education_program_subscription') }}">Получить доступ</a></td>
-                                <td class="table-warning">Нет домашнего задания</td>
+                                <td class="table-warning"><a href="{{ url_for('multilingual.education_program_subscription') }}">{{_("Получить доступ")}}</a></td>
+                                <td class="table-warning">{{_("Нет домашнего задания")}}</td>
                                 <td class="table-warning"><strong><hr></strong></td>
                                 <td class="d-none d-md-table-cell table-warning"><strong><hr></strong></td>
                             {% endif %}
@@ -122,7 +123,7 @@
         </form>
     {% else %}
         <div class="text-center">
-            <h2>Данная страница недоступна из-за отсутствия нужного файла.</h2>
+            <h2>{{_("Данная страница недоступна из-за отсутствия нужного файла")}}.</h2>
         </div>
     {% endif %}
 

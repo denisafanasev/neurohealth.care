@@ -54,14 +54,14 @@
                 <div class="card">
                     <div class="card-header">
                         <div>
-                            <a class="btn {% if _endpoint == "age_range_list" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for("age_range_list") }}" role="tab">
+                            <a class="btn {% if _endpoint == "age_range_list" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for("multilingual.age_range_list") }}" role="tab">
                                 Справочник диапазонов возрастов
                             </a>
-                            <a class="btn {% if _endpoint == "estimated_values" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("estimated_values") }}" role="tab">
+                            <a class="btn {% if _endpoint == "estimated_values" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("multilingual.estimated_values") }}" role="tab">
                                 Справочник оценочных значений
                             </a>
                             <a class="btn {% if _endpoint == "maintenance" %} btn-primary {% else %}btn-light {% endif %} buttons-copy
-                                buttons-html5" aria-controls="datatables-buttons" href="{{ url_for("maintenance") }}" role="tab">
+                                buttons-html5" aria-controls="datatables-buttons" href="{{ url_for("multilingual.maintenance") }}" role="tab">
                                 Обслуживание системы
                             </a>
                         </div>
@@ -70,17 +70,17 @@
             </div>
             <div class="col-sm-10">
                 <div class="tab-content">
-                    <div id="example" class="tab-pane fade {% if _endpoint == "estimated_values" %} show active {% endif %}" id="{{ url_for("estimated_values") }}" role="tabpanel">
+                    <div id="example" class="tab-pane fade {% if _endpoint == "multilingual.estimated_values" %} show active {% endif %}" id="{{ url_for("multilingual.estimated_values") }}" role="tabpanel">
                         {% block estimated_values %}
                         {% endblock %}
                     </div>
 
-                    <div class="tab-pane fade {% if _endpoint == "age_range_list" %} show active {% endif %}" id="{{ url_for("age_range_list") }}" role="tabpanel">
+                    <div class="tab-pane fade {% if _endpoint == "multilingual.age_range_list" %} show active {% endif %}" id="{{ url_for("multilingual.age_range_list") }}" role="tabpanel">
                         {% block age_range_list %}
                         {% endblock %}
                     </div>
 
-                    <div class="tab-pane fade {% if _endpoint == "maintenance" %} show active {% endif %}" id="{{ url_for("maintenance") }}" role="tabpanel">
+                    <div class="tab-pane fade {% if _endpoint == "multilingual.maintenance" %} show active {% endif %}" id="{{ url_for("multilingual.maintenance") }}" role="tabpanel">
                         {% block maintenance %}
                         {% endblock %}
                     </div>
