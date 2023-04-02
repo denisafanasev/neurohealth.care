@@ -1,7 +1,7 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
-from flask_babel import Babel, refresh
+from flask_babel import Babel
 from flask import Flask, request, redirect, render_template, send_file, abort, session, Blueprint, g, url_for
 from flask_login import LoginManager, login_required, login_user, logout_user
 import flask_login
@@ -11,7 +11,6 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 
 # general page controllers
 from werkzeug import exceptions
-from werkzeug.utils import secure_filename
 
 from controllers.main_page_controller import MainPageController
 from controllers.main_menu_controller import MainMenuPageController
@@ -74,6 +73,7 @@ app.debug = config.DEBUG
 login_manager = LoginManager()
 login_manager.login_view = "multilingual.login"
 login_manager.init_app(app)
+
 
 def get_locale():
     # if a user is logged in, use the locale from the user settings
@@ -1620,7 +1620,8 @@ def not_found(e):
 
 
 app.register_blueprint(multilingual)
-babel = Babel(app, locale_selector=get_locale, default_translation_directories=config.DATA_FOLDER + 'translations')
+babel = Babel(app)
+babel.localeselector(get_locale)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
