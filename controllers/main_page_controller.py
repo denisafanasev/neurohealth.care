@@ -116,7 +116,6 @@ class MainPageController():
 
         main_page_service = MainPageService()
 
-        user = main_page_service.get_user_by_id(_user_id)
         education_streams_list = main_page_service.get_education_streams(_user_id)
         education_streams_list_view = []
         for education_stream in education_streams_list:
@@ -124,16 +123,37 @@ class MainPageController():
                 'id':  education_stream.id,
                 'name': education_stream.name,
                 'course_id': education_stream.course,
-                'homeworks': None
+                'status': education_stream.status,
+                'date_end': education_stream.date_end.strftime('%d/%m/%Y')
             }
-            if user.role == 'user':
-                count_accepted_homeworks, count_no_accepted_homeworks = main_page_service.get_count_accepted_homeworks(_user_id,
-                                                                                                           education_stream.course)
-                education_stream_view['homeworks'] = {
-                    'accepted': count_accepted_homeworks,
-                    'no_accepted': count_no_accepted_homeworks
-                }
 
             education_streams_list_view.append(education_stream_view)
 
         return education_streams_list_view
+
+    def get_progress_users(self, _user_id):
+        """
+        Возвращает прогресс текущего пользователя
+        Args:
+            _user_id(Int): ID текущего пользователя
+
+        Returns:
+            List: прогресс по всем курсам, по которым обучался пользователя
+        """
+        main_page_service = MainPageService()
+
+        education_streams_list = main_page_service.get_education_streams(_user_id)
+        id_courses_list = set(education_stream.course for education_stream in education_streams_list)
+        id_accepted_lessons_list = main_page_service.get_id_lessons_list_with_completed_homework(_user_id)
+        progress_list = []
+        for id_course in id_courses_list:
+            name_course, count_accepted_homework, count_no_accepted_homework = main_page_service.get_progress_users(id_course, id_accepted_lessons_list)
+            progress = {
+                'name_course': name_course,
+                'count_accepted_homework': count_accepted_homework,
+                'count_no_accepted_homework': count_no_accepted_homework
+            }
+
+            progress_list.append(progress)
+
+        return progress_list

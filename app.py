@@ -304,7 +304,8 @@ def user_manager():
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _users_list=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _error=error, _error_type=error_type, _num_page=num_page, _languages=config.LANGUAGES)
+                           _error=error, _error_type=error_type, _num_page=num_page, _languages=config.LANGUAGES,
+                           _lang_code=get_locale())
 
 
 @multilingual.route('/user_profile', methods=['GET', 'POST'])
@@ -474,7 +475,7 @@ def user_profile():
                            _is_current_user_admin=flask_login.current_user.is_admin(), _user_id=user_id,
                            _mode=mode, _message_error=message_error, _status_code=status_code,
                            _education_streams_list=education_streams_list, _active_tab=active_tab,
-                           _languages=config.LANGUAGES)
+                           _lang_code=get_locale(), _languages=config.LANGUAGES)
 
 
 @multilingual.route('/user_actions', methods=['GET', 'POST'])
@@ -507,7 +508,8 @@ def user_actions():
     return render_template('user_actions.html', view="user_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=data, _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _user_id=user_id, _mode=mode, _active_tab=active_tab, _languages=config.LANGUAGES)
+                           _user_id=user_id, _mode=mode, _active_tab=active_tab, _lang_code=get_locale(),
+                           _languages=config.LANGUAGES)
 
 
 @multilingual.route('/main_page', methods=['GET', 'POST'])
@@ -537,6 +539,7 @@ def main_page():
     password = ''
     password2 = ''
     education_streams_list = page_controller.get_education_streams(user_id)
+    progress_list = page_controller.get_progress_users(user_id)
 
     if request.method == "POST":
         if request.form.get("button") == "reset":
@@ -559,7 +562,7 @@ def main_page():
                            _data=page_controller.get_actions(user["user_id"]), _user=user, _message_error=message_error,
                            _status_code=status_code, _password=password, _password2=password2,
                            _education_streams_list=education_streams_list, _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _languages=config.LANGUAGES, _progress_list=progress_list)
 
 
 @multilingual.route('/empty_function', methods=['GET', 'POST'])

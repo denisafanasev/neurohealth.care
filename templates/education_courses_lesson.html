@@ -198,7 +198,13 @@
                                             </td>
                                             <td>{{_("Срок доступа")}}</td>
                                             <td></td>
-                                            <td class="d-none d-md-table-cell">{{ _user['education_module_expiration_date'] }}</td>
+                                            <td class="d-none d-md-table-cell">
+                                                {% if _data['end_access_date'] is not none %}
+                                                    {{ _data['end_access_date'] }}
+                                                {% else %}
+                                                    {{ _user['education_module_expiration_date'] }}
+                                                {% endif %}
+                                            </td>
                                         </tr>
                                          <tr>
                                          {% if _user['role'] != "superuser" and _data['lesson']['task'] %}
@@ -334,7 +340,7 @@
                                                 <tr>
                                                     <td>{{ file['name_file_unique'] }}</td>
                                                     <td>{{ file['size'] }}</td>
-                                                    <td><a href="{{url_for('multilingual.download', name_file=file['name_file_unique'], dataset=chat)}}">Файл</a></td>
+                                                    <td><a href="{{url_for('multilingual.download', name_file=file['name_file_unique'], dataset='chat')}}">Файл</a></td>
                                                 </tr>
                                             {% endfor %}
                                         </tbody>

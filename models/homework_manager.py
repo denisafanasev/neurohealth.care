@@ -186,24 +186,22 @@ class HomeworkManager():
 
         return False
 
-    def get_accepted_homeworks(self, _user_id):
+    def get_id_lessons_list_with_completed_homework(self, _user_id):
         """
-        Возвращает список принятых домашних работ у пользователя
+        Возвращает множество из ID уроков, по которым приняты домашние работы у пользователя
 
         Args:
             _user_id(Int): ID пользователя
 
         Returns:
-            List(Homework): список принятых домашних работ
+            Set(Homework): список принятых домашних работ
         """
         data_store = DataStore('homeworks')
 
         homeworks_list_data = data_store.get_rows({'id_user': _user_id, 'status': True})
-        homeworks_list = []
         id_lessons_list = set()
         if homeworks_list_data:
             for homework_data in homeworks_list_data:
-                # homeworks_list.append(self.homework_row_to_homework(homework_data))
                 id_lessons_list.add(homework_data['id_lesson'])
 
         return id_lessons_list

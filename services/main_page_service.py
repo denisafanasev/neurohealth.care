@@ -2,6 +2,7 @@ from datetime import datetime
 
 import config
 from models.action_manager import ActionManager
+from models.course_manager import EducationCourseManager
 from models.homework_manager import HomeworkManager
 from models.lesson_manager import EducationLessonManager
 from models.module_manager import EducationModuleManager
@@ -104,34 +105,42 @@ class MainPageService():
 
         return education_streams
 
-    def get_count_accepted_homeworks(self, _user_id, _id_course):
+    def get_progress_users(self, _id_course, _id_accepted_lessons_list):
         """
-        Возвращает количество сданных/не сданных домашних работ
-
+        Возвращает прогресс текущего пользователя
         Args:
-            _user_id(Int): ID
             _id_course(Int): ID
-
-        Returns:
-            count_accepted_homework(Int): количество сданных домашних работ
-            count_no_accepted_homework(Int): количество не сданных домашних работ
+            _id_accepted_lessons_list
+        Returns
         """
+
+        course_manager = EducationCourseManager()
         module_manager = EducationModuleManager()
         lesson_manager = EducationLessonManager()
+
+        course = course_manager.get_course_by_id(_id_course)
+
+        modules_list = module_manager.get_course_modules_list(course.id)
+        lessons_list = []
+        for module in modules_list:
+            lessons_list.extend(lesson_manager.get_lessons_list_by_id_module(module.id))
+
+        id_lessons_list = set(lesson.id for lesson in lessons_list if lesson.task is not None)
+        count_accepted_homework = len(id_lessons_list.intersection(_id_accepted_lessons_list))
+        count_no_accepted_homework = len(id_lessons_list) - count_accepted_homework
+
+        return course.name, count_accepted_homework, count_no_accepted_homework
+
+    def get_id_lessons_list_with_completed_homework(self, _user_id):
+        """
+        Возвращает множество из ID уроков, по которым домашние работы текущего пользователя приняты
+        Args:
+            _user_id(Int): ID текущего пользователя
+
+        Returns:
+            List: список из ID уроков
+        """
         homework_manager = HomeworkManager()
 
-        module_list = module_manager.get_course_modules_list(_id_course)
-        count_no_accepted_homework = 0
-        count_accepted_homework = 0
-        for module in module_list:
-            lesson_list = lesson_manager.get_lessons_list_by_id_module(module.id)
-            for lesson in lesson_list:
-                if lesson.task:
-                    is_accepted_homework = homework_manager.is_accepted_homework(_user_id, lesson.id)
-                    if is_accepted_homework:
-                        count_accepted_homework += 1
-                    else:
-                        count_no_accepted_homework += 1
-
-        return count_accepted_homework, count_no_accepted_homework
+        return homework_manager.get_id_lessons_list_with_completed_homework(_user_id)
 

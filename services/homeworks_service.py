@@ -273,7 +273,7 @@ class HomeworksService():
 
         homework_manager = HomeworkManager()
 
-        id_lessons_set = homework_manager.get_accepted_homeworks(_user_id)
+        id_lessons_set = homework_manager.get_id_lessons_list_with_completed_homework(_user_id)
 
         count_accepted_homework = len(id_lessons_set.intersection(_id_lessons_list))
         count_no_accepted_homework = len(_id_lessons_list) - count_accepted_homework

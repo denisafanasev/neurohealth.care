@@ -5,6 +5,7 @@ import config
 from models import timetable_manager
 from models.action_manager import ActionManager
 from models.course_manager import EducationCourseManager
+from models.education_stream_manager import EducationStreamManager
 from models.homework_manager import HomeworkManager
 from models.homework_chat_manager import HomeworkChatManager
 from models.upload_manager import UploadManager
@@ -254,5 +255,13 @@ class EducationCourseLessonService():
         """
 
         access_manager = CoursesAccessManager()
+        education_stream_manager = EducationStreamManager()
         is_access, start_access_date = access_manager.is_course_module_avalable_for_user(_course_id, _module_id, _user_id)
-        return is_access, start_access_date
+        end_access_date = None
+        if is_access:
+            if start_access_date is not None:
+                education_stream = education_stream_manager.get_education_stream_by_id_user_and_id_course(_user_id,
+                                                                                                          _course_id)
+                end_access_date = education_stream.date_end
+
+        return is_access, start_access_date, end_access_date
