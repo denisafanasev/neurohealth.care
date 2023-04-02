@@ -211,13 +211,19 @@ class EducationCourseLessonService():
         # если уроки найдены, то оборачиваем их в класс Module
         if neighboring_lessons['next_lesson'] is not None:
             module = module_manager.get_module_by_id(neighboring_lessons['next_lesson'].id_module)
-            module.lessons = neighboring_lessons['next_lesson']
-            neighboring_lessons['next_lesson'] = module
+            if module.id_course == _id_course:
+                module.lessons = neighboring_lessons['next_lesson']
+                neighboring_lessons['next_lesson'] = module
+            else:
+                neighboring_lessons['next_lesson'] = None
 
         if neighboring_lessons['previous_lesson'] is not None:
             module = module_manager.get_module_by_id(neighboring_lessons['previous_lesson'].id_module)
-            module.lessons = neighboring_lessons['previous_lesson']
-            neighboring_lessons['previous_lesson'] = module
+            if module.id_course == _id_course:
+                module.lessons = neighboring_lessons['previous_lesson']
+                neighboring_lessons['previous_lesson'] = module
+            else:
+                neighboring_lessons['previous_lesson'] = None
 
         return neighboring_lessons
 
