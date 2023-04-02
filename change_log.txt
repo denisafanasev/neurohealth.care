@@ -1,3 +1,60 @@
+[1.3.0]
+Новые функции:
+- Проверка доступа пользователя к обучающим курсам осуществляется на основании настройки обучающих потоков
+- Добавлена возможность переключать языки на всех страницах
+- Добавлен виджет "Мой прогресс" с принятыми/не принятыми домашними уроками по всем курсам на главной странице
+- Изменен виджет "Мои обучающие потоки" на главной странице
+
+Исправления:
+
+- Разде "Управление обучающими потоками"
+    - Исправления текста на странице со списком домашних работ
+    - Добавлена кнопка для списка потоков
+    - Исправлен баг на странице со списком обучающих потоков
+    - Исправлен баг с выбором потока без пользователей(студентов)
+
+- Раздел "Проверка домашних работ"
+    - Строка поиска на странице "Списки домашних работ" теперь находится в центре, а не у правого края
+    - Добавлены отступы и сделаны везде одинаковыми
+    - Добавлена возможность переходить в чаты без домашних работ с помощью клика на строку с данными чата
+    - Исправлена логика смены статуса сообщений от пользователей на "Прочитано"
+    - Исправлен баг на странице урока(не скачивался файл, отправленный пользователем)
+
+- Раздел "Обучающие курсы"
+    - Исправлены столбцы "Ссылка" и "Домашние задание" на странице "Список модулей курса"
+    - Исправлен столбец "Срок доступа" на страницах "Список модулей курсов" и "Урок"
+    - Добавлена возможность видеть дату, когда будет открыт доступ к модулю (если пользователь сходит в активный обучающий поток)
+    - Исправлен баг с переходами на соседние не открытые уроки
+
+------------------------------------------------------------------
+
+New features:
+- Checking the user's access to training courses is based on the configuration of training streams
+- Added ability to switch languages on all pages
+- Added widget "My progress" with accepted/not accepted home lessons for all courses on the main page
+- Changed widget "My learning streams" on the main page
+
+Corrections:
+
+- Section "Manage learning streams"
+     - Correction of the text on the page with the list of homework
+     - Added button for stream list
+     - Fixed a bug on the page with the list of training streams
+     - Fixed bug with stream selection without users (students)
+
+- Section "Checking homework"
+     - The search bar on the "Homework Lists" page is now in the center instead of at the right edge
+     - Added padding and made it the same everywhere
+     - Added the ability to switch to chats without homework by clicking on the line with chat data
+     - Fixed the logic of changing the status of messages from users to "Read"
+     - Fixed a bug on the lesson page (the file sent by the user was not downloaded)
+
+- Section "Training courses"
+     - Fixed "Reference" and "Homework" columns on the "List of Course Modules" page
+     - Fixed column "Access period" on pages "List of course modules" and "Lesson"
+     - Added the ability to see the date when access to the module will be opened (if the user goes to the active learning stream)
+     - Fixed a bug with transitions to neighboring non-open lessons
+
 [1.2.10]
 Изменения на странице "Профиль пользователя":
 -В таблице со списком обучающих потоков, добавлен столбец с ролью данного пользователя в потоке
