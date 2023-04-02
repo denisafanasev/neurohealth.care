@@ -64,12 +64,12 @@ class EducationCourseService():
 
         user = user_manager.get_user_by_id(_user_id)
 
-        #education_streams = education_stream_manager.get_education_streams_list_by_login_user(user.login, user.role)
+        education_streams = education_stream_manager.get_education_streams_list_by_id_user(user.login, user.role)
 
-        #if _course_id is not None:
-        #    for education_stream in education_streams:
-        #        if education_stream.course == _course_id and education_stream.status == "идет":
-        #            user.education_stream_list = education_stream
+        if _course_id is not None:
+           for education_stream in education_streams:
+               if education_stream.course == _course_id and education_stream.status != "закончен":
+                   user.education_module_expiration_date = education_stream
 
         return user
     
@@ -118,8 +118,15 @@ class EducationCourseService():
         """        
         
         access_manager = CoursesAccessManager()
+        education_stream_manager = EducationStreamManager()
         is_access, start_access_date = access_manager.is_course_module_avalable_for_user(_course_id, _module_id, _user_id)
-        return is_access, start_access_date
+        end_access_date = None
+        if is_access:
+            if start_access_date is not None:
+                education_stream = education_stream_manager.get_education_stream_by_id_user_and_id_course(_user_id, _course_id)
+                end_access_date = education_stream.date_end
+
+        return is_access, start_access_date, end_access_date
 
     def get_last_homework(self, _id_lesson, _id_user):
         """

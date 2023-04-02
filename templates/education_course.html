@@ -81,12 +81,10 @@
                                 <td class="d-none d-md-table-cell">
                                     {% if module_first %}
                                     {{_("Неограничен")}}
+                                    {% elif i_course['end_access_date'] is not none %}
+                                        {{ i_course['end_access_date'] }}
                                     {% else %}
-                                        {% if _user['education_stream']['date_end'] %}
-                                            {{ _user['education_stream']['date_end'] }}
-                                        {% else %}
-                                            {{ _user['education_module_expiration_date'] }}
-                                        {% endif %}
+                                        {{ _user['education_module_expiration_date'] }}
                                     {% endif %}
                                 </td>
                                 <td>
