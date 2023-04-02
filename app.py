@@ -850,12 +850,15 @@ def education_home_tasks():
 
     current_education_stream = page_controller.get_current_education_stream(id_education_stream, current_user_id)
     if user_id is None:
-        user_id = current_education_stream['students_list'][0]['user_id']
+        if current_education_stream['students_list']:
+            user_id = current_education_stream['students_list'][0]['user_id']
 
-        return redirect(
-            url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream, user_id=user_id))
+            return redirect(
+                url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream, user_id=user_id))
 
-    user = page_controller.get_user(user_id)
+        user = None
+    else:
+        user = page_controller.get_user(user_id)
 
     # список чатов по урокам, по которым не сданы домашние работы
     if filter_homework == 'chat_without_homework':
