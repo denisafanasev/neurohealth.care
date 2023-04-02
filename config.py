@@ -40,7 +40,7 @@ LANGUAGES = [
     },
     {
         'lang_code': 'en',
-        'img_name': 'us.png',
+        'img_name': 'gb.png',
         'title': 'English'
     }
 ]
