@@ -236,7 +236,7 @@
                         </fieldset>
                             {% if _mode == "view" %}
                                 <div class="mb-2">
-                                    <label class="form-label"><strong>Доступ к центру обучения</strong></label>
+                                    <label class="form-label"><strong>Доступ к дополнительным курсам</strong></label>
                                     <input class="form-control" disabled value="{{ _data_edit['education_module_expiration_date'] }}">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#extension" style="float: right; margin-top: 1%"
                             onclick="document.getElementById('extension').style.display = 'block';">Продление доступа</button>
@@ -348,7 +348,7 @@
     </script>
     <div id="extension" class="modal">
         <div class="modal-content animate " style="width: 31%">
-            <h3 class="modal-title">Доступ к центру обучения</h3>
+            <h3 class="modal-title">Доступ к дополнительным курсам</h3>
             <form id="extension" name="form" method="post" enctype="multipart/form-data" onsubmit="return checkExtension(this);">
                 <div class="row d-flex align-items-stretch bd-highlight">
                     <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto;">

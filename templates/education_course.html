@@ -44,7 +44,7 @@
                         {% endif %}
                         {% for i_lesson in i_course['lessons'] %}
                         <tr>
-                            {% if (module_first or i_course['available']) %}
+                            {% if (i_course['available']) %}
                                 <td class="table-action">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -89,6 +89,15 @@
                                         {% endif %}
                                     {% endif %}
                                 </td>
+                                <td>
+                                    {% if i_lesson['id_room_chat'] %}
+                                    {% if i_lesson['unread_message_amount'] != 0 %}
+                                    <div class="badge bg-danger float-end" style="text-align: left">
+                                        {{ i_lesson['unread_message_amount'] }}
+                                    </div>
+                                    {% endif %}
+                                    {% endif %}
+                                </td>
                             {% else %}
                                 <td class="table-action table-warning">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -99,21 +108,16 @@
                                     </svg>
                                 </td>
                                 <td class="table-warning">{{ i_lesson['name'] }}</td>
-                                <td class="table-warning"><a href="{{ url_for('multilingual.education_program_subscription') }}">{{_("Получить доступ")}}</a></td>
+                                {% if i_course['start_access_date'] is not none %}
+                                    <td class="table-warning text-center">{{ i_course['start_access_date'] }}</td>
+                                    {% else %}
+                                    <td class="table-warning text-center"><a href="{{ url_for('multilingual.education_program_subscription') }}">{{_("Получить доступ")}}</a></td>
+                                {% endif %}
                                 <td class="table-warning">{{_("Нет домашнего задания")}}</td>
                                 <td class="table-warning"><strong><hr></strong></td>
                                 <td class="d-none d-md-table-cell table-warning"><strong><hr></strong></td>
+                                <td class="table-warning"></td>
                             {% endif %}
-                            <td>
-                            {% if i_lesson['id_room_chat'] %}
-                                {% if i_lesson['unread_message_amount'] != 0 %}
-                                <div class="badge bg-danger float-end" style="text-align: left">
-                                    {{ i_lesson['unread_message_amount'] }}
-                                </div>
-                                {% endif %}
-                            {% endif %}
-                            </td>
-
                         </tr>
                         {% endfor %}
                     </tbody>
