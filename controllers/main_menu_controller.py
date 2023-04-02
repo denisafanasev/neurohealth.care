@@ -62,17 +62,18 @@ class MainMenuPageController():
         """
 
         main_menu_service = MainMenuService()
-        active_menu_item = main_menu_service.get_active_menu_item_number(self.user_id, _endpoind)
+        endpoint = _endpoind.split('.')[-1]
+        active_menu_item = main_menu_service.get_active_menu_item_number(self.user_id, endpoint)
         return active_menu_item
 
-    def get_languages_list(self):
-        """
-        Возвращает список доступных языков.
-        """
-        if not 'app' in request.host_url:
-            languages = config.LANGUAGES
-        else:
-            languages = [config.LANGUAGES[0]]
-
-        return languages
+    # def get_languages_list(self):
+    #     """
+    #     Возвращает список доступных языков.
+    #     """
+    #     if not 'app' in request.host_url:
+    #         languages = config.LANGUAGES
+    #     else:
+    #         languages = [config.LANGUAGES[0]]
+    #
+    #     return languages
 
