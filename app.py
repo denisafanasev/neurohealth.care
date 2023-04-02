@@ -736,9 +736,8 @@ def education_course_lesson():
         course = page_controller.get_course_by_id(data['id_course'])
 
         neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
-        if user['active_education_module'] == 'inactive' and user['education_stream'].get('status') != "идет":
-            if data['id_module'] > 1 and user['role'] != 'superuser' and not data['available']:
-                return redirect(url_for('multilingual.education_program_subscription'))
+        if not data['available']:
+            return redirect(url_for('multilingual.education_program_subscription'))
 
     if id_video is None:
         id_video = 1
