@@ -35,6 +35,11 @@ class EducationCourseLessonPageController():
             if module.lessons.text:
                 module.lessons.text = Markup(module.lessons.text)
 
+            is_access, start_access_date = lesson_service.is_course_module_avalable_for_user(module.id_course, module.id, _user_id)
+
+            if start_access_date is not None:
+                    start_access_date = start_access_date.strftime("%d/%m/%Y")
+
             lesson = {
                 "id_course": module.id_course,
                 "id_module": module.id,
@@ -48,7 +53,8 @@ class EducationCourseLessonPageController():
                     "text": module.lessons.text,
                     "task": module.lessons.task
                 },
-                "available": lesson_service.is_course_module_avalable_for_user(module.id_course, module.id, _user_id)
+                "available": is_access,
+                "start_access_date": start_access_date
             }
 
             return lesson

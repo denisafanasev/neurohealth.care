@@ -36,10 +36,18 @@ class EducationCoursePageController():
                 lesson_list = []
 
                 # проверим доступность модуля для пользователя
-                module["available"] = course_service.is_course_module_avalable_for_user(_id, i_module.id, _user_id)
+                is_access, start_access_date = course_service.is_course_module_avalable_for_user(_id, i_module.id, _user_id)
+                module["available"] = is_access
+
+                if start_access_date is not None:
+                    start_access_date = start_access_date.strftime("%d/%m/%Y")
+                
+                module["start_access_date"] = start_access_date
+                
                 user_role = course_service.get_user_by_id(_user_id).role
 
                 for i_lesson in i_module.lessons:
+
                     lesson = {
                         "id": i_lesson.id,
                         "name": i_lesson.name,

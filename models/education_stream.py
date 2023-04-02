@@ -13,6 +13,8 @@ class EducationStream():
         self.students_list = _students_list
         self.teacher = _teacher
         self.status = _status
+        self.date_start = _date_start
+        self.date_end = _date_end
 
         if _date_start != '':
             if type(_date_start) is str:

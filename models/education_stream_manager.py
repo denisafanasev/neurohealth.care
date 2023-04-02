@@ -39,6 +39,7 @@ class EducationStreamManager():
         else:
             education_stream.date_end = datetime.today() + timedelta(days=1)
 
+        # TODO: need to rewrite by using constants
         if datetime.today() <= education_stream.date_end + timedelta(days=1):
             if datetime.today() >= education_stream.date_start:
                 education_stream.status = "идет"
@@ -150,15 +151,20 @@ class EducationStreamManager():
         Returns:
             List(EducationStream): список обучающих потоков
         """
+
         data_store = DataStore("education_streams")
 
         education_streams_list = data_store.get_rows()
         education_streams = []
+        
         for i_education_stream in education_streams_list:
+
             education_stream = self.education_stream_row_to_education_stream(i_education_stream)
+
             if _role_user == "user":
                 if _id_user in education_stream.students_list:
                     education_streams.append(education_stream)
+
             elif _role_user == "superuser":
                 if _id_user in education_stream.curators_list:
                     education_streams.append(education_stream)

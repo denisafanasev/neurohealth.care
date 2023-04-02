@@ -5,16 +5,15 @@ import config
 from models import timetable_manager
 from models.action_manager import ActionManager
 from models.course_manager import EducationCourseManager
-from models.education_stream_manager import EducationStreamManager
 from models.homework_manager import HomeworkManager
 from models.homework_chat_manager import HomeworkChatManager
-from models.timetable_manager import TimetableManager
 from models.upload_manager import UploadManager
 from models.user_manager import UserManager
 from models.users_file_manager import UsersFileManager
 from models.module_manager import EducationModuleManager
 from models.lesson_manager import EducationLessonManager
 from models.message_manager import MessageManager
+from models.courses_access_manager import CoursesAccessManager
 
 from error import HomeworkManagerException, EducationCourseLessonServiceException
 
@@ -207,6 +206,7 @@ class EducationCourseLessonService():
         module_manager = EducationModuleManager()
 
         neighboring_lessons = lesson_manager.get_neighboring_lessons(_id_lesson)
+
         # если уроки найдены, то оборачиваем их в класс Module
         if neighboring_lessons['next_lesson'] is not None:
             module = module_manager.get_module_by_id(neighboring_lessons['next_lesson'].id_module)
@@ -219,107 +219,6 @@ class EducationCourseLessonService():
             neighboring_lessons['previous_lesson'] = module
 
         return neighboring_lessons
-
-    def is_course_module_avalable_for_user(self, _course_id, _module_id, _user_id):
-        """
-        Функция проверки доступности модуля для пользователя
-
-        Args:
-            _course_id (Integer): ID курса
-            _module_id (Integer): ID модуля
-            _user_id (Integer): ID пользователя
-
-        Returns:
-            Boolean: доступен модуль для пользователя или нет
-        """
-        course_manager = EducationCourseManager()
-        module_manager = EducationModuleManager()
-        user_manager = UserManager()
-
-        user = user_manager.get_user_by_id(_user_id)
-
-        # если пользователь суперпользователь, то сразу возвращаем True и больше ничего не проверяем
-        if user.role == 'superuser':
-            return True
-
-        # если это обычный пользователь, посмотрим что за курс и модуль
-        course = course_manager.get_course_by_id(_course_id)
-        course_modules = module_manager.get_course_modules_list(_course_id)
-        first_module = course_modules[0]
-
-        if course.type == 'additional':
-            # если дополнительный курс, то проверяем доступность модуля для пользователя по налицию у него общей подписки
-            if user.education_module_expiration_date >= datetime.now():
-                return True
-            elif first_module.id == _module_id:
-                return True
-            else:
-                return False
-        else:
-            # если это основной курс, то проверяем доступность модуля по наличию подписки на обучающий курс
-
-            # TODO: это надо перенести в целевую модель проверки вхождения пользователя в обущающий поток
-
-            # education_stream = education_stream_manager.get_education_stream_by_id_user_and_id_course(_user_id,
-            #                                                                                           _course_id)
-            # timetable = timetable_manager.get_timetable_by_id_module_and_id_education_stream(_module_id,
-            #                                                                                  education_stream.id)
-            # date_today = datetime.today()
-            # if date_today >= timetable.date_start:
-            #     return True
-
-            # проверяем, есть ли пользователь в списках участников пятого потока
-            for i in range(1, min(len(course_modules) + 1, 9)):
-                if course_modules[i - 1].id == _module_id:
-                    with open(config.DATA_FOLDER + 'course_1/s6_users.txt') as f:
-                        course_users_list = f.read().splitlines()
-
-                    for course_user in course_users_list:
-                        if course_user.lower() == user.login:
-                            return True
-            
-            for i in range(1, min(len(course_modules) + 1, 9)):
-                if course_modules[i - 1].id == _module_id:
-                    with open(config.DATA_FOLDER + 'course_1/s7_users.txt') as f:
-                        course_users_list = f.read().splitlines()
-
-                    for course_user in course_users_list:
-                        if course_user.lower() == user.login:
-                            return True
-
-            # проверяем, есть ли пользователь в списках участников четвертого потока
-            for i in range(1, min(len(course_modules) + 1, 9)):
-                if course_modules[i - 1].id == _module_id:
-                    with open(config.DATA_FOLDER + 'course_1/s61_users.txt') as f:
-                        course_users_list = f.read().splitlines()
-
-                    for course_user in course_users_list:
-                        if course_user.lower() == user.login:
-                            return True
-
-            '''
-            # проверяем, есть ли пользователь в списках участников третьего потока
-            for i in range(1, min(len(course_modules) + 1, 9)):
-                if course_modules[i - 1].id == _module_id:
-                    with open(config.DATA_FOLDER + 'course_1/s3_users.txt') as f:
-                        course_users_list = f.read().splitlines()
-
-                    for course_user in course_users_list:
-                        if course_user.lower() == user.login:
-                            return True
-
-            # проверяем, есть ли пользователь в списках участников второго потока
-            for i in range(1, min(len(course_modules) + 1, 9)):
-                if course_modules[i - 1].id == _module_id:
-                    with open(config.DATA_FOLDER + 'course_1/s2_users.txt') as f:
-                        course_users_list = f.read().splitlines()
-
-                    for course_user in course_users_list:
-                        if course_user.split()[0].lower() == user.login:
-                            return True
-            '''
-
-            return False
 
     def get_homework_chat(self, _id_lesson, _id_user):
         """
@@ -340,3 +239,20 @@ class EducationCourseLessonService():
             homework_chat.message = message_manager.get_messages_for_user(homework_chat.id, _id_user)
 
         return homework_chat
+
+    def is_course_module_avalable_for_user(self, _course_id, _module_id, _user_id):
+        """
+        Функция проверки доступности модуля для пользователя
+
+        Args:
+            _course_id (Integer): ID курса
+            _module_id (Integer): ID модуля
+            _user_id (Integer): ID пользователя
+
+        Returns:
+            Boolean: is the module avalable for the user or not
+        """
+
+        access_manager = CoursesAccessManager()
+        is_access, start_access_date = access_manager.is_course_module_avalable_for_user(_course_id, _module_id, _user_id)
+        return is_access, start_access_date
