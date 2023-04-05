@@ -831,16 +831,6 @@ def education_home_tasks():
         elif request.form.get('user_id'):
             user_id = request.form.get('user_id')
 
-        elif request.form.get('homework_id'):
-            homework_id = request.form['homework_id']
-
-            return redirect(url_for('multilingual.education_home_task_card', id_homework=homework_id))
-
-        elif request.form.get('homework_chat_id'):
-            homework_chat_id = request.form['homework_chat_id']
-
-            return redirect(url_for('multilingual.education_home_task_card', id_chat=homework_chat_id))
-
         return redirect(
             url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream, user_id=user_id))
 
