@@ -95,24 +95,6 @@
             var form = document.querySelector('form[name=form]')
             HTMLFormElement.prototype.submit.call(form);
         }
-
-        function button_click_homework_id(id) {
-            <!--Присваиваем input ID выбранного пользователя и после вызываем событие submit для отправки данных-->
-            var about = document.querySelector('input[name=homework_id]');
-            about.value = id;
-
-            var form = document.querySelector('form[name=form]')
-            HTMLFormElement.prototype.submit.call(form);
-        }
-
-        function button_click_homework_chat_id(id) {
-            <!--Присваиваем input ID выбранного пользователя и после вызываем событие submit для отправки данных-->
-            var about = document.querySelector('input[name=homework_chat_id]');
-            about.value = id;
-
-            var form = document.querySelector('form[name=form]')
-            HTMLFormElement.prototype.submit.call(form);
-        }
     </script>
     <style>
         .dataTables_wrapper .dataTables_filter {
@@ -149,7 +131,6 @@
         <div class="mb-3">
             <h1 class="h3 d-inline align-middle">Проверка домашних заданий</h1>
         </div>
-
 
         <form name="form" method="post" enctype="multipart/form-data" class="row">
             <!--Карточка для выбора обучающего потока и пользователя из соответствующих списков -->
@@ -290,12 +271,12 @@
                                 {% for item in _data %}
                                     {% if item['homework_list'] is not none %}
                                         {% for homework in item['homework_list'] %}
-                                            <tr onclick="button_click_homework_id({{ homework['id'] }});">
+                                            <tr>
                                                 <td>{{ item['module']['id'] }}</td>
                                                 <td>{{ item['lesson']['id'] }}</td>
                                                 <td style="white-space: break-spaces">{{ item['module']['name'] }}</td>
                                                 <td style="white-space: inherit">
-                                                    Урок: {{ item['lesson']['name'] }}</td>
+                                                    <a href="{{ url_for('multilingual.education_home_task_card', id_homework=homework['id']) }}">Урок: {{ item['lesson']['name'] }}</a></td>
                                                 <td>{{ homework['date_delivery'] }}</td>
                                                 <td style="text-align: center">
                                                     <div class='badge {% if homework['status'] == "Не проверено" %} bg-info {% else %} bg-success {% endif %} bg-gradient text-light'>
@@ -324,12 +305,12 @@
                                             </tr>
                                         {% endfor %}
                                     {% else %}
-                                        <tr onclick="button_click_homework_chat_id({{ item['homework_chat']['id'] }});">
+                                        <tr>
                                             <td>{{ item['module']['id'] }}</td>
                                             <td>{{ item['lesson']['id'] }}</td>
                                             <td>{{ item['module']['name'] }}</td>
                                             <td style="white-space: inherit">
-                                                Урок: {{ item['lesson']['name'] }}</td>
+                                                <a href="{{ url_for('multilingual.education_home_task_card', id_chat=item['homework_chat']['id']) }}">Урок: {{ item['lesson']['name'] }}</a></td>
                                             <td></td>
                                             <td>
                                                 <div class='badge bg-warning bg-gradient text-light'>
