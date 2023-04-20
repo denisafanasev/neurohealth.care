@@ -5,8 +5,8 @@ class Probe():
     Класс теста
     """
 
-    def __init__(self, _name_probationer="", _probationer_id="", _date_of_birth="", _protocol_status="",
-                 _probe_id="", _estimated_values_file="", _test=""):
+    def __init__(self, _probe_id="", _name_probationer="", _probationer_id="", _date_of_birth="", _protocol_status="",
+                  _estimated_values_file="", _test=""):
         """
         Конструктор класса
 
@@ -27,8 +27,8 @@ class Probe():
         self.probe_id = _probe_id
         self.test = _test
 
-        if _date_of_birth != "":
-            self.age_probationer = ((datetime.today() - datetime.strptime(_date_of_birth, "%d/%m/%Y")) / 365.25).days
+        # if _date_of_birth != "":
+        #     self.age_probationer = ((datetime.today() - datetime.strptime(_date_of_birth, "%d/%m/%Y")) / 365.25).days
 
         if _protocol_status == "end":
             self.protocol_status = "окончательный"

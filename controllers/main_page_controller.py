@@ -47,7 +47,6 @@ class MainPageController():
 
             actions.append(action)
 
-
         return actions
 
     def get_user_view_by_user_id(self, _user_id):

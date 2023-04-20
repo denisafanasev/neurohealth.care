@@ -34,7 +34,7 @@ class ProbationersPageController():
             probationer_view = {}
 
             probationer_view['probationer_id'] = probationer.probationer_id
-            probationer_view['user_login'] = probationer.user_login
+            probationer_view['user_id'] = probationer.user_id
             probationer_view['name_probationer'] = probationer.name_probationer
             probationer_view['name_parent'] = probationer.name_parent
             probationer_view['date_of_birth'] = str(probationer.date_of_birth)

@@ -5,8 +5,8 @@ class Probationer():
     Класс испытуемого
     """
 
-    def __init__(self, _probationer_id=0, _user_login="", _name_probationer="", _name_parent="",
-                 _educational_institution="", _contacts="", _diagnoses="", _reasons_for_contact="", _date_of_birth=""):
+    def __init__(self, _probationer_id=0, _user_id="", _name_probationer="", _name_parent="",
+                 _educational_institution="", _contacts="", _diagnoses="", _reasons_for_contact=""):
         """
             Конструктор класса
 
@@ -23,10 +23,10 @@ class Probationer():
         """
 
         self.probationer_id = _probationer_id
-        self.user_login = _user_login
+        self.user_id = _user_id
         self.name_probationer = _name_probationer
-        if _date_of_birth != "":
-            self.date_of_birth = datetime.strptime(_date_of_birth, "%d/%m/%Y").strftime("%d/%m/%Y")
+        # if _date_of_birth != "":
+        #     self.date_of_birth = datetime.strptime(_date_of_birth, "%d/%m/%Y").strftime("%d/%m/%Y")
         self.name_parent = _name_parent
         self.educational_institution = _educational_institution
         self.contacts = _contacts

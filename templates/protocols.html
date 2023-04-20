@@ -1,6 +1,26 @@
 {% extends 'base.html' %}
 
 {% block main_block %}
+    <script>
+        var modal_reset = document.getElementById('add_protocol');
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target === modal_reset) {
+                modal_reset.style.display = "none";
+            }
+        }
+    </script>
+    <script type="text/javascript">
+          function checkprobationer(form) {
+            var probationer = form.probationer.value;
+            var text = "Ошибка: выберите тестируемого!"
+
+            if (probationer === "Выберите тестируемого"){
+                alert(text);
+                return false;
+            }
+          }
+    </script>
     <div class="container-fluid p-0">
     
         <h1 class="h3 mb-3">Пробы</h1>
@@ -15,7 +35,7 @@
                                 <div class="col-sm-12 col-md-6">
                                     <div class="dt-buttons btn-group flex-wrap">
                                         {% if _is_probationer %}
-                                            <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('multilingual.probe_profile')}}">
+                                            <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" onclick="document.getElementById('add_protocol').style.display='block'">
                                                 <span>Добавить пробу</span>
                                             </a>
                                         {% else %}
@@ -59,11 +79,7 @@
                                                 <td class="sorting_1 dtr-control"><a href="{{ url_for('multilingual.probe_profile',probationer_id=item["probationer_id"], probe_id=item["probe_id"], test_id=1) }}">{{ item['name_probationer'] }}</a></td>
                                                 <td>{{ item['date_test'] }}</td>
                                                 <td>{{ item['date_protocol'] }}</td>
-                                                {% if item['protocol_status']=="draft" %}
-                                                    <td>черновик</td>
-                                                {% elif item['protocol_status']=="end" %}
-                                                    <td>окончательный</td>
-                                                {% endif %}
+                                                <td>{{ item['protocol_status'] }}</td>
 
                                             </tr>
 
@@ -84,5 +100,47 @@
                 </div>
             </div>
         </div>
+        <!-- Выпадающее окно для создания нового протокола -->
+        <div id="add_protocol" class="modal">
+            <div class="modal-content" style="width: 25%">
+                <form id="probes" name="probes" method="post" enctype="multipart/form-data"
+                      onsubmit="return checkprobationer(this);">
+                    <div class="row d-flex align-items-stretch bd-highlight">
+                        <div class="col-8 p-2 bd-highlight">
+                            <div class="card d-flex align-self-baseline">
+                                <div class="card-header">
+                                    <h5 class="card-title">Выбор тестируемого</h5>
+                                    <div class="mb-2">
+                                        <label class="form-label"><strong>Тестируемый</strong></label>
+                                        <select class="form-select" name="probationer">
+                                            <option disabled selected value="Выберите тестируемого">Выберите тестируемого</option>
+                                            {% for i_probationer in _probationers_list %}
+                                                <option {% if i_probationer["name"] == 'Выберите тестируемого' %}selected
+                                                        disabled {% endif %} value="{{ i_probationer['id'] }}">{{ i_probationer["name"] }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label class="form-label"><strong>Проба</strong></label>
+                                        <select class="form-select" name="probes_list">
+                                            <option disabled selected value="Выберите пробу">Выберите пробу</option>
+                                            {% for probe in _probes_list %}
+                                                <option value="{{ probe['id'] }}">{{ probe["name"] }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: right">
+                                <button type="submit" disabled name="button" value="draft" class="btn btn-primary ">Продолжить
+                                </button>
+
+                                <a type="submit" name="button" href="{{ url_for('multilingual.probes') }}"
+                                   class="btn btn-secondary ">Отмена</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </div>
 {% endblock %}

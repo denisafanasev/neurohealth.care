@@ -27,17 +27,3 @@ class ProbationersService():
         probationers = probationer_manager.get_probationers(user)
 
         return probationers
-
-    def is_probationers(self, _user_id):
-        """
-        Проверает, есть ли у пользователя тестируемые
-
-        Returns:
-            (Boolean): Есть/нет тестируемых
-        """
-
-        probationer_manager = ProbationerManager()
-        user_manager = UserManager()
-        user_login = user_manager.get_user_by_id(_user_id).login
-
-        return probationer_manager.is_probationers(user_login)

@@ -986,13 +986,17 @@ def probes():
 
     endpoint = "probes"
 
+    probes_list = page_controller.get_probes_list()
+    probationers_list = page_controller.get_probationers_list(user_id)
+
     if not flask_login.current_user.is_admin():
         return redirect(url_for("multilingual.evolution_centre_dummy"))
 
     return render_template('protocols.html', view="probes", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data=page_controller.get_probes(), _is_probationer=page_controller.is_probationers(user_id),
-                           _lang_code=get_locale(), _languages=config.LANGUAGES)
+                           _data=page_controller.get_probes(user_id), _is_probationer=page_controller.is_probationers(user_id),
+                           _lang_code=get_locale(), _languages=config.LANGUAGES, _probes_list=probes_list,
+                           _probationers_list=probationers_list)
 
 
 @multilingual.route('/probe_profile', methods=['GET', 'POST'])
