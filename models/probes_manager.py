@@ -140,7 +140,15 @@ class ProbesManager():
                 data_store_test.insert_row({"id": int(grade["id"]), "grade": grade["grade"]})
 
     def get_probe_by_id(self, _probe_id):
+        """
+        Возвращает протокол по ID
 
+        Args:
+            _probe_id(Int): ID протокола
+
+        Returns:
+            Probe: протокол
+        """
         data_store = DataStore("probes")
         probe = data_store.get_rows({"probe_id": _probe_id})
         probe['test'] = ''

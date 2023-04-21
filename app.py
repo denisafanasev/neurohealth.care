@@ -992,6 +992,13 @@ def probes():
     if not flask_login.current_user.is_admin():
         return redirect(url_for("multilingual.evolution_centre_dummy"))
 
+    if request.method == 'POST':
+        if request.form.get('button') == 'add_protocol':
+            probationer_id = request.form.get('probationer')
+            probe_id = request.form.get('probe')
+
+            return redirect(url_for('multilingual.probe_card', probationer_id=probationer_id, probe_id=probe_id))
+
     return render_template('protocols.html', view="probes", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _data=page_controller.get_probes(user_id), _is_probationer=page_controller.is_probationers(user_id),
@@ -999,9 +1006,9 @@ def probes():
                            _probationers_list=probationers_list)
 
 
-@multilingual.route('/probe_profile', methods=['GET', 'POST'])
+@multilingual.route('/probe_card', methods=['GET', 'POST'])
 @login_required
-def probe_profile():
+def probe_card():
     user_id = flask_login.current_user.user_id
     page_controller = ProbeProfileController()
     mpc = MainMenuPageController(user_id)
@@ -1012,26 +1019,25 @@ def probe_profile():
         return redirect(url_for("multilingual.evolution_centre_dummy"))
 
     probationer_id = request.args.get('probationer_id')
+    if probationer_id is not None:
+        probationer_id = int(probationer_id)
+
+    probe_id = request.args.get('probe_id')
+    if probe_id is not None:
+        probe_id = int(probe_id)
 
     data = {}
     test_list = []
     probationers = []
-    probe_id = request.args.get("probe_id")
     protocol = ""
 
-    if probationer_id is None:
-        probationers.append({"name_probationer": "Выберите тестируемого"})
-        probationers.extend(page_controller.get_probationers(user_id))
-        mode = "selection_probationer"
+    data = page_controller.get_protocol(probationer_id, probe_id)
+    if data is not None:
+        protocol = data["protocol_status"]
     else:
-        test_id = int(request.args.get("test_id"))
-        data = page_controller.get_protocol(test_id, int(probe_id))
-        if data is not None:
-            protocol = data["protocol_status"]
-        else:
-            protocol = None
-        mode = "add_value_tests"
-        test_list = page_controller.get_tests_list()
+        protocol = None
+    mode = "add_value_tests"
+    test_list = page_controller.get_tests_list()
 
     if request.method == "POST":
         if mode == "selection_probationer":

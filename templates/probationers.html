@@ -145,24 +145,24 @@
 
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%;"
+                                    <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%; font-size: 13px"
                                         role="grid" aria-describedby="datatables-buttons_info">
                                         <thead>
                                             <tr role="row" style="text-align: center">
                                                 <th style="width:5%;">#</th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                     style="width:10%;" aria-label="Position: activate to sort column ascending">Имя испытуемого</th>
                                                 {% if _is_current_user_admin %}
-                                                    <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                    <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                         style="width:10%;" aria-label="Position: activate to sort column ascending">User_Login</th>
                                                 {% endif %}
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                     style="width:10%;" aria-label="Position: activate to sort column ascending">Дата рождения</th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                     style="width:15%;" aria-label="Position: activate to sort column ascending">ФИО родителя</th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                     style="width:10%;" aria-label="Position: activate to sort column ascending">Контакты</th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                     style="width:15%;" aria-label="Position: activate to sort column ascending">Учебное заведение</th>
                                             </tr>
                                         </thead>
@@ -183,12 +183,12 @@
                                                             </div>
                                                         </td>
                                                         {% if _is_current_user_admin %}
-                                                            <td><div style="position: center; margin-right: 16%">{{ item['user_login'] }}</div></td>
+                                                            <td class="text-center"><div>{{ item['user_login'] }}</div></td>
                                                         {% endif %}
-                                                        <td><div style="position: center; margin-right: 16%">{{ item['date_of_birth'] }}</div></td>
-                                                        <td><div style="position: center; margin-right: 10%">{{ item['name_parent'] }}</div></td>
-                                                        <td><div style="position: center; margin-right: 5%">{{ item['contacts'] }}</div></td>
-                                                        <td><div style="position: center; margin-right: 16%">{{ item['educational_institution'] }}</div></td>
+                                                        <td class="text-center"><div>{{ item['date_of_birth'] }}</div></td>
+                                                        <td class="text-center"><div>{{ item['name_parent'] }}</div></td>
+                                                        <td class="text-center"><div>{{ item['contacts'] }}</div></td>
+                                                        <td class="text-center"><div>{{ item['educational_institution'] }}</div></td>
 
                                                     </tr>
                                                 {% endif %}

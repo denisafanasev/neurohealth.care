@@ -27,3 +27,17 @@ class ProbationersService():
         probationers = probationer_manager.get_probationers(user)
 
         return probationers
+
+    def get_user_by_id(self, _user_id):
+        """
+        Возвращает пользователя по ID
+
+        Args:
+            _user_id(Int): ID
+
+        Returns:
+            User: пользователя
+        """
+        user_manager = UserManager()
+
+        return user_manager.get_user_by_id(_user_id)

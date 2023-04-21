@@ -30,11 +30,11 @@ class ProbationersPageController():
 
         users_list_view = []
         for probationer in probationers:
-
             probationer_view = {}
+            user = probationers_service.get_user_by_id(probationer.user_id)
 
             probationer_view['probationer_id'] = probationer.probationer_id
-            probationer_view['user_id'] = probationer.user_id
+            probationer_view['user_login'] = user.login
             probationer_view['name_probationer'] = probationer.name_probationer
             probationer_view['name_parent'] = probationer.name_parent
             probationer_view['date_of_birth'] = str(probationer.date_of_birth)

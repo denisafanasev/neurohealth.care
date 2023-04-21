@@ -2,6 +2,17 @@
 
 {% block main_block %}
     <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var datatablesButtons = $("#protocols_table").DataTable({
+            responsive: true,
+            lengthChange: !1,
+
+
+        });
+    })
+    </script>
+    <script>
         var modal_reset = document.getElementById('add_protocol');
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function (event) {
@@ -52,18 +63,18 @@
                              <div class="row">
                                 <div class="col-sm-12">
                                 {% if _is_probationer %}
-                                    <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%;"
+                                    <table id="protocols_table" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%; font-size: 13px"
                                         role="grid" aria-describedby="datatables-buttons_info">
                                         <thead>
                                             <tr role="row">
                                                 <th style="width:5%;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                     style="width:20%;" aria-label="Position: activate to sort column ascending">Имя тестируемого</th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                     style="width:10%;" aria-label="Position: activate to sort column ascending">Дата тестирования</th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">Дата создания протокола</th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">Дата создания</th>
+                                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                     style="width:5%;" aria-label="Position: activate to sort column ascending">Статус протокола</th>
                                             </tr>
                                         </thead>
@@ -76,10 +87,10 @@
                                                 <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg")}}" width="32" height="32"
                                                         class="rounded-circle my-n1" alt="Avatar"></td>
 
-                                                <td class="sorting_1 dtr-control"><a href="{{ url_for('multilingual.probe_profile',probationer_id=item["probationer_id"], probe_id=item["probe_id"], test_id=1) }}">{{ item['name_probationer'] }}</a></td>
-                                                <td>{{ item['date_test'] }}</td>
-                                                <td>{{ item['date_protocol'] }}</td>
-                                                <td>{{ item['protocol_status'] }}</td>
+                                                <td class="sorting_1 dtr-control "><a href="{{ url_for('multilingual.probe_profile',probationer_id=item["probationer_id"], probe_id=item["probe_id"], test_id=1) }}">{{ item['name_probationer'] }}</a></td>
+                                                <td class="text-center">{{ item['date_test'] }}</td>
+                                                <td class="text-center">{{ item['date_protocol'] }}</td>
+                                                <td class="text-center">{{ item['protocol_status'] }}</td>
 
                                             </tr>
 

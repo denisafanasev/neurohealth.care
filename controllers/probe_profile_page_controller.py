@@ -57,7 +57,7 @@ class ProbeProfileController():
 
         return probationer_card_service.get_probationer_card_view(probationer_id)
 
-    def get_protocol(self, _id_test, _probe_id):
+    def get_protocol(self, _probationer_id, _probe_id):
         """
         Возвращает тест из пробы тестируемого
 
@@ -72,7 +72,7 @@ class ProbeProfileController():
         probe_profile_service = ProbeProfileService()
 
         try:
-            protocol = probe_profile_service.get_protocol(_id_test, _probe_id)
+            protocol = probe_profile_service.get_protocol(_probationer_id, _probe_id)
             probe = {}
 
             probe["id"] = protocol.test.id
