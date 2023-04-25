@@ -88,7 +88,7 @@ EDUCATION_MENU = [
 
 EVOLUTION_MENU = [
     {"module": "Центр развития", "name": "Мои тестируемые", "endpoint": "probationers", "icon": "users"},
-    {"module": "Центр развития", "name": "Диагностика", "endpoint": "probes", "icon": "list"},
+    {"module": "Центр развития", "name": "Диагностика", "endpoint": "protocols", "icon": "list"},
     {"module": "Центр развития", "name": "Результаты", "endpoint": "results", "icon": "activity"},
     {"module": "Центр развития", "name": "Занятия", "endpoint": "corrections", "icon": "trending-up"}
 ]
