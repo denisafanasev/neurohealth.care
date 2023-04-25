@@ -1,4 +1,4 @@
-from models.probes_manager import ProbesManager
+from models.probes_manager import ProtocolsManager
 from models.probationer_manager import ProbationerManager
 from models.action_manager import ActionManager
 from models.user_manager import UserManager
@@ -29,7 +29,7 @@ class ProbeProfileService():
 
         return probationer_manager.get_probationers(user)
 
-    def add_probe(self, _name_probationer, _probationer_id, _date_of_birth, _protocol_status, _id_user):
+    def update_protocol(self, _probationer_id, _protocol_status, _id_user):
         """
         Добавляет в базу данных пробу тестируемого
 
@@ -40,32 +40,33 @@ class ProbeProfileService():
             _protocol_status(String): статус пробы
         """
 
-        probes_manager = ProbesManager()
+        protocols_manager = ProtocolsManager()
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        probe_id = probes_manager.add_probe(_name_probationer, _probationer_id, _date_of_birth, _protocol_status)
+        protocol_id = protocols_manager.add_protocol(_probationer_id, _protocol_status)
         login_user = user_manager.get_user_by_id(_id_user).login
 
         action_manager.add_notifications(f"пробы испытуемого № {_probationer_id}", "добавил", '', "probes_manager",
                                           login_user)
-        return probe_id
+        return protocol_id
 
-    def get_protocol(self, _id_test, _probe_id):
+    def get_protocol(self, _protocol_id):
         """
         Возвращает тест из пробы тестируемого
 
         Args:
-            _id_test(Int): индентификатор теста
-            _probe_id(Int): индентафикатор пробы
+            _id_test(Int): идентификатор теста
+            _probe_id(Int): идентификатор пробы
 
         Return:
             Тест из пробы
         """
 
-        probes_manager = ProbesManager()
-
-        return probes_manager.get_protocol(_id_test, _probe_id)
+        protocols_manager = ProtocolsManager()
+        protocol = protocols_manager.get_protocol_by_id(_protocol_id)
+        # probe_id = protocol.test.split('_')[-1]
+        return protocols_manager.get_protocol(_protocol_id)
 
     def get_tests_list(self):
         """
@@ -75,9 +76,9 @@ class ProbeProfileService():
             Список тестов
         """
 
-        probes_manager = ProbesManager()
+        protocols_manager = ProtocolsManager()
 
-        return probes_manager.get_tests_list()
+        return protocols_manager.get_tests_list()
 
     def add_grades_in_probe(self, _grades, _probe_id, _protocol_status):
         """
@@ -89,6 +90,6 @@ class ProbeProfileService():
             _protocol_status(String): статус пробы
         """
 
-        probes_manager = ProbesManager()
+        protocols_manager = ProtocolsManager()
 
-        return probes_manager.add_grades_in_probe(_grades, _probe_id, _protocol_status)
+        return protocols_manager.add_grades_in_probe(_grades, _probe_id, _protocol_status)

@@ -969,9 +969,9 @@ def corrections():
                            _languages=config.LANGUAGES)
 
 
-@multilingual.route('/probes', methods=['GET', 'POST'])
+@multilingual.route('/protocols', methods=['GET', 'POST'])
 @login_required
-def probes():
+def protocols():
     """
     Просмотр проведение нейро-психологических проб
 
@@ -984,7 +984,7 @@ def probes():
     user_id = flask_login.current_user.user_id
     mpc = MainMenuPageController(user_id)
 
-    endpoint = "probes"
+    endpoint = "protocols"
 
     probes_list = page_controller.get_probes_list()
     probationers_list = page_controller.get_probationers_list(user_id)
@@ -997,7 +997,9 @@ def probes():
             probationer_id = request.form.get('probationer')
             probe_id = request.form.get('probe')
 
-            return redirect(url_for('multilingual.probe_card', probationer_id=probationer_id, probe_id=probe_id))
+            protocol_id = page_controller.add_protocol(probationer_id, probe_id, user_id)
+
+            return redirect(url_for('multilingual.protocol_card', protocol_id=protocol_id))
 
     return render_template('protocols.html', view="probes", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
@@ -1006,72 +1008,55 @@ def probes():
                            _probationers_list=probationers_list)
 
 
-@multilingual.route('/probe_card', methods=['GET', 'POST'])
+@multilingual.route('/protocol_card', methods=['GET', 'POST'])
 @login_required
-def probe_card():
+def protocol_card():
     user_id = flask_login.current_user.user_id
     page_controller = ProbeProfileController()
     mpc = MainMenuPageController(user_id)
 
-    endpoint = "probes"
+    endpoint = "protocols"
 
     if not flask_login.current_user.is_admin():
         return redirect(url_for("multilingual.evolution_centre_dummy"))
 
-    probationer_id = request.args.get('probationer_id')
-    if probationer_id is not None:
-        probationer_id = int(probationer_id)
-
-    probe_id = request.args.get('probe_id')
-    if probe_id is not None:
-        probe_id = int(probe_id)
+    protocol_id = request.args.get('protocol_id')
+    if protocol_id is not None:
+        protocol_id = int(protocol_id)
 
     data = {}
     test_list = []
     probationers = []
     protocol = ""
 
-    data = page_controller.get_protocol(probationer_id, probe_id)
+    data = page_controller.get_protocol(protocol_id)
     if data is not None:
         protocol = data["protocol_status"]
     else:
         protocol = None
-    mode = "add_value_tests"
     test_list = page_controller.get_tests_list()
 
     if request.method == "POST":
-        if mode == "selection_probationer":
-            name_probationer = request.form["probationer"]
-            probationer = [i for i in probationers if i["name_probationer"] == name_probationer][0]
-            probationer_id = probationer["probationer_id"]
-            date_of_birth = probationer["date_of_birth"]
+        grades = [{"id": key, "grade": value} for key, value in request.form.items() if
+                  key.isdigit() or ("_" in key and key.split("_")[0].isdigit())]
+        page_controller.add_grades_in_probe(grades, protocol_id)
 
-            probe_id = page_controller.add_probe(name_probationer, probationer_id, date_of_birth, user_id)
-            return redirect(url_for("multilingual.probe_profile", probationer_id=probationer_id, probe_id=probe_id, test_id=1))
+        if request.form.get("button") == "draft" or request.form.get("button") == "end":
+            protocol_status = request.form["button"]
+            page_controller.add_grades_in_probe(grades, protocol_id, protocol_status)
 
-        elif mode == "add_value_tests":
-            probe_id = request.args.get("probe_id")
-            grades = [{"id": key, "grade": value} for key, value in request.form.items() if
-                      key.isdigit() or ("_" in key and key.split("_")[0].isdigit())]
-            page_controller.add_grades_in_probe(grades, int(probe_id))
+            return redirect(url_for("multilingual.protocols"))
 
-            if request.form.get("button") == "draft" or request.form.get("button") == "end":
-                protocol_status = request.form["button"]
-                page_controller.add_grades_in_probe(grades, int(probe_id), protocol_status)
+        elif request.form["action"]:
+            page_controller.add_grades_in_probe(grades, protocol_id)
 
-                return redirect(url_for("multilingual.probes"))
+            return redirect(
+                url_for("multilingual.protocol_card", protocol_id=protocol_id))
 
-            elif request.form["action"]:
-                page_controller.add_grades_in_probe(grades, int(probe_id))
-                next_test_id = int(request.form["action"])
-
-                return redirect(
-                    url_for("multilingual.probe_profile", probationer_id=probationer_id, probe_id=probe_id, test_id=next_test_id))
-
-    return render_template('probe_profile.html', view="probe_profile", _menu=mpc.get_main_menu(),
+    return render_template('probe_card.html', view="probe_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _probationers_list=probationers, _data=data,
-                           _mode=mode, _probes=test_list, _protocol=protocol, _lang_code=get_locale(),
+                           _probes=test_list, _protocol=protocol, _lang_code=get_locale(),
                            _languages=config.LANGUAGES)
 
 

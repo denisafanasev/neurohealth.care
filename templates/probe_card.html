@@ -45,61 +45,24 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready (function () {
-            const  selections  =  new  Choices ( $ ( '.id_probe' ) [ 0 ] ) ;
-        });
-    </script>
+{#    <script type="text/javascript">#}
+{#        $(document).ready (function () {#}
+{#            const  selections  =  new  Choices ( $ ( '.id_probe' ) [ 0 ] ) ;#}
+{#        });#}
+{#    </script>#}
 
     <div class="container-fluid p-0">
 
         <div class="mb-3">
-            <h1 class="h3 d-inline align-middle">Протокол тестирования{% if _mode == "add_value_tests" and _data%}(Тестируемый: {{ _data["name_probationer"] }}) {% endif %}</h1>
+            <h1 class="h3 d-inline align-middle">Протокол тестирования(Тестируемый: {{ _data["name_probationer"] }})</h1>
         </div>
 
         <form id="probes" name="probes" method="post" enctype="multipart/form-data" onsubmit="return checkprobationer(this);">
-            {% if _mode == "selection_probationer" %}
-                <div class="row d-flex align-items-stretch bd-highlight">
-                    <div class="col-8 p-2 bd-highlight">
-                        <div class="card d-flex align-self-baseline">
-                            <div class="card-header">
-                                <h5 class="card-title">Выбор тестируемого</h5>
-                                <div class="mb-2">
-                                    <label class="form-label"><strong>Тестируемый</strong></label>
-                                    <select class="form-select" name="probationer">
-                                        {% for i_probationer in _probationers_list %}
-                                            <option {% if i_probationer["name_probationer"] == 'Выберите тестируемого' %}selected disabled {% endif %}>{{ i_probationer["name_probationer"] }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="text-align: right">
-                            <button type="submit" name="button" value="draft" class="btn btn-primary ">Продолжить</button>
-
-                            <a type="submit" name="button" href="{{ url_for('multilingual.probes') }}" class="btn btn-secondary ">Отмена</a>
-                        </div>
-                    </div>
-                </div>
-
-
-
-            {% elif _mode == "add_value_tests" %}
                 <div class="row d-flex align-items-stretch bd-highlight">
                     <div class="p-2 bd-highlight">
                         <div class="card d-flex align-self-baseline">
                             <div class="card-header">
                                 {% if _data %}
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <select id="id_probe" name="action" class="id_probe" onchange="this.form.submit();">
-                                                <option>Выберите пробу</option>
-                                            {% for i_probe in _probes %}
-                                                <option style="background: black" value="{{ i_probe["id"] }}">{{ i_probe["name_probe"] }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
                                 <h1>{{ _data["name_probe"] }}</h1>
                                 <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline cell-border"
                                        role="grid" aria-describedby="datatables-buttons_info">
@@ -184,14 +147,13 @@
                         </div>
                     </div>
                 </div>
-            {% endif %}
             {% if _data %}
                 <div align="right">
                     <button type="submit" name="button" value="draft" class="btn btn-primary ">Сохранить как черновик</button>
 
                     <button type="submit" name="button" value="end" class="btn btn-primary ">Сохранить окончательно</button>
 
-                    <a href="{{ url_for("multilingual.probes") }}" class="btn btn-primary ">Назад</a>
+                    <a href="{{ url_for("multilingual.protocols") }}" class="btn btn-primary ">Назад</a>
                 </div>
             {% endif %}
         </form>

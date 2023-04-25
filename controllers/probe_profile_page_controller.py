@@ -36,14 +36,14 @@ class ProbeProfileController():
 
         return users_list_view
 
-    def add_probe(self, _name_probationer, _probationer_id, _date_of_birth, _id_user,_protocol_status=""):
+    def update_protocol(self, _probationer_id, _id_user, _protocol_status=""):
         """
         Записывает в системе только что совершенное действие авторизованного пользователя
         """
 
         probe_profile_service = ProbeProfileService()
 
-        return probe_profile_service.add_probe(_name_probationer, _probationer_id, _date_of_birth, _protocol_status, _id_user)
+        return probe_profile_service.update_protocol(_probationer_id, _protocol_status, _id_user)
 
     def get_probationer_card_view(self, probationer_id):
         """
@@ -57,7 +57,7 @@ class ProbeProfileController():
 
         return probationer_card_service.get_probationer_card_view(probationer_id)
 
-    def get_protocol(self, _probationer_id, _probe_id):
+    def get_protocol(self, _protocol_id):
         """
         Возвращает тест из пробы тестируемого
 
@@ -72,7 +72,7 @@ class ProbeProfileController():
         probe_profile_service = ProbeProfileService()
 
         try:
-            protocol = probe_profile_service.get_protocol(_probationer_id, _probe_id)
+            protocol = probe_profile_service.get_protocol(_protocol_id)
             probe = {}
 
             probe["id"] = protocol.test.id

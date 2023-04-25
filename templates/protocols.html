@@ -71,6 +71,8 @@
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                     style="width:20%;" aria-label="Position: activate to sort column ascending">Имя тестируемого</th>
                                                 <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">Протокол</th>
+                                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                     style="width:10%;" aria-label="Position: activate to sort column ascending">Дата тестирования</th>
                                                 <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                     style="width:10%;" aria-label="Position: activate to sort column ascending">Дата создания</th>
@@ -87,7 +89,8 @@
                                                 <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg")}}" width="32" height="32"
                                                         class="rounded-circle my-n1" alt="Avatar"></td>
 
-                                                <td class="sorting_1 dtr-control "><a href="{{ url_for('multilingual.probe_profile',probationer_id=item["probationer_id"], probe_id=item["probe_id"], test_id=1) }}">{{ item['name_probationer'] }}</a></td>
+                                                <td class="sorting_1 dtr-control "><a href="{{ url_for('multilingual.protocol_card',protocol_id=item["probe_id"]) }}">{{ item['name_probationer'] }}</a></td>
+                                                <td class="text-center">{{ item['test'] }}</td>
                                                 <td class="text-center">{{ item['date_test'] }}</td>
                                                 <td class="text-center">{{ item['date_protocol'] }}</td>
                                                 <td class="text-center">{{ item['protocol_status'] }}</td>
@@ -144,7 +147,7 @@
                                 <button type="submit" disabled name="button" value="draft" class="btn btn-primary ">Продолжить
                                 </button>
 
-                                <a type="submit" name="button" href="{{ url_for('multilingual.probes') }}"
+                                <a type="submit" name="button" href="{{ url_for('multilingual.protocols') }}"
                                    class="btn btn-secondary ">Отмена</a>
                             </div>
                         </div>

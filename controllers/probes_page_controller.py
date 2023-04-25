@@ -1,5 +1,5 @@
 import utils.ada as ada
-from services.probes_service import ProbesService
+from services.probes_service import ProtocolsService
 from services.probationers_service import ProbationersService
 
 
@@ -25,25 +25,25 @@ class ProbesPageController():
         Returns:
             List: список тестов, каждый из которых представлен структурой типа Dict
         """
-        probes_service = ProbesService()
-        probes = []
+        probes_service = ProtocolsService()
 
         probes_list = probes_service.get_probes(_user_id)
+        probes_list_view = []
+        for probe in probes_list:
+            probe_view = {}
 
-        for i_probe in probes_list:
-            probe = {}
+            probe_view["probe_id"] = probe.probe_id
+            probe_view["name_probationer"] = probe.name_probationer
+            probe_view["probationer_id"] = probe.probationer_id
+            probe_view["protocol_status"] = probe.protocol_status
+            probe_view["estimated_values_file"] = probe.estimated_values_file
+            probe_view["date_test"] = probe.date_test
+            probe_view["date_protocol"] = probe.date_protocol
+            probe_view['test'] = probe.test.name_probe
 
-            probe["probe_id"] = i_probe.probe_id
-            probe["name_probationer"] = i_probe.name_probationer
-            probe["probationer_id"] = i_probe.probationer_id
-            probe["protocol_status"] = i_probe.protocol_status
-            probe["estimated_values_file"] = i_probe.estimated_values_file
-            probe["date_test"] = i_probe.date_test
-            probe["date_protocol"] = i_probe.date_protocol
+            probes_list_view.append(probe_view)
 
-            probes.append(probe)
-
-        return probes
+        return probes_list_view
 
     def is_probationers(self, _user_id):
         """
@@ -53,7 +53,7 @@ class ProbesPageController():
             (Boolean)
         """
 
-        probes_service = ProbesService()
+        probes_service = ProtocolsService()
 
         return probes_service.is_probationers(_user_id)
 
@@ -64,7 +64,7 @@ class ProbesPageController():
         Returns:
             List(Dict): список проб
         """
-        probes_service = ProbesService()
+        probes_service = ProtocolsService()
 
         probes_list = probes_service.get_probes_list()
         probes_list_view = []
@@ -88,7 +88,7 @@ class ProbesPageController():
         Returns:
             List(Dict): список тестируемых
         """
-        probes_service = ProbesService()
+        probes_service = ProtocolsService()
 
         probationers_list = probes_service.get_probationers_list(_user_id)
         probationers_list_view = []
@@ -102,3 +102,9 @@ class ProbesPageController():
                 probationers_list_view.append(probationer_view)
 
         return probationers_list_view
+    
+    def add_protocol(self, _probationer_id, _probe_id, _user_id):
+        
+        protocols_service = ProtocolsService()
+
+        return protocols_service.add_protocol(_probationer_id, _probe_id, _user_id)
