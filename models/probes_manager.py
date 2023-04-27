@@ -9,7 +9,7 @@ class ProtocolsManager():
     def protocol_row_to_protocol(self, _data_row):
 
         probe = Probe(_data_row.doc_id, _data_row['name_probationer'], _data_row['probationer_id'],
-                      _data_row['protocol_status'], _test=_data_row['test'])
+                      _protocol_status=_data_row['protocol_status'], _test=_data_row['test'])
 
         return probe
 

@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 
 {% block main_block %}
+
     <div class="container-fluid p-0">
-    
+
         <h1 class="h3 mb-3">Пробы</h1>
-    
+
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -18,13 +19,17 @@
                                 <div class="col-sm-12 col-md-6">
                                     <div class="dt-buttons btn-group flex-wrap">
                                         {% if _data != [] %}
-                                            <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('multilingual.probe_profile')}}">
+                                            <a class="btn btn-secondary buttons-copy buttons-html5"
+                                               aria-controls="datatables-buttons"
+                                               href="{{ url_for('multilingual.probe_profile') }}">
                                                 <span>Добавить пробу</span>
                                             </a>
                                         {% else %}
                                             <p>У вас нет тестируемых</p>
                                             <p>Создайте пожалуйста тестируемого</p>
-                                            <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('multilingual.probationer_card')}}">
+                                            <a class="btn btn-secondary buttons-copy buttons-html5"
+                                               aria-controls="datatables-buttons"
+                                               href="{{ url_for('multilingual.probationer_card') }}">
                                                 <span>Добавить тестируемого</span>
                                             </a>
                                         {% endif %}
@@ -32,47 +37,64 @@
                                 </div>
                             </div>
                         </div>
-                         <div class="row">
+                        <div class="row">
                             <div class="col-sm-12">
-                                <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%;"
-                                    role="grid" aria-describedby="datatables-buttons_info">
+                                <table id="datatables-buttons"
+                                       class="table table-striped dataTable no-footer dtr-inline" style="width: 100%;"
+                                       role="grid" aria-describedby="datatables-buttons_info">
                                     <thead>
-                                        <tr role="row">
-                                            <th style="width:5%;">#</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:20%;" aria-label="Position: activate to sort column ascending">Имя испытуемого</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:10%;" aria-label="Position: activate to sort column ascending">Дата рождения</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:10%;" aria-label="Position: activate to sort column ascending">ФИО родителя</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Контакты</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Учебное заведение</th>
-                                        </tr>
+                                    <tr role="row">
+                                        <th style="width:5%;">#</th>
+                                        <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                            colspan="1"
+                                            style="width:20%;" aria-label="Position: activate to sort column ascending">
+                                            Имя испытуемого
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                            colspan="1"
+                                            style="width:10%;" aria-label="Position: activate to sort column ascending">
+                                            Дата рождения
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                            colspan="1"
+                                            style="width:10%;" aria-label="Position: activate to sort column ascending">
+                                            ФИО родителя
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                            colspan="1"
+                                            style="width:5%;" aria-label="Position: activate to sort column ascending">
+                                            Контакты
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                            colspan="1"
+                                            style="width:5%;" aria-label="Position: activate to sort column ascending">
+                                            Учебное заведение
+                                        </th>
+                                    </tr>
                                     </thead>
                                     <tbody>
 
-                                        {% for item in _data %}
+                                    {% for item in _data %}
 
                                         <tr class="even">
 
-                                            <td><img src="{{ url_for('static' , filename="img/avatars/avatar.jpg")}}" width="32" height="32"
-                                                    class="rounded-circle my-n1" alt="Avatar"></td>
+                                            <td><img src="{{ url_for('static' , filename="img/avatars/avatar.jpg") }}"
+                                                     width="32" height="32"
+                                                     class="rounded-circle my-n1" alt="Avatar"></td>
 
-                                            <td class="sorting_1 dtr-control"><a href="{{ url_for('multilingual.probationer_card', probationer_id=item['probationer_id'])}}">{{ item['name_probationer'] }}
+                                            <td class="sorting_1 dtr-control"><a
+                                                    href="{{ url_for('multilingual.probationer_card', probationer_id=item['probationer_id']) }}">{{ item['name_probationer'] }}
                                             </a></td>
                                             {% if _is_current_user_admin %}
-                                                <td>{{ item['user_login'] }}</td>
+                                                <td>{{ item['user_id'] }}</td>
                                             {% endif %}
-                                            <td>{{ item['date_of_birth'] }}</td>
                                             <td>{{ item['name_parent'] }}</td>
                                             <td>{{ item['contacts'] }}</td>
                                             <td>{{ item['educational_institution'] }}</td>
 
                                         </tr>
 
-                                        {% endfor %}
+                                    {% endfor %}
 
                                     </tbody>
                                 </table>
@@ -82,6 +104,5 @@
                 </div>
             </div>
         </div>
-    
     </div>
 {% endblock %}

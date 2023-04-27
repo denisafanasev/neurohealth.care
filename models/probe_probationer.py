@@ -26,17 +26,18 @@ class Probe():
         self.date_protocol = datetime.strftime(datetime.today(), "%d/%m/%y")
         self.probe_id = _probe_id
         self.test = _test
+        self.protocol_status = _protocol_status
 
         # if _date_of_birth != "":
         #     self.age_probationer = ((datetime.today() - datetime.strptime(_date_of_birth, "%d/%m/%Y")) / 365.25).days
 
-        if _protocol_status == "end":
-            self.protocol_status = "окончательный"
-        elif _protocol_status == "draft":
-            self.protocol_status = "черновик"
-        elif _protocol_status == "черновик":
-            self.protocol_status = "draft"
-        elif _protocol_status == "окончательный":
-            self.protocol_status = "end"
-        else:
-            self.protocol_status = "черновик"
+        # if _protocol_status == "end":
+        #     self.protocol_status = "окончательный"
+        # elif _protocol_status == "draft":
+        #     self.protocol_status = "черновик"
+        # elif _protocol_status == "черновик":
+        #     self.protocol_status = "draft"
+        # elif _protocol_status == "окончательный":
+        #     self.protocol_status = "end"
+        # else:
+        #     self.protocol_status = "черновик"

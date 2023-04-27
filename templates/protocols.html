@@ -93,7 +93,12 @@
                                                 <td class="text-center">{{ item['test'] }}</td>
                                                 <td class="text-center">{{ item['date_test'] }}</td>
                                                 <td class="text-center">{{ item['date_protocol'] }}</td>
-                                                <td class="text-center">{{ item['protocol_status'] }}</td>
+                                                <td class="text-center">
+                                                    <div class='badge {% if item['protocol_status'] == "черновик" %} bg-success
+                                                            {% elif item['protocol_status'] == "окончательный" %} bg-danger {% endif %} bg-gradient text-light' style="display: block;text-align: center; margin-right: 15%">
+                                                                {{ item['protocol_status'] }}
+                                                            </div>
+                                                </td>
 
                                             </tr>
 
