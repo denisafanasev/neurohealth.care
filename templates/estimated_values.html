@@ -13,12 +13,7 @@
             word-wrap: break-word;
             width: 100%;
         }
-        .criteria{
-            border: 1px solid #ced4da;
-            background-clip: padding-box;
-            width: 175px;
-            padding: 0.1rem 0.85rem;
-        }
+
 
         h2.card-title{
             color: black;
@@ -32,9 +27,9 @@
             <div class="row">
              <h2 class="card-title col-sm">Справочник оценочных значений</h2>
             {% if _data %}
-                <div class="about col-sm-4">
+                <div class="about col-sm-3">
                     <label><strong>Диапазон возрастов</strong></label>
-                    <select type="text" name="action" onchange="this.form.submit();" class="criteria form-select">
+                    <select type="text" name="action" onchange="this.form.submit();" class="criteria form-select float-end">
                         {% for i_rage in _ranges_age %}
                             <option {% if i_rage['id'] == _id_file_name %} selected {% endif %} value="{{ i_rage['id'] }}">{{ i_rage['range'] }}   </option>
                         {% endfor %}
