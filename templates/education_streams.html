@@ -44,7 +44,7 @@
 
     <div class="container-fluid p-0">
 
-        <h1 class="h3 mb-3">Обучающие потоки</h1>
+        <h1 class="h3 mb-3">{{_("Обучающие потоки")}}</h1>
 
         <div class="row">
             <div class="col-12">
@@ -57,7 +57,7 @@
                                     <div class="dt-buttons btn-group flex-wrap">
                                         <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
                                         href="{{ url_for('multilingual.education_stream_card') }}">
-                                            <span>Добавить обучающий поток</span>
+                                            <span>{{_("Добавить обучающий поток")}}</span>
                                         </a>
                                     </div>
                                 </div>
@@ -69,28 +69,36 @@
                                         <thead style="text-align: center">
                                             <tr>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:30%; text-align: left;" aria-label="Position: activate to sort column ascending">Название
+                                                    style="width:30%; text-align: left;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Название")}}
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">Преподаватель
+                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Преподаватель")}}
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">Дата старта
+                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Дата старта")}}
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">Дата окончания
+                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Дата окончания")}}
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:15%; text-align: center;" aria-label="Position: activate to sort column ascending">Обучающий курс
+                                                    style="width:15%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Обучающий курс")}}
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">Количество кураторов
+                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Количество кураторов")}}
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">Количество обучающихся
+                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Количество обучающихся")}}
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:10%; text-align: center;" aria-label="Position: activate to sort column ascending">Статус
+                                                    style="width:10%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Статус")}}
                                                 </th>
                                             </tr>
                                         </thead>
@@ -147,7 +155,7 @@
             </script>
             <div id="{{ education_stream['id'] }}" class="modal_{{ education_stream['id'] }} modal">
             <div class="modal-content animate">
-                <h3 class="modal-title">Обучающий поток</h3>
+                <h3 class="modal-title">{{_("Обучающий поток")}}</h3>
                 <form id="discharge_user_{{ education_stream['id'] }}" name="discharge_user_{{ education_stream['id'] }}"
                       method="post" enctype="multipart/form-data" class="was-validated">
                     <div class="row d-flex align-items-stretch bd-highlight">
@@ -155,33 +163,33 @@
                             <div class="card d-flex align-self-baseline" style="margin-left: auto; margin-right: auto; ">
                                 <div class="card-header">
                                     <div class="mb-2">
-                                        <label class="form-label"><strong>Название потока</strong></label>
+                                        <label class="form-label"><strong>{{_("Название потока")}}</strong></label>
                                         <input id="name" required name="name_{{ education_stream['id'] }}" class="form-control">
                                         <div class="invalid-feedback">
-                                            Поле, обязательное для заполнения!
+                                            {{_("Поле, обязательное для заполнения")}}!
                                         </div>
                                     </div>
 
                                     <div class="mb-2">
-                                        <label class="form-label"><strong>Курс</strong></label>
+                                        <label class="form-label"><strong>{{_("Курс")}}</strong></label>
                                         <select id="course_list" name="course_list_{{ education_stream['id'] }}" class="form-select">
                                             {% for course in _courses_list %}
                                                 <option value="{{ course['id'] }}">{{ course['name'] }}</option>
                                             {% endfor %}
                                         </select>
                                         <div class="invalid-feedback">
-                                            Поле, обязательное для заполнения!
+                                            {{_("Поле, обязательное для заполнения")}}!
                                         </div>
                                     </div>
                                     <div class="mb-2">
-                                        <label class="form-label"><strong>Преподаватель</strong></label>
+                                        <label class="form-label"><strong>{{_("Преподаватель")}}</strong></label>
                                         <select id="teacher" name="teacher_{{ education_stream['id'] }}" class="form-select">
                                             {% for teacher in _curators_list %}
                                                 <option value="{{ teacher['login'] }}">{{ teacher['name'] }}</option>
                                             {% endfor %}
                                         </select>
                                         <div class="invalid-feedback">
-                                            Поле, обязательное для заполнения!
+                                            {{_("Поле, обязательное для заполнения")}}!
                                         </div>
                                     </div>
                                 </div>
@@ -191,21 +199,21 @@
                             <div class="card d-flex align-self-baseline" style="margin-left: auto; margin-right: auto; ">
                                 <div class="card-header">
                                     <div class="mb-2">
-                                        <label class="form-label"><strong>Дата старта</strong></label>
+                                        <label class="form-label"><strong>{{_("Дата старта")}}</strong></label>
                                         <input id="date_start" type="date" placeholder="Выберите дату..">
                                         <div class="invalid-feedback">
-                                            Поле, обязательное для заполнения!
+                                            {{_("Поле, обязательное для заполнения")}}!
                                         </div>
                                     </div>
                                     <div class="mb-2">
-                                        <label class="form-label"><strong>Дата окончания</strong></label>
+                                        <label class="form-label"><strong>{{_("Дата окончания")}}</strong></label>
                                         <input id="date_end" type="date" placeholder="Выберите дату..">
                                         <div class="invalid-feedback">
-                                            Поле, обязательное для заполнения!
+                                            {{_("Поле, обязательное для заполнения")}}!
                                         </div>
                                     </div>
                                     <div class="mb-2">
-                                        <label class="form-label"><strong>Кураторы</strong></label>
+                                        <label class="form-label"><strong>{{_("Кураторы")}}</strong></label>
                                         <select id="curators_list" name="curators_list_{{ education_stream['id'] }}"
                                                 style="overflow-y: scroll;" class="form-select choices-multiple" multiple="multiple">
                                             {% for curator in _curators_list %}
@@ -213,11 +221,11 @@
                                             {% endfor %}
                                         </select>
                                         <div class="invalid-feedback">
-                                            Поле, обязательное для заполнения!
+                                            {{_("Поле, обязательное для заполнения")}}!
                                         </div>
                                     </div>
                                     <div class="mb-2">
-                                        <label class="form-label"><strong>Ученики</strong></label>
+                                        <label class="form-label"><strong>{{_("Ученики")}}</strong></label>
                                         <select id="students_list" name="students_list_{{ education_stream['id'] }}"
                                                 style="overflow-y: scroll;" class="form-select" multiple="multiple">
                                             {% for student in _students_list %}
@@ -225,7 +233,7 @@
                                             {% endfor %}
                                         </select>
                                         <div class="invalid-feedback">
-                                            Поле, обязательное для заполнения!
+                                            {{_("Поле, обязательное для заполнения")}}!
                                         </div>
                                     </div>
                                 </div>
@@ -235,10 +243,10 @@
                     <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
                         <div class="p-1" align="right">
                             <button type="submit" name="button_{{ education_stream['id'] }}" value="discharge" class="btn btn-primary ">
-                                Сохранить
+                                {{_("Сохранить")}}
                             </button>
                             <a onclick="document.getElementById('{{ education_stream["id"] }}').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
-                                Отмена
+                                {{_("Отмена")}}
                             </a>
                         </div>
                     </div>

@@ -129,7 +129,7 @@
     <div class="container-fluid p-0 ">
 
         <div class="mb-3">
-            <h1 class="h3 d-inline align-middle">Проверка домашних заданий</h1>
+            <h1 class="h3 d-inline align-middle">{{_('Проверка домашних заданий')}}</h1>
         </div>
 
         <form name="form" method="post" enctype="multipart/form-data" class="row">
@@ -138,7 +138,7 @@
                 <!--Select со списком обучающих потоков -->
                 <div class="border card card-body">
                     <div>
-                        <label class="form-label "><h3>Поток</h3></label>
+                        <label class="form-label "><h3>{{_("Поток")}}</h3></label>
                     </div>
                     <div class="input-group">
                         <select class="form-select" name="education_stream" id="education_stream_list">
@@ -147,7 +147,7 @@
                                         value="{{ education_stream['id'] }}">{{ education_stream['name'] }}</option>
                             {% endfor %}
                         </select>
-                        <button name="button" value="id_education_stream" class="btn btn-primary">Показать</button>
+                        <button name="button" value="id_education_stream" class="btn btn-primary">{{_("Показать")}}</button>
                     </div>
 
                 </div>
@@ -157,7 +157,7 @@
 
                         <div class="card-body">
                             <input type="hidden" name="user_id">
-                            <label class="mx-2" for="users_list"><h3>Список учеников</h3></label>
+                            <label class="mx-2" for="users_list"><h3>{{_("Список учеников")}}</h3></label>
                             <table id="users_list"
                                    class="table table-striped dataTable no-footer dtr-inline"
                                    style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
@@ -171,18 +171,18 @@
                                     <th class="sorting" style="width: 30%" tabindex="0"
                                         aria-controls="datatables-homeworks"
                                         aria-label="Position: activate to sort column ascending" rowspan="1"
-                                        colspan="1">Имя пользователя
+                                        colspan="1">{{_("Имя пользователя")}}
                                     </th>
                                     <th class="sorting" style="width: 65%" tabindex="0"
                                         aria-controls="datatables-homeworks"
                                         aria-label="Position: activate to sort column ascending" rowspan=1 colspan="1">
-                                        Домашние работы
+                                        {{_("Домашние работы")}}
                                     </th>
                                     <th class="sorting text-center" style="width:5%" tabindex="0"
                                         aria-controls="datatables-homeworks"
                                         aria-label="Position: activate to sort column ascending" rowspan="1"
                                         colspan="1">
-                                        Новые сообщения
+                                        {{_("Новые сообщения")}}
                                     </th>
                                 </tr>
                                 </thead>
@@ -198,8 +198,8 @@
                                                 {{ user['name'] }}
                                             </a>
                                         </td>
-                                        <td>Сдано: {{ user['amount_accepted_homeworks'] }}/ Не
-                                            сдано: {{ user['amount_no_accepted_homeworks'] }}</td>
+                                        <td>{{_("Сдано")}}: {{ user['amount_accepted_homeworks'] }}/ {{_("Не
+                                                сдано")}}: {{ user['amount_no_accepted_homeworks'] }}</td>
                                         <td class="text-center">{% if user['is_unread_message'] is true %}
                                             <span class="fas fa-circle chat-offline"></span>{% endif %}</td>
                                     </tr>
@@ -218,7 +218,7 @@
                             {% if _current_education_stream['course_name'] is not none %}
                                 <div class="col-7 mb-2">
                                     <h3>{{ _current_education_stream['course_name'] }}</h3>
-                                    <p>Ученик: {% if _user is not none %}{{ _user['name'] }}{% endif %}</p>
+                                    <p>{{_("Ученик")}}: {% if _user is not none %}{{ _user['name'] }}{% endif %}</p>
                                 </div>
 
                             {% endif %}
@@ -244,25 +244,25 @@
                             <tr role="row">
                                 <th rowspan="1" colspan="1" style="width: 0"></th>
                                 <th rowspan="1" colspan="1" style="width: 0"></th>
-                                <th rowspan="1" colspan="1" style="width: 0">Модуль</th>
-                                <th rowspan="1" colspan="1" style="width: 75%">Урок</th>
+                                <th rowspan="1" colspan="1" style="width: 0">{{_("Модуль")}}</th>
+                                <th rowspan="1" colspan="1" style="width: 75%">{{_("Урок")}}</th>
                                 <th class="sorting" style="width:10%" tabindex="0" aria-controls="datatables-homeworks"
                                     aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">
-                                    Дата сдачи
+                                    {{_("Дата сдачи")}}
                                 </th>
                                 <th class="sorting text-center" style="width:5%" tabindex="0"
                                     aria-controls="datatables-homeworks"
                                     aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">
-                                    Статус
+                                    {{_("Статус")}}
                                 </th>
                                 <th class="sorting text-center" style="width:5%" tabindex="0"
                                     aria-controls="datatables-homeworks"
                                     aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">
-                                    Ответ
+                                    {{_("Ответ")}}
                                 </th>
                                 <th class="sorting" style="width:5%" tabindex="0" aria-controls="datatables-homeworks"
                                     aria-label="Position: activate to sort column ascending" rowspan="1" colspan="1">
-                                    Новые сообщения
+                                    {{_("Новые сообщения")}}
                                 </th>
                             </tr>
                             </thead>
@@ -281,7 +281,7 @@
                                                 <td style="text-align: center">
                                                     <div class='badge {% if homework['status'] == "Не проверено" %} bg-info {% else %} bg-success {% endif %} bg-gradient text-light'>
                                                         {% if homework['status'] == "Не проверено" %}
-                                                            {{ homework['status'] }}{% else %}Проверено{% endif %}
+                                                            {{ homework['status'] }}{% else %}{{_("Проверено")}}{% endif %}
                                                     </div>
                                                 </td>
                                                 <td style="text-align: center">
@@ -310,11 +310,11 @@
                                             <td>{{ item['lesson']['id'] }}</td>
                                             <td>{{ item['module']['name'] }}</td>
                                             <td style="white-space: inherit">
-                                                <a href="{{ url_for('multilingual.education_home_task_card', id_chat=item['homework_chat']['id']) }}">Урок: {{ item['lesson']['name'] }}</a></td>
+                                                <a href="{{ url_for('multilingual.education_home_task_card', id_chat=item['homework_chat']['id']) }}">{{_("Урок")}}: {{ item['lesson']['name'] }}</a></td>
                                             <td></td>
                                             <td>
                                                 <div class='badge bg-warning bg-gradient text-light'>
-                                                    Не сдано
+                                                    {{_("Не сдано")}}
                                                 </div>
                                             </td>
                                             <td></td>

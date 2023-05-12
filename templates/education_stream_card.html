@@ -176,32 +176,32 @@
         const message = document.getElementById('message');
 
          if (teacher === 'placeholder'){
-             document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = "Выберите учителя данного потока.";
+             document.querySelector('h3[id=title_message]').textContent = '{{_("Ошибка")}}';
+             document.querySelector('p[id=text_message]').textContent = "{{_("Выберите учителя данного потока.")}}";
              message.style.display = 'block'
              return false;
          }
          if (date_start === ''){
-             document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = 'Выберите дату начала обучения данного потока.';
+             document.querySelector('h3[id=title_message]').textContent = '{{_("Ошибка")}}';
+             document.querySelector('p[id=text_message]').textContent = '{{_("Выберите дату начала обучения данного потока.")}}';
              message.style.display = 'block'
              return false;
          }
          if (date_end === ''){
-             document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = 'Выберите дату окончания обучения данного потока.';
+             document.querySelector('h3[id=title_message]').textContent = '{{_("Ошибка")}}';
+             document.querySelector('p[id=text_message]').textContent = '{{_("Выберите дату окончания обучения данного потока.")}}';
              message.style.display = 'block'
              return false;
          }
          if (name_stream === ''){
-             document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = 'Введите название для данного потока.';
+             document.querySelector('h3[id=title_message]').textContent = '{{_("Ошибка")}}';
+             document.querySelector('p[id=text_message]').textContent = '{{_("Введите название для данного потока.")}}';
              message.style.display = 'block'
              return false;
          }
          if (course === 'placeholder'){
-             document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-             document.querySelector('p[id=text_message]').textContent = 'Выберите курс для данного потока.';
+             document.querySelector('h3[id=title_message]').textContent = '{{_("Ошибка")}}';
+             document.querySelector('p[id=text_message]').textContent = '{{_("Выберите курс для данного потока.")}}';
              message.style.display = 'block'
              return false;
          }else {
@@ -220,19 +220,19 @@
 
     <div class="container-fluid p-0">
         <div class="mb-3">
-            <h1 class="h3 d-inline align-middle">{% if _mode == "view" %}Просмотр {% elif _mode == "new" %}Создание
-                {% else %}Редактирование {% endif %} карточки обучающего потока</h1>
+            <h1 class="h3 d-inline align-middle">{% if _mode == "view" %}{{_("Просмотр")}} {% elif _mode == "new" %}{{_("Создание")}}
+                {% else %}{{_("Редактирование")}} {% endif %} {{_("карточки обучающего потока")}}</h1>
         </div>
         {% if _status_code=='Successful' %}
             <div class="alert alert-success alert-dismissible" role="alert">
                 <div class="alert-message">
-                    <strong>Успешно</strong> {{ _message_error }}
+                    <strong>{{_("Успешно")}}</strong> {{ _message_error }}
                 </div>
             </div>
         {% elif _status_code=='Error' %}
             <div class="alert alert-danger alert-dismissible" role="alert">
                 <div class="alert-message">
-                    <strong>Ошибка</strong> {{ _message_error }}
+                    <strong>{{_("Ошибка")}}</strong> {{ _message_error }}
                 </div>
             </div>
         {% endif %}
@@ -245,15 +245,15 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="mb-2">
-                                <label class="form-label"><strong>Название потока</strong></label>
+                                <label class="form-label"><strong>{{_("Название потока")}}</strong></label>
                                 <input id="name_stream" name="name" class="form-control" {% if _mode=='new' %} placeholder="Введите название потока.."
                                 {% else %} value="{{ _education_stream['name'] }}" {% endif %}>
                             </div>
 
                             <div class="mb-2">
-                                <label class="form-label"><strong>Курс</strong></label>
+                                <label class="form-label"><strong>{{_("Курс")}}</strong></label>
                                 <select id="course" name="course" class="form-select" {% if _mode == 'view' %} disabled {% endif %}  style="z-index: auto">
-                                    {% if _mode == 'new' %}<option selected disabled value="placeholder">Выберите курс..</option>{% endif %}
+                                    {% if _mode == 'new' %}<option selected disabled value="placeholder">{{_("Выберите курс")}}..</option>{% endif %}
                                     {% for course in _courses_list %}
                                     <option {% if course['id']==_education_stream['course']['id'] %} selected {% endif %}
                                         value="modules_courses_{{ course['id'] }}">{{ course['name'] }}</option>
@@ -262,10 +262,10 @@
                             </div>
 
                             <div class="mb-2">
-                                <label class="form-label"><strong>Преподаватель</strong></label>
+                                <label class="form-label"><strong>{{_("Преподаватель")}}</strong></label>
                                 <select id="teacher" name="teacher" class="form-select" {% if _mode == 'view' %} disabled {% endif %}>
                                     {% if _mode != 'view' %}
-                                        <option selected disabled value="placeholder">Выберите преподавателя</option>
+                                        <option selected disabled value="placeholder">{{_("Выберите преподавателя")}}</option>
                                         {% for teacher in _curators_list %}
                                             <option {% if teacher['id']==_education_stream['teacher']['id'] %} selected {% endif %}
                                                 value="{{ teacher['id'] }}">{{ teacher['login'] }}</option>
@@ -278,7 +278,7 @@
 
                             <div class="row mb-2">
                                 <div class="col-sm-6" style="display: inline-grid;float: left">
-                                    <label class="form-label"><strong>Дата старта</strong></label>
+                                    <label class="form-label"><strong>{{_("Дата старта")}}</strong></label>
 
                                     <div id="date_start" class="flatpickr input-group mb-3">
                                         <input name="date_start" type="text"
@@ -288,7 +288,7 @@
 
                                 </div>
                                 <div class="col-sm-6" style="display: block; justify-content: right">
-                                    <label class="form-label"><strong>Дата окончания</strong></label>
+                                    <label class="form-label"><strong>{{_("Дата окончания")}}</strong></label>
 
                                     <div id="date_end" class="flatpickr input-group mb-3">
                                         <input name="date_ends" type="text"
@@ -307,7 +307,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="mb-2">
-                                    <label class="form-label"><strong>Кураторы</strong></label>
+                                    <label class="form-label"><strong>{{_("Кураторы")}}</strong></label>
                                     <table id="curators_table" class="table table-striped dataTable no-footer dtr-inline"
                                        style="width:100%; font-size: 13px">
                                         <thead>
@@ -315,7 +315,8 @@
                                                 <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
                                                     colspan="1">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Имя пользователя</th>
+                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">
+                                                    {{_("Имя пользователя")}}</th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Email</th>
                                             </tr>
                                         </thead>
@@ -344,7 +345,7 @@
                 <div class="col-md-12 col-xl-12">
                     <div class="card">
                         <div class="card-body">
-                            <label class="form-label"><strong>Доступные модули</strong></label>
+                            <label class="form-label"><strong>{{_("Доступные модули")}}</strong></label>
                             <div id="modules">
                             {% if _mode != 'view' %}
                                 {% for course in _courses_list %}
@@ -355,9 +356,9 @@
 {#                                                <th class="sorting" style="width: 5%!important;" tabindex="0" aria-controls="datatables-buttons"#}
 {#                                                    rowspan="1" colspan="1">#</th>#}
                                                 <th class="sorting" style="width: 50%;max-width: 60%;" tabindex="0" aria-controls="datatables-buttons"
-                                                    rowspan="1" colspan="1">Название модуля</th>
+                                                    rowspan="1" colspan="1">{{_("Название модуля")}}</th>
                                                 <th class="sorting" style="width: 40%;max-width: 50%;" tabindex="0" aria-controls="datatables-buttons"
-                                                    rowspan="1" colspan="1">Дата начала</th>
+                                                    rowspan="1" colspan="1">{{_("Дата начала")}}</th>
                                             </tr>
                                         </thead>
 
@@ -387,9 +388,9 @@
 {#                                            <th class="sorting" style="width: 0" tabindex="0" aria-controls="datatables-buttons"#}
 {#                                                    rowspan="1" colspan="1">#</th>#}
                                             <th class="sorting" tabindex="0" style="width: 70%!important;" aria-controls="datatables-buttons" rowspan="1"
-                                                colspan="1">Название модуля</th>
+                                                colspan="1">{{_("Название модуля")}}</th>
                                             <th class="sorting" tabindex="0" style="width: 30%!important;" aria-controls="datatables-buttons"
-                                                rowspan="1" colspan="1">Дата начала</th>
+                                                rowspan="1" colspan="1">{{_("Дата начала")}}</th>
                                         </tr>
                                     </thead>
 
@@ -424,7 +425,7 @@
                         <div class="card-body">
 
                             <div class="mb-2">
-                                <label class="form-label"><strong>Ученики</strong></label>
+                                <label class="form-label"><strong>{{_("Ученики")}}</strong></label>
                             {% if _students_list != [] %}
                                 <table id="students_table" class="table table-striped dataTable no-footer dtr-inline"
                                        style="width:100%; font-size: 13px">
@@ -433,7 +434,8 @@
                                             <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
                                                 colspan="1">#</th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Имя пользователя</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">
+                                                {{_("Имя пользователя")}}</th>
                                             <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Email</th>
                                         </tr>
                                     </thead>
@@ -456,7 +458,7 @@
                             {% else %}
                                 <div class="text-center">
                                     {% if _mode == 'view' %}
-                                        <h2>В этом потоке нет учеников.</h2>
+                                        <h2>{{_("В этом потоке нет учеников")}}.</h2>
                                     {% endif %}
                                 </div>
                             {% endif %}
@@ -470,10 +472,10 @@
             <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
                 <div class="p-1" align="right">
                     <button type="submit" name="button" value="{% if _mode == 'new' %}new{% elif _mode == "view" %}edit{% else %}save{% endif %}" class="btn btn-primary ">
-                        {% if _mode == 'new' %}Создать{% elif _mode == "view" %}Редактировать{% else %}Сохранить{% endif %}
+                        {% if _mode == 'new' %}{{_("Создать")}}{% elif _mode == "view" %}{{_("Редактировать")}}{% else %}{{_("Сохранить")}}{% endif %}
                     </button>
                     <a href="{{ url_for('multilingual.education_streams') }}" class="btn btn-primary cancelbtn">
-                        Отмена
+                        {{_("Отмена")}}
                     </a>
                 </div>
             </div>

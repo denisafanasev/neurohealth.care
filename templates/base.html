@@ -250,13 +250,13 @@
                             </div>
                         </li>
                         <div class="p-2">
-                            <span class="text-dark"><b>Имя пользователя:</b> {{ current_user.name }}{% if current_user.role == 'superuser' %} <b>роль:</b> {{ current_user.role }}{% endif %}</span>
+                            <span class="text-dark"><b>Имя пользователя:</b> {{ current_user.name }}{% if current_user.role == 'superuser' %} <b>{{_("роль")}}:</b> {{ current_user.role }}{% endif %}</span>
                         </div>
 
                         <div class="btn-group">
                             <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button" data-bs-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
-                                Действия
+                                {{_("Действия")}}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-lg-end">
 {#                                <li><a class="dropdown-item" href="https://adminkit.io/docs/" target="_blank"><svg xmlns="http://www.w3.org/2000/svg"#}

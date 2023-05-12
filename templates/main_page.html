@@ -174,8 +174,8 @@
                                                 {{ progress['name_course'] }}
                                             </th>
 
-                                            <td style="width: 30%">Cдано:{{ progress['count_accepted_homework'] }} / Не
-                                                сдано: {{ progress['count_no_accepted_homework'] }}</td>
+                                            <td style="width: 30%">{{_("Cдано")}}:{{ progress['count_accepted_homework'] }} /
+                                                {{_("Не сдано")}}: {{ progress['count_no_accepted_homework'] }}</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
