@@ -54,7 +54,7 @@
     <div class="container-fluid p-0">
 
         <div class="mb-3">
-            <h1 class="h3 d-inline align-middle">Протокол тестирования(Тестируемый: {{ _data["name_probationer"] }})</h1>
+            <h1 class="h3 d-inline align-middle">{{_("Протокол тестирования")}}({{_("Тестируемый")}}: {{ _data["name_probationer"] }})</h1>
         </div>
 
         <form id="probes" name="probes" method="post" enctype="multipart/form-data" onsubmit="return checkprobationer(this);">
@@ -69,11 +69,11 @@
                                     <thead>
                                         <tr role="row">
                                             <td class="sorting" style="" tabindex="0" aria-controls="datatables-buttons"
-                                                aria-label="Position: activate to sort column ascending">Параметр</td>
+                                                aria-label="Position: activate to sort column ascending">{{_("Параметр")}}</td>
                                             <td class="sorting" style="width:50%!important;" tabindex="0" aria-controls="datatables-buttons"
-                                                aria-label="Position: activate to sort column ascending">Критерии</td>
+                                                aria-label="Position: activate to sort column ascending">{{_("Критерии")}}</td>
                                             <td class="sorting" style="width:50%!important;; text-align:center" tabindex="0" aria-controls="datatables-buttons"
-                                                aria-label="Position: activate to sort column ascending">Оценка</td>
+                                                aria-label="Position: activate to sort column ascending">{{_("Оценка")}}</td>
                                         </tr>
                                     </thead>
 
@@ -108,7 +108,7 @@
                                                                     {% endfor %}
                                                                 {% if i_grade["grade"] != "" %}
                                                                     <div>
-                                                                        <span>Отвечено: {{ i_grade['grade'] }}</span>
+                                                                        <span>{{_("Отвечено")}}: {{ i_grade['grade'] }}</span>
                                                                     </div>
                                                                 {% endif %}
                                                                 </div>
@@ -140,7 +140,7 @@
                                 </table>
                                 {% else %}
                                     <div class="text-center">
-                                        <h2>Данная страница недоступна из-за отсутсвия нужного файла.</h2>
+                                        <h2>{{_("Данная страница недоступна из-за отсутствия нужного файла")}}.</h2>
                                     </div>
                                 {% endif %}
                             </div>
@@ -149,11 +149,11 @@
                 </div>
             {% if _data %}
                 <div align="right">
-                    <button type="submit" name="button" value="draft" class="btn btn-primary ">Сохранить как черновик</button>
+                    <button type="submit" name="button" value="draft" class="btn btn-primary ">{{_("Сохранить как черновик")}}</button>
 
-                    <button type="submit" name="button" value="end" class="btn btn-primary ">Сохранить окончательно</button>
+                    <button type="submit" name="button" value="end" class="btn btn-primary ">{{_("Сохранить окончательно")}}</button>
 
-                    <a href="{{ url_for("multilingual.protocols") }}" class="btn btn-primary ">Назад</a>
+                    <a href="{{ url_for("multilingual.protocols") }}" class="btn btn-primary ">{{_("Назад")}}</a>
                 </div>
             {% endif %}
         </form>

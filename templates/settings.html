@@ -47,7 +47,7 @@
 
     <div class="container-fluid p-0">
     
-        <h1 class="h3 mb-3">Настройки и обслуживание</h1>
+        <h1 class="h3 mb-3">{{_("Настройки и обслуживание")}}</h1>
     
         <div class="row">
             <div class="col">
@@ -55,14 +55,14 @@
                     <div class="card-header">
                         <div>
                             <a class="btn {% if _endpoint == "age_range_list" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for("multilingual.age_range_list") }}" role="tab">
-                                Справочник диапазонов возрастов
+                                {{_("Справочник диапазонов возрастов")}}
                             </a>
                             <a class="btn {% if _endpoint == "estimated_values" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("multilingual.estimated_values") }}" role="tab">
-                                Справочник оценочных значений
+                                {{_("Справочник оценочных значений")}}
                             </a>
                             <a class="btn {% if _endpoint == "maintenance" %} btn-primary {% else %}btn-light {% endif %} buttons-copy
                                 buttons-html5" aria-controls="datatables-buttons" href="{{ url_for("multilingual.maintenance") }}" role="tab">
-                                Обслуживание системы
+                                {{_("Обслуживание системы")}}
                             </a>
                         </div>
                     </div>

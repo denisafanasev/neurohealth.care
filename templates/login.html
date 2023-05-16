@@ -50,24 +50,25 @@
                                             {% if _login_error %}
                                             <div class="alert alert-danger alert-dismissible" role="alert">
                                                 <div class="alert-message">
-                                                    <strong>Ошибка</strong> {{ _login_error }}
+                                                    <strong>{{_("Ошибка")}}</strong> {{ _login_error }}
                                                 </div>
                                             </div>
                                             {% endif %}
-                                            <label><strong>Логин</strong></label>
+                                            <label><strong>{{_("Логин")}}</strong></label>
                                             <input class="form-control form-control-lg" type="login" name="login"
                                                 placeholder="Введите логин" />
                                         </div>
                                         <div class="form-group">
-                                            <label><strong>Пароль</strong></label>
+                                            <label><strong>{{_("Пароль")}}</strong></label>
                                             <input class="form-control form-control-lg" type="password" name="password"
                                                 placeholder="Введите пароль" />
                                         </div>
                                         <div class="text-center mt-3">
-                                            <button type="submit" class="btn btn-primary">Войти</button>
+                                            <button type="submit" class="btn btn-primary">{{_("Войти")}}</button>
                                         </div>
                                         <div class="text-center mt-3">
-                                            <a href="{{ url_for('multilingual.registration')}}">Регистрация</a> | <a>Вспомнить пароль</a> | <a href="{{APP_SUPPORT_CHANNEL}}" target="blank">Чат поддержки</a>
+                                            <a href="{{ url_for('multilingual.registration')}}">{{_("Регистрация")}}</a> | <a>{{_("Вспомнить
+                                                пароль")}}</a> | <a href="{{APP_SUPPORT_CHANNEL}}" target="blank">{{_("Чат поддержки")}}</a>
                                         </div>
                                     </form>
                                 </div>

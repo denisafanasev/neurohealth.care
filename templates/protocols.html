@@ -24,9 +24,9 @@
     <script type="text/javascript">
           function checkprobationer(form) {
             var probationer = form.probationer.value;
-            var text = "Ошибка: выберите тестируемого!"
+            var text = "{{_("Ошибка: выберите тестируемого")}}!"
 
-            if (probationer === "Выберите тестируемого"){
+            if (probationer === "{{_("Выберите тестируемого")}}"){
                 alert(text);
                 return false;
             }
@@ -34,7 +34,7 @@
     </script>
     <div class="container-fluid p-0">
     
-        <h1 class="h3 mb-3">Пробы</h1>
+        <h1 class="h3 mb-3">{{_("Пробы")}}</h1>
     
         <div class="row">
             <div class="col-12">
@@ -47,12 +47,12 @@
                                     <div class="dt-buttons btn-group flex-wrap">
                                         {% if _is_probationer %}
                                             <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" onclick="document.getElementById('add_protocol').style.display='block'">
-                                                <span>Добавить пробу</span>
+                                                <span>{{_("Добавить пробу")}}</span>
                                             </a>
                                         {% else %}
                                             <div>
                                                 <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for('multilingual.probationer_card')}}">
-                                                    <span>Добавить тестируемого</span>
+                                                    <span>{{_("Добавить тестируемого")}}</span>
                                                 </a>
                                             </div>
                                         {% endif %}
@@ -69,15 +69,20 @@
                                             <tr role="row">
                                                 <th style="width:5%;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:20%;" aria-label="Position: activate to sort column ascending">Имя тестируемого</th>
+                                                    style="width:20%;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Имя тестируемого")}}</th>
                                                 <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">Протокол</th>
+                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Протокол")}}</th>
                                                 <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">Дата тестирования</th>
+                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Дата тестирования")}}</th>
                                                 <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">Дата создания</th>
+                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Дата создания")}}</th>
                                                 <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:5%;" aria-label="Position: activate to sort column ascending">Статус протокола</th>
+                                                    style="width:5%;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Статус протокола")}}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -108,8 +113,8 @@
                                     </table>
                                 {% else %}
                                     <div class="text-center">
-                                        <h2>У вас нет тестируемых.</h2>
-                                        <h2>Перед тем, как создать протокол, создайте тестируемого.</h2>
+                                        <h2>{{_("У вас нет тестируемых")}}.</h2>
+                                        <h2>{{_("Перед тем, как создать протокол, создайте тестируемого")}}.</h2>
                                     </div>
                                 {% endif %}
                                 </div>
@@ -128,19 +133,20 @@
                         <div class="col-8 p-2 bd-highlight">
                             <div class="card d-flex align-self-baseline">
                                 <div class="card-header">
-                                    <h5 class="card-title">Выбор тестируемого</h5>
+                                    <h5 class="card-title">{{_("Выбор тестируемого")}}</h5>
                                     <div class="mb-2">
-                                        <label class="form-label"><strong>Тестируемый</strong></label>
+                                        <label class="form-label"><strong>{{_("Тестируемый")}}</strong></label>
                                         <select class="form-select" name="probationer">
-                                            <option disabled selected value="Выберите тестируемого">Выберите тестируемого</option>
+                                            <option disabled selected value="Выберите тестируемого">{{_("Выберите
+                                                    тестируемого")}}</option>
                                             {% for i_probationer in _probationers_list %}
                                                 <option {% if i_probationer["name"] == 'Выберите тестируемого' %}selected
                                                         disabled {% endif %} value="{{ i_probationer['id'] }}">{{ i_probationer["name"] }}</option>
                                             {% endfor %}
                                         </select>
-                                        <label class="form-label"><strong>Проба</strong></label>
+                                        <label class="form-label"><strong>{{_("Проба")}}</strong></label>
                                         <select class="form-select" name="probes_list">
-                                            <option disabled selected value="Выберите пробу">Выберите пробу</option>
+                                            <option disabled selected value="Выберите пробу">{{_("Выберите пробу")}}</option>
                                             {% for probe in _probes_list %}
                                                 <option value="{{ probe['id'] }}">{{ probe["name"] }}</option>
                                             {% endfor %}
@@ -149,11 +155,12 @@
                                 </div>
                             </div>
                             <div style="text-align: right">
-                                <button type="submit" disabled name="button" value="draft" class="btn btn-primary ">Продолжить
+                                <button type="submit" disabled name="button" value="draft" class="btn btn-primary ">
+                                    {{_("Продолжить")}}
                                 </button>
 
                                 <a type="submit" name="button" href="{{ url_for('multilingual.protocols') }}"
-                                   class="btn btn-secondary ">Отмена</a>
+                                   class="btn btn-secondary ">{{_("Отмена")}}</a>
                             </div>
                         </div>
                     </div>

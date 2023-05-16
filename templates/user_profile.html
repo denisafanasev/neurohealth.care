@@ -56,20 +56,20 @@
             const message = document.getElementById('message');
 
             if (role === 'placeholder') {
-                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                document.querySelector('p[id=text_message]').textContent = "Выберите роль пользователю.";
+                document.querySelector('h3[id=title_message]').textContent = '{{_("Ошибка")}}';
+                document.querySelector('p[id=text_message]').textContent = "{{_("Выберите роль пользователю")}}.";
                 message.style.display = 'block'
                 return false;
             }
             if (probationers_number === 'placeholder') {
-                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                document.querySelector('p[id=text_message]').textContent = "Выберите количество доступных тестируемых для пользователя.";
+                document.querySelector('h3[id=title_message]').textContent = '{{_("Ошибка")}}';
+                document.querySelector('p[id=text_message]').textContent = "{{_("Выберите количество доступных тестируемых для пользователя")}}.";
                 message.style.display = 'block'
                 return false;
             }
             if (user_name === '') {
-                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                document.querySelector('p[id=text_message]').textContent = "Введите имя пользователя";
+                document.querySelector('h3[id=title_message]').textContent = '{{_("Ошибка")}}';
+                document.querySelector('p[id=text_message]').textContent = "{{_("Введите имя пользователя")}}";
                 message.style.display = 'block'
                 return false;
             }
@@ -83,15 +83,15 @@
             const message = document.getElementById('message');
 
             if (period === 'placeholder'){
-                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                document.querySelector('p[id=text_message]').textContent = "Выберите срок, на который хотите продлить доступ пользователю.";
+                document.querySelector('h3[id=title_message]').textContent = '{{_("Ошибка")}}';
+                document.querySelector('p[id=text_message]').textContent = "{{_("Выберите срок, на который хотите продлить доступ пользователю")}}.";
                 message.style.display = 'block'
                 return false;
             }
 
             if (reference_point === 'placeholder'){
-                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                document.querySelector('p[id=text_message]').textContent = "Выберите начальное время отсчета.";
+                document.querySelector('h3[id=title_message]').textContent = '{{_("Ошибка")}}';
+                document.querySelector('p[id=text_message]').textContent = "{{_("Выберите начальное время отсчета")}}.";
                 message.style.display = 'block'
                 return false;
             }
@@ -149,31 +149,31 @@
                 <div class="col-sm-6 bd-highlight">
                     <div class="card d-flex align-self-baseline" style="height: 100%;">
                         <div class="card-header">
-                            <h5 class="card-title">Учетные данные пользователя</h5>
+                            <h5 class="card-title">{{_("Учетные данные пользователя")}}</h5>
                         <fieldset {% if _mode == 'view' %}disabled{% endif %}>
                             <div class="mb-2">
                                 <label class="form-label"><strong>Login</strong></label>
-                                <input type="text" name="login" class="form-control" {% if _mode!="new" %} disabled {% endif %} {% if _data_edit['login'] != _data['login'] or _mode != "new" %} value="{{ _data_edit['login'] }}" {% else %} placeholder="Введите логин пользователя" {% endif %}>
+                                <input type="text" name="login" class="form-control" {% if _mode!="new" %} disabled {% endif %} {% if _data_edit['login'] != _data['login'] or _mode != "new" %} value="{{ _data_edit['login'] }}" {% else %} placeholder="{{_("Введите логин пользователя")}}" {% endif %}>
                             </div>
 
                             <div class="mb-2">
-                                <label class="form-label"><strong>Имя пользователя</strong></label>
-                                <input type="text" name="user_name" class="form-control" {% if _data_edit['name'] != _data['name'] or _mode != "new"%} value="{{ _data_edit['name'] }}" {% else %} placeholder="Введите имя пользователя" {% endif %}>
+                                <label class="form-label"><strong>{{_("Имя пользователя")}}</strong></label>
+                                <input type="text" name="user_name" class="form-control" {% if _data_edit['name'] != _data['name'] or _mode != "new"%} value="{{ _data_edit['name'] }}" {% else %} placeholder="{{_("Введите имя пользователя")}}" {% endif %}>
                             </div>
 
                             {% if _mode=="new" %}
                                 <div class="mb-2">
-                                    <label class="form-label"><strong>Пароль</strong></label>
+                                    <label class="form-label"><strong>{{_("Пароль")}}</strong></label>
                                     <div class="password">
-                                        <input id="password" type="password" name="password" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
+                                        <input id="password" type="password" name="password" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="{{_("Введите пароль")}}" {% endif %}>
                                         <div style="float: right"><a class="password-control" ></a></div>
                                     </div>
                                 </div>
 
                                 <div class="mb-2">
-                                    <label class="form-label"><strong>Повтор пароля</strong></label>
+                                    <label class="form-label"><strong>{{_("Повтор пароля")}}</strong></label>
                                     <div class="password">
-                                        <input id="password2" type="password" name="password2" class="form-control" {% if _data_edit['password2']!= _data['password2'] %} value="{{ _data_edit['password2'] }}" {% else %} placeholder="Повторно введите пароль" {% endif %}>
+                                        <input id="password2" type="password" name="password2" class="form-control" {% if _data_edit['password2']!= _data['password2'] %} value="{{ _data_edit['password2'] }}" {% else %} placeholder="{{_("Повторно введите пароль")}}" {% endif %}>
                                         <a href="#" class="password-control2" ></a>
                                     </div>
                                 </div>
@@ -181,7 +181,7 @@
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Email</strong></label>
-                                <input type="email" name="email" class="form-control"  {% if _data_edit['email'] != _data['email'] or _mode != "new"%} value="{{ _data_edit['email'] }}" {% else %} placeholder="Введите email пользователя" {% endif %}>
+                                <input type="email" name="email" class="form-control"  {% if _data_edit['email'] != _data['email'] or _mode != "new"%} value="{{ _data_edit['email'] }}" {% else %} placeholder="{{_("Введите email пользователя")}}" {% endif %}>
                             </div>
                         </fieldset>
                             <div class="mb-2">
@@ -192,7 +192,7 @@
                                            {% if _data_edit['active'] == true %}checked{% endif %}
                                             {% if _mode == "new" %}disabled{% endif %}
                                             {% if _mode == "view" %} onchange="edit_is_active(); this.form.submit()" {% endif %}>
-                                    <label class="form-check-label" for="is_active">{% if _data_edit['active'] == true %}Разблокирован{% else %}Заблокирован{% endif %}</label>
+                                    <label class="form-check-label" for="is_active">{% if _data_edit['active'] == true %}{{_("Разблокирован")}}{% else %}{{_("Заблокирован")}}{% endif %}</label>
                                 </div>
                             </div>
                         </div>
@@ -204,13 +204,13 @@
                     <div class="card d-flex align-self-baseline" style="height: 100%;">
 
                         <div class="card-header">
-                            <h5 class="card-title">Параметры доступа</h5>
+                            <h5 class="card-title">{{_("Параметры доступа")}}</h5>
                         <fieldset {% if _mode == 'view' %}disabled{% endif %}>
                             <div class="mb-2">
-                                <label class="form-label"><strong>Роль пользователя</strong></label>
+                                <label class="form-label"><strong>{{_("Роль пользователя")}}</strong></label>
                                 <select id="role" type="text" name="role" class="form-select" {% if _mode=="view" %} disabled {% endif %}>
                                     {% if _mode != "view" %}
-                                        <option value="placeholder">Выберите роль пользователя</option>
+                                        <option value="placeholder">{{_("Выберите роль пользователя")}}</option>
                                         {% for i in _settings['role'] %}
                                             <option {% if i == _data_edit['role'] %} selected {% endif %} value="{{ i }}">{{ i }}</option>
                                         {% endfor %}
@@ -221,10 +221,10 @@
                             </div>
 
                             <div class="mb-2">
-                                <label class="form-label"><strong>Количество доступных тестируемых</strong></label>
+                                <label class="form-label"><strong>{{_("Количество доступных тестируемых")}}</strong></label>
                                 <select id="probationers_number" type="text" name="probationers_number" class="form-select" {% if _mode=="view" %} disabled {% endif %}>
                                     {% if _mode != "view" %}
-                                        <option value="placeholder">Выберите количество доступных тестируемых</option>
+                                        <option value="placeholder">{{_("Выберите количество доступных тестируемых")}}</option>
                                         {% for i in _settings['probationers_number'] %}
                                                 <option {% if _data_edit['probationers_number'] == i %} selected {% endif %}value="{{ i }}"> {{ i }} </option>
                                         {% endfor %}
@@ -236,10 +236,10 @@
                         </fieldset>
                             {% if _mode == "view" %}
                                 <div class="mb-2">
-                                    <label class="form-label"><strong>Доступ к дополнительным курсам</strong></label>
+                                    <label class="form-label"><strong>{{_("Доступ к дополнительным курсам")}}</strong></label>
                                     <input class="form-control" disabled value="{{ _data_edit['education_module_expiration_date'] }}">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#extension" style="float: right; margin-top: 1%"
-                            onclick="document.getElementById('extension').style.display = 'block';">Продление доступа</button>
+                            onclick="document.getElementById('extension').style.display = 'block';">{{_("Продление доступа")}}</button>
                                 </div>
                             {% endif %}
                         </div>
@@ -252,29 +252,35 @@
         <div class="col-sm-12 p-2 bd-highlight">
             <div class="card d-flex align-self-baseline" style="height: 100%;">
                 <div class="card-header">
-                    <h5 class="card-title">Обучающие потоки</h5>
+                    <h5 class="card-title">{{_("Обучающие потоки")}}</h5>
 
                     <div class="mb-2">
                         <table id="education_stream_table" class="table table-striped dataTable no-footer dtr-inline" style="font-size: 13px" >
                             <thead>
                             <tr>
                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                    style="width:20%; text-align: left;" aria-label="Position: activate to sort column ascending">Название
+                                    style="width:20%; text-align: left;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Название")}}
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                    style="width:20%; text-align: left;" aria-label="Position: activate to sort column ascending">Роль пользователя в потоке
+                                    style="width:20%; text-align: left;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Роль пользователя в потоке")}}
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                    style="width:10%; text-align: center;" aria-label="Position: activate to sort column ascending">Преподаватель
+                                    style="width:10%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Преподаватель")}}
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">Дата старта
+                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Дата старта")}}
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">Дата окончания
+                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Дата окончания")}}
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                    style="width:15%; text-align: center;" aria-label="Position: activate to sort column ascending">Обучающий курс
+                                    style="width:15%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Обучающий курс")}}
                                 </th>
                             </tr>
                             </thead>
@@ -313,21 +319,22 @@
             <div class="col-12 p-2">
                 <a type="submit" name="button" href="{% if _mode == "edit" %}{{ url_for('multilingual.user_profile', user_id=_data['user_id']) }}{% else %}{{ url_for('multilingual.user_manager') }}{% endif %}"
                    class="btn btn-primary">
-                    {% if _mode != "view" %}Отмена{% else %}Назад{% endif %}
+                    {% if _mode != "view" %}{{_("Отмена")}}{% else %}{{_("Назад")}}{% endif %}
                 </a>
                 {% if _mode !="discharge" %}
                     <button form="add_user" type="submit" name="button"
                             value="{% if _mode=="new" %}add{% elif _mode=="edit"%}save{% else %}edit{% endif %}" class="btn btn-primary">
-                        {% if _mode=="new" %}Добавить пользователя
-                        {% elif _mode=="edit" %}Сохранить
-                        {% else %}Редактировать
+                        {% if _mode=="new" %}{{_("Добавить пользователя")}}
+                        {% elif _mode=="edit" %}{{_("Сохранить")}}
+                        {% else %}{{_("Редактировать")}}
                         {% endif %}
                     </button>
                 {% endif %}
                 {% if _mode == "view"%}
                     <button name="button" value="{% if _mode=="view" %}discharge{% elif _mode=="discharge" %}save_discharge{% endif %}"
                             class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#extension"
-                            onclick="document.getElementById('extension').style.display = 'none'; document.getElementById('reset').style.display = 'block';">Сброс пароля
+                            onclick="document.getElementById('extension').style.display = 'none'; document.getElementById('reset').style.display = 'block';">
+                        {{_("Сброс пароля")}}
 
                     </button>
                 {% endif %}
@@ -348,17 +355,17 @@
     </script>
     <div id="extension" class="modal">
         <div class="modal-content animate " style="width: 31%">
-            <h3 class="modal-title">Доступ к дополнительным курсам</h3>
+            <h3 class="modal-title">{{_("Доступ к дополнительным курсам")}}</h3>
             <form id="extension" name="form" method="post" enctype="multipart/form-data" onsubmit="return checkExtension(this);">
                 <div class="row d-flex align-items-stretch bd-highlight">
                     <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto;">
                         <div class="card-header">
                             <div class="mb-2">
 
-                                <label class="form-label"><strong>Продление срока доступа</strong></label>
+                                <label class="form-label"><strong>{{_("Продление срока доступа")}}</strong></label>
                                 <select id="period" required class="form-select" name="period">
                                     <option selected disabled value="placeholder">
-                                        Выберите продление срок доступа..
+                                        {{_("Выберите продление срок доступа")}}..
                                     </option>
                                     {% for i in _settings['education_module_expiration_date'] %}
                                         <option value="{{ i['amount'] }}">{{ i['name_period'] }}</option>
@@ -368,7 +375,7 @@
                             <div class="mb-2">
                                 <select id="reference_point" required name="reference_point" class="form-select">
                                     <option selected disabled value="placeholder">
-                                        Выберите начальное время отсчета..
+                                        {{_("Выберите начальное время отсчета")}}..
                                     </option>
                                     {% for i_point in _settings['reference_point'] %}
                                         <option value="{{ i_point['value'] }}">{{ i_point['name_point'] }}</option>
@@ -381,10 +388,10 @@
                 <div class="row d-flex align-items-stretch bd-highlight" align="right">
                     <div class="p-1">
                         <button type="submit" class="btn btn-primary" name="button" value="extension">
-                            Продлить
+                            {{_("Продлить")}}
                         </button>
                         <a onclick="document.getElementById('extension').style.display='none'" type="submit" name="button" class="btn btn-primary cancelbtn">
-                            Отмена
+                            {{_("Отмена")}}
                         </a>
                     </div>
                 </div>
@@ -393,23 +400,23 @@
     </div>
     <div id="reset" class="modal">
         <div class="modal-content animate" style="width: 20%">
-            <h3 class="modal-title">Сброс пароля</h3>
+            <h3 class="modal-title">{{_("Сброс пароля")}}</h3>
             <form id="reset_password" name="discharge" method="post" enctype="multipart/form-data"
                     onsubmit="return checkPasswordsMatched(this);">
                 <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto; ">
                     <div class="card-header">
                         <div class="mb-2">
-                            <label class="form-label"><strong>Пароль</strong></label>
+                            <label class="form-label"><strong>{{_("Пароль")}}</strong></label>
                             <div class="password">
-                                <input id="password" type="password" name="password" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
+                                <input id="password" type="password" name="password" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="{{_("Введите пароль")}}" {% endif %}>
                                 <div style="float: right"><a id="password-control" class="password-control" ></a></div>
                             </div>
                         </div>
 
                         <div class="mb-2">
-                            <label class="form-label"><strong>Повтор пароля</strong></label>
+                            <label class="form-label"><strong>{{_("Повтор пароля")}}</strong></label>
                             <div class="password">
-                                <input id="password2" type="password" name="password2" class="form-control" {% if _data_edit['password2']!= _data['password2']%} value="{{ _data_edit['password2'] }}" {% else %} placeholder="Введите пароль" {% endif %}>
+                                <input id="password2" type="password" name="password2" class="form-control" {% if _data_edit['password2']!= _data['password2']%} value="{{ _data_edit['password2'] }}" {% else %} placeholder="{{_("Введите пароль")}}" {% endif %}>
                                 <div style="float: right"><a href="#" class="password-control2" ></a></div>
                             </div>
                         </div>
@@ -418,10 +425,10 @@
                 <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
                     <div class="p-1" align="right">
                         <button type="submit" name="button" value="reset" class="btn btn-primary">
-                            Сохранить
+                            {{_("Сохранить")}}
                         </button>
                         <a onclick="document.getElementById('reset').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
-                            Отмена
+                            {{_("Отмена")}}
                         </a>
                     </div>
                 </div>

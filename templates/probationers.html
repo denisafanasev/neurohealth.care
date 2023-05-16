@@ -124,7 +124,7 @@
 
     <div class="container-fluid p-0">
     
-        <h1 class="h3 mb-3">Испытуемые</h1>
+        <h1 class="h3 mb-3">{{_("Испытуемые")}}</h1>
     
         <div class="row">
             <div class="col-12">
@@ -137,7 +137,7 @@
                                         <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
                                             data-bs-toggle="modal" data-bs-target="#0"
                                                     onclick="document.getElementById('0').style.display='block'">
-                                                <span>Добавить тестируемого</span>
+                                                <span>{{_("Добавить тестируемого")}}</span>
                                             </a>
                                     </div>
                                 </div>
@@ -151,19 +151,24 @@
                                             <tr role="row" style="text-align: center">
                                                 <th style="width:5%;">#</th>
                                                 <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">Имя испытуемого</th>
+                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Имя испытуемого")}}</th>
                                                 {% if _is_current_user_admin %}
                                                     <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                         style="width:10%;" aria-label="Position: activate to sort column ascending">User_Login</th>
                                                 {% endif %}
                                                 <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">Дата рождения</th>
+                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Дата рождения")}}</th>
                                                 <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:15%;" aria-label="Position: activate to sort column ascending">ФИО родителя</th>
+                                                    style="width:15%;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("ФИО родителя")}}</th>
                                                 <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">Контакты</th>
+                                                    style="width:10%;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Контакты")}}</th>
                                                 <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:15%;" aria-label="Position: activate to sort column ascending">Учебное заведение</th>
+                                                    style="width:15%;" aria-label="Position: activate to sort column ascending">
+                                                    {{_("Учебное заведение")}}</th>
                                             </tr>
                                         </thead>
                                         <tbody style="text-align: center">
@@ -214,11 +219,12 @@
             </script>
             <div id="{{ item['probationer_id'] }}" class="modal_{{ item['probationer_id'] }} modal">
                 <div class="modal-content animate">
-                    <h3 class="modal-title">{% if _mode[item['probationer_id']] == "view" %}Просмотр{% else %} Редактирование{% endif %} карточки тестируемого</h3>
+                    <h3 class="modal-title">{% if _mode[item['probationer_id']] == "view" %}{{_("Просмотр")}}{% else %}
+                        {{_("Редактирование")}}{% endif %} {{_("карточки тестируемого")}}</h3>
                     {% if _error_type['probationer_id']=='Error' %}
                         <div class="alert alert-danger alert-dismissible" role="alert">
                             <div class="alert-message">
-                                <strong>Ошибка</strong> {{ _error }}
+                                <strong>{{_("Ошибка")}}</strong> {{ _error }}
                             </div>
                         </div>
                     {% endif %}
@@ -235,21 +241,21 @@
                                             </div>
                                         {% endif %}
                                         <div class="mb-2">
-                                            <label class="form-label"><strong>Имя испытуемого</strong></label>
+                                            <label class="form-label"><strong>{{_("Имя испытуемого")}}</strong></label>
                                             <input required type="text" name="name_probationer_{{ item['probationer_id'] }}" class="form-control"  {% if _mode[item['probationer_id']|int]=="view" %} readonly {% endif %}
                                                     {% if _data_edit[item['probationer_id']|int]['name_probationer'] != _data[item['probationer_id']|int]['name_probationer'] or _mode[item['probationer_id']|int] != "new" %}
                                                    value="{{ _data_edit[item['probationer_id']|int]['name_probationer'] }}" {% else %} placeholder= "{{ _data[item['probationer_id']|int]['name_probationer'] }}" {% endif %}>
                                         </div>
 
                                         <div class="mb-2">
-                                            <label class="form-label"><strong>Сопутствующие диагнозы</strong></label>
+                                            <label class="form-label"><strong>{{_("Сопутствующие диагнозы")}}</strong></label>
                                             <textarea required name="diagnoses_{{ item['probationer_id'] }}" class="form-control"  {% if _mode[item['probationer_id']|int]=="view" %} readonly {% endif %} {% if _data[item['probationer_id']|int]['diagnoses']==_data_edit[item['probationer_id']|int]['diagnoses'] or _mode[item['probationer_id']|int] == "new" %}
                                                       placeholder= "{{ _data[item['probationer_id']|int]['diagnoses'] }}" {% endif %}
                                             >{% if _data_edit[item['probationer_id']|int]['diagnoses']!=_data[item['probationer_id']|int]['diagnoses'] or _mode[item['probationer_id']|int] != "new" %}{{ _data_edit[item['probationer_id']|int]['diagnoses'] }}{% endif %}</textarea>
                                         </div>
 
                                         <div class="mb-2">
-                                            <label class="form-label"><strong>Причины обращения</strong></label>
+                                            <label class="form-label"><strong>{{_("Причины обращения")}}</strong></label>
                                             <textarea required name="reasons_for_contact_{{ item['probationer_id'] }}" class="form-control"  {% if _mode[item['probationer_id']|int]=="view"%} readonly {% endif %} {% if _data_edit[item['probationer_id']|int]['reasons_for_contact']==_data[item['probationer_id']|int]['reasons_for_contact'] or _mode[item['probationer_id']|int] == "new"  %}
                                                       placeholder= "{{ _data[item['probationer_id']|int]['reasons_for_contact'] }}" {% endif %}>{% if _data_edit[item['probationer_id']|int]['reasons_for_contact']!=_data[item['probationer_id']|int]['reasons_for_contact'] or _mode[item['probationer_id']|int] != "new"  %}{{ _data_edit[item['probationer_id']|int]['reasons_for_contact'] }}{% endif %}</textarea>
                                         </div>
@@ -262,38 +268,39 @@
                                 <div class="card d-flex align-self-baseline">
                                     <div class="card-header">
                                         <div class="mb-2">
-                                            <label class="form-label"><strong>Дата Рождения</strong></label>
+                                            <label class="form-label"><strong>{{_("Дата Рождения")}}</strong></label>
                                             <input required type="date" name="date_of_birth_{{ item['probationer_id'] }}" class="form-control" {% if _mode[item['probationer_id']|int] == "view" %} readonly {% endif %} value="{{ _data_edit[item['probationer_id']|int]['date_of_birth'] }}" >
                                             <div class="invalid-feedback">
-                                                Поле, обязательное для заполнения!
+                                                {{_("Поле, обязательное для заполнения")}}!
                                             </div>
                                         </div>
                                         <div class="mb-2">
-                                            <label class="form-label"><strong>ФИО родителя</strong></label>
+                                            <label class="form-label"><strong>{{_("ФИО родителя")}}</strong></label>
                                             <input required type="text" name="name_parent_{{ item['probationer_id'] }}" class="form-control" {% if _mode[item['probationer_id']|int] == "view" %} readonly {% endif %} {% if _data_edit[item['probationer_id']|int]['name_parent']!=_data[item['probationer_id']|int]['name_parent'] or _mode[item['probationer_id']|int] != "new" %}
                                                    value="{{ _data_edit[item['probationer_id']|int]['name_parent'] }}" {% else %}  placeholder="{{ _data[item['probationer_id']|int]['name_parent'] }}" {% endif %}>
                                             <div class="invalid-feedback">
-                                                Поле, обязательное для заполнения!
+                                                {{_("Поле, обязательное для заполнения")}}!
                                             </div>
                                         </div>
                                         <div class="mb-2">
-                                            <label class="form-label"><strong>Учебное заведение</strong></label>
+                                            <label class="form-label"><strong>{{_("Учебное заведение")}}</strong></label>
                                             <select required type="text" name="educational_institution_{{ item['probationer_id'] }}" class="form-control" {% if _mode[item['probationer_id']|int]=="view"%} disabled {% endif %}>
-                                                <option selected disabled value="">Выберите название учебного заведения..</option>
+                                                <option selected disabled value="">{{_("Выберите название учебного
+                                                        заведения")}}..</option>
                                                 {% for i_setting in _settings['educational_institution'] %}
                                                     <option {% if i_setting == _data_edit[item['probationer_id']|int]['educational_institution'] %}selected{% endif %} value="{{ i_setting }}">{{ i_setting }}</option>
                                                 {% endfor %}
                                             </select>
                                             <div class="invalid-feedback">
-                                                Поле, обязательное для заполнения!
+                                                {{_("Поле, обязательное для заполнения")}}!
                                             </div>
                                         </div>
                                         <div class="mb-2">
-                                            <label class="form-label"><strong>Контакты</strong></label>
+                                            <label class="form-label"><strong>{{_("Контакты")}}</strong></label>
                                             <input required type="text" name="contacts_{{ item['probationer_id'] }}" class="form-control" {% if _mode[item['probationer_id']|int]=="view" %} readonly {% endif %} {% if _data_edit[item['probationer_id']|int]['contacts']!=_data[item['probationer_id']|int]['contacts'] or _mode[item['probationer_id']|int]!="new" %}
                                                    value="{{ _data_edit[item['probationer_id']|int]['contacts'] }}" {% else %} placeholder= "{{ _data[item['probationer_id']|int]['contacts'] }}" {% endif %}>
                                             <div class="invalid-feedback">
-                                                Поле, обязательное для заполнения!
+                                                {{_("Поле, обязательное для заполнения")}}!
                                             </div>
                                         </div>
                                     </div>
@@ -304,12 +311,14 @@
                             <div class="col-12 p-2 bd-highlight">
                                 <div align="right">
                                     <button type="submit" name="button_{{ item['probationer_id'] }}" value="{% if _mode[item['probationer_id']|int]=="new" %}add{% elif _mode[item['probationer_id']|int]=="edit" %}save{% else %}edit{% endif %}" class="btn btn-primary ">
-                                                                                    {% if _mode[item['probationer_id']|int]=="new" %}Добавить тестируемого
-                                                                                    {% elif _mode[item['probationer_id']|int]=="edit" %}Сохранить
-                                                                                    {% else %}Редактировать
+                                                                                    {% if _mode[item['probationer_id']|int]=="new" %}{{_("Добавить
+                                                                                            тестируемого")}}
+                                                                                    {% elif _mode[item['probationer_id']|int]=="edit" %}{{_("Сохранить")}}
+                                                                                    {% else %}{{_("Редактировать")}}
                                                                                     {% endif %}
                                     </button>
-                                    <button id="button_{{ item['probationer_id']|int }}_cancel" type="submit" value="cancel" formnovalidate name="button_{{ item['probationer_id']|int }}" class="btn btn-primary">Отмена</button>
+                                    <button id="button_{{ item['probationer_id']|int }}_cancel" type="submit" value="cancel" formnovalidate name="button_{{ item['probationer_id']|int }}" class="btn btn-primary">
+                                        {{_("Отмена")}}</button>
                                 </div>
                             </div>
                         </div>
