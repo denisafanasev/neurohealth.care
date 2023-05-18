@@ -85,7 +85,7 @@ class ProbeProfileController():
 
         return probe
 
-    def get_tests_list(self):
+    def get_tests_list(self, _probe_id):
         """
         Возвращает список тестов
 
@@ -95,7 +95,7 @@ class ProbeProfileController():
 
         probe_profile_service = ProbeProfileService()
 
-        return probe_profile_service.get_tests_list()
+        return probe_profile_service.get_tests_list(_probe_id)
 
     def add_grades_in_probe(self, _grades, _probe_id, _protocol_status=""):
         """

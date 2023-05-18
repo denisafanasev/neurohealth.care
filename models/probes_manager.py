@@ -34,13 +34,6 @@ class ProtocolsManager():
 
         probe_id = data_store.get_rows_count() + 1
         test = f"test_probe_id_{probe_id}"
-        # data = {
-        #     'name_probationer': '',
-        #     'probationer_id': _probationer_id,
-        #     'date_of_birth': '',
-        #     'protocol_status': _protocol_status,
-        #     'test': f'test_probe_id_{probe_id}'
-        # }
         probe = Probe(_probationer_id=_probationer_id, _probe_id=_probe_id, _test=test, _protocol_status=_protocol_status)
 
         data_store.insert_row({"probe_id": probe.probe_id, "name_probationer": probe.name_probationer,
@@ -57,7 +50,15 @@ class ProtocolsManager():
         return test
 
     def get_protocol(self, _protocol_id):
+        """
+        Возвращает данные протокола по ID
 
+        Args:
+            _protocol_id(Int): ID протокола
+
+        Returns:
+            Protocol
+        """
         data_store_probes = DataStore("test")
         data_store_parameters = DataStore("test", "parameters")
         data_store_grade = DataStore("parameters_criteria")
@@ -110,14 +111,21 @@ class ProtocolsManager():
         return protocol
 
     def get_tests_list(self):
+        """
+        Возвращает список всех проб
 
+        Returns:
+            List: список проб
+        """
         data_store_probes = DataStore("test")
         tests_list = data_store_probes.get_rows()
 
         return tests_list
 
     def add_grades_in_probe(self, _grades, _probe_id, _protocol_status):
-
+        """
+        Добавляет в протокол новый результат
+        """
         data_store = DataStore("probes")
 
         # if _protocol_status != "":
@@ -133,7 +141,7 @@ class ProtocolsManager():
             else:
                 data_store_test.insert_row({"id": int(grade["id"]), "grade": grade["grade"]})
 
-    def get_probe_by_id(self, _probe_id):
+    def get_protocol_by_id(self, _probe_id):
         """
         Возвращает протокол по ID
 
@@ -185,21 +193,21 @@ class ProtocolsManager():
 
         return probes_list
 
-    def get_protocol_by_id(self, _protocol_id):
-        """
-        Возвращает данные протокола по ID
-
-        Args:
-            _protocol_id(Int): ID протокола
-
-        Returns:
-            Probe: протокол
-        """
-        data_store = DataStore('probes')
-
-        protocol_data = data_store.get_rows({'probe_id': _protocol_id})
-        if protocol_data:
-            return self.protocol_row_to_protocol(protocol_data[0])
+    # def get_protocol_by_id(self, _protocol_id):
+    #     """
+    #     Возвращает данные протокола по ID
+    #
+    #     Args:
+    #         _protocol_id(Int): ID протокола
+    #
+    #     Returns:
+    #         Probe: протокол
+    #     """
+    #     data_store = DataStore('probes')
+    #
+    #     protocol_data = data_store.get_rows({'probe_id': _protocol_id})
+    #     if protocol_data:
+    #         return self.protocol_row_to_protocol(protocol_data[0])
 
     def get_probe_by_id_grade(self, _protocol_test):
 
@@ -218,3 +226,11 @@ class ProtocolsManager():
             test = data_store_tests.get_rows({'id': 1})[0]
 
         return self.test_row_to_test(test.doc_id, test['name_probe'], '')
+
+    def get_probe_by_id(self, _probe_id):
+        """
+
+        """
+        data_store_probe = DataStore('test')
+        data_store_parameters = DataStore("test", "parameters")
+        data_store_grade = DataStore("parameters_criteria")

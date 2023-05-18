@@ -64,11 +64,11 @@ class ProbeProfileService():
         """
 
         protocols_manager = ProtocolsManager()
-        protocol = protocols_manager.get_protocol_by_id(_protocol_id)
+        # protocol = protocols_manager.get_protocol_by_id(_protocol_id)
         # probe_id = protocol.test.split('_')[-1]
         return protocols_manager.get_protocol(_protocol_id)
 
-    def get_tests_list(self):
+    def get_tests_list(self, _probe_id):
         """
         Возвращает список тестов
 
@@ -78,7 +78,7 @@ class ProbeProfileService():
 
         protocols_manager = ProtocolsManager()
 
-        return protocols_manager.get_tests_list()
+        return protocols_manager.get_tests_list(_probe_id)
 
     def add_grades_in_probe(self, _grades, _probe_id, _protocol_status):
         """

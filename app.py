@@ -999,7 +999,7 @@ def protocols():
 
             protocol_id = page_controller.add_protocol(probationer_id, probe_id, user_id)
 
-            return redirect(url_for('multilingual.protocol_card', protocol_id=protocol_id))
+            return redirect(url_for('multilingual.protocol_card', protocol_id=protocol_id, probe_id=probe_id))
 
     return render_template('protocols.html', view="probes", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
@@ -1024,7 +1024,10 @@ def protocol_card():
     if protocol_id is not None:
         protocol_id = int(protocol_id)
 
-    data = {}
+    probe_id = request.args.get('probe_id')
+    if probe_id is not None:
+        probe_id = int(probe_id)
+
     test_list = []
     probationers = []
     protocol = ""
@@ -1034,7 +1037,8 @@ def protocol_card():
         protocol = data["protocol_status"]
     else:
         protocol = None
-    test_list = page_controller.get_tests_list()
+
+    test_list = page_controller.get_tests_list(probe_id)
 
     if request.method == "POST":
         grades = [{"id": key, "grade": value} for key, value in request.form.items() if
