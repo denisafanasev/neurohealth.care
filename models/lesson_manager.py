@@ -1,3 +1,5 @@
+from flask_babel import gettext
+
 from data_adapters.data_store import DataStore
 from models.lesson import Lesson
 
@@ -19,14 +21,14 @@ class EducationLessonManager():
             Lesson: урок
         """
 
-        lesson = Lesson(_id=_data_row.doc_id, _id_module=_data_row["id_module"], _name=_data_row["name"],
-                        _materials=_data_row["materials"], _link=_data_row['link'])
+        lesson = Lesson(_id=_data_row.doc_id, _id_module=_data_row["id_module"], _name=gettext(_data_row["name"]),
+                        _materials=gettext(_data_row["materials"]), _link=_data_row['link'])
 
         if _data_row.get("task") != "":
-            lesson.task = _data_row['task']
+            lesson.task = gettext(_data_row['task'])
 
         if _data_row.get("text") != "":
-            lesson.text = _data_row['text']
+            lesson.text = gettext(_data_row['text'])
 
         return lesson
 

@@ -1,7 +1,7 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
-from flask_babel import Babel
+from flask_babel import Babel, gettext
 from flask import Flask, request, redirect, render_template, send_file, abort, session, Blueprint, g, url_for
 from flask_login import LoginManager, login_required, login_user, logout_user
 import flask_login
@@ -549,7 +549,7 @@ def main_page():
 
             message_error = page_controller.chenge_password(user['user_id'], password, password2, current_password)
             if message_error is None:
-                session['message_error'] = "Пароль успешно изменен!"
+                session['message_error'] = gettext("Пароль успешно изменен!")
                 session['status_code'] = "Successful"
             else:
                 session['message_error'] = str(message_error)
@@ -1287,7 +1287,7 @@ def probationer_card():
 
                     if error is None:
                         mode = "view"
-                        error = "Испытуемый сохранён!"
+                        error = gettext("Испытуемый сохранён!")
                         error_type = "Successful"
 
                     data = probationer
@@ -1314,7 +1314,7 @@ def probationer_card():
 
                     data = probationer
                     mode = "view"
-                    error = "Изменения сохранены!"
+                    error = gettext("Изменения сохранены!")
                     error_type = "Successful"
 
     except exceptions.BadRequestKeyError:

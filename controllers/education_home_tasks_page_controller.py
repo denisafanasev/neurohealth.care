@@ -1,4 +1,5 @@
 from flask import Markup
+from flask_babel import gettext
 
 from services.homeworks_service import HomeworksService
 
@@ -130,11 +131,11 @@ class EducationHomeTasksPageController():
             for homework in _homework_list:
                 if homework is not None:
                     if homework.status is None:
-                        homework.status = "Не проверено"
+                        homework.status = gettext("Не проверено")
                     elif homework.status:
-                        homework.status = "Принято"
+                        homework.status = gettext("Принято")
                     else:
-                        homework.status = "Не принято"
+                        homework.status = gettext("Не принято")
 
                 homework = {
                     "id": homework.id,

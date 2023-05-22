@@ -1,3 +1,5 @@
+from flask_babel import gettext
+
 from services.education_course_service import EducationCourseService
 
 
@@ -65,11 +67,11 @@ class EducationCoursePageController():
                             last_homeworks = course_service.get_last_homework(i_lesson.id, _user_id)
                             if last_homeworks is not None:
                                 if last_homeworks.status is None:
-                                    last_homeworks.status = "Не проверено"
+                                    last_homeworks.status = gettext("Не проверено")
                                 elif last_homeworks.status:
-                                    last_homeworks.status = "Принято"
+                                    last_homeworks.status = gettext("Принято")
                                 else:
-                                    last_homeworks.status = "Не принято"
+                                    last_homeworks.status = gettext("Не принято")
 
                                 lesson['homework'] = {
                                     "date_delivery": last_homeworks.date_delivery.strftime("%d/%m/%Y"),

@@ -1,4 +1,5 @@
 from flask import Markup
+from flask_babel import gettext
 
 from services.education_course_lesson_service import EducationCourseLessonService
 from utils.ada import size_to_format_view
@@ -210,11 +211,11 @@ class EducationCourseLessonPageController():
         homework_view = None
         if homework is not None:
             if homework.status is None:
-                homework.status = "не проверенно"
+                homework.status = gettext("не проверенно")
             elif homework.status:
-                homework.status = "Принято"
+                homework.status = gettext("Принято")
             else:
-                homework.status = "Не принято"
+                homework.status = gettext("Не принято")
 
             homework_view = {
                 "id": homework.id,

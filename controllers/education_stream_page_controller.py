@@ -1,4 +1,7 @@
 from datetime import datetime, timedelta
+
+from flask_babel import gettext
+
 from services.education_stream_service import EducationStreamService
 
 class EducationStreamPageController():
@@ -39,8 +42,6 @@ class EducationStreamPageController():
                     }
 
                     students_list.append(student)
-
-
 
         return students_list
 
@@ -85,7 +86,7 @@ class EducationStreamPageController():
         Возвращает список курсов
 
         Args:
-            _timetables_list(List): список расписаний открытий модулей обучающего потока
+            _id_education_stream(Int): ID обучающего потока
 
         Returns:
             (List): список курсов
@@ -171,13 +172,13 @@ class EducationStreamPageController():
         else:
             education_stream_view = {
                 "id": 0,
-                "name": "Введите название потока..",
-                "course": "Выберить курс обучающего потока..",
+                "name": gettext("Введите название потока.."),
+                "course": gettext("Выберить курс обучающего потока.."),
                 "date_start": datetime.today().strftime("%d/%m/%Y"),
                 "date_end": (datetime.today() + timedelta(days=60)).strftime("%d/%m/%Y"),
-                "curators_list": "Выберите кураторов обучающего потока..",
-                "students_list": "Выберите учащихся обучающего потока..",
-                "teacher": "Выберите преподавателя обучающего потока..",
+                "curators_list": gettext("Выберите кураторов обучающего потока.."),
+                "students_list": gettext("Выберите учащихся обучающего потока.."),
+                "teacher": gettext("Выберите преподавателя обучающего потока.."),
             }
 
         return education_stream_view
@@ -199,7 +200,7 @@ class EducationStreamPageController():
         id_education_stream = education_stream_manager.create_education_stream(_education_stream, _timetables_list,
                                                                                _current_user_id)
 
-        return id_education_stream, 'Обучающий поток успешно создан.', 'Successful'
+        return id_education_stream, gettext('Обучающий поток успешно создан.'), 'Successful'
 
     def save_education_stream(self, _education_stream, _timetables_list, _current_user_id):
         """
@@ -220,7 +221,7 @@ class EducationStreamPageController():
 
         _education_stream['course'] = _education_stream.pop("id_course")
 
-        return 'Редактирование обучающего потока успешно завершено.', 'Successful'
+        return gettext('Редактирование обучающего потока успешно завершено.'), 'Successful'
 
     def get_timetables_list(self, _id):
         """

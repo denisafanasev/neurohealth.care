@@ -1,4 +1,5 @@
 from flask import Markup
+from flask_babel import gettext
 
 from services.homework_card_service import HomeworkCardService
 from error import HomeworkManagerException, HomeworkCardServiceException
@@ -104,7 +105,7 @@ class EducationHomeworkCardPageController():
         homework_service = HomeworkCardService()
 
         homework_service.homework_answer_accepted(_id_homework, _user_id)
-        message = "Домашняя работа принята"
+        message = gettext("Домашняя работа принята")
 
         return message, "Successful"
 
@@ -125,7 +126,7 @@ class EducationHomeworkCardPageController():
         homework_service = HomeworkCardService()
 
         homework_service.homework_answer_no_accepted(_id_homework, _user_id)
-        message = "Домашняя работа не принята"
+        message = gettext("Домашняя работа не принята")
 
         return message, "Successful"
 
@@ -208,7 +209,7 @@ class EducationHomeworkCardPageController():
                     "email": user.email,
                 }
             else:
-                data['user'] = 'Данный пользователь не найден'
+                data['user'] = gettext('Данный пользователь не найден')
 
             return data
 
@@ -251,7 +252,7 @@ class EducationHomeworkCardPageController():
                 data['module'] = error
 
             except TypeError:
-                data['course'] = "Данный курс не найден"
+                data['course'] = gettext("Данный курс не найден")
 
             user = homework_service.get_user_by_id(homework_chat.id_user)
             if user is not None:
@@ -262,7 +263,7 @@ class EducationHomeworkCardPageController():
                     "email": user.email,
                 }
             else:
-                data['user'] = 'Данный пользователь не найден'
+                data['user'] = gettext('Данный пользователь не найден')
 
             return data
 

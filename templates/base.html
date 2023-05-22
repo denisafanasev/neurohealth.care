@@ -250,7 +250,7 @@
                             </div>
                         </li>
                         <div class="p-2">
-                            <span class="text-dark"><b>Имя пользователя:</b> {{ current_user.name }}{% if current_user.role == 'superuser' %} <b>{{_("роль")}}:</b> {{ current_user.role }}{% endif %}</span>
+                            <span class="text-dark"><b>{{_("Имя пользователя")}}:</b> {{ current_user.name }}{% if current_user.role == 'superuser' %} <b>{{_("роль")}}:</b> {{ current_user.role }}{% endif %}</span>
                         </div>
 
                         <div class="btn-group">
