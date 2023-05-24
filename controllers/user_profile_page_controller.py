@@ -1,3 +1,5 @@
+from flask_babel import gettext
+
 import config
 from services.user_profile_service import UserProfileService
 from error import UserManagerException
@@ -42,13 +44,13 @@ class UserProfilePageController():
 
             user_view['active'] = user.active
         else:
-            user_view["login"] = "введите логин пользователя.."
-            user_view["name"] = "введите имя пользователя.."
-            user_view["email"] = "введите email пользователя.."
-            user_view["password"] = "введите пароль.."
-            user_view["password2"] = "введите повторно пароль.."
-            user_view["role"] = "Выберите роль пользователя"
-            user_view["probationers_number"] = "Выберите количество доступных тестируемых"
+            user_view["login"] = gettext("введите логин пользователя..")
+            user_view["name"] = gettext("введите имя пользователя..")
+            user_view["email"] = gettext("введите email пользователя..")
+            user_view["password"] = gettext("введите пароль..")
+            user_view["password2"] = gettext("введите повторно пароль..")
+            user_view["role"] = gettext("Выберите роль пользователя")
+            user_view["probationers_number"] = gettext("Выберите количество доступных тестируемых")
             user_view["token"] = ""
             user_view["active"] = True
             user_view["email_confirmed"] = False
@@ -127,7 +129,7 @@ class UserProfilePageController():
         except UserManagerException as error:
             return error, 'Error'
 
-        return "Пароль успешно изменен!", 'Successful'
+        return gettext("Пароль успешно изменен!"), 'Successful'
 
     def activation(self, _user_id, _current_user_id):
         """
@@ -144,7 +146,7 @@ class UserProfilePageController():
 
         user_profile_service.activation(_user_id, _current_user_id)
 
-        return "Пользователь успешно разблокирован!"
+        return gettext("Пользователь успешно разблокирован!")
 
     def deactivation(self, _user_id, _current_user_id):
         """
@@ -161,7 +163,7 @@ class UserProfilePageController():
 
         user_profile_service.deactivation(_user_id, _current_user_id)
 
-        return "Пользователь успешно заблокирован!"
+        return gettext("Пользователь успешно заблокирован!")
 
     def get_settings_user(self):
         """
@@ -194,7 +196,7 @@ class UserProfilePageController():
         user_profile_service = UserProfileService()
 
         user_profile_service.access_extension(_period, _reference_point, _user_id, _current_user_id)
-        error = "Доступ пользователя к обучающей программе успешно изменен!"
+        error = gettext("Доступ пользователя к обучающей программе успешно изменен!")
 
         return error
 
@@ -214,15 +216,15 @@ class UserProfilePageController():
         education_streams_list = user_profile_service.get_education_streams_list(_user_id, _role_user)
         role_selected_user = ''
         if _role_user == 'user':
-            role_selected_user = 'учащийся'
+            role_selected_user = gettext('учащийся')
 
         education_streams_list_view = []
         for education_stream in education_streams_list:
             if _role_user == 'superuser':
                 if _user_id == education_stream.teacher.user_id:
-                    role_selected_user = 'учитель'
+                    role_selected_user = gettext('учитель')
                 else:
-                    role_selected_user = 'куратор'
+                    role_selected_user = gettext('куратор')
 
             education_stream_view = {
                 'id': education_stream.id,

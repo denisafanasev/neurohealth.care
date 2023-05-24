@@ -22,7 +22,7 @@ class EducationLessonManager():
         """
 
         lesson = Lesson(_id=_data_row.doc_id, _id_module=_data_row["id_module"], _name=gettext(_data_row["name"]),
-                        _materials=gettext(_data_row["materials"]), _link=_data_row['link'])
+                        _materials=_data_row["materials"], _link=_data_row['link'])
 
         if _data_row.get("task") != "":
             lesson.task = gettext(_data_row['task'])

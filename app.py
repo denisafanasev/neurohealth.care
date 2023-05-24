@@ -1268,7 +1268,6 @@ def probationer_card():
                 if mode == "new":
                     # добавляем нового тестируемого и получаем список с ошибками
                     # если их нет, то получаем пустой список
-                    attempt = True
                     probationer = {}
                     probationer["name_probationer"] = request.form["name_probationer"]
                     probationer["date_of_birth"] = request.form["date_of_birth"]

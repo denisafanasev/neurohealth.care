@@ -1,3 +1,5 @@
+from flask_babel import gettext
+
 from models.action_manager import ActionManager
 from models.homework_manager import HomeworkManager
 from models.course_manager import EducationCourseManager
@@ -179,10 +181,10 @@ class HomeworkCardService():
 
         lesson = lesson_manager.get_lesson_by_id(_id_lesson)
         if lesson is None:
-            raise HomeworkCardServiceException('Данный урок не найден.')
+            raise HomeworkCardServiceException(gettext('Данный урок не найден.'))
         module = module_manager.get_module_by_id(lesson.id_module)
         if lesson is None:
-            raise HomeworkCardServiceException('Данный модуль не найден.')
+            raise HomeworkCardServiceException(gettext('Данный модуль не найден.'))
         module.lessons = lesson
 
         return module

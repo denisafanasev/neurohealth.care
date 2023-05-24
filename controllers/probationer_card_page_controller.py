@@ -1,3 +1,5 @@
+from flask_babel import gettext
+
 import config
 from services.probationer_card_service import ProbationerCardService
 
@@ -50,13 +52,13 @@ class ProbationerCardPageController():
             patient_view["diagnoses"] = patient.diagnoses
             patient_view["reasons_for_contact"] = patient.reasons_for_contact
         else:
-            patient_view["name_probationer"] = "введите имя испытуемого.."
-            patient_view["date_of_birth"] = "введите дату рождения.."
-            patient_view["name_parent"] = "введите ФИО родителя.."
-            patient_view["contacts"] = "введите контакты для связи.."
-            patient_view["educational_institution"] = "введите название учебного заведения.."
-            patient_view["diagnoses"] = "введите диагнозы.."
-            patient_view["reasons_for_contact"] = "введите причины обращения.."
+            patient_view["name_probationer"] = gettext("введите имя испытуемого..")
+            patient_view["date_of_birth"] = gettext("введите дату рождения..")
+            patient_view["name_parent"] = gettext("введите ФИО родителя..")
+            patient_view["contacts"] = gettext("введите контакты для связи..")
+            patient_view["educational_institution"] = gettext("введите название учебного заведения..")
+            patient_view["diagnoses"] = gettext("введите диагнозы..")
+            patient_view["reasons_for_contact"] = gettext("введите причины обращения..")
 
         return patient_view
 

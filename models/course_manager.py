@@ -1,4 +1,7 @@
 import os
+
+from flask_babel import gettext
+
 import config
 
 from distutils.command.config import config
@@ -24,7 +27,8 @@ class EducationCourseManager():
             Course: урок
         """
 
-        course = Course(_data_row.doc_id, _data_row["name"], _data_row["description"], _data_row["type"], _data_row["image"])
+        course = Course(_data_row.doc_id, gettext(_data_row["name"]), gettext(_data_row["description"]),
+                        _data_row["type"], _data_row["image"])
 
         return course
 

@@ -1,3 +1,5 @@
+from flask_babel import gettext
+
 from data_adapters.data_store import DataStore
 from models.module import Module
 
@@ -19,7 +21,7 @@ class EducationModuleManager():
             Module: модуль курса
         """
 
-        module = Module(_id=_data_row.doc_id, _name=_data_row["name"], _id_course=_data_row['id_course'])
+        module = Module(_id=_data_row.doc_id, _name=gettext(_data_row["name"]), _id_course=_data_row['id_course'])
 
         if _data_row.get("lessons") is not None:
             module.lessons = _data_row['lessons']
