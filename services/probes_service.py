@@ -33,7 +33,8 @@ class ProtocolsService():
             if probes:
                 probes_probationer_list = []
                 for probe in probes:
-                    probe.test = probes_manager.get_probe_by_id_grade(probe.test)
+                    probe.name_probationer = probationer.name_probationer
+                    probe.test = probes_manager.get_probe_by_id(probe.probe_id)
                     probes_probationer_list.append(probe)
 
                 probes_list.extend(probes_probationer_list)

@@ -8,7 +8,7 @@ class ProtocolsManager():
 
     def protocol_row_to_protocol(self, _data_row):
 
-        probe = Probe(_data_row.doc_id, _data_row['name_probationer'], _data_row['probationer_id'],
+        probe = Probe(_data_row.doc_id, _data_row['probe_id'], _data_row['name_probationer'], _data_row['probationer_id'],
                       _protocol_status=_data_row['protocol_status'], _test=_data_row['test'])
 
         return probe
@@ -31,18 +31,29 @@ class ProtocolsManager():
     def add_protocol(self, _probationer_id, _probe_id, _protocol_status="черновик"):
 
         data_store = DataStore("probes")
+        data_store_criteria = DataStore('parameters_criteria')
 
         probe_id = data_store.get_rows_count() + 1
         test = f"test_probe_id_{probe_id}"
-        probe = Probe(_probationer_id=_probationer_id, _probe_id=_probe_id, _test=test, _protocol_status=_protocol_status)
+        probe = Probe(_probationer_id=int(_probationer_id), _probe_id=int(_probe_id), _test=test, _protocol_status=_protocol_status)
 
-        data_store.insert_row({"probe_id": probe.probe_id, "name_probationer": probe.name_probationer,
+        protocol_id = data_store.insert_row({"probe_id": probe.probe_id, "name_probationer": probe.name_probationer,
                                "probationer_id": probe.probationer_id,
                                "protocol_status": probe.protocol_status,
                                "estimated_values_file": '',
                                "date_test": probe.date_test, "date_protocol": probe.date_protocol, "test": probe.test})
 
-        return probe.probe_id
+        # data_store_test = DataStore("probes", test[0]["test"])
+        # grades = data_store_test
+        #
+        # for grade in _grades:
+        #     if "_" in grade["id"]:
+        #         data_store_test.insert_row(
+        #             {"id": int(grade["id"].split("_")[0]), "grade": {grade["id"].split("_")[1]: grade["grade"]}})
+        #     else:
+        #         data_store_test.insert_row({"id": int(grade["id"]), "grade": grade["grade"]})
+
+        return protocol_id
 
     def test_row_to_test(self, _id, _assessment_parameters, _tests):
         test = Test(_id, _assessment_parameters, _tests)
@@ -66,19 +77,21 @@ class ProtocolsManager():
         data_store_probe = DataStore("probes")
 
         # test = data_store_probes.get_rows({"id": _id_test})[0]
-        protocol_data = data_store_probe.get_rows({"probe_id": _protocol_id})[0]
+        protocol_data = data_store_probe.get_row_by_id(_protocol_id)
         protocol = self.protocol_row_to_protocol(protocol_data)
 
         data_store_grade_probationer = DataStore("probes", protocol.test)
         grades_probationer = data_store_grade_probationer.get_rows()
-        if grades_probationer:
-            grade = data_store_grade.get_rows({'id': grades_probationer[0]['id']})[0]
-            parameter = data_store_parameters.get_rows({'id': grade['id_parameters']})[0]
-            test = data_store_probes.get_rows({'id': parameter['id_test']})[0]
-
-            parameters = data_store_parameters.get_rows({"id_test": test["id"]})
-        else:
-            return None
+        # if grades_probationer:
+        #     grade = data_store_grade.get_rows({'id': grades_probationer[0]['id']})[0]
+        #     parameter = data_store_parameters.get_rows({'id': grade['id_parameters']})[0]
+        #     test = data_store_probes.get_rows({'id': parameter['id_test']})[0]
+        #
+        #     parameters = data_store_parameters.get_rows({"id_test": test["id"]})
+        # else:
+        #     return None
+        test = data_store_probes.get_rows({'id': protocol.probe_id})[0]
+        parameters = data_store_parameters.get_rows({"id_test": protocol.probe_id})
         parameter_list = []
         for i_parameter in parameters:
             grades = data_store_grade.get_rows({"id_parameters": i_parameter["id"]})
@@ -229,8 +242,12 @@ class ProtocolsManager():
 
     def get_probe_by_id(self, _probe_id):
         """
-
+        Возвращает пробу по ID
         """
         data_store_probe = DataStore('test')
         data_store_parameters = DataStore("test", "parameters")
         data_store_grade = DataStore("parameters_criteria")
+
+        probe = data_store_probe.get_row_by_id(_probe_id)
+
+        return self.test_row_to_test(probe.doc_id, probe['name_probe'], '')

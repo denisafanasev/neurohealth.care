@@ -237,7 +237,8 @@ def registration():
             error_message = str(e)
 
     return render_template('registration.html', view="registration", _user_created=False,
-                           _error_message=error_message, _create_superuser=is_create_superuser)
+                           _error_message=error_message, _create_superuser=is_create_superuser,
+                           _languages=config.LANGUAGES, _lang_code=get_locale())
 
 
 @multilingual.route('/login', methods=['GET', 'POST'])
@@ -274,7 +275,8 @@ def login():
                 login_user(user)
                 return redirect(url_for('multilingual.main_page'))
 
-    return render_template('login.html', view="login", _login_error=login_error)
+    return render_template('login.html', view="login", _login_error=login_error, _languages=config.LANGUAGES,
+                           _lang_code=get_locale())
 
 
 @multilingual.route('/user_manager', methods=['GET', 'POST'])
@@ -1038,7 +1040,7 @@ def protocol_card():
     else:
         protocol = None
 
-    test_list = page_controller.get_tests_list(probe_id)
+    # test_list = page_controller.get_tests_list(probe_id)
 
     if request.method == "POST":
         grades = [{"id": key, "grade": value} for key, value in request.form.items() if

@@ -5,7 +5,7 @@ class Probe():
     Класс теста
     """
 
-    def __init__(self, _probe_id="", _name_probationer="", _probationer_id="", _date_of_birth="", _protocol_status="",
+    def __init__(self, _id=None, _probe_id="", _name_probationer="", _probationer_id="", _date_of_birth="", _protocol_status="",
                   _estimated_values_file="", _test=""):
         """
         Конструктор класса

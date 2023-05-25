@@ -145,7 +145,7 @@
                                             {% endfor %}
                                         </select>
                                         <label class="form-label"><strong>{{_("Проба")}}</strong></label>
-                                        <select class="form-select" name="probes_list">
+                                        <select class="form-select" name="probe">
                                             <option disabled selected value="Выберите пробу">{{_("Выберите пробу")}}</option>
                                             {% for probe in _probes_list %}
                                                 <option value="{{ probe['id'] }}">{{ probe["name"] }}</option>
@@ -155,7 +155,7 @@
                                 </div>
                             </div>
                             <div style="text-align: right">
-                                <button type="submit" disabled name="button" value="draft" class="btn btn-primary ">
+                                <button type="submit" name="button" value="add_protocol" class="btn btn-primary ">
                                     {{_("Продолжить")}}
                                 </button>
 
