@@ -105,7 +105,7 @@ class ProbationerManager():
 
         probationer.date_of_birth = datetime.strptime(_date_of_birth, "%Y-%m-%d").strftime("%d/%m/%Y")
 
-        probationer_data = {"user_login": probationer.user_id, "name_probationer": probationer.name_probationer,
+        probationer_data = {"user_id": probationer.user_id, "name_probationer": probationer.name_probationer,
                             "date_of_birth": probationer.date_of_birth, "name_parent": probationer.name_parent,
                             "educational_institution": probationer.educational_institution,
                             "contacts": probationer.contacts, "diagnoses": probationer.diagnoses,

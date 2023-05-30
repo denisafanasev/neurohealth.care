@@ -232,6 +232,18 @@
                                             </form>
                                             <br>
                                             <a href="{{APP_SUPPORT_CHANNEL}}" target="blank">{{_("Поддержка")}}</a>
+                                            <div class="text-center mt-3">
+                                        {% for language in _languages %}
+                                            <a href="{{ '/'+language['lang_code']+'/' + (request.full_path.split('/')[2:])|join("/") }}">
+                                                <img src="{{ url_for('static' , filename="img/flags/" + language['img_name']) }}"
+                                                     width="20" class="align-middle me-1">
+                                                <span class="align-middle">{{ language['title'] }}</span>
+                                            </a>
+                                            {% if loop.first %}
+                                            |
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
                                         </div>
                                     </div>
                                 </div>

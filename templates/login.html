@@ -47,22 +47,11 @@
                             <div class="m-sm-4">
                                 <form id="loginForm" method="post" enctype="multipart/form-data">
                                     <div class="btn-group dropright" style="display: block; text-align: center">
-                                        <button class="btn btn-primary dropdown-toggle" href="#" id="languageDropdown" role="button"
-                                           data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-primary dropdown-toggle" href="#" id="languageDropdown"
+                                                role="button"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
                                             Сменить язык
                                         </button>
-                                        <div class="dropdown-menu" aria-labelledby="languageDropdown">
-                                            {% for language in _languages %}
-                                                <a class="dropdown-item"
-                                                   href="{{ '/'+language['lang_code']+'/' + (request.full_path.split('/')[2:])|join("/") }}">
-{#                                                    <img src="{{ url_for('static' , filename="img/flags/" + language['img_name']) }}"#}
-{#                                                         width="20" class="align-middle me-1">#}
-                                                    <span class="align-middle">{{ language['title'] }}</span>
-                                                </a>
-                                            {% endfor %}
-{#                                            <a class="dropdown-item" href="">English</a>#}
-{#                                            <a class="dropdown-item" href="">Русский</a>#}
-                                        </div>
                                     </div>
                                     <div class="form-group">
                                         {% if _login_error %}
@@ -89,6 +78,18 @@
                                         | <a>{{ _("Вспомнить
                                                 пароль") }}</a> | <a href="{{ APP_SUPPORT_CHANNEL }}"
                                                                      target="blank">{{ _("Чат поддержки") }}</a>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        {% for language in _languages %}
+                                            <a href="{{ '/'+language['lang_code']+'/' + (request.full_path.split('/')[2:])|join("/") }}">
+                                                <img src="{{ url_for('static' , filename="img/flags/" + language['img_name']) }}"
+                                                     width="20" class="align-middle me-1">
+                                                <span class="align-middle">{{ language['title'] }}</span>
+                                            </a>
+                                            {% if loop.first %}
+                                            |
+                                            {% endif %}
+                                        {% endfor %}
                                     </div>
                                 </form>
                             </div>

@@ -13,13 +13,13 @@ class ProbationerCardService():
     def __init__(self):
         pass
 
-    def create_probationer(self, _user_login, _name_probationer, _date_of_birth, _name_parent,
-                 _educational_institution, _contacts, _diagnoses, _reasons_for_contact, _id_user):
+    def create_probationer(self, _user_id, _name_probationer, _date_of_birth, _name_parent,
+                 _educational_institution, _contacts, _diagnoses, _reasons_for_contact):
         """
         Создает в системе испытуемого
 
         Args:
-            _user_login (String): логин пользователя, к которому прикрепиться испытуемый
+            _user_id (String): ID пользователя, к которому прикрепиться испытуемый
             _name_probationer (String): имя испытуемого
             _date_of_birth (String): дата рождения испытуемого
             _name_parent (String): ФИО родителя испытуемого
@@ -33,10 +33,10 @@ class ProbationerCardService():
         user_service = UserManager()
         action_manager = ActionManager()
 
-        name_probationer = probationer_manager.create_probationer( _user_login, _name_probationer, _date_of_birth,
+        name_probationer = probationer_manager.create_probationer(_user_id, _name_probationer, _date_of_birth,
                                                _name_parent, _educational_institution, _contacts, _diagnoses,
                                                _reasons_for_contact)
-        login_user = user_service.get_user_by_id(_id_user).login
+        login_user = user_service.get_user_by_id(_user_id).login
 
         action_manager.add_notifications(name_probationer, "добавил", 'нового', "probationer_manager", login_user)
 

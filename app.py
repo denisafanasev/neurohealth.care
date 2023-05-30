@@ -1115,12 +1115,9 @@ def probationers():
     error_type = {}
 
     mode = {0: "new"}
-    data_edit = {}
-    data = {0: profile_page_controller.get_probationer_card_view('')}
-    data[0]['probationer_id'] = 0
     num_page = 0
 
-    user_login = UserProfilePageController().get_users_profile_view(user_id)['login']
+    # user_login = UserProfilePageController().get_users_profile_view(user_id)['login']
     probationers_list = page_controller.get_probationers_list_view(user_id)
 
     for i_probationer in probationers_list:
@@ -1133,99 +1130,93 @@ def probationers():
         #     mode[i_probationer['probationer_id']] = "new"
         #     probationer_id = ""
 
-        data[i_probationer['probationer_id']] = profile_page_controller.get_probationer_card_view(
-            i_probationer['probationer_id'])
-        error_type[i_probationer['probationer_id']] = None
+        # data[i_probationer['probationer_id']] = profile_page_controller.get_probationer_card_view(
+        #     i_probationer['probationer_id'])
+        # error_type[i_probationer['probationer_id']] = None
 
-    try:
-        if request.method == 'POST':
-            for i_probationer in probationers_list:
-                if request.form.get(f'button_{i_probationer["probationer_id"]}') is not None:
-                    probationer_id = i_probationer["probationer_id"]
-                    break
+    # try:
+        # if request.method == 'POST':
+        #     for i_probationer in probationers_list:
+        #         if request.form.get(f'button_{i_probationer["probationer_id"]}') is not None:
+        #             probationer_id = i_probationer["probationer_id"]
+        #             break
+        #
+        #     if request.form.get("button_0") is not None:
+        #         probationer_id = 0
+        #
+        #     num_page = user_id // 10
+        #
+        #     if request.form[f"button_{probationer_id}"] == "add":
+        #         if mode[probationer_id] == "new":
+        #             # добавляем нового тестируемого и получаем список с ошибками
+        #             # если их нет, то получаем пустой список
+        #             probationer = {}
+        #             probationer["name_probationer"] = request.form[f"name_probationer_{probationer_id}"]
+        #             probationer["date_of_birth"] = request.form[f"date_of_birth_{probationer_id}"]
+        #             probationer["name_parent"] = request.form[f"name_parent_{probationer_id}"]
+        #             probationer["educational_institution"] = request.form[f"educational_institution_{probationer_id}"]
+        #             probationer["contacts"] = request.form[f"contacts_{probationer_id}"]
+        #             probationer["diagnoses"] = request.form[f"diagnoses_{probationer_id}"]
+        #             probationer["reasons_for_contact"] = request.form[f"reasons_for_contact_{probationer_id}"]
+        #
+        #             error = profile_page_controller.create_probationers(user_login, probationer["name_probationer"],
+        #                                                                 probationer["date_of_birth"],
+        #                                                                 probationer["name_parent"],
+        #                                                                 probationer["educational_institution"],
+        #                                                                 probationer["contacts"],
+        #                                                                 probationer["diagnoses"],
+        #                                                                 probationer["reasons_for_contact"], user_id)
+        #
+        #             if error is None:
+        #                 probationers_list = page_controller.get_probationers_list_view(user_id)
+        #                 mode[len(probationers_list)] = "view"
+        #                 error = "Испытуемый сохранён!"
+        #                 error_type[len(probationers_list)] = "Successful"
+        #
+        #                 data_edit = data
+        #                 data_edit[len(probationers_list)] = probationer
+        #
+        #     elif request.form[f"button_{probationer_id}"] == "edit":
+        #         if mode[probationer_id] == "view":
+        #             mode[probationer_id] = "edit"
+        #
+        #     elif request.form[f"button_{probationer_id}"] == "save":
+        #         if mode[probationer_id] == "edit":
+        #             probationer = {}
+        #
+        #             probationer["name_probationer"] = request.form[f"name_probationer_{probationer_id}"]
+        #             probationer["date_of_birth"] = request.form[f"date_of_birth_{probationer_id}"]
+        #             probationer["name_parent"] = request.form[f"name_parent_{probationer_id}"]
+        #             probationer["educational_institution"] = request.form[f"educational_institution_{probationer_id}"]
+        #             probationer["contacts"] = request.form[f"contacts_{probationer_id}"]
+        #             probationer["diagnoses"] = request.form[f"diagnoses_{probationer_id}"]
+        #             probationer["reasons_for_contact"] = request.form[f"reasons_for_contact_{probationer_id}"]
+        #
+        #             profile_page_controller.change_probationer(probationer_id, probationer["name_probationer"],
+        #                                                        probationer["date_of_birth"], probationer["name_parent"],
+        #                                                        probationer["educational_institution"],
+        #                                                        probationer["contacts"], probationer["diagnoses"],
+        #                                                        probationer["reasons_for_contact"], user_id)
+        #
+        #             probationers_list = page_controller.get_probationers_list_view(user_id)
+        #             data_edit[probationer_id] = probationer
+        #             mode[probationer_id] = "view"
+        #             error = "Изменения сохранены!"
+        #             error_type[probationer_id] = "Successful"
+        #
+        #     elif request.form[f'button_{probationer_id}'] == "cancel":
+        #         if probationer_id != 0:
+        #             mode[probationer_id] = "view"
 
-            if request.form.get("button_0") is not None:
-                probationer_id = 0
-
-            num_page = user_id // 10
-
-            if request.form[f"button_{probationer_id}"] == "add":
-                if mode[probationer_id] == "new":
-                    # добавляем нового тестируемого и получаем список с ошибками
-                    # если их нет, то получаем пустой список
-                    probationer = {}
-                    probationer["name_probationer"] = request.form[f"name_probationer_{probationer_id}"]
-                    probationer["date_of_birth"] = request.form[f"date_of_birth_{probationer_id}"]
-                    probationer["name_parent"] = request.form[f"name_parent_{probationer_id}"]
-                    probationer["educational_institution"] = request.form[f"educational_institution_{probationer_id}"]
-                    probationer["contacts"] = request.form[f"contacts_{probationer_id}"]
-                    probationer["diagnoses"] = request.form[f"diagnoses_{probationer_id}"]
-                    probationer["reasons_for_contact"] = request.form[f"reasons_for_contact_{probationer_id}"]
-
-                    error = profile_page_controller.create_probationers(user_login, probationer["name_probationer"],
-                                                                        probationer["date_of_birth"],
-                                                                        probationer["name_parent"],
-                                                                        probationer["educational_institution"],
-                                                                        probationer["contacts"],
-                                                                        probationer["diagnoses"],
-                                                                        probationer["reasons_for_contact"], user_id)
-
-                    if error is None:
-                        probationers_list = page_controller.get_probationers_list_view(user_id)
-                        mode[len(probationers_list)] = "view"
-                        error = "Испытуемый сохранён!"
-                        error_type[len(probationers_list)] = "Successful"
-
-                        data_edit = data
-                        data_edit[len(probationers_list)] = probationer
-
-            elif request.form[f"button_{probationer_id}"] == "edit":
-                if mode[probationer_id] == "view":
-                    mode[probationer_id] = "edit"
-
-            elif request.form[f"button_{probationer_id}"] == "save":
-                if mode[probationer_id] == "edit":
-                    probationer = {}
-
-                    probationer["name_probationer"] = request.form[f"name_probationer_{probationer_id}"]
-                    probationer["date_of_birth"] = request.form[f"date_of_birth_{probationer_id}"]
-                    probationer["name_parent"] = request.form[f"name_parent_{probationer_id}"]
-                    probationer["educational_institution"] = request.form[f"educational_institution_{probationer_id}"]
-                    probationer["contacts"] = request.form[f"contacts_{probationer_id}"]
-                    probationer["diagnoses"] = request.form[f"diagnoses_{probationer_id}"]
-                    probationer["reasons_for_contact"] = request.form[f"reasons_for_contact_{probationer_id}"]
-
-                    profile_page_controller.change_probationer(probationer_id, probationer["name_probationer"],
-                                                               probationer["date_of_birth"], probationer["name_parent"],
-                                                               probationer["educational_institution"],
-                                                               probationer["contacts"], probationer["diagnoses"],
-                                                               probationer["reasons_for_contact"], user_id)
-
-                    probationers_list = page_controller.get_probationers_list_view(user_id)
-                    data_edit = data
-                    data_edit[probationer_id] = probationer
-                    mode[probationer_id] = "view"
-                    error = "Изменения сохранены!"
-                    error_type[probationer_id] = "Successful"
-
-            elif request.form[f'button_{probationer_id}'] == "cancel":
-                if probationer_id != 0:
-                    mode[probationer_id] = "view"
-
-    except exceptions.BadRequestKeyError:
-
-        mode = "view"
-
-    if data_edit == {}:
-        data_edit = data
-
-    probationers_list.append(data[0])
+    # except exceptions.BadRequestKeyError:
+    #
+    #     mode = "view"
 
     return render_template('probationers.html', view="probationers", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _probationers_list=probationers_list,
                            _is_current_user_admin=flask_login.current_user.is_admin(), _mode=mode,
-                           _data=data, _data_edit=data_edit, _error=error, _error_type=error_type,
+                           _error=error, _error_type=error_type,
                            _settings=profile_page_controller.get_settings_probationer(), _num_page=num_page,
                            _lang_code=get_locale(), _languages=config.LANGUAGES)
 
@@ -1259,7 +1250,6 @@ def probationer_card():
         probationer_id = ""
 
     user_id = flask_login.current_user.user_id
-    user_login = UserProfilePageController().get_users_profile_view(user_id)['login']
 
     data_begin = page_controller.get_probationer_card_view(probationer_id)
     data = {}
@@ -1279,7 +1269,7 @@ def probationer_card():
                     probationer["diagnoses"] = request.form["diagnoses"]
                     probationer["reasons_for_contact"] = request.form["reasons_for_contact"]
 
-                    error = page_controller.create_probationers(user_login, probationer["name_probationer"],
+                    error = page_controller.create_probationers(user_id, probationer["name_probationer"],
                                                                 probationer["date_of_birth"],
                                                                 probationer["name_parent"],
                                                                 probationer["educational_institution"],
@@ -1295,6 +1285,7 @@ def probationer_card():
             elif request.form["button"] == "edit":
                 if mode == "view":
                     mode = "edit"
+
             elif request.form["button"] == "save":
                 if mode == "edit":
                     probationer = {}
@@ -1311,7 +1302,7 @@ def probationer_card():
                                                        probationer["date_of_birth"], probationer["name_parent"],
                                                        probationer["educational_institution"],
                                                        probationer["contacts"],
-                                                       probationer["diagnoses"], probationer["reasons_for_contact"])
+                                                       probationer["diagnoses"], probationer["reasons_for_contact"], user_id)
 
                     data = probationer
                     mode = "view"
