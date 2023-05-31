@@ -36,7 +36,7 @@
 <div class="container-fluid p-0">
 
     <div class="mb-3">
-        <h1 class="h3 d-inline align-middle">{{_("Карточка испытуемого")}}</h1>
+        <h1 class="h3 d-inline align-middle">{{_("Карточка тестируемого")}}</h1>
     </div>
 
     <form id="add_probationer" name="add_probationer" method="post" enctype="multipart/form-data">
@@ -57,7 +57,7 @@
                 <div class="col-6 p-2 bd-highlight">
                     <div class="card d-flex align-self-baseline">
                         <div class="card-header">
-                            <h5 class="card-title">{{_("Данные испытуемого")}}</h5>
+                            <h5 class="card-title">{{_("Данные тестируемого")}}</h5>
 
                             {% if _is_current_user_admin and _mode=="view" %}
                                 <div class="mb-2">
@@ -66,7 +66,7 @@
                                 </div>
                             {% endif %}
                             <div class="mb-2">
-                                <label class="form-label"><strong>{{_("Имя испытуемого")}}</strong></label>
+                                <label class="form-label"><strong>{{_("Имя тестируемого")}}</strong></label>
                                 <input required type="text" name="name_probationer" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _data['name_probationer']!=_data_begin['name_probationer'] or _mode != "new" %} value="{{ _data['name_probationer'] }}" {% else %} placeholder= "{{ _data_begin['name_probationer'] }}" {% endif %}>
                             </div>
 

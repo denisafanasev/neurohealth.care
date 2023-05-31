@@ -10,26 +10,9 @@
             var datatablesButtons = $("#datatables-buttons").DataTable({
                 responsive: true,
                 lengthChange: !1,
-                displayStart: {{ _num_page * 10 }}
+                {#displayStart: {{ _num_page * 10 }}#}
             });
-            datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
-            let message = document.getElementById('message');
-
-            {% for item in _probationers_list %}
-                let modal_{{ item['probationer_id'] }} = document.getElementById('{{ item['probationer_id'] }}');
-
-                {% if _mode[item['probationer_id']] == "edit" %}
-                    modal_{{ item['probationer_id'] }}.style.display = "block";
-
-                {% elif _error_type[item['probationer_id']] == "Error" %}
-                    modal_{{ item['probationer_id'] }}.style.display = "block";
-
-                {% elif _error_type[item['probationer_id']] == "Successful" %}
-                    document.querySelector('h3[id=title_message]').textContent = 'Успешно';
-                    document.querySelector('p[id=text_message]').textContent = "{{ _error }}";
-                    message.style.display = 'block'
-                {% endif %}
-            {% endfor %}
+            datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)")
         });
     </script>
     <style>
@@ -44,182 +27,98 @@
             font-family: Arial, Helvetica, sans-serif;
             overflow-y: scroll !important;
         }
-
-        .pagination {
-            z-index: 0;
-        }
-
-
-        /* The Modal (background) */
-        .modal {
-            display: none; /* Hidden by default */
-            z-index: 99; /* Sit on top */
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0, 0, 0); /* Fallback color */
-            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        /* Modal Content/Box */
-        .modal-content {
-
-            margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
-            border: gray;
-            width: 80%; /* Could be more or less, depending on screen size */
-            padding: 16px;
-        }
-
-        .modal-backdrop {
-            display: none;
-        }
-
-        /* The Close Button (x) */
-
-        .close:hover,
-        .close:focus {
-            color: red;
-            cursor: pointer;
-        }
-
-        /* Add Zoom Animation */
-        .animate {
-            -webkit-animation: animatezoom 0.6s;
-            animation: animatezoom 0.6s
-        }
-
-        @-webkit-keyframes animatezoom {
-            from {
-                -webkit-transform: scale(0)
-            }
-            to {
-                -webkit-transform: scale(1)
-            }
-        }
-
-        @keyframes animatezoom {
-            from {
-                transform: scale(0)
-            }
-            to {
-                transform: scale(1)
-            }
-        }
-
-        /* Change styles for span and cancel button on extra small screens */
-        @media screen and (max-width: 300px) {
-            span.psw {
-                display: block;
-                float: none;
-            }
-
-            .cancelbtn {
-                width: 100%;
-            }
-        }
-
     </style>
 
     <div class="container-fluid p-0">
 
-        <h1 class="h3 mb-3">{{ _("Испытуемые") }}</h1>
+        <h1 class="h3 mb-3">{{ _("Тестируемые") }}</h1>
 
-        <div class="row">
-            <div class="card card-body col-12">
-                <div id="datatables-buttons_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
-                    <div class="col-sm-12 col-md-6">
-                        <div class="dt-buttons btn-group flex-wrap">
-                            <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
-                               data-bs-toggle="modal" data-bs-target="#0"
-                               href="{{ url_for('multilingual.probationer_card') }}">
-                                <span>{{ _("Добавить тестируемого") }}</span>
-                            </a>
-                        </div>
-                    </div>
-
-
-                    <div class="col-sm-12">
-                        <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline"
-                               style="width: 100%; font-size: 13px"
-                               role="grid" aria-describedby="datatables-buttons_info">
-                            <thead>
-                            <tr role="row" style="text-align: center">
-                                <th style="width:1%;">#</th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
-                                    rowspan="1" colspan="1"
-                                    style="width:10%;" aria-label="Position: activate to sort column ascending">
-                                    {{ _("Имя испытуемого") }}</th>
-                                {% if _is_current_user_admin %}
-                                    <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
-                                        rowspan="1" colspan="1"
-                                        style="width:10%;" aria-label="Position: activate to sort column ascending">
-                                        User_Login
-                                    </th>
-                                {% endif %}
-                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
-                                    rowspan="1" colspan="1"
-                                    style="width:10%;" aria-label="Position: activate to sort column ascending">
-                                    {{ _("Дата рождения") }}</th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
-                                    rowspan="1" colspan="1"
-                                    style="width:15%;" aria-label="Position: activate to sort column ascending">
-                                    {{ _("ФИО родителя") }}</th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
-                                    rowspan="1" colspan="1"
-                                    style="width:10%;" aria-label="Position: activate to sort column ascending">
-                                    {{ _("Контакты") }}</th>
-                                <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
-                                    rowspan="1" colspan="1"
-                                    style="width:15%;" aria-label="Position: activate to sort column ascending">
-                                    {{ _("Учебное заведение") }}</th>
-                            </tr>
-                            </thead>
-                            <tbody style="">
-
-                            {% for item in _probationers_list %}
-                                <tr class="even">
-
-                                    <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg") }}"
-                                             width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-
-                                    <td class="sorting_1 dtr-control">
-                                        <div class="bg-success bg-gradient" style="text-align: center;">
-                                            <a style="color: white; display: inline-block; width: 100%"
-                                               data-bs-toggle="modal" data-bs-target="#{{ item['probationer_id'] }}"
-                                                    {#                                                                onclick="document.getElementById('{{ item['probationer_id'] }}').style.display='block'"#}
-                                               href="{{ url_for('multilingual.probationer_card', probationer_id=item['probationer_id']) }}">
-                                                <span class="">{{ item['name_probationer'] }}</span>
-                                            </a>
-                                        </div>
-                                    </td>
-                                    {% if _is_current_user_admin %}
-                                        <td class="text-center">
-                                            <div>{{ item['user_login'] }}</div>
-                                        </td>
-                                    {% endif %}
-                                    <td class="text-center">
-                                        <div>{{ item['date_of_birth'] }}</div>
-                                    </td>
-                                    <td class="text-center">
-                                        <div>{{ item['name_parent'] }}</div>
-                                    </td>
-                                    <td class="text-center">
-                                        <div>{{ item['contacts'] }}</div>
-                                    </td>
-                                    <td class="text-center">
-                                        <div>{{ item['educational_institution'] }}</div>
-                                    </td>
-
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+        <div class="card card-body">
+            <div class="col-sm-12 col-md-6">
+                <div class="dt-buttons btn-group flex-wrap">
+                    <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
+                       data-bs-toggle="modal" data-bs-target="#0"
+                       href="{{ url_for('multilingual.probationer_card') }}">
+                        <span>{{ _("Добавить тестируемого") }}</span>
+                    </a>
                 </div>
+            </div>
+
+
+            <div class="col-sm-12">
+                <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline"
+                       style="width: 100%; font-size: 13px"
+                       role="grid" aria-describedby="datatables-buttons_info">
+                    <thead>
+                    <tr role="row" style="text-align: center">
+                        <th style="width:1%;">#</th>
+                        <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
+                            rowspan="1" colspan="1"
+                            style="width:10%;" aria-label="Position: activate to sort column ascending">
+                            {{ _("Имя испытуемого") }}</th>
+                        {% if _is_current_user_admin %}
+                            <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
+                                rowspan="1" colspan="1"
+                                style="width:10%;" aria-label="Position: activate to sort column ascending">
+                                User_Login
+                            </th>
+                        {% endif %}
+                        <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
+                            rowspan="1" colspan="1"
+                            style="width:10%;" aria-label="Position: activate to sort column ascending">
+                            {{ _("Дата рождения") }}</th>
+                        <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
+                            rowspan="1" colspan="1"
+                            style="width:15%;" aria-label="Position: activate to sort column ascending">
+                            {{ _("ФИО родителя") }}</th>
+                        <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
+                            rowspan="1" colspan="1"
+                            style="width:10%;" aria-label="Position: activate to sort column ascending">
+                            {{ _("Контакты") }}</th>
+                        <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
+                            rowspan="1" colspan="1"
+                            style="width:15%;" aria-label="Position: activate to sort column ascending">
+                            {{ _("Учебное заведение") }}</th>
+                    </tr>
+                    </thead>
+                    <tbody style="">
+
+                    {% for item in _probationers_list %}
+                        <tr class="even">
+
+                            <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg") }}"
+                                     width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+
+                            <td class="sorting_1 dtr-control">
+                                <div class="bg-success bg-gradient" style="text-align: center;">
+                                    <a style="color: white;"
+                                       href="{{ url_for('multilingual.probationer_card', probationer_id=item['probationer_id']) }}">
+                                        <span>{{ item['name_probationer'] }}</span>
+                                    </a>
+                                </div>
+                            </td>
+                            {% if _is_current_user_admin %}
+                                <td class="text-center">
+                                    <div>{{ item['user_login'] }}</div>
+                                </td>
+                            {% endif %}
+                            <td class="text-center">
+                                <div>{{ item['date_of_birth'] }}</div>
+                            </td>
+                            <td class="text-center">
+                                <div>{{ item['name_parent'] }}</div>
+                            </td>
+                            <td class="text-center">
+                                <div>{{ item['contacts'] }}</div>
+                            </td>
+                            <td class="text-center">
+                                <div>{{ item['educational_institution'] }}</div>
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

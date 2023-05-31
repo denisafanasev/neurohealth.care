@@ -9,7 +9,7 @@
             // DataTables with Buttons
             var datatablesButtons = $("#datatables-buttons").DataTable({
                 lengthChange: !1,
-                displayStart: {{ _num_page * 10 }},
+                {#displayStart: {{ _num_page * 10 }},#}
                 responsive: true,
                 pageLength: 20
             });
@@ -108,7 +108,7 @@
                                                 <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg") }}" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
 
                                                 <td class="sorting_1 dtr-control" style="display: flex">
-                                                    <div class="col{% if item['role'] == "superuser" %} bg-primary {% else %} bg-success {% endif %} bg-gradient" style="text-align: center;position: center; margin-right: 16%; color: white">
+                                                    <div class="col{% if item['role'] == "superuser" %} bg-primary {% else %} bg-success {% endif %} bg-gradient" style="text-align: center; margin-right: 16%; color: white">
                                                         <a style="display: inline-block; width: 100%"  href="{{ url_for('multilingual.user_profile', user_id=item['user_id']) }}">
                                                             <span class="">{{ item['login'] }}</span>
                                                         </a>
@@ -134,17 +134,17 @@
                                                 {% endif %}
 
                                                 {% if item['active_education_module'] == 'active' %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-success" >Self service</span></div></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="badge bg-success" >Self service</span></div></td>
                                                 {% elif item['active_education_module'] == 'inactive' %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-info">Overview</span></div></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="badge bg-info">Overview</span></div></td>
                                                 {% elif item['active_education_module'] == 'ends' %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-warning">Expiring</span></div></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="badge bg-warning">Expiring</span></div></td>
                                                 {% endif %}
 
                                                 {% if item['email_confirmed'] %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="fas fa-circle chat-online"></span></div></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="fas fa-circle chat-online"></span></div></td>
                                                 {% else %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="fas fa-circle chat-offline"></span></div></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="fas fa-circle chat-offline"></span></div></td>
                                                 {% endif %}
 
                                             </tr>

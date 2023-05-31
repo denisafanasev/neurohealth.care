@@ -1110,114 +1110,13 @@ def probationers():
     mpc = MainMenuPageController(flask_login.current_user.user_id)
     profile_page_controller = ProbationerCardPageController()
 
-    probationer_id = request.args.get('probationer_id')
-    error = None
-    error_type = {}
-
-    mode = {0: "new"}
-    num_page = 0
-
-    # user_login = UserProfilePageController().get_users_profile_view(user_id)['login']
     probationers_list = page_controller.get_probationers_list_view(user_id)
-
-    for i_probationer in probationers_list:
-        if i_probationer is not None and not request.form.get(f"button_{i_probationer['probationer_id']}"):
-            mode[i_probationer['probationer_id']] = "view"
-        else:
-            mode[i_probationer['probationer_id']] = "edit"
-
-        # if probationer_id is None:
-        #     mode[i_probationer['probationer_id']] = "new"
-        #     probationer_id = ""
-
-        # data[i_probationer['probationer_id']] = profile_page_controller.get_probationer_card_view(
-        #     i_probationer['probationer_id'])
-        # error_type[i_probationer['probationer_id']] = None
-
-    # try:
-        # if request.method == 'POST':
-        #     for i_probationer in probationers_list:
-        #         if request.form.get(f'button_{i_probationer["probationer_id"]}') is not None:
-        #             probationer_id = i_probationer["probationer_id"]
-        #             break
-        #
-        #     if request.form.get("button_0") is not None:
-        #         probationer_id = 0
-        #
-        #     num_page = user_id // 10
-        #
-        #     if request.form[f"button_{probationer_id}"] == "add":
-        #         if mode[probationer_id] == "new":
-        #             # добавляем нового тестируемого и получаем список с ошибками
-        #             # если их нет, то получаем пустой список
-        #             probationer = {}
-        #             probationer["name_probationer"] = request.form[f"name_probationer_{probationer_id}"]
-        #             probationer["date_of_birth"] = request.form[f"date_of_birth_{probationer_id}"]
-        #             probationer["name_parent"] = request.form[f"name_parent_{probationer_id}"]
-        #             probationer["educational_institution"] = request.form[f"educational_institution_{probationer_id}"]
-        #             probationer["contacts"] = request.form[f"contacts_{probationer_id}"]
-        #             probationer["diagnoses"] = request.form[f"diagnoses_{probationer_id}"]
-        #             probationer["reasons_for_contact"] = request.form[f"reasons_for_contact_{probationer_id}"]
-        #
-        #             error = profile_page_controller.create_probationers(user_login, probationer["name_probationer"],
-        #                                                                 probationer["date_of_birth"],
-        #                                                                 probationer["name_parent"],
-        #                                                                 probationer["educational_institution"],
-        #                                                                 probationer["contacts"],
-        #                                                                 probationer["diagnoses"],
-        #                                                                 probationer["reasons_for_contact"], user_id)
-        #
-        #             if error is None:
-        #                 probationers_list = page_controller.get_probationers_list_view(user_id)
-        #                 mode[len(probationers_list)] = "view"
-        #                 error = "Испытуемый сохранён!"
-        #                 error_type[len(probationers_list)] = "Successful"
-        #
-        #                 data_edit = data
-        #                 data_edit[len(probationers_list)] = probationer
-        #
-        #     elif request.form[f"button_{probationer_id}"] == "edit":
-        #         if mode[probationer_id] == "view":
-        #             mode[probationer_id] = "edit"
-        #
-        #     elif request.form[f"button_{probationer_id}"] == "save":
-        #         if mode[probationer_id] == "edit":
-        #             probationer = {}
-        #
-        #             probationer["name_probationer"] = request.form[f"name_probationer_{probationer_id}"]
-        #             probationer["date_of_birth"] = request.form[f"date_of_birth_{probationer_id}"]
-        #             probationer["name_parent"] = request.form[f"name_parent_{probationer_id}"]
-        #             probationer["educational_institution"] = request.form[f"educational_institution_{probationer_id}"]
-        #             probationer["contacts"] = request.form[f"contacts_{probationer_id}"]
-        #             probationer["diagnoses"] = request.form[f"diagnoses_{probationer_id}"]
-        #             probationer["reasons_for_contact"] = request.form[f"reasons_for_contact_{probationer_id}"]
-        #
-        #             profile_page_controller.change_probationer(probationer_id, probationer["name_probationer"],
-        #                                                        probationer["date_of_birth"], probationer["name_parent"],
-        #                                                        probationer["educational_institution"],
-        #                                                        probationer["contacts"], probationer["diagnoses"],
-        #                                                        probationer["reasons_for_contact"], user_id)
-        #
-        #             probationers_list = page_controller.get_probationers_list_view(user_id)
-        #             data_edit[probationer_id] = probationer
-        #             mode[probationer_id] = "view"
-        #             error = "Изменения сохранены!"
-        #             error_type[probationer_id] = "Successful"
-        #
-        #     elif request.form[f'button_{probationer_id}'] == "cancel":
-        #         if probationer_id != 0:
-        #             mode[probationer_id] = "view"
-
-    # except exceptions.BadRequestKeyError:
-    #
-    #     mode = "view"
 
     return render_template('probationers.html', view="probationers", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _probationers_list=probationers_list,
-                           _is_current_user_admin=flask_login.current_user.is_admin(), _mode=mode,
-                           _error=error, _error_type=error_type,
-                           _settings=profile_page_controller.get_settings_probationer(), _num_page=num_page,
+                           _is_current_user_admin=flask_login.current_user.is_admin(),
+                           _settings=profile_page_controller.get_settings_probationer(),
                            _lang_code=get_locale(), _languages=config.LANGUAGES)
 
 
@@ -1237,8 +1136,13 @@ def probationer_card():
     mpc = MainMenuPageController(flask_login.current_user.user_id)
 
     probationer_id = request.args.get('probationer_id')
-    error = None
-    error_type = None
+    message_error = session.get('message_error')
+    if message_error is not None:
+        session.pop('message_error')
+
+    status_code = session.get('status_code')
+    if status_code is not None:
+        session.pop('status_code')
 
     if probationer_id is not None and not request.form.get("button"):
         mode = "view"
@@ -1269,19 +1173,20 @@ def probationer_card():
                     probationer["diagnoses"] = request.form["diagnoses"]
                     probationer["reasons_for_contact"] = request.form["reasons_for_contact"]
 
-                    error = page_controller.create_probationers(user_id, probationer["name_probationer"],
+                    probationer_id = page_controller.create_probationers(user_id, probationer["name_probationer"],
                                                                 probationer["date_of_birth"],
                                                                 probationer["name_parent"],
                                                                 probationer["educational_institution"],
                                                                 probationer["contacts"], probationer["diagnoses"],
                                                                 probationer["reasons_for_contact"])
 
-                    if error is None:
-                        mode = "view"
-                        error = gettext("Испытуемый сохранён!")
-                        error_type = "Successful"
+                    if probationer_id is not None:
+                        session['mode'] = "view"
+                        session['message_error'] = gettext("Испытуемый сохранён!")
+                        session['status_code'] = "Successful"
 
-                    data = probationer
+                        return redirect(url_for('multilingual.probationer_card', probationer_id=probationer_id))
+
             elif request.form["button"] == "edit":
                 if mode == "view":
                     mode = "edit"
@@ -1304,10 +1209,11 @@ def probationer_card():
                                                        probationer["contacts"],
                                                        probationer["diagnoses"], probationer["reasons_for_contact"], user_id)
 
-                    data = probationer
-                    mode = "view"
-                    error = gettext("Изменения сохранены!")
-                    error_type = "Successful"
+                    session['mode'] = "view"
+                    session['message_error'] = gettext("Изменения сохранены!")
+                    session['status_code'] = "Successful"
+
+                    return redirect(url_for('multilingual.probationer_card', probationer_id=probationer_id))
 
     except exceptions.BadRequestKeyError:
         mode = "view"
@@ -1317,7 +1223,7 @@ def probationer_card():
 
     return render_template('probationer_card.html', view="probationer_card", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
-                           _mode=mode, _data_begin=data_begin, _error=error, _error_type=error_type,
+                           _mode=mode, _data_begin=data_begin, _error=message_error, _error_type=status_code,
                            _settings=page_controller.get_settings_probationer(), _lang_code=get_locale(),
                            _languages=config.LANGUAGES)
 

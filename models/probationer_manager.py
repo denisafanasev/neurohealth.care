@@ -111,9 +111,9 @@ class ProbationerManager():
                             "contacts": probationer.contacts, "diagnoses": probationer.diagnoses,
                             "reasons_for_contact": probationer.reasons_for_contact}
 
-        data_store.insert_row(probationer_data)
+        probationer_id = data_store.insert_row(probationer_data)
 
-        return probationer.name_probationer
+        return probationer_id, probationer.name_probationer
 
     def change_probationer(self, _probationer_id, _name_probationer, _date_of_birth, _name_parent,
                            _educational_institution,
@@ -131,6 +131,7 @@ class ProbationerManager():
             _diagnoses(String): сопутствующие диагнозы
             _reasons_for_contact(String): причины обращения
         """
+        data_store = DataStore("probationers")
 
         probationer = Probationer(_probationer_id=_probationer_id, _name_probationer=_name_probationer,
                                   _name_parent=_name_parent, _educational_institution=_educational_institution,
@@ -144,9 +145,7 @@ class ProbationerManager():
                             "contacts": probationer.contacts, "diagnoses": probationer.diagnoses,
                             "reasons_for_contact": probationer.reasons_for_contact}
 
-        data = DataStore("probationers")
-
-        data.update_row_by_id(probationer_data, probationer.probationer_id)
+        data_store.update_row_by_id(probationer_data, probationer.probationer_id)
 
         return probationer.name_probationer
 

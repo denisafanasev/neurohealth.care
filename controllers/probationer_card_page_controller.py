@@ -26,7 +26,7 @@ class ProbationerCardPageController():
 
         probationer_card_service = ProbationerCardService()
 
-        probationer_card_service.create_probationer( _user_id, _name_probationer, _date_of_birth,
+        return probationer_card_service.create_probationer( _user_id, _name_probationer, _date_of_birth,
                                                     _name_parent, _educational_institution, _contacts, _diagnoses,
                                                     _reasons_for_contact)
 

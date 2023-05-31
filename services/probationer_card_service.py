@@ -33,12 +33,14 @@ class ProbationerCardService():
         user_service = UserManager()
         action_manager = ActionManager()
 
-        name_probationer = probationer_manager.create_probationer(_user_id, _name_probationer, _date_of_birth,
+        probationer_id, name_probationer = probationer_manager.create_probationer(_user_id, _name_probationer, _date_of_birth,
                                                _name_parent, _educational_institution, _contacts, _diagnoses,
                                                _reasons_for_contact)
         login_user = user_service.get_user_by_id(_user_id).login
 
         action_manager.add_notifications(name_probationer, "добавил", 'нового', "probationer_manager", login_user)
+
+        return probationer_id
 
     def get_probationer_card_view(self, probationer_id):
         """
