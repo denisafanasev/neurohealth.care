@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import utils.ada as ada
 from services.user_manager_service import UserManagerService
 from error import UserManagerException
@@ -31,6 +33,7 @@ class UserManagerPageController():
 
         users = user_manager_service.get_users(_user_id)
         users_list_view = []
+        number_of_users_subscriptions = 0
         for user in users:
 
             user_view = {}
@@ -48,5 +51,19 @@ class UserManagerPageController():
             user_view['email_confirmed'] = user.email_confirmed
 
             users_list_view.append(user_view)
+
+            if user.education_module_expiration_date > datetime.now():
+                if user.role != 'superuser':
+                    number_of_users_subscriptions += 1
             
-        return users_list_view
+        return users_list_view, number_of_users_subscriptions, len(users)
+
+    # def get_number_of_users_with_subscriptions(self, _user_id):
+    #     """
+    #
+    #     """
+    #     user_manager_service = UserManagerService()
+    #
+    #     number_of_users_subscriptions, number_of_users = user_manager_service.get_number_of_users_with_subscriptions(_user_id)
+    #
+    #     return number_of_users_subscriptions, number_of_users
