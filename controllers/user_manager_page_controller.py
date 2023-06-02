@@ -21,7 +21,7 @@ class UserManagerPageController():
 
         pass
 
-    def get_users_list_view(self, _user_id):
+    def get_users_list_view(self, _user_id, _filters):
         """
         Возвращает отформатированный список пользователей
 
@@ -31,9 +31,9 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
 
-        users = user_manager_service.get_users(_user_id)
+        users = user_manager_service.get_users(_user_id, _filters)
         users_list_view = []
-        number_of_users_subscriptions = 0
+        # number_of_users_subscriptions = 0
         for user in users:
 
             user_view = {}
@@ -51,19 +51,23 @@ class UserManagerPageController():
             user_view['email_confirmed'] = user.email_confirmed
 
             users_list_view.append(user_view)
-
-            if user.education_module_expiration_date > datetime.now():
-                if user.role != 'superuser':
-                    number_of_users_subscriptions += 1
             
-        return users_list_view, number_of_users_subscriptions, len(users)
+        return users_list_view
 
-    # def get_number_of_users_with_subscriptions(self, _user_id):
-    #     """
-    #
-    #     """
-    #     user_manager_service = UserManagerService()
-    #
-    #     number_of_users_subscriptions, number_of_users = user_manager_service.get_number_of_users_with_subscriptions(_user_id)
-    #
-    #     return number_of_users_subscriptions, number_of_users
+    def get_number_of_users_with_subscriptions(self, _user_id):
+        """
+        Возвращает количество пользователей с активной подпиской/ролью user
+
+        Args:
+            _user_id(Int): ID текущего пользователя
+
+        Returns:
+            number_of_users_with_subscriptions: количество пользователей с подпиской
+            number_of_users: количество пользователей с ролью user
+        """
+
+        user_manager_service = UserManagerService()
+
+        number_of_users_subscriptions, number_of_users = user_manager_service.get_number_of_users_with_subscriptions(_user_id)
+
+        return number_of_users_subscriptions, number_of_users

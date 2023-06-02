@@ -2,6 +2,7 @@ import hashlib
 
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from flask_babel import gettext
 from itsdangerous import URLSafeTimedSerializer
 
 from models.user import User
@@ -264,7 +265,7 @@ class UserManager():
 
         return user
 
-    def get_users(self, _user_id):
+    def get_users(self, _user_id, _filters=''):
         """
         Возвращает список пользователей в системе, в соответствии с ролью пользователя, который запрашивает список
 
@@ -279,7 +280,7 @@ class UserManager():
 
         data_store = DataStore("users")
 
-        users_list_data = data_store.get_rows()
+        users_list_data = data_store.get_rows(_filters)
 
         for user_data in users_list_data:
 
@@ -447,17 +448,17 @@ class UserManager():
 
         self.validate_password(_password)
         if _password != _password2:
-            raise UserManagerException("введенные пароли не совпадают")
+            raise UserManagerException(gettext("введенные пароли не совпадают"))
 
         password = self.hash_password(_password)
         data_store = DataStore("users")
         if _current_password != "":
             if _current_password is None:
-                raise UserManagerException('Введите текущий пароль')
+                raise UserManagerException(gettext('Введите текущий пароль'))
             current_password = self.hash_password(_current_password)
             user = data_store.get_row_by_id(_user_id)
             if current_password != user['password']:
-                raise UserManagerException("Введенный текущий пароль неправильный")
+                raise UserManagerException(gettext("Введенный текущий пароль неправильный"))
 
         user_data = {"password": password}
 
@@ -512,7 +513,6 @@ class UserManager():
         user = self.get_user_by_id(_user_id)
 
         if _reference_point == "end":
-            x = relativedelta(months=_period)
             user.education_module_expiration_date = (
                     user.education_module_expiration_date + relativedelta(months=_period)).strftime("%d/%m/%Y")
         elif _reference_point == "today":
@@ -522,3 +522,22 @@ class UserManager():
         self.chenge_user(user.user_id, user.login, user.name, user.email, user.role, user.probationers_number,
                          user.created_date, user.education_module_expiration_date,
                          user.token, user.email_confirmed, user.active)
+
+    # def get_filtered_users(self, _user_id, _filter):
+    #     """
+    #     Возвращает
+    #     Args:
+    #         _user_id(Int): ID текущего пользователя
+    #         _filter():
+    #
+    #     Returns:
+    #         number_of_users_with_subscriptions: количество пользователей с подпиской
+    #         number_of_users: количество всех пользователей
+    #     """
+    #     data_store = DataStore('users')
+    #     users = []
+    #     if self.get_user_role(_user_id) == 'superuser':
+    #         users_data = data_store.get_rows({'role': 'users'})
+    #         users = [self.user_row_to_user(user) for user in users_data]
+    #
+    #     return users

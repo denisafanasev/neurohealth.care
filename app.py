@@ -297,7 +297,13 @@ def user_manager():
         return redirect(url_for("multilingual.main_page"))
 
     endpoint = request.endpoint
-    users_list, number_of_users_subscriptions, number_of_users = page_controller.get_users_list_view(current_user_id)
+    filters = request.args.get('filters')
+
+    users_list = page_controller.get_users_list_view(current_user_id, filters)
+    number_of_users_subscriptions, number_of_users = page_controller.get_number_of_users_with_subscriptions(current_user_id)
+    if request.method == 'POST':
+        if request.form.get('button') == 'subscription':
+            return redirect(url_for('multilingual.user_manager', filters='with_subscription'))
 
     error = None
     error_type = None

@@ -19,25 +19,26 @@
         });
     </script>
 
-    <script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>
+    <script src="{{ url_for('static' , filename="js/nhc_utils.js") }}"></script>
     <style>
 
         table.dataTable thead .sorting,
         table.dataTable thead .sorting_asc,
         table.dataTable thead .sorting_desc {
-            background : none;
+            background: none;
         }
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            overflow-y: scroll!important;
+            overflow-y: scroll !important;
         }
 
-        a{
+        a {
             color: white;
             text-decoration: none;
         }
-        a:hover{
+
+        a:hover {
             color: white;
             text-decoration: none;
         }
@@ -46,28 +47,33 @@
 
     <div class="container-fluid p-0">
 
-        <h1 class="h3 mb-3">{{_("Управление пользователями")}}</h1>
-        <div class="card col-2">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col mt-0">
-                        <h5 class="card-title">{{ _("Пользователи с подпиской") }}</h5>
-                    </div>
+        <h1 class="h3 mb-3">{{ _("Управление пользователями") }}</h1>
+        <form method="post">
+            <div class="card col-2">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col mt-0">
+                            <h5 class="card-title">{{ _("Пользователи с подпиской") }}</h5>
+                        </div>
 
-                    <div class="col-auto">
-                        <div class="stat text-primary">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users align-middle"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <div class="col-auto">
+                            <div class="stat text-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round" class="feather feather-users align-middle">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
                         </div>
                     </div>
+                    <h1 class="mt-1 mb-3">{{ _number_of_users_subscriptions }}/{{ _number_of_users }}</h1>
+                    <button class="btn btn-primary" name="button" value="subscription">{{ _("Посмотреть") }}</button>
                 </div>
-                <h1 class="mt-1 mb-3">{{ _number_of_users_subscriptions }}/{{ _number_of_users }}</h1>
-{#                <div class="mb-0">#}
-{#                    <span class="badge badge-success-light"> <i class="mdi mdi-arrow-bottom-right"></i> 5.25% </span>#}
-{#                    <span class="text-muted">Since last week</span>#}
-{#                </div>#}
-                <button class="btn btn-primary">{{ _("Посмотреть") }}</button>
             </div>
-        </div>
+        </form>
         <div class="row">
             <div class="col-12">
                 <div class="card border">
@@ -78,9 +84,10 @@
                                 <div class="row">
                                     <div class="col-sm-12 col-md-6">
                                         <div class="dt-buttons btn-group flex-wrap">
-                                            <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
-                                            href="{{ url_for('multilingual.user_profile') }}">
-                                                <span>{{_("Добавить пользователя")}}</span>
+                                            <a class="btn btn-secondary buttons-copy buttons-html5"
+                                               aria-controls="datatables-buttons"
+                                               href="{{ url_for('multilingual.user_profile') }}">
+                                                <span>{{ _("Добавить пользователя") }}</span>
                                             </a>
                                         </div>
                                     </div>
@@ -89,39 +96,58 @@
 
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
+                                    <table id="datatables-buttons"
+                                           class="table table-striped dataTable no-footer dtr-inline"
+                                           style="width: 100%; font-size: 13px"
+                                           aria-describedby="datatables-buttons_info">
                                         <thead>
                                         <tr role="row" style="text-align: center">
                                             <th style="width:5%;">#</th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:15%;" aria-label="Position: activate to sort column ascending">Login
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                rowspan="1" colspan="1"
+                                                style="width:15%;"
+                                                aria-label="Position: activate to sort column ascending">Login
                                             </th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:10%;" aria-label="Position: activate to sort column ascending">
-                                                {{_("Имя пользователя")}}
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                rowspan="1" colspan="1"
+                                                style="width:10%;"
+                                                aria-label="Position: activate to sort column ascending">
+                                                {{ _("Имя пользователя") }}
                                             </th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:40%;" aria-label="Position: activate to sort column ascending">Email
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                rowspan="1" colspan="1"
+                                                style="width:40%;"
+                                                aria-label="Position: activate to sort column ascending">Email
                                             </th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:5%;" aria-label="Position: activate to sort column ascending">
-                                                {{_("Дата создания")}}
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                rowspan="1" colspan="1"
+                                                style="width:5%;"
+                                                aria-label="Position: activate to sort column ascending">
+                                                {{ _("Дата создания") }}
                                             </th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:5%;" aria-label="Position: activate to sort column ascending">
-                                                {{_("Срок доступа")}}
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                rowspan="1" colspan="1"
+                                                style="width:5%;"
+                                                aria-label="Position: activate to sort column ascending">
+                                                {{ _("Срок доступа") }}
                                             </th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:5%;" aria-label="Position: activate to sort column ascending">
-                                                {{_("Доступ")}}
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                rowspan="1" colspan="1"
+                                                style="width:5%;"
+                                                aria-label="Position: activate to sort column ascending">
+                                                {{ _("Доступ") }}
                                             </th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:5%;" aria-label="Position: activate to sort column ascending">
-                                                {{_("Обучение")}}
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                rowspan="1" colspan="1"
+                                                style="width:5%;"
+                                                aria-label="Position: activate to sort column ascending">
+                                                {{ _("Обучение") }}
                                             </th>
-                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:5%;" aria-label="Position: activate to sort column ascending">
-                                                {{_("Подтвержден email")}}
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons"
+                                                rowspan="1" colspan="1"
+                                                style="width:5%;"
+                                                aria-label="Position: activate to sort column ascending">
+                                                {{ _("Подтвержден email") }}
                                             </th>
                                         </tr>
                                         </thead>
@@ -129,51 +155,71 @@
 
                                         {% for item in _users_list %}
                                             {% if item["user_id"] %}
-                                            <tr class="even">
+                                                <tr class="even">
 
-                                                <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg") }}" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                                    <td><img
+                                                            src="{{ url_for('static' , filename="img/avatars/149071.jpg") }}"
+                                                            width="32" height="32" class="rounded-circle my-n1"
+                                                            alt="Avatar"></td>
 
-                                                <td class="sorting_1 dtr-control" style="display: flex">
-                                                    <div class="col{% if item['role'] == "superuser" %} bg-primary {% else %} bg-success {% endif %} bg-gradient" style="text-align: center; margin-right: 16%; color: white">
-                                                        <a style="display: inline-block; width: 100%"  href="{{ url_for('multilingual.user_profile', user_id=item['user_id']) }}">
-                                                            <span class="">{{ item['login'] }}</span>
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                                <td>{{ item['name'] }}</td>
-                                                <td>{{ item['email'] }}</td>
-                                                <td>{{ item['created_date'] }}</td>
-                                                <td><a>{{ item['education_module_expiration_date'] }}</a></td>
-
-                                                {% if item['is_active'] %}
-                                                    <td style="display: flex">
-                                                        <div class="col" style="text-align: center;">
-                                                            <a><span class="fas fa-circle chat-online"></span></a>
+                                                    <td class="sorting_1 dtr-control" style="display: flex">
+                                                        <div class="col{% if item['role'] == "superuser" %} bg-primary {% else %} bg-success {% endif %} bg-gradient"
+                                                             style="text-align: center; margin-right: 16%; color: white">
+                                                            <a style="display: inline-block; width: 100%"
+                                                               href="{{ url_for('multilingual.user_profile', user_id=item['user_id']) }}">
+                                                                <span class="">{{ item['login'] }}</span>
+                                                            </a>
                                                         </div>
                                                     </td>
-                                                {% else %}
-                                                    <td style="display: flex">
-                                                        <div class="col" style="text-align: center; margin-left: 27%">
-                                                            <a><span class="fas fa-circle chat-offline"></span></a>
-                                                        </div>
-                                                    </td>
-                                                {% endif %}
+                                                    <td>{{ item['name'] }}</td>
+                                                    <td>{{ item['email'] }}</td>
+                                                    <td>{{ item['created_date'] }}</td>
+                                                    <td><a>{{ item['education_module_expiration_date'] }}</a></td>
 
-                                                {% if item['active_education_module'] == 'active' %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="badge bg-success" >Self service</span></div></td>
-                                                {% elif item['active_education_module'] == 'inactive' %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="badge bg-info">Overview</span></div></td>
-                                                {% elif item['active_education_module'] == 'ends' %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="badge bg-warning">Expiring</span></div></td>
-                                                {% endif %}
+                                                    {% if item['is_active'] %}
+                                                        <td style="display: flex">
+                                                            <div class="col" style="text-align: center;">
+                                                                <a><span class="fas fa-circle chat-online"></span></a>
+                                                            </div>
+                                                        </td>
+                                                    {% else %}
+                                                        <td style="display: flex">
+                                                            <div class="col" style="text-align: center;">
+                                                                <a><span class="fas fa-circle chat-offline"></span></a>
+                                                            </div>
+                                                        </td>
+                                                    {% endif %}
 
-                                                {% if item['email_confirmed'] %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="fas fa-circle chat-online"></span></div></td>
-                                                {% else %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="fas fa-circle chat-offline"></span></div></td>
-                                                {% endif %}
+                                                    {% if item['active_education_module'] == 'active' %}
+                                                        <td style="display: flex">
+                                                            <div style="text-align: center; margin-right: 16%;"><span
+                                                                    class="badge bg-success">Self service</span></div>
+                                                        </td>
+                                                    {% elif item['active_education_module'] == 'inactive' %}
+                                                        <td style="display: flex">
+                                                            <div style="text-align: center; margin-right: 16%;"><span
+                                                                    class="badge bg-info">Overview</span></div>
+                                                        </td>
+                                                    {% elif item['active_education_module'] == 'ends' %}
+                                                        <td style="display: flex">
+                                                            <div style="text-align: center; margin-right: 16%;"><span
+                                                                    class="badge bg-warning">Expiring</span></div>
+                                                        </td>
+                                                    {% endif %}
 
-                                            </tr>
+                                                    {% if item['email_confirmed'] %}
+                                                        <td style="display: flex">
+                                                            <div style="text-align: center; margin-right: 16%;"><span
+                                                                    class="fas fa-circle chat-online"></span></div>
+                                                        </td>
+                                                    {% else %}
+                                                        <td style="display: flex">
+                                                            <div style="text-align: center; margin-right: 16%;"><span
+                                                                    class="fas fa-circle chat-offline"></span></div>
+                                                        </td>
+                                                    {% endif %}
+
+                                                </tr>
                                             {% endif %}
                                         {% endfor %}
                                         </tbody>
