@@ -1,9 +1,5 @@
-from datetime import datetime
-
 import utils.ada as ada
 from services.user_manager_service import UserManagerService
-from error import UserManagerException
-import config
 
 
 class UserManagerPageController():

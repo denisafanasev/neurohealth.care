@@ -1,8 +1,7 @@
 from datetime import datetime
 
 from models.user_manager import UserManager
-from models.education_stream_manager import EducationStreamManager
-from models.action_manager import ActionManager
+
 
 class UserManagerService():
     """
