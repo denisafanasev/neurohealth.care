@@ -630,7 +630,6 @@ def evolution_centre_dummy():
                            _languages=config.LANGUAGES)
 
 
-# @app.route('/education_list_courses', methods=['GET', 'POST'])
 @multilingual.route('/education_list_courses')
 @login_required
 def education_list_courses():
@@ -1382,6 +1381,8 @@ def maintenance():
 
         if action_name == "upload_users_from_json_to_sql":
             page_controller.upload_users_from_json_to_sql(current_user_id)
+
+            return redirect(url_for('multilingual.maintenance'))
 
     return render_template('maintenance.html', view="maintenance", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),

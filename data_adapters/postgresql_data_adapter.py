@@ -1,9 +1,10 @@
 import sqlalchemy as db
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy import insert, select, update
 from sqlalchemy import MetaData
 
 import config
+
 
 class PostgreSQLDataAdapter():
     """
@@ -43,6 +44,20 @@ class PostgreSQLDataAdapter():
         #    result = self.data_store.search(Query().fragment(_filter))
         #else:
         #    result = self.data_store.all()
+        metadata = MetaData(bind=self.data_store)
+        metadata.reflect()
+
+        # if _filter is None:
+        #     query_result = self.data_store.execute(select(metadata.tables[self.table_name]))
+        # else:
+        #     query_result = self.data_store.execute(select(metadata.tables[self.table_name].columns['']).
+        #                                            where())
+        query = select(metadata.tables[self.table_name])
+        if _filter is not None:
+            query = query.where(text(_filter))
+
+        query_result = self.data_store.execute(query)
+        result = [u._asdict() for u in query_result.all()]
 
         return result
 

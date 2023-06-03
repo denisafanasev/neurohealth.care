@@ -49,7 +49,7 @@ class MaintenanceService():
         user_manager = UserManager()
         users = user_manager.get_users(_current_user_id)
 
-        # create data sttore with SQL data adapter
+        # create data store with SQL data adapter
         data_store = DataStore("users", force_adapter="PostgreSQLDataAdapter")
 
         for user in users:

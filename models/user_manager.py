@@ -1,6 +1,7 @@
 import hashlib
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
+from sqlalchemy import func, and_
 from dateutil.relativedelta import relativedelta
 from itsdangerous import URLSafeTimedSerializer
 
@@ -100,7 +101,7 @@ class UserManager():
         # создадим пользователя с указанием обязательных атрибутов
         # note that doc_id from the table used as a user_id
         try:
-            user = User(_data_row.doc_id, _data_row['login'], _data_row['name'], _data_row['email'], _data_row['role'],
+            user = User(_data_row['doc_id'], _data_row['login'], _data_row['name'], _data_row['email'], _data_row['role'],
                         _data_row['active'])
         except KeyError as error:
             raise UserManagerException("DB structure error: no attribute " + error.args[0])
@@ -113,13 +114,15 @@ class UserManager():
             user.probationers_number = 5
 
         if _data_row.get('created_date') is not None:
-            user.created_date = datetime.strptime(_data_row['created_date'], '%d/%m/%Y')
+            # user.created_date = datetime.strptime(_data_row['created_date'], '%d/%m/%Y')
+            user.created_date = _data_row['created_date']
         else:
             user.created_date = datetime.strptime("01/01/1990", '%d/%m/%Y')
 
         if _data_row.get('education_module_expiration_date') is not None:
-            user.education_module_expiration_date = datetime.strptime(_data_row['education_module_expiration_date'],
-                                                                      '%d/%m/%Y')
+            # user.education_module_expiration_date = datetime.strptime(_data_row['education_module_expiration_date'],
+            #                                                           '%d/%m/%Y')
+            user.education_module_expiration_date = _data_row['education_module_expiration_date']
         else:
             user.education_module_expiration_date = datetime.today()
 
@@ -158,8 +161,8 @@ class UserManager():
 
         user = None
 
-        data_store = DataStore("users")
-        user_data = data_store.get_row_by_id(_user_id)
+        data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
+        user_data = data_store.get_row_by_id(_user_id)[0]
 
         if user_data is not None:
 
@@ -277,8 +280,8 @@ class UserManager():
 
         users = []
 
-        data_store = DataStore("users")
-
+        data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
+        # users_list_data = data_store.get_rows(f'users.education_module_expiration_date >= {func.now()} or users.role={"user"}')
         users_list_data = data_store.get_rows()
 
         for user_data in users_list_data:
