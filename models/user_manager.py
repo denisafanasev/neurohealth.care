@@ -162,32 +162,33 @@ class UserManager():
         user = None
 
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
-        user_data = data_store.get_row_by_id(_user_id)[0]
+        user_data = data_store.get_row_by_id(_user_id)
 
         if user_data is not None:
 
-            user = self.user_row_to_user(user_data)
+            user_data = user_data
+            user = self.user_row_to_user(user_data[0])
             
-            if user_data.get("education_module_expiration_date") is None:
-
-                self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
-                                 _probationers_number=user.probationers_number, _created_date=user.created_date,
-                                 _education_module_expiration_date=user.education_module_expiration_date,
-                                 _token=user.token, _email_confirmed=user.email_confirmed)
-
-            elif user_data.get("token") is None:
-
-                self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
-                                 _probationers_number=user.probationers_number, _created_date=user.created_date,
-                                 _education_module_expiration_date=user.education_module_expiration_date,
-                                 _token=user.token, _email_confirmed=user.email_confirmed)
-
-            elif user_data.get("email_confirmed") is None:
-
-                self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
-                                 _probationers_number=user.probationers_number, _created_date=user.created_date,
-                                 _education_module_expiration_date=user.education_module_expiration_date,
-                                 _token=user.token, _email_confirmed=user.email_confirmed)
+            # if user_data.get("education_module_expiration_date") is None:
+            #
+            #     self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+            #                      _probationers_number=user.probationers_number, _created_date=user.created_date,
+            #                      _education_module_expiration_date=user.education_module_expiration_date,
+            #                      _token=user.token, _email_confirmed=user.email_confirmed)
+            #
+            # elif user_data.get("token") is None:
+            #
+            #     self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+            #                      _probationers_number=user.probationers_number, _created_date=user.created_date,
+            #                      _education_module_expiration_date=user.education_module_expiration_date,
+            #                      _token=user.token, _email_confirmed=user.email_confirmed)
+            #
+            # elif user_data.get("email_confirmed") is None:
+            #
+            #     self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
+            #                      _probationers_number=user.probationers_number, _created_date=user.created_date,
+            #                      _education_module_expiration_date=user.education_module_expiration_date,
+            #                      _token=user.token, _email_confirmed=user.email_confirmed)
 
         return user
 
@@ -205,10 +206,10 @@ class UserManager():
         login = _login.lower().strip()
         password = self.hash_password(_password)
 
-        data_store = DataStore("users")
+        data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
-        user_data = data_store.get_rows({"login": login, "password": password})
-
+        # user_data = data_store.get_rows({"login": login, "password": password})
+        user_data = data_store.get_rows(f"users.login = '{login}' and users.password = '{password}'")
         # проверим, что у нас данному набору логин и пароль соответсвует только одна запись пользователя
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей")
@@ -232,9 +233,9 @@ class UserManager():
         user = None
 
         login = _login.lower().strip()
-        data_store = DataStore("users")
+        data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
-        user_data = data_store.get_rows({"login": login})
+        user_data = data_store.get_rows(f"users.login = '{login}'")
 
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей, login не уникальный")
@@ -255,9 +256,9 @@ class UserManager():
         user = None
 
         email = _email.lower().strip()
-        data_store = DataStore("users")
+        data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
-        user_data = data_store.get_rows({"email": email})
+        user_data = data_store.get_rows(f"users.email = '{email}'")
 
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей, email не уникальный")
@@ -281,7 +282,6 @@ class UserManager():
         users = []
 
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
-        # users_list_data = data_store.get_rows(f'users.education_module_expiration_date >= {func.now()} or users.role={"user"}')
         users_list_data = data_store.get_rows()
 
         for user_data in users_list_data:
@@ -304,7 +304,7 @@ class UserManager():
             None
         """
 
-        data_store = DataStore("users")
+        data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
         data = data_store.get_rows_count()
 
@@ -350,7 +350,7 @@ class UserManager():
         token = self.create_token(email)
 
         # создаем новую запись
-        data_store = DataStore("users")
+        data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
         # проверим, что у пользователя с таким логином не существует
 
@@ -425,7 +425,7 @@ class UserManager():
         education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
         user.created_date = user.created_date.strftime("%d/%m/%Y")
 
-        data_store = DataStore("users")
+        data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
         user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
                      "probationers_number": user.probationers_number, "created_date": user.created_date,
                      "education_module_expiration_date": education_module_expiration_date, "active": user.active,

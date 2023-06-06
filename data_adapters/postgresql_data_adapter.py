@@ -38,20 +38,9 @@ class PostgreSQLDataAdapter():
             _filter   - Optional  : срока с заданным фильтром (String)
         """
 
-        result = []
-
-        #if _filter is not None:
-        #    result = self.data_store.search(Query().fragment(_filter))
-        #else:
-        #    result = self.data_store.all()
         metadata = MetaData(bind=self.data_store)
         metadata.reflect()
 
-        # if _filter is None:
-        #     query_result = self.data_store.execute(select(metadata.tables[self.table_name]))
-        # else:
-        #     query_result = self.data_store.execute(select(metadata.tables[self.table_name].columns['']).
-        #                                            where())
         query = select(metadata.tables[self.table_name])
         if _filter is not None:
             query = query.where(text(_filter))
@@ -70,7 +59,6 @@ class PostgreSQLDataAdapter():
         """
 
         result = None
-
 
         if _id != '':
 
@@ -122,9 +110,14 @@ class PostgreSQLDataAdapter():
         metadata = MetaData(bind=self.data_store)
         metadata.reflect()
 
+        data_list = self.get_rows()
+        _data['doc_id'] = max([data['doc_id'] for data in data_list]) + 1
+
         result = self.data_store.execute(
             insert(metadata.tables[self.table_name]),[_data],
         )
+
+        return _data['doc_id']
 
     '''
     def update_row(self, _data, _where):

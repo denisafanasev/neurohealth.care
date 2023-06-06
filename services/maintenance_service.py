@@ -51,11 +51,14 @@ class MaintenanceService():
 
         # create data store with SQL data adapter
         data_store = DataStore("users", force_adapter="PostgreSQLDataAdapter")
+        # data_store_tiny_db = DataStore('users')
 
         for user in users:
 
+            # password = data_store_tiny_db.get_row_by_id(user.user_id)['password']
+
             # convert User object to Dict
-            user_raw = {"doc_id": user.user_id, "active": user.active, "password": "", "created_date": user.created_date,
+            user_raw = {"doc_id": user.user_id, "active": user.active, "password": '', "created_date": user.created_date,
                             "education_module_expiration_date": user.education_module_expiration_date, "email": user.email,
                             "email_confirmed": user.email_confirmed, "login": user.login, "name": user.name,
                             "probationers_number": user.probationers_number, "role": user.role, "token": user.token}
