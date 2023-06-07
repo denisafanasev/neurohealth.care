@@ -209,7 +209,7 @@ class UserManager():
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
         # user_data = data_store.get_rows({"login": login, "password": password})
-        user_data = data_store.get_rows(f"users.login = '{login}' and users.password = '{password}'")
+        user_data = data_store.get_rows(f"select * from users where users.login = '{login}' and users.password = '{password}'")
         # проверим, что у нас данному набору логин и пароль соответсвует только одна запись пользователя
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей")
@@ -235,7 +235,7 @@ class UserManager():
         login = _login.lower().strip()
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
-        user_data = data_store.get_rows(f"users.login = '{login}'")
+        user_data = data_store.get_rows(f"select * from users where users.login = '{login}'")
 
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей, login не уникальный")
@@ -258,7 +258,7 @@ class UserManager():
         email = _email.lower().strip()
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
-        user_data = data_store.get_rows(f"users.email = '{email}'")
+        user_data = data_store.get_rows(f"select * from users where users.email = '{email}'")
 
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей, email не уникальный")
@@ -432,9 +432,8 @@ class UserManager():
                      "token": user.token, "email_confirmed": user.email_confirmed}
 
         data_store.update_row_by_id(user_data, user.user_id)
-        user = data_store.get_row_by_id(user.user_id)
 
-        return self.user_row_to_user(user)
+        return user
 
     def chenge_password(self, _user_id, _password, _password2, _current_password=''):
         """
