@@ -1,11 +1,6 @@
 {% extends 'profile_main_page.html' %}
 
 {% block user_profile_block %}
-    <script src="https://snipp.ru/cdn/select2/4.0.13/dist/js/select2.min.js"></script>
-    <script src="https://snipp.ru/cdn/select2/4.0.13/dist/js/i18n/ru.js"></script>
-    <link rel="stylesheet" href="https://snipp.ru/cdn/select2/4.0.13/dist/css/select2.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const education_stream_table = $("#education_stream_table").DataTable({
@@ -14,40 +9,8 @@
                 pageLength: 5,
                 });
 
-            const probationers_number = new  Choices ( $ ( '#probationers_number' ) [ 0 ]) ;
-            const role_user = new  Choices ( $ ( '#role' ) [ 0 ]) ;
-            const period = new Choices( $ ('#period') [ 0 ] )
-            const reference_point = new Choices( $ ('#reference_point') [ 0 ])
-
-
         });
-
     </script>
-{#    <script>#}
-{#    flatpickr(".flatpickr-minimum");#}
-{#        flatpickr(".flatpickr-datetime", {#}
-{#            enableTime: true,#}
-{#            dateFormat: "Y-m-d H:i",#}
-{#        });#}
-{#        flatpickr(".flatpickr-human", {#}
-{#            altInput: true,#}
-{#            altFormat: "F j, Y",#}
-{#            dateFormat: "Y-m-d",#}
-{#        });#}
-{#        flatpickr(".flatpickr-multiple", {#}
-{#            mode: "multiple",#}
-{#            dateFormat: "Y-m-d"#}
-{#        });#}
-{#        flatpickr(".flatpickr-range", {#}
-{#            mode: "range",#}
-{#            dateFormat: "Y-m-d"#}
-{#        });#}
-{#        flatpickr(".flatpickr-time", {#}
-{#            enableTime: true,#}
-{#            noCalendar: true,#}
-{#            dateFormat: "H:i",#}
-{#        });#}
-{#    </script>#}
     <script>
         function checkData(form){
             const role = form.role.value;
@@ -112,40 +75,10 @@
             }
 
         }
-
     </script>
-
-{#<script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>#}
-{#    <div class="mb-3">#}
-{#        <h1 class="h3 d-inline align-middle">{% if _mode == "view" %}Просмотр {% elif _mode == "new" %}Создание#}
-{#            {% else %}Редактирование {% endif %} пользователя</h1>#}
-{#    </div>#}
-{##}
-{#    {% if _status_code=='Successful' %}#}
-{#        <div class="alert alert-success alert-dismissible" role="alert">#}
-{#            <div class="alert-message">#}
-{#                <strong>Успешно</strong> {{ _message_error }}#}
-{#            </div>#}
-{#        </div>#}
-{#    {% elif _status_code=='Error' %}#}
-{#        <div class="alert alert-danger alert-dismissible" role="alert">#}
-{#            <div class="alert-message">#}
-{#                <strong>Ошибка</strong> {{ _message_error }}#}
-{#            </div>#}
-{#        </div>#}
-{#    {% endif %}#}
-{#    <ul class="nav nav-tabs">#}
-{#        {% for menu in _ %}#}
-{#        <li class="nav-item">#}
-{#            <a class="nav-link active" aria-current="page" href="#">Профиль</a>#}
-{#        </li>#}
-{#        <li class="nav-item">#}
-{#            <a class="nav-link" href="{{ url_for('/user_profile/actions', user_id=_data['user_id']) }}">Действия</a>#}
-{#        </li>#}
-{#    </ul>#}
         <form id="add_user" name="add_user" method="post" enctype="multipart/form-data" onsubmit="return checkData(this);">
 
-            <div class="row d-flex align-items-stretch bd-highlight">
+            <div class="row d-flex align-items-stretch">
                 <div class="col-sm-6 bd-highlight">
                     <div class="card d-flex align-self-baseline" style="height: 100%;">
                         <div class="card-header">
@@ -185,7 +118,7 @@
                             </div>
                         </fieldset>
                             <div class="mb-2">
-                                <label class="form-label" style="height: 100%"><strong>Статус</strong></label>
+                                <label class="form-label"><strong>Статус</strong></label>
                                 <div class="form-check form-switch">
                                     <input id="is_active" name="is_active" class="form-check-input" type="checkbox"
                                            value="True"
@@ -200,9 +133,7 @@
                 </div>
 
                 <div class="col-sm-6 bd-highlight">
-
                     <div class="card d-flex align-self-baseline" style="height: 100%;">
-
                         <div class="card-header">
                             <h5 class="card-title">{{_("Параметры доступа")}}</h5>
                         <fieldset {% if _mode == 'view' %}disabled{% endif %}>
@@ -248,8 +179,8 @@
             </div>
         </form>
 {% if _mode == 'view' %}
-    <div class="row d-flex align-items-stretch bd-highlight">
-        <div class="col-sm-12 p-2 bd-highlight">
+    <div class="row d-flex align-items-stretch">
+        <div class="col-sm p-2 bd-highlight">
             <div class="card d-flex align-self-baseline" style="height: 100%;">
                 <div class="card-header">
                     <h5 class="card-title">{{_("Обучающие потоки")}}</h5>
@@ -292,19 +223,11 @@
                                             <a href="{{ url_for('multilingual.education_stream_card', id=education_stream['id'] ) }}">{{ education_stream['name'] }}</a>
                                         </div>
                                     </td>
-                                    <td>
-                                        <div style="text-align: left">
-                                            {{ education_stream['role_selected_user'] }}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div style="text-align: center; margin-right: 6%">{{ education_stream['teacher'] }}</div>
-                                    </td>
+                                    <td><div style="text-align: left">{{ education_stream['role_selected_user'] }}</div></td>
+                                    <td><div style="text-align: center; margin-right: 6%">{{ education_stream['teacher'] }}</div></td>
                                     <td><div style="text-align: center; margin-right: 13%;">{{ education_stream['date_start'] }}</div></td>
                                     <td><div style="text-align: center; margin-right: 13%;">{{ education_stream['date_end'] }}</div></td>
-                                    <td>
-                                        <div style="text-align: center; margin-right: 4%">{{ education_stream['course'] }}</div>
-                                    </td>
+                                    <td><div style="text-align: center; margin-right: 4%">{{ education_stream['course'] }}</div></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -317,7 +240,7 @@
 {% endif %}
     <div class="row d-flex align-items-stretch bd-highlight" align="right">
             <div class="col-12 p-2">
-                <a type="submit" name="button" href="{% if _mode == "edit" %}{{ url_for('multilingual.user_profile', user_id=_data['user_id']) }}{% else %}{{ url_for('multilingual.user_manager') }}{% endif %}"
+                <a type="submit" href="{% if _mode == "edit" %}{{ url_for('multilingual.user_profile', user_id=_data['user_id']) }}{% else %}{{ url_for('multilingual.user_manager') }}{% endif %}"
                    class="btn btn-primary">
                     {% if _mode != "view" %}{{_("Отмена")}}{% else %}{{_("Назад")}}{% endif %}
                 </a>
@@ -385,12 +308,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="row d-flex align-items-stretch bd-highlight" align="right">
+                <div class="row d-flex align-items-stretch bd-highlight" style="text-align: end;">
                     <div class="p-1">
                         <button type="submit" class="btn btn-primary" name="button" value="extension">
                             {{_("Продлить")}}
                         </button>
-                        <a onclick="document.getElementById('extension').style.display='none'" type="submit" name="button" class="btn btn-primary cancelbtn">
+                        <a onclick="document.getElementById('extension').style.display='none'" type="submit"
+                           class="btn btn-primary cancelbtn">
                             {{_("Отмена")}}
                         </a>
                     </div>
@@ -422,8 +346,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
-                    <div class="p-1" align="right">
+                <div class="align-items-stretch" style="margin-left: auto; margin-right: auto; ">
+                    <div class="p-1" style="text-align: end">
                         <button type="submit" name="button" value="reset" class="btn btn-primary">
                             {{_("Сохранить")}}
                         </button>

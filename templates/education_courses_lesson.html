@@ -353,60 +353,27 @@
                     </div>
 
                 <!-- Чат для общения с кураторами/преподавателями -->
-                    {% if _user['role'] == "superuser" %}
-                        <div class="col card border">
-                            <div class="card-header">
-                                <div class="row">
-                                    <div class="col">
-                                        <h4>
-                                            {{_("Чат")}}
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12 text-left">
-                                        <div class="card py-1 py-md-1">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <h2>{{_("Чат не доступен")}}</h2>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                         </div>
-                    {% elif not _data['available']%}
-                        <div class="col card border">
-                            <div class="card-header">
-                                <div class="row">
-                                    <div class="col">
-                                        <h4>
-                                            {{_("Чат")}}
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12 text-left">
-                                        <div class="card py-1 py-md-1">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <h2>{{_("Чат не доступен")}}</h2>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                         </div>
-                    {% else %}
+                    {% if _user['role'] != "superuser" %}
                         <div class="col-md-5 text-left bd-highlight">
                             {% include "room_chat.html" %}
                         </div>
+                    {% elif _data['available']%}
+                        <div class="col-md-5 text-left bd-highlight">
+                            {% include "room_chat.html" %}
+                        </div>
+                    {% else %}
+                        <div class="col card border">
+                            <div class="card-header">
+                                <h4>{{_("Чат")}}</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="py-1 py-md-1">
+                                    <div class="text-center">
+                                        <h2>{{_("Чат не доступен")}}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
                     {% endif %}
                 </div>
             </div>
