@@ -283,13 +283,11 @@
         <div class="card border">
         {% if _data['lesson']['task'] %}
             <div class="card-body">
-                <div class="row d-flex align-items-stretch bd-highlight">
-
-                    <div class="col-sm-7 md-2 text-left bd-highlight">
+                <div class="row">
+                    <div class="col-sm-7 md-2 text-left">
                         <div class="card py-1 py-md-1 border">
                             <div class="card-header">
                                 <h4 class="form-label">{{_('Домашние задание')}}</h4>
-
                                 <p class="card-text">
                                     {{ _data['lesson']['task'] }}
                                 </p>
@@ -357,10 +355,6 @@
                         <div class="col-md-5 text-left bd-highlight">
                             {% include "room_chat.html" %}
                         </div>
-                    {% elif _data['available']%}
-                        <div class="col-md-5 text-left bd-highlight">
-                            {% include "room_chat.html" %}
-                        </div>
                     {% else %}
                         <div class="col card border">
                             <div class="card-header">
@@ -379,28 +373,12 @@
             </div>
         {% else %}
             <div class="card-header">
-                <div class="row d-flex align-items-stretch bd-highlight">
-                    <div class="col">
-                        <h4>
-                            {{_("Домашнее задание")}}
-                        </h4>
-                    </div>
-                </div>
+                <h4>{{_("Домашнее задание")}}</h4>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12 text-left">
-                        <div class="card py-1 py-md-1 border">
-                            <div class="card-body">
-                                <div class="text-center">
-                                    {% if not _data['lesson']['task']%}
-                                        <h2>{{_("Для данного урока нет домашнего задания")}}</h2>
-                                    {% else %}
-                                        <h2>{{_("Выполнение домашней работы недоступно")}}.</h2>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
+                <div class="card py-1 py-md-1 border">
+                    <div class="card-body text-center">
+                        <h2>{{_("Для данного урока нет домашнего задания")}}</h2>
                     </div>
                 </div>
             </div>
