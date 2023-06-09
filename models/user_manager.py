@@ -117,7 +117,8 @@ class UserManager():
             # user.created_date = datetime.strptime(_data_row['created_date'], '%d/%m/%Y')
             user.created_date = _data_row['created_date']
         else:
-            user.created_date = datetime.strptime("01/01/1990", '%d/%m/%Y')
+            # user.created_date = datetime.strptime("01/01/1990", '%d/%m/%Y')
+            user.created_date = datetime(1990, 1, 1, 0, 0)
 
         if _data_row.get('education_module_expiration_date') is not None:
             # user.education_module_expiration_date = datetime.strptime(_data_row['education_module_expiration_date'],
@@ -139,7 +140,7 @@ class UserManager():
         date_today = datetime.today()
 
         if user.role == 'superuser':
-            user.education_module_expiration_date += relativedelta(year=datetime.today().year + 10)
+            user.education_module_expiration_date += relativedelta(year=date_today.year + 10)
 
         if date_today.date() > user.education_module_expiration_date.date():
             user.active_education_module = "inactive"
@@ -209,7 +210,7 @@ class UserManager():
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
         # user_data = data_store.get_rows({"login": login, "password": password})
-        user_data = data_store.get_rows(f"select * from users where users.login = '{login}' and users.password = '{password}'")
+        user_data = data_store.get_rows(f"users.login = '{login}' and users.password = '{password}'")
         # проверим, что у нас данному набору логин и пароль соответсвует только одна запись пользователя
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей")
@@ -235,7 +236,8 @@ class UserManager():
         login = _login.lower().strip()
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
-        user_data = data_store.get_rows(f"select * from users where users.login = '{login}'")
+        # user_data = data_store.get_rows(f"select * from users where users.login = '{login}'")
+        user_data = data_store.get_rows(f"users.login = '{login}'")
 
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей, login не уникальный")
@@ -258,7 +260,8 @@ class UserManager():
         email = _email.lower().strip()
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
-        user_data = data_store.get_rows(f"select * from users where users.email = '{email}'")
+        # user_data = data_store.get_rows(f"select * from users where users.email = '{email}'")
+        user_data = data_store.get_rows(f"users.email = '{email}'")
 
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей, email не уникальный")
@@ -369,11 +372,9 @@ class UserManager():
         user = User(_login=login, _name=name, _email=email, _role=role, _probationers_number=_probationers_number,
                     _token=token, _email_confirmed=email_confirmed)
 
-        education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
-
         user_data = {"login": user.login, "password": password, "email": user.email,
-                     "role": user.role, "name": user.name, "created_date": user.created_date.strftime("%d/%m/%Y"),
-                     "education_module_expiration_date": education_module_expiration_date,
+                     "role": user.role, "name": user.name, "created_date": user.created_date,
+                     "education_module_expiration_date": user.education_module_expiration_date,
                      "probationers_number": user.probationers_number,
                      "active": user.active, "email_confirmed": user.email_confirmed, "token": user.token}
 
@@ -422,13 +423,10 @@ class UserManager():
                     _probationers_number=_probationers_number, _token=_token, _email_confirmed=_email_confirmed,
                     _education_module_expiration_date=_education_module_expiration_date, _active=_active)
 
-        education_module_expiration_date = user.education_module_expiration_date.strftime("%d/%m/%Y")
-        user.created_date = user.created_date.strftime("%d/%m/%Y")
-
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
         user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
                      "probationers_number": user.probationers_number, "created_date": user.created_date,
-                     "education_module_expiration_date": education_module_expiration_date, "active": user.active,
+                     "education_module_expiration_date": user.education_module_expiration_date, "active": user.active,
                      "token": user.token, "email_confirmed": user.email_confirmed}
 
         data_store.update_row_by_id(user_data, user.user_id)
@@ -452,13 +450,13 @@ class UserManager():
             raise UserManagerException("введенные пароли не совпадают")
 
         password = self.hash_password(_password)
-        data_store = DataStore("users")
+        data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
         if _current_password != "":
             if _current_password is None:
                 raise UserManagerException('Введите текущий пароль')
             current_password = self.hash_password(_current_password)
             user = data_store.get_row_by_id(_user_id)
-            if current_password != user['password']:
+            if current_password != user[0]['password']:
                 raise UserManagerException("Введенный текущий пароль неправильный")
 
         user_data = {"password": password}
@@ -514,12 +512,11 @@ class UserManager():
         user = self.get_user_by_id(_user_id)
 
         if _reference_point == "end":
-            x = relativedelta(months=_period)
+            # x = relativedelta(months=_period)
             user.education_module_expiration_date = (
-                    user.education_module_expiration_date + relativedelta(months=_period)).strftime("%d/%m/%Y")
+                    user.education_module_expiration_date + relativedelta(months=_period))
         elif _reference_point == "today":
-            user.education_module_expiration_date = (datetime.now() + relativedelta(months=_period)).strftime(
-                "%d/%m/%Y")
+            user.education_module_expiration_date = (datetime.now() + relativedelta(months=_period))
 
         self.chenge_user(user.user_id, user.login, user.name, user.email, user.role, user.probationers_number,
                          user.created_date, user.education_module_expiration_date,

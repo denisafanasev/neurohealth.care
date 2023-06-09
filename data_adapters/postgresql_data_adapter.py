@@ -1,5 +1,5 @@
 import sqlalchemy as db
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, text, func, Table
 from sqlalchemy import insert, select, update
 from sqlalchemy import MetaData
 
@@ -41,14 +41,16 @@ class PostgreSQLDataAdapter():
         metadata = MetaData(bind=self.data_store)
         metadata.reflect()
 
-        # query = select(metadata.tables[self.table_name])
-        # if _filter is not None:
-        #     query = query.where(text(_filter))
-
+        query = select(metadata.tables[self.table_name])
         if _filter is not None:
-            query_result = self.data_store.execute(text(_filter))
-        else:
-            query_result = self.data_store.execute(select(metadata.tables[self.table_name]))
+            query = query.where(text(_filter))
+
+        # if _filter is not None:
+        #     query_result = self.data_store.execute(text(_filter))
+        # else:
+        #     query_result = self.data_store.execute(select(metadata.tables[self.table_name]))
+
+        query_result = self.data_store.execute(query)
 
         result = [u._asdict() for u in query_result]
 
@@ -115,9 +117,9 @@ class PostgreSQLDataAdapter():
         metadata.reflect()
 
         if _data.get('doc_id') is None:
-            doc_id_last = self.get_rows(f'select max({metadata.tables[self.table_name].columns["doc_id"]}) from {self.table_name}')
-            # _data['doc_id'] = max(data_list, key=lambda i: i['doc_id']) + 1
-            _data['doc_id'] = doc_id_last[0]['max'] + 1
+            # doc_id_last = self.get_rows(f'select max({metadata.tables[self.table_name].columns["doc_id"]}) from {self.table_name}')
+            doc_id_last = db.select([func.max(metadata.tables[self.table_name].columns['doc_id'])]).select_from(metadata.tables[self.table_name]).scalar()
+            _data['doc_id'] = doc_id_last + 1
 
         result = self.data_store.execute(
             insert(metadata.tables[self.table_name]),[_data],
@@ -159,3 +161,11 @@ class PostgreSQLDataAdapter():
         result = self.data_store.execute(
             update(metadata.tables[self.table_name]).where(metadata.tables[self.table_name].columns["doc_id"] == _id),[_data],
         )
+
+
+    # def get_last_doc_id_in_the_table(self):
+    #
+    #     metadata = MetaData(bind=self.data_store)
+    #     metadata.reflect()
+    #
+    #     result = self.data_store.execute(select(metadata.tables[self.table_name]))

@@ -1436,7 +1436,6 @@ def estimated_values():
 
 
 @multilingual.route('/education_streams', methods=['GET', 'POST'])
-@app.route('/education_streams', methods=['GET', 'POST'])
 @login_required
 def education_streams():
     page_controller = EducationStreamsPageController()
@@ -1452,7 +1451,6 @@ def education_streams():
 
 
 @multilingual.route('/education_stream_card', methods=['GET', 'POST'])
-@app.route('/education_stream_card', methods=['GET', 'POST'])
 @login_required
 def education_stream_card():
     endpoint = "education_streams"
