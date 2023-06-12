@@ -54,16 +54,19 @@ class MaintenanceService():
         # data_store_tiny_db = DataStore('users')
 
         for user in users:
+            password = ''
 
-            # password = data_store_tiny_db.get_row_by_id(user.user_id)['password']
+            # user_data = data_store_tiny_db.get_row_by_id(user.user_id)
+            # if user_data is not None:
+            #     password = user_data['password']
 
             # convert User object to Dict
-            user_raw = {"doc_id": user.user_id, "active": user.active, "password": '', "created_date": user.created_date,
+            user_raw = {"doc_id": user.user_id, "active": user.active, "password": password, "created_date": user.created_date,
                             "education_module_expiration_date": user.education_module_expiration_date, "email": user.email,
                             "email_confirmed": user.email_confirmed, "login": user.login, "name": user.name,
                             "probationers_number": user.probationers_number, "role": user.role, "token": user.token}
 
-            if len(data_store.get_row_by_id(user.user_id))>0:
+            if data_store.get_row_by_id(user.user_id):
 
                 # if user existed in the table, make change
                 data_store.update_row_by_id(user_raw, user.user_id)

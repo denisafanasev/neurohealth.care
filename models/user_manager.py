@@ -1,7 +1,6 @@
 import hashlib
 
-from datetime import datetime, timedelta, date
-from sqlalchemy import func, and_
+from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from itsdangerous import URLSafeTimedSerializer
 
@@ -168,7 +167,7 @@ class UserManager():
         if user_data is not None:
 
             user_data = user_data
-            user = self.user_row_to_user(user_data[0])
+            user = self.user_row_to_user(user_data)
             
             # if user_data.get("education_module_expiration_date") is None:
             #
