@@ -45,214 +45,89 @@
     <div class="container-fluid p-0">
 
         <h1 class="h3 mb-3">{{_("Обучающие потоки")}}</h1>
-
-        <div class="row">
-            <div class="col-12">
-                <div class="card border">
-                    <div class="card-body">
-                        <div id="datatables-buttons_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
-
-                            <div class="row">
-                                <div class="col-sm-12 col-md-6">
-                                    <div class="dt-buttons btn-group flex-wrap">
-                                        <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
-                                        href="{{ url_for('multilingual.education_stream_card') }}">
-                                            <span>{{_("Добавить обучающий поток")}}</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
-                                        <thead style="text-align: center">
-                                            <tr>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:30%; text-align: left;" aria-label="Position: activate to sort column ascending">
-                                                    {{_("Название")}}
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
-                                                    {{_("Преподаватель")}}
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
-                                                    {{_("Дата старта")}}
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
-                                                    {{_("Дата окончания")}}
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:15%; text-align: center;" aria-label="Position: activate to sort column ascending">
-                                                    {{_("Обучающий курс")}}
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
-                                                    {{_("Количество кураторов")}}
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
-                                                    {{_("Количество обучающихся")}}
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                    style="width:10%; text-align: center;" aria-label="Position: activate to sort column ascending">
-                                                    {{_("Статус")}}
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for education_stream in _education_streams_list %}
-                                                {% if education_stream['id'] != 0 %}
-                                                    <tr class="even" >
-                                                        <td>
-                                                            <div style="text-align: left; margin-right: 21%">
-                                                                <a href="{{ url_for('multilingual.education_stream_card', id=education_stream['id']) }}">{{ education_stream['name'] }}</a>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div style="text-align: left; margin-right: 14%">{{ education_stream['teacher'] }}</div>
-                                                        </td>
-                                                        <td>{{ education_stream['date_start'] }}</td>
-                                                        <td>{{ education_stream['date_end'] }}</td>
-                                                        <td>
-                                                            <div style="text-align: left; margin-right: 16%">{{ education_stream['course']['name'] }}</div>
-                                                        </td>
-                                                        <td>
-                                                            <div style="text-align: center; margin-right: 21%">{{ education_stream['count_curators'] }}</div>
-                                                        </td>
-                                                        <td>
-                                                            <div style="text-align: center; margin-right: 15%">{{ education_stream['count_students'] }}</div>
-                                                        </td>
-                                                        <td>
-                                                            <div class='badge {% if education_stream['status'] == "идет" %} bg-success
-                                                            {% elif education_stream['status'] == "запланирован" %} bg-info
-                                                            {% elif education_stream['status'] == "закончен" %} bg-danger {% endif %} bg-gradient text-light' style="display: block;text-align: center; margin-right: 15%">
-                                                                {{ education_stream['status'] }}
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+        <div class="card border">
+            <div class="card-body">
+                <div id="datatables-buttons_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                    <div class="dt-buttons btn-group flex-wrap">
+                        <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
+                        href="{{ url_for('multilingual.education_stream_card') }}">
+                            <span>{{_("Добавить обучающий поток")}}</span>
+                        </a>
                     </div>
+                    <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
+                        <thead style="text-align: center">
+                            <tr>
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                    style="width:30%; text-align: left;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Название")}}
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Преподаватель")}}
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Дата старта")}}
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Дата окончания")}}
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                    style="width:15%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Обучающий курс")}}
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Количество кураторов")}}
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Количество обучающихся")}}
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                    style="width:10%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                                    {{_("Статус")}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for education_stream in _education_streams_list %}
+                                {% if education_stream['id'] != 0 %}
+                                    <tr class="even" >
+                                        <td>
+                                            <div style="text-align: left; margin-right: 21%">
+                                                <a href="{{ url_for('multilingual.education_stream_card', id=education_stream['id']) }}">{{ education_stream['name'] }}</a>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div style="text-align: left; margin-right: 14%">{{ education_stream['teacher'] }}</div>
+                                        </td>
+                                        <td>{{ education_stream['date_start'] }}</td>
+                                        <td>{{ education_stream['date_end'] }}</td>
+                                        <td>
+                                            <div style="text-align: center">{{ education_stream['course']['name'] }}</div>
+                                        </td>
+                                        <td>
+                                            <div style="text-align: center; margin-right: 21%">{{ education_stream['count_curators'] }}</div>
+                                        </td>
+                                        <td>
+                                            <div style="text-align: center; margin-right: 15%">{{ education_stream['count_students'] }}</div>
+                                        </td>
+                                        <td>
+                                            <div class='badge {% if education_stream['status'] == "идет" %} bg-success
+                                            {% elif education_stream['status'] == "запланирован" %} bg-info
+                                            {% elif education_stream['status'] == "закончен" %} bg-danger {% endif %} bg-gradient text-light' style="display: block;text-align: center; margin-right: 15%">
+                                                {{ education_stream['status'] }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        {% for education_stream in _education_streams_list %}
-            <script>
-                var modal_{{ education_stream['id'] }} = document.getElementById('{{ education_stream['id'] }}');
-                window.onclick = function (event) {
-                    if (event.target === modal_{{ education_stream['id'] }}) {
-                        modal_{{ education_stream['id'] }}.style.display = "none";
-                    }
-                }
-            </script>
-            <div id="{{ education_stream['id'] }}" class="modal_{{ education_stream['id'] }} modal">
-            <div class="modal-content animate">
-                <h3 class="modal-title">{{_("Обучающий поток")}}</h3>
-                <form id="discharge_user_{{ education_stream['id'] }}" name="discharge_user_{{ education_stream['id'] }}"
-                      method="post" enctype="multipart/form-data" class="was-validated">
-                    <div class="row d-flex align-items-stretch bd-highlight">
-                        <div style="margin-right: 5px" class="col p-1 bd-highlight border">
-                            <div class="card d-flex align-self-baseline" style="margin-left: auto; margin-right: auto; ">
-                                <div class="card-header">
-                                    <div class="mb-2">
-                                        <label class="form-label"><strong>{{_("Название потока")}}</strong></label>
-                                        <input id="name" required name="name_{{ education_stream['id'] }}" class="form-control">
-                                        <div class="invalid-feedback">
-                                            {{_("Поле, обязательное для заполнения")}}!
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-2">
-                                        <label class="form-label"><strong>{{_("Курс")}}</strong></label>
-                                        <select id="course_list" name="course_list_{{ education_stream['id'] }}" class="form-select">
-                                            {% for course in _courses_list %}
-                                                <option value="{{ course['id'] }}">{{ course['name'] }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <div class="invalid-feedback">
-                                            {{_("Поле, обязательное для заполнения")}}!
-                                        </div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label"><strong>{{_("Преподаватель")}}</strong></label>
-                                        <select id="teacher" name="teacher_{{ education_stream['id'] }}" class="form-select">
-                                            {% for teacher in _curators_list %}
-                                                <option value="{{ teacher['login'] }}">{{ teacher['name'] }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <div class="invalid-feedback">
-                                            {{_("Поле, обязательное для заполнения")}}!
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="margin-right: 5px" class="col p-1 bd-highlight border">
-                            <div class="card d-flex align-self-baseline" style="margin-left: auto; margin-right: auto; ">
-                                <div class="card-header">
-                                    <div class="mb-2">
-                                        <label class="form-label"><strong>{{_("Дата старта")}}</strong></label>
-                                        <input id="date_start" type="date" placeholder="Выберите дату..">
-                                        <div class="invalid-feedback">
-                                            {{_("Поле, обязательное для заполнения")}}!
-                                        </div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label"><strong>{{_("Дата окончания")}}</strong></label>
-                                        <input id="date_end" type="date" placeholder="Выберите дату..">
-                                        <div class="invalid-feedback">
-                                            {{_("Поле, обязательное для заполнения")}}!
-                                        </div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label"><strong>{{_("Кураторы")}}</strong></label>
-                                        <select id="curators_list" name="curators_list_{{ education_stream['id'] }}"
-                                                style="overflow-y: scroll;" class="form-select choices-multiple" multiple="multiple">
-                                            {% for curator in _curators_list %}
-                                                <option value="{{ curator['login'] }}">{{ curator['name'] }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <div class="invalid-feedback">
-                                            {{_("Поле, обязательное для заполнения")}}!
-                                        </div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label"><strong>{{_("Ученики")}}</strong></label>
-                                        <select id="students_list" name="students_list_{{ education_stream['id'] }}"
-                                                style="overflow-y: scroll;" class="form-select" multiple="multiple">
-                                            {% for student in _students_list %}
-                                                <option value="{{ student['login'] }}">{{ student['name'] }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <div class="invalid-feedback">
-                                            {{_("Поле, обязательное для заполнения")}}!
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto; margin-right: auto; ">
-                        <div class="p-1" align="right">
-                            <button type="submit" name="button_{{ education_stream['id'] }}" value="discharge" class="btn btn-primary ">
-                                {{_("Сохранить")}}
-                            </button>
-                            <a onclick="document.getElementById('{{ education_stream["id"] }}').style.display='none'" type="submit" class="btn btn-primary cancelbtn">
-                                {{_("Отмена")}}
-                            </a>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-        {% endfor %}
     </div>
 {% endblock %}

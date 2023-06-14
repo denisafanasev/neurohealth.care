@@ -13,16 +13,6 @@
     <script src="{{ url_for('static' , filename="js/datatables.js") }}"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function () {
-{#        {% if _status_code == "Error" %}#}
-{#            document.querySelector('h3[id=title_message]').textContent = 'Ошибка';#}
-{#            document.querySelector('p[id=text_message]').textContent = "{{ _message_error }}";#}
-{#            message.style.display = "block";#}
-{#        {% elif _status_code == 'Successful' %}#}
-{#            document.querySelector('h3[id=title_message]').textContent = 'Успешно';#}
-{#            document.querySelector('p[id=text_message]').textContent = "{{ _message_error }}";#}
-{#            message.style.display = "block";#}
-{#        {% endif %}#}
-
         var students_table = $("#students_table").DataTable({
             responsive: true,
             lengthChange: !1,
@@ -303,46 +293,44 @@
                     </fieldset>
                 </div>
 
-                    <div class="col-12 col-xl-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="mb-2">
-                                    <label class="form-label"><strong>{{_("Кураторы")}}</strong></label>
-                                    <table id="curators_table" class="table table-striped dataTable no-footer dtr-inline"
-                                       style="width:100%; font-size: 13px">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
-                                                    colspan="1">#</th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">
-                                                    {{_("Имя пользователя")}}</th>
-                                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Email</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for curator in _curators_list %}
-                                            <tr>
-                                                <td>
-                                                    <input {% if _mode=='view' %} disabled {% endif %}
-                                                            {% if _mode != 'new' %}{% if curator['id'] in _education_stream['curators_list'] %}checked {% endif %}{% endif %}
-                                                            name="user_{{ curator['id'] }}" type="checkbox" value="{{ curator['id'] }}">
-                                                </td>
-                                                <td>{{ curator['login'] }}</td>
-                                                <td>{{ curator['name'] }}</td>
-                                                <td>{{ curator['email'] }}</td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                <div class="col-12 col-xl-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <label class="form-label"><strong>{{_("Кураторы")}}</strong></label>
+                                <table id="curators_table" class="table table-striped dataTable no-footer dtr-inline"
+                                   style="width:100%; font-size: 13px">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 5%" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1"
+                                                colspan="1">#</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Login</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">
+                                                {{_("Имя пользователя")}}</th>
+                                            <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1">Email</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for curator in _curators_list %}
+                                        <tr>
+                                            <td>
+                                                <input {% if _mode=='view' %} disabled {% endif %}
+                                                        {% if _mode != 'new' %}{% if curator['id'] in _education_stream['curators_list'] %}checked {% endif %}{% endif %}
+                                                        name="user_{{ curator['id'] }}" type="checkbox" value="{{ curator['id'] }}">
+                                            </td>
+                                            <td>{{ curator['login'] }}</td>
+                                            <td>{{ curator['name'] }}</td>
+                                            <td>{{ curator['email'] }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
+                </div>
 
             </div>
-            <div class="row">
-                <div class="col-md-12 col-xl-12">
                     <div class="card">
                         <div class="card-body">
                             <label class="form-label"><strong>{{_("Доступные модули")}}</strong></label>
@@ -353,8 +341,6 @@
                                            style="width: 100%; font-size: 13px; {% if _education_stream['course']['id'] != course['id'] %}display: none{% endif %}">
                                         <thead>
                                             <tr>
-{#                                                <th class="sorting" style="width: 5%!important;" tabindex="0" aria-controls="datatables-buttons"#}
-{#                                                    rowspan="1" colspan="1">#</th>#}
                                                 <th class="sorting" style="width: 50%;max-width: 60%;" tabindex="0" aria-controls="datatables-buttons"
                                                     rowspan="1" colspan="1">{{_("Название модуля")}}</th>
                                                 <th class="sorting" style="width: 40%;max-width: 50%;" tabindex="0" aria-controls="datatables-buttons"
@@ -365,7 +351,6 @@
                                         <tbody>
                                             {% for module in course['modules'] %}
                                                 <tr>
-{#                                                <td></td>#}
                                                     <td>{{ module['name'] }}</td>
                                                     <td>
                                                         <div id="date_start_module_{{ module['id'] }}" class="flatpickr input-group">
@@ -385,8 +370,6 @@
                                        style="width: 100%; font-size: 13px;">
                                     <thead>
                                         <tr>
-{#                                            <th class="sorting" style="width: 0" tabindex="0" aria-controls="datatables-buttons"#}
-{#                                                    rowspan="1" colspan="1">#</th>#}
                                             <th class="sorting" tabindex="0" style="width: 70%!important;" aria-controls="datatables-buttons" rowspan="1"
                                                 colspan="1">{{_("Название модуля")}}</th>
                                             <th class="sorting" tabindex="0" style="width: 30%!important;" aria-controls="datatables-buttons"
@@ -397,7 +380,6 @@
                                     <tbody>
                                         {% for timetable in _timetables_list %}
                                             <tr>
-{#                                            <td></td>#}
                                                 <td>
                                                     {{ timetable['module']['name'] }}
                                                 </td>
@@ -416,11 +398,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 col-xl-12">
                     <div class="card">
                         <div class="card-body">
 

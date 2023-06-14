@@ -64,15 +64,15 @@
         {% endif %}
         });
     </script>
-    <script>
-        var modal_discharge = document.getElementById('discharge');
-        // When the user clicks anywhere outside the modal, close it
-        window.onclick = function (event) {
-            if (event.target === modal_extension) {
-                modal_discharge.style.display = "none";
-            }
-        }
-    </script>
+{#    <script>#}
+{#        var modal_extension = document.getElementById('discharge');#}
+{#        // When the user clicks anywhere outside the modal, close it#}
+{#        window.onclick = function (event) {#}
+{#            if (event.target === modal_extension) {#}
+{#                modal_extension.style.display = "none";#}
+{#            }#}
+{#        }#}
+{#    </script>#}
     <style>
 
     .word-icon {
@@ -285,9 +285,9 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-sm-7 md-2 text-left">
-                        <div class="card py-1 py-md-1 border">
+                        <div class="card  border">
                             <div class="card-header">
-                                <h4 class="form-label">{{_('Домашние задание')}}</h4>
+                                <h4 class="form-label">{{_('Домашнее задание')}}</h4>
                                 <p class="card-text">
                                     {{ _data['lesson']['task'] }}
                                 </p>
@@ -324,6 +324,7 @@
                                         <div class="mb-2">
                                             <strong>{{_("Текст ответа:")}}</strong> {{ _homework['text'] }}
                                         </div>
+                                    </div>
                                     {% if _homework['users_files_list'] != [] %}
                                         <table class="table">
                                         <thead>
@@ -344,7 +345,7 @@
                                         </tbody>
                                         </table>
                                     {% endif %}
-                                    </div>
+
                                 </div>
                             </div>
                         {% endif %}

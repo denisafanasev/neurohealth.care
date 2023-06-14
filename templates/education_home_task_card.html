@@ -65,87 +65,84 @@
 
         <div class="row d-flex align-items-stretch bd-highlight">
             <div class="align-self-baseline border-0" style="background: fixed;">
-                <div class="row d-flex align-items-stretch bd-highlight">
-                    <div class="col-md-6 bd-highlight">
-
-                            <div class="card d-flex align-self-baseline border p-4">
-                                <h4>{{_("Данные ученика")}}</h4>
-                                <div class="card-header">
-                                    {% if _data['user'] is mapping %}
-                                        <p><strong>Login:</strong> {{ _data['user']['login'] }}</p>
-                                        <p><strong>{{_("Имя")}}:</strong> {{ _data['user']['name'] }}</p>
-                                        <p><strong>Email:</strong> {{ _data['user']['email'] }}</p>
-                                    {% else %}
-                                        <p>{{ _data['user'] }}</p>
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <div class="card d-flex align-self-baseline border p-4">
-                                <h4>{{_("Данные урока")}}</h4>
-                                <div class="card-header">
-                                {% if _data['module'] is mapping %}
-                                    <p><strong>{{_("Курс")}}: </strong>{{ _data['course']['name'] }}</p>
-                                    <p><strong>{{_("Модуль")}}: </strong>{{ _data['module']['name'] }}</p>
-                                    <p><strong>{{_("Урок")}}: </strong>{{ _data['module']['lesson']['name'] }}</p>
-                                    <p class="task"><strong>{{_("Задание")}}: </strong>{{ _data['module']['lesson']['task'] }}</p>
-                                    <p><strong>{{_("Статус")}}: </strong>
-                                        {% if request.args.get("id_homework") is not none %}{{ _homework["status"] }}
-                                        {% else %}{{_("Не сдано")}}{% endif %}
-                                    </p>
+                <div class="row d-flex align-items-stretch">
+                    <div class="col-md-6">
+                        <div class="card d-flex align-self-baseline border p-4">
+                            <h4>{{_("Данные ученика")}}</h4>
+                            <div class="card-header">
+                                {% if _data['user'] is mapping %}
+                                    <p><strong>Login:</strong> {{ _data['user']['login'] }}</p>
+                                    <p><strong>{{_("Имя")}}:</strong> {{ _data['user']['name'] }}</p>
+                                    <p><strong>Email:</strong> {{ _data['user']['email'] }}</p>
                                 {% else %}
-                                    <p>{{ _data['module'] }}</p>
+                                    <p>{{ _data['user'] }}</p>
                                 {% endif %}
-                                </div>
                             </div>
-                        {% if request.args.get("id_homework") is not none %}
-                            <div class="card d-flex align-self-baseline border p-4">
-                                <h4>{{_("Домашняя работа")}}</h4>
-                                <div class="card-header">
-                                    <form id="homework" name="homework" method="post" enctype="multipart/form-data" onsubmit="return checkAnswer(this);">
-                                        <div class="mb-2">
-                                            <div class="mb-2">
-                                                {{ _homework['text'] }}
-                                            </div>
-                                            {% for file in _homework['users_files_list'] %}
-                                                <a download href="{{ url_for('multilingual.download', name_file=file, dataset='chat') }}">{{ file }}</a>
-                                            {% endfor %}
-                                        </div>
+                        </div>
 
-                                    {% if _homework['status'] == "не проверено" %}
-                                        <div class="mb-0">
-                                            <label class="form-label"><strong>Ответ</strong></label>
-                                            <div class="">
-                                              <input  name="answer" type="radio" value="True">
-                                              <label class="form-check-label" for="answer_true">
-                                                  {{_("Принято")}}
-                                              </label>
-                                            </div>
-                                            <div class="">
-                                              <input  name="answer" type="radio" value="False">
-                                              <label class="form-check-label" for="answer_false">
-                                                  {{_("Не принято")}}
-                                              </label>
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                    </form>
-                                </div>
-                            {% if _homework['status'] == "не проверено" %}
-                                <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto;">
-                                    <div class="p-1" style="float: right">
-                                        <button type="submit" form="homework" name="button" value="answer" class="btn btn-primary ">
-                                            {{_("Сохранить")}}
-                                        </button>
-                                    </div>
-                                </div>
+                        <div class="card d-flex align-self-baseline border p-4">
+                            <h4>{{_("Данные урока")}}</h4>
+                            <div class="card-header">
+                            {% if _data['module'] is mapping %}
+                                <p><strong>{{_("Курс")}}: </strong>{{ _data['course']['name'] }}</p>
+                                <p><strong>{{_("Модуль")}}: </strong>{{ _data['module']['name'] }}</p>
+                                <p><strong>{{_("Урок")}}: </strong>{{ _data['module']['lesson']['name'] }}</p>
+                                <p class="task"><strong>{{_("Задание")}}: </strong>{{ _data['module']['lesson']['task'] }}</p>
+                                <p><strong>{{_("Статус")}}: </strong>
+                                    {% if request.args.get("id_homework") is not none %}{{ _homework["status"] }}
+                                    {% else %}{{_("Не сдано")}}{% endif %}
+                                </p>
+                            {% else %}
+                                <p>{{ _data['module'] }}</p>
                             {% endif %}
                             </div>
+                        </div>
+                    {% if request.args.get("id_homework") is not none %}
+                        <div class="card d-flex align-self-baseline border p-4">
+                            <h4>{{_("Домашняя работа")}}</h4>
+                            <div class="card-header">
+                                <form id="homework" name="homework" method="post" enctype="multipart/form-data" onsubmit="return checkAnswer(this);">
+                                    <div class="mb-2">
+                                        {{ _homework['text'] }}
+                                    </div>
+                                    {% for file in _homework['users_files_list'] %}
+                                        <a download href="{{ url_for('multilingual.download', name_file=file, dataset='chat') }}">{{ file }}</a>
+                                    {% endfor %}
+
+                                {% if _homework['status'] == "не проверено" %}
+                                    <div class="mb-0">
+                                        <label class="form-label"><strong>Ответ</strong></label>
+                                        <div>
+                                          <input  name="answer" type="radio" value="True">
+                                          <label class="form-check-label" for="answer_true">
+                                              {{_("Принято")}}
+                                          </label>
+                                        </div>
+                                        <div>
+                                          <input  name="answer" type="radio" value="False">
+                                          <label class="form-check-label" for="answer_false">
+                                              {{_("Не принято")}}
+                                          </label>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                </form>
+                            </div>
+                        {% if _homework['status'] == "не проверено" %}
+                            <div class="row d-flex align-items-stretch bd-highlight" style="margin-left: auto;">
+                                <div class="p-1" style="float: right">
+                                    <button type="submit" form="homework" name="button" value="answer" class="btn btn-primary ">
+                                        {{_("Сохранить")}}
+                                    </button>
+                                </div>
+                            </div>
                         {% endif %}
+                        </div>
+                    {% endif %}
                     </div>
-                <div class="col-md-6 text-left bd-highlight">
-                    {% include "room_chat.html" %}
-                </div>
+                    <div class="col-md-6 text-left">
+                        {% include "room_chat.html" %}
+                    </div>
                 </div>
             </div>
         </div>
