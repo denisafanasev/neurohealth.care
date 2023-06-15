@@ -511,7 +511,6 @@ class UserManager():
         user = self.get_user_by_id(_user_id)
 
         if _reference_point == "end":
-            # x = relativedelta(months=_period)
             user.education_module_expiration_date = (
                     user.education_module_expiration_date + relativedelta(months=_period))
         elif _reference_point == "today":
@@ -520,3 +519,49 @@ class UserManager():
         self.chenge_user(user.user_id, user.login, user.name, user.email, user.role, user.probationers_number,
                          user.created_date, user.education_module_expiration_date,
                          user.token, user.email_confirmed, user.active)
+
+    def get_users_by_ids_list(self, _user_id,_ids_list):
+        """
+        Возвращает список пользователей по ID из списка
+
+        Args:
+            _user_id(Int): ID текущего пользователя
+            _ids_list(List): список ID пользователей
+
+        Returns:
+            List: список пользователей
+        """
+        data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
+
+        users_list = []
+        # Если роль текущего пользователя superuser, то он получит список пользователей.
+        # Иначе, получит пустой список
+        if self.get_user_role(_user_id) == 'superuser':
+            users_data_list = data_store.get_rows(f'users.doc_id in {tuple(_ids_list)}')
+            for user_data in users_data_list:
+                users_list.append(self.user_row_to_user(user_data))
+
+        return users_list
+
+    def get_users_by_role(self, _id_user, _role):
+        """
+        Возвращает список пользователей по роли
+
+        Args:
+            _id_user(Int): ID текущего пользователя
+            _role(Str): роль
+
+        Returns:
+            List: список пользователей
+        """
+        data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
+
+        users_list = []
+        # Если роль текущего пользователя superuser, то он получит список пользователей.
+        # Иначе, получит пустой список
+        if self.get_user_role(_id_user) == 'superuser':
+            users_data_list = data_store.get_rows(f"users.role = '{_role}'")
+            for user_data in users_data_list:
+                users_list.append(self.user_row_to_user(user_data))
+
+        return users_list

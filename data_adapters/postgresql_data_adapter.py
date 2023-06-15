@@ -167,14 +167,14 @@ class PostgreSQLDataAdapter():
         metadata = MetaData(bind=self.data_store)
         metadata.reflect()
 
-        # result = self.data_store.execute(
-        #     update(metadata.tables[self.table_name]).where(metadata.tables[self.table_name].columns["doc_id"] == _id),[_data],
-        # )
-
         result = self.data_store.execute(
-            update(self.table).where(self.table.columns["doc_id"] == _id),
-            [_data],
+            update(metadata.tables[self.table_name]).where(metadata.tables[self.table_name].columns["doc_id"] == _id),[_data],
         )
+
+        # result = self.data_store.execute(
+        #     update(self.table).where(self.table.columns["doc_id"] == _id),
+        #     [_data],
+        # )
 
 
     # def get_last_doc_id_in_the_table(self):

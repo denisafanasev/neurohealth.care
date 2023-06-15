@@ -1493,8 +1493,8 @@ def education_stream_card():
     else:
         # Если пользователь просматривает карточку обучающего потока, то ищем только данные пользователей и курса
         # этого обучающего потока
-        curators_list = page_controller.get_curators_list(user_id, education_stream['curators_list'])
-        students_list = page_controller.get_students_list(user_id, education_stream['students_list'])
+        curators_list = page_controller.get_curators_list(user_id, id_education_stream)
+        students_list = page_controller.get_students_list(user_id, id_education_stream)
         courses_list = [education_stream['course']]
 
     if request.method == 'POST':

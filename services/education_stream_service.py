@@ -32,41 +32,49 @@ class EducationStreamService():
 
         return education_streams_list
 
-    def get_students_list(self, _id_user):
+    def get_students_list(self, _user_id, _id_education_stream):
         """
-        Возвращает список пользователей с ролью user
+        Возвращает список студентов обучающего потока
+
+        Args:
+            _user_id(Int): ID текущего пользователя
+            _id_education_stream(Int): ID обучающего потока
 
         Returns:
             students_list(List): список пользователей
         """
 
         user_manager = UserManager()
+        education_stream_manager = EducationStreamManager()
 
-        users_list = user_manager.get_users(_id_user)
-        students_list = []
-
-        for user in users_list:
-            if user.role == "user":
-                students_list.append(user)
+        if _id_education_stream is not None:
+            education_stream = education_stream_manager.get_education_stream(_id_education_stream)
+            students_list = user_manager.get_users_by_ids_list(_user_id, education_stream.students_list)
+        else:
+            students_list = user_manager.get_users_by_role(_user_id, 'user')
 
         return students_list
 
-    def get_curators_list(self, _id_user):
+    def get_curators_list(self, _user_id, _id_education_stream):
         """
-        Возвращает список пользователей с ролью superuser
+        Возвращает список кураторов обучающего потока
+
+        Args:
+            _user_id(Int): ID текущего пользователя
+            _id_education_stream(Int): ID обучающего потока
 
         Returns:
             curators_list(List): список пользователей
         """
 
         user_manager = UserManager()
+        education_stream_manager = EducationStreamManager()
 
-        users_list = user_manager.get_users(_id_user)
-        curators_list = []
-
-        for user in users_list:
-            if user.role == "superuser":
-                curators_list.append(user)
+        if _id_education_stream is not None:
+            education_stream = education_stream_manager.get_education_stream(_id_education_stream)
+            curators_list = user_manager.get_users_by_ids_list(_user_id, education_stream.curators_list)
+        else:
+            curators_list = user_manager.get_users_by_role(_user_id, 'superuser')
 
         return curators_list
 
