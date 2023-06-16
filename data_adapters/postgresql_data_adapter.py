@@ -27,9 +27,8 @@ class PostgreSQLDataAdapter():
             _table_name    - Required  : имя таблицы данных (String)
         """
 
-        self.table_name = _table_name
         self.data_store = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
-        # self.table = Table(_table_name, MetaData(bind=self.data_store), autoload_with=self.data_store)
+        self.table = Table(_table_name, MetaData(bind=self.data_store), autoload_with=self.data_store)
 
     def get_rows(self, _filter=None):
         """
@@ -38,12 +37,11 @@ class PostgreSQLDataAdapter():
         @params:
             _filter   - Optional  : срока с заданным фильтром (String)
         """
+        #
+        # metadata = MetaData(bind=self.data_store)
+        # metadata.reflect()
 
-        metadata = MetaData(bind=self.data_store)
-        metadata.reflect()
-
-        query = select(metadata.tables[self.table_name])
-        # query = select(self.table)
+        query = select(self.table)
         if _filter is not None:
             query = query.where(text(_filter))
 
@@ -64,19 +62,10 @@ class PostgreSQLDataAdapter():
         result = None
 
         if _id != '':
-
-            # read DB metadata
-            metadata = MetaData(bind=self.data_store)
-            metadata.reflect()
-
             # run select by doc_id (default primary key for each table)
             query_result = self.data_store.execute(
-                select(metadata.tables[self.table_name]).where(metadata.tables[self.table_name].columns["doc_id"] == _id)
+                select(self.table).where(self.table.columns["doc_id"] == _id)
             )
-
-            # query_result = self.data_store.execute(
-            #     select(self.table).where(self.table.columns["doc_id"] == _id)
-            # )
             # convert sqlalchemy query result to list of dict
             result = [u._asdict() for u in query_result.all()]
 
@@ -90,15 +79,7 @@ class PostgreSQLDataAdapter():
         @params:
             _filter   - Optional  : срока с заданным фильтром (String)
         """
-
-        result = 0
-
-        # read DB metadata
-        metadata = MetaData(bind=self.data_store)
-        metadata.reflect()
-
-        query_result = db.select([db.func.count()]).select_from(metadata.tables[self.table_name])
-        # query_result = db.select([db.func.count()]).select_from(self.table)
+        query_result = db.select([db.func.count()]).select_from(self.table)
         if _filter:
             query_result = query_result.where(_filter)
 
@@ -122,17 +103,12 @@ class PostgreSQLDataAdapter():
         metadata.reflect()
 
         if _data.get('doc_id') is None:
-            doc_id_last = db.select([func.max(metadata.tables[self.table_name].columns['doc_id'])]).select_from(metadata.tables[self.table_name]).scalar()
-            # doc_id_last = self.data_store.execute(select(db.func.max(self.table.columns['doc_id']))).scalar()
+            doc_id_last = self.data_store.execute(select(db.func.max(self.table.columns['doc_id']))).scalar()
             _data['doc_id'] = doc_id_last + 1
 
         result = self.data_store.execute(
-            insert(metadata.tables[self.table_name]),[_data],
+            insert(self.table), [_data],
         )
-
-        # result = self.data_store.execute(
-        #     insert(self.table), [_data],
-        # )
 
         return _data['doc_id']
 
@@ -168,18 +144,6 @@ class PostgreSQLDataAdapter():
         metadata.reflect()
 
         result = self.data_store.execute(
-            update(metadata.tables[self.table_name]).where(metadata.tables[self.table_name].columns["doc_id"] == _id),[_data],
+            update(self.table).where(self.table.columns["doc_id"] == _id),
+            [_data],
         )
-
-        # result = self.data_store.execute(
-        #     update(self.table).where(self.table.columns["doc_id"] == _id),
-        #     [_data],
-        # )
-
-
-    # def get_last_doc_id_in_the_table(self):
-    #
-    #     metadata = MetaData(bind=self.data_store)
-    #     metadata.reflect()
-    #
-    #     result = self.data_store.execute(select(metadata.tables[self.table_name]))
