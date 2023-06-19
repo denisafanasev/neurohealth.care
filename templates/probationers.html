@@ -35,15 +35,12 @@
 
         <div class="card card-body">
             <div class="col-sm-12 col-md-6">
-                <div class="dt-buttons btn-group flex-wrap">
-                    <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
-                       data-bs-toggle="modal" data-bs-target="#0"
-                       href="{{ url_for('multilingual.probationer_card') }}">
-                        <span>{{ _("Добавить тестируемого") }}</span>
-                    </a>
-                </div>
+                <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
+                   data-bs-toggle="modal" data-bs-target="#0"
+                   href="{{ url_for('multilingual.probationer_card') }}">
+                    <span>{{ _("Добавить тестируемого") }}</span>
+                </a>
             </div>
-
 
             <div class="col-sm-12">
                 <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline"
@@ -81,7 +78,7 @@
                             {{ _("Учебное заведение") }}</th>
                     </tr>
                     </thead>
-                    <tbody style="">
+                    <tbody>
 
                     {% for item in _probationers_list %}
                         <tr class="even">
