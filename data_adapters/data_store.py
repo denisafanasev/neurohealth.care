@@ -30,7 +30,11 @@ class DataStore():
             force_adapter = config.data_adapter()
 
         if force_adapter == "PostgreSQLDataAdapter":
-            self.data_store = PostgreSQLDataAdapter(_table_name)
+            try:
+                self.data_store = PostgreSQLDataAdapter(_table_name)
+            except KeyError:
+                self.data_store = TinyDBDataAdapter(_table_name, tinydb_table_name)
+                raise KeyError('Данной таблицы в PostgreSQL не существует. Данные берутся из TinyDB')
 
         elif force_adapter == "TinyDBDataAdapter":
             self.data_store = TinyDBDataAdapter(_table_name, tinydb_table_name)

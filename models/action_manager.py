@@ -166,7 +166,7 @@ class ActionManager():
 
         return actions
 
-    def get_actions(self, _login):
+    def get_actions_by_login(self, _login):
         """
         Возвращает все действия пользователя по логину
 
@@ -176,9 +176,25 @@ class ActionManager():
         Returns:
             List(Action): список действий пользователя
         """
+        data_store = DataStore('action', force_adapter='PostgreSQLDataAdapter')
+
+        actions_list_data = data_store.get_rows(f"action.login = '{_login}'")
+        actions_list = []
+        for action_data in actions_list_data:
+            actions_list.append(self.action_row_to_action(action_data))
+
+        return actions_list
+
+    def get_actions(self):
+        """
+        Возвращает действия всех пользователей
+
+        Returns:
+            List: список действий
+        """
         data_store = DataStore('action')
 
-        actions_list_data = data_store.get_rows({'login': _login})
+        actions_list_data = data_store.get_rows()
         actions_list = []
         for action_data in actions_list_data:
             actions_list.append(self.action_row_to_action(action_data))
