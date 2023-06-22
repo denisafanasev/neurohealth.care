@@ -99,8 +99,14 @@ class UserManager():
 
         # создадим пользователя с указанием обязательных атрибутов
         # note that doc_id from the table used as a user_id
+        # if _data_row.get('doc_id') is not None:
+        #     doc_id = _data_row['doc_id']
+        # else:
+        #     doc_id = _data_row.doc_id
+
+        doc_id = _data_row['doc_id'] if _data_row.get('doc_id') is not None else _data_row.doc_id
         try:
-            user = User(_data_row['doc_id'], _data_row['login'], _data_row['name'], _data_row['email'], _data_row['role'],
+            user = User(doc_id, _data_row['login'], _data_row['name'], _data_row['email'], _data_row['role'],
                         _data_row['active'])
         except KeyError as error:
             raise UserManagerException("DB structure error: no attribute " + error.args[0])
@@ -113,16 +119,20 @@ class UserManager():
             user.probationers_number = 5
 
         if _data_row.get('created_date') is not None:
-            # user.created_date = datetime.strptime(_data_row['created_date'], '%d/%m/%Y')
-            user.created_date = _data_row['created_date']
+            if isinstance(_data_row['created_date'], str):
+                user.created_date = datetime.strptime(_data_row['created_date'], '%d/%m/%Y')
+            else:
+                user.created_date = _data_row['created_date']
         else:
             # user.created_date = datetime.strptime("01/01/1990", '%d/%m/%Y')
             user.created_date = datetime(1990, 1, 1, 0, 0)
 
         if _data_row.get('education_module_expiration_date') is not None:
-            # user.education_module_expiration_date = datetime.strptime(_data_row['education_module_expiration_date'],
-            #                                                           '%d/%m/%Y')
-            user.education_module_expiration_date = _data_row['education_module_expiration_date']
+            if isinstance(_data_row['education_module_expiration_date'], str):
+                user.education_module_expiration_date = datetime.strptime(_data_row['education_module_expiration_date'],
+                                                                          '%d/%m/%Y')
+            else:
+                user.education_module_expiration_date = _data_row['education_module_expiration_date']
         else:
             user.education_module_expiration_date = datetime.today()
 
@@ -565,3 +575,11 @@ class UserManager():
                 users_list.append(self.user_row_to_user(user_data))
 
         return users_list
+
+    def get_current_data_adapter(self):
+        """
+
+        """
+        data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
+
+        return data_store.get_current_data_adapter()

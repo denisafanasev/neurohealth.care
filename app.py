@@ -1370,6 +1370,8 @@ def maintenance():
     mpc = MainMenuPageController(current_user_id)
     upload_users_from_json_to_sql_page_data = page_controller.get_upload_users_from_json_to_sql_page_data(
         current_user_id)
+    upload_actions_from_json_to_sql_page_data = page_controller.get_upload_actions_from_json_to_sql_page_data(
+        current_user_id)
 
     if not flask_login.current_user.is_admin():
         return redirect(url_for("multilingual.main_page"))
@@ -1384,10 +1386,17 @@ def maintenance():
 
             return redirect(url_for('multilingual.maintenance'))
 
+        elif action_name == 'upload_action_from_json_to_sql':
+            page_controller.upload_actions_from_json_to_sql()
+
+        else:
+
+            page_controller.create_table_in_sql(action_name)
+
     return render_template('maintenance.html', view="maintenance", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _endpoint=endpoint, _page_data=upload_users_from_json_to_sql_page_data, _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _endpoint=endpoint, _user_page_data=upload_users_from_json_to_sql_page_data, _lang_code=get_locale(),
+                           _languages=config.LANGUAGES, _action_page_data=upload_actions_from_json_to_sql_page_data)
 
 
 @multilingual.route('/settings/estimated_values', methods=['GET', 'POST'])

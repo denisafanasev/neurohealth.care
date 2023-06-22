@@ -99,7 +99,7 @@ class ActionManager():
             actions(List): список испытуемых
         """
 
-        data_store = DataStore("action")
+        data_store = DataStore("action", force_adapter='PostgreSQLDataAdapter')
     
         actions_list = data_store.get_rows()
 
@@ -200,3 +200,17 @@ class ActionManager():
             actions_list.append(self.action_row_to_action(action_data))
 
         return actions_list
+
+    def get_current_data_adapter(self):
+        """
+
+        """
+        data_store = DataStore('action', force_adapter='PostgreSQLDataAdapter')
+
+        return data_store.get_current_data_adapter()
+
+    def get_count_actions(self):
+
+        data_store = DataStore('action', force_adapter='PostgreSQLDataAdapter')
+
+        return data_store.get_rows_count()

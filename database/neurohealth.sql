@@ -15,7 +15,7 @@ create table users(
 
 create table action(
 	doc_id INT PRIMARY KEY,
-	user_id VARCHAR ( 15 ) UNIQUE NOT NULL,
+	login VARCHAR ( 15 ) UNIQUE NOT NULL,
 	action VARCHAR ( 200 ),
 	comment_action VARCHAR ( 100 ) UNIQUE NOT NULL,
 	created_date TIMESTAMP NOT NULL

@@ -28,7 +28,8 @@ class PostgreSQLDataAdapter():
         """
 
         self.data_store = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
-        self.table = Table(_table_name, MetaData(bind=self.data_store), autoload_with=self.data_store)
+        if _table_name is not None:
+            self.table = Table(_table_name, MetaData(bind=self.data_store), autoload_with=self.data_store)
 
     def get_rows(self, _filter=None):
         """

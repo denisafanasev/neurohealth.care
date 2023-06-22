@@ -7,6 +7,7 @@ from data_adapters.postgresql_data_adapter import PostgreSQLDataAdapter
 
 import config
 
+
 class DataStore():
     """
     Класс предназначен для работы с системой хранения данных
@@ -29,12 +30,15 @@ class DataStore():
         if force_adapter is None:
             force_adapter = config.data_adapter()
 
+        self.current_data_adapter = force_adapter
         if force_adapter == "PostgreSQLDataAdapter":
             try:
                 self.data_store = PostgreSQLDataAdapter(_table_name)
-            except KeyError:
+
+            except:
                 self.data_store = TinyDBDataAdapter(_table_name, tinydb_table_name)
-                raise KeyError('Данной таблицы в PostgreSQL не существует. Данные берутся из TinyDB')
+                self.current_data_adapter = 'TinyDBDataAdapter'
+                # raise NoSuchTableError('Данной таблицы в PostgreSQL не существует. Данные берутся из TinyDB')
 
         elif force_adapter == "TinyDBDataAdapter":
             self.data_store = TinyDBDataAdapter(_table_name, tinydb_table_name)
@@ -150,4 +154,10 @@ class DataStore():
         """
 
         self.data_store.delete_row(_data_ids)
+
+    def get_current_data_adapter(self):
+        """
+
+        """
+        return self.current_data_adapter
 
