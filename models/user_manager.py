@@ -381,9 +381,16 @@ class UserManager():
         user = User(_login=login, _name=name, _email=email, _role=role, _probationers_number=_probationers_number,
                     _token=token, _email_confirmed=email_confirmed)
 
+        if data_store.get_current_data_adapter() == 'TinyDBDataAdapter':
+            created_date = user.created_date.strftime('%d/%m/%Y')
+            education_module_expiration_date = user.education_module_expiration_date.strftime('%d/%m/%Y')
+        else:
+            created_date = user.created_date
+            education_module_expiration_date = user.education_module_expiration_date
+
         user_data = {"login": user.login, "password": password, "email": user.email,
-                     "role": user.role, "name": user.name, "created_date": user.created_date,
-                     "education_module_expiration_date": user.education_module_expiration_date,
+                     "role": user.role, "name": user.name, "created_date": created_date,
+                     "education_module_expiration_date": education_module_expiration_date,
                      "probationers_number": user.probationers_number,
                      "active": user.active, "email_confirmed": user.email_confirmed, "token": user.token}
 
@@ -433,9 +440,16 @@ class UserManager():
                     _education_module_expiration_date=_education_module_expiration_date, _active=_active)
 
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
+        if data_store.get_current_data_adapter() == 'TinyDBDataAdapter':
+            created_date = user.created_date.strftime('%d/%m/%Y')
+            education_module_expiration_date = user.education_module_expiration_date.strftime('%d/%m/%Y')
+        else:
+            created_date = user.created_date
+            education_module_expiration_date = user.education_module_expiration_date
+
         user_data = {"login": user.login, "email": user.email, "role": user.role, "name": user.name,
-                     "probationers_number": user.probationers_number, "created_date": user.created_date,
-                     "education_module_expiration_date": user.education_module_expiration_date, "active": user.active,
+                     "probationers_number": user.probationers_number, "created_date": created_date,
+                     "education_module_expiration_date": education_module_expiration_date, "active": user.active,
                      "token": user.token, "email_confirmed": user.email_confirmed}
 
         data_store.update_row_by_id(user_data, user.user_id)

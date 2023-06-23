@@ -157,7 +157,7 @@ class DataStore():
 
     def get_current_data_adapter(self):
         """
-
+        Возвращает
         """
         return self.current_data_adapter
 

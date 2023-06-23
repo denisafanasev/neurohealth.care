@@ -63,14 +63,14 @@ class MaintenanceService():
 
         # create data store with SQL data adapter
         data_store = DataStore("users", force_adapter="PostgreSQLDataAdapter")
-        # data_store_tiny_db = DataStore('users')
+        data_store_tiny_db = DataStore('users')
 
         for user in users:
             password = ''
 
-            # user_data = data_store_tiny_db.get_row_by_id(user.user_id)
-            # if user_data is not None:
-            #     password = user_data['password']
+            user_data = data_store_tiny_db.get_row_by_id(user.user_id)
+            if user_data is not None:
+                password = user_data['password']
 
             # convert User object to Dict
             user_raw = {"doc_id": user.user_id, "active": user.active, "password": password, "created_date": user.created_date,
@@ -101,7 +101,7 @@ class MaintenanceService():
         actions = action_manager.get_actions()
         actions_number = len(actions)
 
-        db_data_store = DataStore("actions", force_adapter="PostgreSQLDataAdapter")
+        db_data_store = DataStore("action", force_adapter="PostgreSQLDataAdapter")
         current_data_adapter = action_manager.get_current_data_adapter()
         if current_data_adapter == 'PostgreSQLDataAdapter':
             db_actions_number = db_data_store.get_rows_count()
@@ -138,7 +138,7 @@ class MaintenanceService():
         for action in action_list:
             # convert Action object to Dict
             # user = user_manager.get_user_by_login(action.user_login)
-            action_raw = {"doc_id": action.id, 'user_login': action.user_login, 'action': action.action,
+            action_raw = {"doc_id": action.id, 'login': action.user_login, 'action': action.action,
                           'created_date': action.created_date, 'comment_action': action.comment_action}
             if data_store.get_row_by_id(action.id):
                 # if user existed in the table, make change
