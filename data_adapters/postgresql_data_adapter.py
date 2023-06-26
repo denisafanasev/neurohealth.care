@@ -43,8 +43,8 @@ class PostgreSQLDataAdapter():
         # metadata.reflect()
 
         query = select(self.table)
-        if _filter is not None:
-            query = query.where(text(_filter))
+        if _filter != '':
+            query = self.update_query(_filter, query)
 
         query_result = self.data_store.execute(query)
 
@@ -82,7 +82,7 @@ class PostgreSQLDataAdapter():
         """
         query_result = db.select([db.func.count()]).select_from(self.table)
         if _filter:
-            query_result = query_result.where(_filter)
+            query_result = self.update_query(_filter, query_result)
 
         # convert sqlalchemy query result to scalar
         result = query_result.scalar()
@@ -148,3 +148,31 @@ class PostgreSQLDataAdapter():
             update(self.table).where(self.table.columns["doc_id"] == _id),
             [_data],
         )
+
+    def update_query(self, _query_dict, _query):
+        """
+        Дополняет запрос к БД
+
+        Args:
+            _query_dict(Dict):
+            _query(Query)
+
+        Returns:
+            _query(Query): Окончательный запрос
+        """
+        if _query_dict.get('where') is not None:
+            _query = _query.where(text(_query_dict['where']))
+
+        if _query_dict.get('group_by') is not None:
+            _query = _query.group_by(text(_query_dict['group_by']))
+
+        if _query_dict.get('order_by') is not None:
+            _query = _query.order_by(text(_query_dict['order_by']))
+
+        if _query_dict.get('having') is not None:
+            _query = _query.having(text(_query_dict['having']))
+
+        if _query_dict.get('limit') is not None:
+            _query = _query.limit(_query_dict['limit'])
+
+        return _query

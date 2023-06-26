@@ -54,6 +54,6 @@ class EstimatedValuesService():
         action_manager = ActionManager()
 
         file_name = estimated_values_manager.overwrite(_id_file_name, _criteria)
-        login_user = user_manager.get_user_by_id(_id_user).login
+        user = user_manager.get_user_by_id(_id_user)
 
-        action_manager.add_notifications(file_name, "изменил", '', "estimated_values", login_user)
+        action_manager.add_notifications(file_name, "изменил", '', "estimated_values", user)

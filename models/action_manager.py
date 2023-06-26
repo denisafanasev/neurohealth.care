@@ -14,7 +14,8 @@ class ActionManager():
             _action (List): список действий пользователя
         """
 
-        action = Action(_id=_data_row['doc_id'], _user_login=_data_row["login"], _action=_data_row["action"])
+        doc_id = _data_row['doc_id'] if _data_row.get('doc_id') is not None else _data_row.doc_id
+        action = Action(_id=doc_id, _user_login=_data_row.get("login"), _action=_data_row["action"], _user_id=_data_row.get('user_id'))
 
         if _data_row.get("created_date") is not None:
             if isinstance(_data_row['created_date'], str):
@@ -79,19 +80,23 @@ class ActionManager():
             comment_action = f"по курсу {_place}"
 
         action = "{user} {action} {name_place}".format(
-            user=_user,
+            user=_user.login,
             action=_action,
             name_place=_name_place)
-        id = data_store.get_rows_count() + 1
 
-        action = self.action_row_to_action({"id": id, "login": _user, "action": action, "comment_action": comment_action})
-        if data_store.get_current_data_adapter() == 'TinyDBDataAdapter':
+        # action = Action(_user_login= _user, _action=action, _comment_action=comment_action)
+        if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
+            action = Action(_user_id=_user.user_id, _action=action, _comment_action=comment_action)
             created_date = action.created_date.strftime("%d/%m/%Y %H:%M:%S")
+
+            data_store.insert_row({"id": action.id, "user_id": action.user_id, "action": action.action,
+                                   "comment_action": action.comment_action, "created_date": created_date})
         else:
+            action = Action(_user_login=_user.login, _action=action, _comment_action=comment_action)
             created_date = action.created_date
 
-        data_store.insert_row({"id": action.id, "login": action.user_login, "action": action.action,
-                               "comment_action": action.comment_action, "created_date": created_date})
+            data_store.insert_row({"id": action.id, "login": action.user_login, "action": action.action,
+                                   "comment_action": action.comment_action, "created_date": created_date})
 
     def get_last_ten_actions(self, _user):
         """
@@ -107,18 +112,16 @@ class ActionManager():
 
         data_store = DataStore("action", force_adapter='PostgreSQLDataAdapter')
 
-        actions_list = data_store.get_rows()
-
         date = datetime.now()
         actions = []
 
         # for i_action in actions_list:
         if not _user.role == "superuser":
-            actions_list = self.get_actions_by_login(_user.login)
-            for action in actions_list:
-                if action.comment_action == '':
-                    data_store.update_row({"comment_action": action.comment_action, "id": action.id}, "id")
-
+            actions_list = data_store.get_rows(
+                {'where': f'action.user_id = {_user.user_id}', 'order_by': 'action.created_date desc', 'limit': 10})
+            # actions_list = self.get_actions_by_login(_user.login)
+            for action_data in actions_list:
+                action = self.action_row_to_action(action_data)
                 if date < action.created_date:
                     actions.append({"action": action, "timedelta": date - date})
                     data_store.update_row({"created_date": date.strftime("%d/%m/%Y %H:%M:%S"), "id": action.id},
@@ -127,8 +130,11 @@ class ActionManager():
                     actions.append({"action": action, "timedelta": date - action.created_date})
                 # timedelta_list.append(date - action.created_date)
         else:
-            actions_list = self.get_actions()
-            for action in actions_list:
+            # actions_list = self.get_actions()
+            actions_list = data_store.get_rows(
+                {'order_by': 'action.created_date desc', 'limit': 10})
+            for action_data in actions_list:
+                action = self.action_row_to_action(action_data)
                 if date < action.created_date:
                     actions.append({"action": action, "timedelta": date - date})
                     data_store.update_row({"created_date": date.strftime("%d/%m/%Y %H:%M:%S"), "id": action.id}, "id")
@@ -187,7 +193,11 @@ class ActionManager():
         """
         data_store = DataStore('action', force_adapter='PostgreSQLDataAdapter')
 
-        actions_list_data = data_store.get_rows(f"action.login = '{_login}'")
+        if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
+            actions_list_data = data_store.get_rows({'where': f"action.login = '{_login}'"})
+        else:
+            actions_list_data = data_store.get_rows({"login": _login})
+
         actions_list = []
         for action_data in actions_list_data:
             actions_list.append(self.action_row_to_action(action_data))

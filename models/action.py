@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 import datetime
 
 
@@ -7,7 +7,7 @@ class Action():
     Класс действий
     """
 
-    def __init__(self, _id=None, _user_login="", _action="", _created_date=None, _comment_action=''):
+    def __init__(self, _id=None, _user_login="", _action="", _created_date=None, _comment_action='', _user_id=None):
         """
         Конструктор класса
 
@@ -19,11 +19,12 @@ class Action():
 
         self.id = _id
         self.user_login = _user_login
+        self.user_id = _user_id
         self.action = _action
         self.comment_action = _comment_action
 
         if _created_date is None:
-            self.created_date = date.today()
+            self.created_date = datetime.datetime.today()
         else:
             self.created_date = _created_date
 

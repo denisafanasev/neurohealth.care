@@ -49,10 +49,10 @@ class UserProfileService():
         action_manager = ActionManager()
 
         error = user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
-        login_superuser = user_manager.get_user_by_id(_current_user_id).login
+        current_user = user_manager.get_user_by_id(_current_user_id)
 
         if isinstance(error, int):
-            action_manager.add_notifications(_login, "добавил", 'нового', "user_manager", login_superuser)
+            action_manager.add_notifications(error, "добавил", 'нового', "user_manager", current_user)
 
         return error
 
@@ -83,9 +83,9 @@ class UserProfileService():
         user = user_manager.chenge_user(_user_id, _login,_name, _email, _role, _probationers_number, _created_date,
                                         _education_module_expiration_date, _active=_is_active)
 
-        login_superuser = user_manager.get_user_by_id(_current_user_id).login
+        current_user = user_manager.get_user_by_id(_current_user_id)
 
-        action_manager.add_notifications(user.login, "изменил", 'данные', "user_manager", login_superuser)
+        action_manager.add_notifications(user, "изменил", 'данные', "user_manager", current_user)
 
         return user
 
@@ -108,10 +108,10 @@ class UserProfileService():
         action_manager = ActionManager()
 
         error = user_manager.chenge_password(_user_id, _password, _password2, _current_password)
-        login_superuser = user_manager.get_user_by_id(_current_user_id).login
-        login_user = user_manager.get_user_by_id(_user_id).login
+        current_user = user_manager.get_user_by_id(_current_user_id)
+        user = user_manager.get_user_by_id(_user_id)
 
-        action_manager.add_notifications(login_user, "изменил", 'пароль', "user_manager", login_superuser)
+        action_manager.add_notifications(user, "изменил", 'пароль', "user_manager", current_user)
 
         return error
 
@@ -128,10 +128,10 @@ class UserProfileService():
         action_manager = ActionManager()
 
         user_manager.activation(_user_id)
-        login_user = user_manager.get_user_by_id(_user_id).login
+        user = user_manager.get_user_by_id(_user_id)
 
-        login_superuser = user_manager.get_user_by_id(_current_user_id).login
-        action_manager.add_notifications(login_user, "изменил", 'доступ', "user_manager", login_superuser)
+        current_user = user_manager.get_user_by_id(_current_user_id)
+        action_manager.add_notifications(user, "изменил", 'доступ', "user_manager", current_user)
 
     def deactivation(self, _user_id, _current_user_id):
         """
@@ -146,10 +146,10 @@ class UserProfileService():
         action_manager = ActionManager()
 
         active = user_manager.deactivation(_user_id)
-        login_user = user_manager.get_user_by_id(_user_id).login
+        user = user_manager.get_user_by_id(_user_id)
 
-        login_superuser = user_manager.get_user_by_id(_current_user_id).login
-        action_manager.add_notifications(login_user, "изменил", 'доступ', "user_manager", login_superuser)
+        current_user = user_manager.get_user_by_id(_current_user_id)
+        action_manager.add_notifications(user, "изменил", 'доступ', "user_manager", current_user)
 
         return active
 
@@ -182,10 +182,10 @@ class UserProfileService():
         action_manager = ActionManager()
 
         user_manager.access_extension(_period, _reference_point, _user_id)
-        login_superuser = user_manager.get_user_by_id(_current_user_id).login
-        login_user = user_manager.get_user_by_id(_user_id).login
+        current_user = user_manager.get_user_by_id(_current_user_id)
+        user = user_manager.get_user_by_id(_user_id)
 
-        action_manager.add_notifications(login_user, "продлил", 'срок доступа', "user_manager", login_superuser)
+        action_manager.add_notifications(user, "продлил", 'срок доступа', "user_manager", current_user)
 
     def get_education_streams_list(self, _user_id, _role_user):
         """

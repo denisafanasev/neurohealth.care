@@ -36,9 +36,9 @@ class ProbationerCardService():
         name_probationer = probationer_manager.create_probationer( _user_login, _name_probationer, _date_of_birth,
                                                _name_parent, _educational_institution, _contacts, _diagnoses,
                                                _reasons_for_contact)
-        login_user = user_service.get_user_by_id(_id_user).login
+        user = user_service.get_user_by_id(_id_user)
 
-        action_manager.add_notifications(name_probationer, "добавил", 'нового', "probationer_manager", login_user)
+        action_manager.add_notifications(name_probationer, "добавил", 'нового', "probationer_manager", user)
 
     def get_probationer_card_view(self, probationer_id):
         """
@@ -75,6 +75,6 @@ class ProbationerCardService():
         name_probationer = probationer_manager.change_probationer(_probationer_id, _name_probationer, _date_of_birth,
                             _name_parent, _educational_institution, _contacts, _diagnoses, _reasons_for_contact)
 
-        login_user = user_manager.get_user_by_id(_id_user).login
+        user = user_manager.get_user_by_id(_id_user)
 
-        action_manager.add_notifications(name_probationer, "изменил", '', "probationer_manager", login_user)
+        action_manager.add_notifications(name_probationer, "изменил", '', "probationer_manager", user)

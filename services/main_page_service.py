@@ -56,9 +56,9 @@ class MainPageService():
         action_manager = ActionManager()
 
         error = user_manager.chenge_password(_user_id, _password, _password2, _current_password)
-        login_superuser = user_manager.get_user_by_id(_user_id).login
+        user = user_manager.get_user_by_id(_user_id)
 
-        action_manager.add_notifications(login_superuser, "изменил", 'пароль', "user_manager", login_superuser)
+        action_manager.add_notifications(user, "изменил", 'пароль', "user_manager", user)
 
         return error
 

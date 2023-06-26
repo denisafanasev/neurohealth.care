@@ -97,7 +97,7 @@ class HomeworkCardService():
         user = user_manager.get_user_by_id(homework.id_user)
         lesson = lesson_manager.get_lesson_by_id(homework.id_lesson)
 
-        action_manager.add_notifications(user.login, "принял", lesson.name, "homework_manager", current_user.login)
+        action_manager.add_notifications(user.login, "принял", lesson.name, "homework_manager", current_user)
 
         return homework
 
@@ -123,7 +123,7 @@ class HomeworkCardService():
         user = user_manager.get_user_by_id(homework.id_user)
         lesson = lesson_manager.get_lesson_by_id(homework.id_lesson)
 
-        action_manager.add_notifications(user.login, "не принял", lesson.name, "homework_manager", current_user.login)
+        action_manager.add_notifications(user.login, "не принял", lesson.name, "homework_manager", current_user)
 
         return homework
 

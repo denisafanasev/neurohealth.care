@@ -218,8 +218,12 @@ class UserManager():
 
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
-        # user_data = data_store.get_rows({"login": login, "password": password})
-        user_data = data_store.get_rows(f"users.login = '{login}' and users.password = '{password}'")
+        # user_data = data_store.get_rows(f"users.login = '{login}' and users.password = '{password}'")
+        if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
+            user_data = data_store.get_rows({'where': f"users.login = '{login}' and users.password = '{password}'"})
+        else:
+            user_data = data_store.get_rows({"login": login, "password": password})
+
         # проверим, что у нас данному набору логин и пароль соответсвует только одна запись пользователя
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей")
@@ -245,8 +249,10 @@ class UserManager():
         login = _login.lower().strip()
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
-        # user_data = data_store.get_rows(f"select * from users where users.login = '{login}'")
-        user_data = data_store.get_rows(f"users.login = '{login}'")
+        if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
+            user_data = data_store.get_rows({'where': f"users.login = '{login}'"})
+        else:
+            user_data = data_store.get_rows({"login": login})
 
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей, login не уникальный")
@@ -270,7 +276,10 @@ class UserManager():
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
         # user_data = data_store.get_rows(f"select * from users where users.email = '{email}'")
-        user_data = data_store.get_rows(f"users.email = '{email}'")
+        if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
+            user_data = data_store.get_rows({'where': f"users.email = '{email}'"})
+        else:
+            user_data = data_store.get_rows({"email": email})
 
         if len(user_data) > 1:
             raise UserManagerException("Ошибка в базе данных пользователей, email не уникальный")
@@ -560,10 +569,11 @@ class UserManager():
         users_list = []
         # Если роль текущего пользователя superuser, то он получит список пользователей.
         # Иначе, получит пустой список
-        if self.get_user_role(_user_id) == 'superuser':
-            users_data_list = data_store.get_rows(f'users.doc_id in {tuple(_ids_list)}')
-            for user_data in users_data_list:
-                users_list.append(self.user_row_to_user(user_data))
+        if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
+            if self.get_user_role(_user_id) == 'superuser':
+                users_data_list = data_store.get_rows({'where': f'users.doc_id in {tuple(_ids_list)}'})
+                for user_data in users_data_list:
+                    users_list.append(self.user_row_to_user(user_data))
 
         return users_list
 
@@ -584,7 +594,10 @@ class UserManager():
         # Если роль текущего пользователя superuser, то он получит список пользователей.
         # Иначе, получит пустой список
         if self.get_user_role(_id_user) == 'superuser':
-            users_data_list = data_store.get_rows(f"users.role = '{_role}'")
+            if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
+                users_data_list = data_store.get_rows({'where': f"users.role = '{_role}'"})
+            else:
+                users_data_list = data_store.get_rows({'role': _role})
             for user_data in users_data_list:
                 users_list.append(self.user_row_to_user(user_data))
 

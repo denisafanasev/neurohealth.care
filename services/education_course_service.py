@@ -202,6 +202,6 @@ class EducationCourseService():
 
         if lesson is not None:
             if user.role != "superuser":
-                action_manager.add_notifications(module, "посмотрел", '', "course_manager", user.login)
+                action_manager.add_notifications(module, "посмотрел", '', "course_manager", user)
 
             return redirect(url_for("multilingual.education_course_lesson", id_lesson=lesson.id, id_video=1))

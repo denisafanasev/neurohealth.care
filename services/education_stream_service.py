@@ -50,6 +50,11 @@ class EducationStreamService():
         if _id_education_stream is not None:
             education_stream = education_stream_manager.get_education_stream(_id_education_stream)
             students_list = user_manager.get_users_by_ids_list(_user_id, education_stream.students_list)
+            if not students_list:
+                users_list = user_manager.get_users_by_role(_user_id, 'user')
+                for user in users_list:
+                    if user.user_id in education_stream.students_list:
+                        students_list.append(user)
         else:
             students_list = user_manager.get_users_by_role(_user_id, 'user')
 
@@ -73,6 +78,12 @@ class EducationStreamService():
         if _id_education_stream is not None:
             education_stream = education_stream_manager.get_education_stream(_id_education_stream)
             curators_list = user_manager.get_users_by_ids_list(_user_id, education_stream.curators_list)
+            if not curators_list:
+                users_list = user_manager.get_users_by_role(_user_id, 'superuser')
+                curators_list = []
+                for user in users_list:
+                    if user.user_id in education_stream.curators_list:
+                        curators_list.append(user)
         else:
             curators_list = user_manager.get_users_by_role(_user_id, 'superuser')
 
@@ -141,7 +152,7 @@ class EducationStreamService():
         current_user = user_manager.get_user_by_id(_current_user_id)
         course = course_manager.get_course_by_id(_education_stream['id_course'])
         action_manager.add_notifications(course.name, 'создал', education_stream.name, 'education_stream_manager',
-                                         current_user.login)
+                                         current_user)
 
         return education_stream.id
 
@@ -170,7 +181,7 @@ class EducationStreamService():
         current_user = user_manager.get_user_by_id(_current_user_id)
         course = course_manager.get_course_by_id(_education_stream['id_course'])
         action_manager.add_notifications(course.name, 'отредактировал', education_stream.name,
-                                         'education_stream_manager', current_user.login)
+                                         'education_stream_manager', current_user)
 
     def get_education_streams_by_login_user(self, _login_user, _role_user):
         """_summary_

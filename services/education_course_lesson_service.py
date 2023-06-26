@@ -151,7 +151,7 @@ class EducationCourseLessonService():
             homework_files_list = upload_service.upload_files(_files_list, user.login)
             homework_manager.create_homework(homework_files_list, _text, _current_user_id, _id_lesson)
 
-            action_manager.add_notifications("", "сдал", lesson.name, "homework_manager", user.login)
+            action_manager.add_notifications("", "сдал", lesson.name, "homework_manager", user)
 
     def get_last_homework(self, _id_lesson, _user_id):
         """

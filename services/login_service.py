@@ -51,7 +51,7 @@ class LoginService():
         if not user.active:
             raise UserManagerException("Данный пользователь заблокирован")
         elif user.role != "superuser":
-            action_manager.add_notifications("", "зашел", "", "в систему", user.login)
+            action_manager.add_notifications("", "зашел", "", "в систему", user)
 
         return user
     

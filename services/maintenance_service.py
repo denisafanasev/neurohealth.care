@@ -97,12 +97,12 @@ class MaintenanceService():
         """
         _data = []
 
-        action_manager = ActionManager()
-        actions = action_manager.get_actions()
-        actions_number = len(actions)
+        action_manager = DataStore("action")
+        # actions = action_manager.get_rows()
+        actions_number = action_manager.get_rows_count()
 
         db_data_store = DataStore("action", force_adapter="PostgreSQLDataAdapter")
-        current_data_adapter = action_manager.get_current_data_adapter()
+        current_data_adapter = db_data_store.get_current_data_adapter()
         if current_data_adapter == 'PostgreSQLDataAdapter':
             db_actions_number = db_data_store.get_rows_count()
             is_there_table = 'Created'
@@ -128,17 +128,19 @@ class MaintenanceService():
 
         # get all users in the system
         action_manager = ActionManager()
-        # user_manager = UserManager()
+        data_store = DataStore('action')
+        user_manager = UserManager()
 
-        action_list = action_manager.get_actions()
+        action_list = data_store.get_rows()
 
         # create data store with SQL data adapter
         data_store = DataStore("action", force_adapter="PostgreSQLDataAdapter")
 
-        for action in action_list:
+        for action_data in action_list:
             # convert Action object to Dict
-            # user = user_manager.get_user_by_login(action.user_login)
-            action_raw = {"doc_id": action.id, 'login': action.user_login, 'action': action.action,
+            action = action_manager.action_row_to_action(action_data)
+            user = user_manager.get_user_by_login(action.user_login)
+            action_raw = {"doc_id": action.id, 'user_id': user.user_id, 'action': action.action,
                           'created_date': action.created_date, 'comment_action': action.comment_action}
             if data_store.get_row_by_id(action.id):
                 # if user existed in the table, make change
