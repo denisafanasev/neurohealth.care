@@ -43,7 +43,7 @@ class PostgreSQLDataAdapter():
         # metadata.reflect()
 
         query = select(self.table)
-        if _filter != '':
+        if _filter is not None:
             query = self.update_query(_filter, query)
 
         query_result = self.data_store.execute(query)

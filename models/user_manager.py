@@ -199,6 +199,11 @@ class UserManager():
             #                      _probationers_number=user.probationers_number, _created_date=user.created_date,
             #                      _education_module_expiration_date=user.education_module_expiration_date,
             #                      _token=user.token, _email_confirmed=user.email_confirmed)
+        else:
+            if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
+                data_store = DataStore("users")
+                user_data = data_store.get_row_by_id(_user_id)
+                user = self.user_row_to_user(user_data)
 
         return user
 
@@ -221,6 +226,9 @@ class UserManager():
         # user_data = data_store.get_rows(f"users.login = '{login}' and users.password = '{password}'")
         if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
             user_data = data_store.get_rows({'where': f"users.login = '{login}' and users.password = '{password}'"})
+            if len(user_data) == 0:
+                data_store = DataStore("users")
+                user_data = data_store.get_rows({"login": login, "password": password})
         else:
             user_data = data_store.get_rows({"login": login, "password": password})
 
@@ -328,9 +336,15 @@ class UserManager():
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
         data = data_store.get_rows_count()
-
         if data != 0:
             return True
+        else:
+            if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
+                data_store_tinydb = DataStore("users")
+
+                data = data_store_tinydb.get_rows_count()
+                if data != 0:
+                    return True
 
         return False
 
