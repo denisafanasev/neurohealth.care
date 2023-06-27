@@ -117,32 +117,27 @@ class ActionManager():
 
         # for i_action in actions_list:
         if not _user.role == "superuser":
-            actions_list = data_store.get_rows(
-                {'where': f'action.user_id = {_user.user_id}', 'order_by': 'action.created_date desc', 'limit': 10})
-            # actions_list = self.get_actions_by_login(_user.login)
-            for action_data in actions_list:
-                action = self.action_row_to_action(action_data)
-                if date < action.created_date:
-                    actions.append({"action": action, "timedelta": date - date})
-                    data_store.update_row({"created_date": date.strftime("%d/%m/%Y %H:%M:%S"), "id": action.id},
-                                          "id")
-                else:
-                    actions.append({"action": action, "timedelta": date - action.created_date})
-                # timedelta_list.append(date - action.created_date)
+            if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
+                actions_list = data_store.get_rows(
+                    {'where': f'action.user_id = {_user.user_id}', 'order_by': 'action.created_date desc', 'limit': 10})
+            else:
+                actions_list = data_store.get_rows({'login': _user.login})
         else:
-            # actions_list = self.get_actions()
-            actions_list = data_store.get_rows(
-                {'order_by': 'action.created_date desc', 'limit': 10})
-            for action_data in actions_list:
-                action = self.action_row_to_action(action_data)
-                if date < action.created_date:
-                    actions.append({"action": action, "timedelta": date - date})
-                    data_store.update_row({"created_date": date.strftime("%d/%m/%Y %H:%M:%S"), "id": action.id}, "id")
-                else:
-                    actions.append({"action": action, "timedelta": date - action.created_date})
-                    # timedelta_list.append(date - action.created_date)
+            if data_store.current_data_adapter == '':
+                actions_list = data_store.get_rows(
+                    {'order_by': 'action.created_date desc', 'limit': 10})
+            else:
+                actions_list = data_store.get_rows()
 
-        # timedelta_list.sort()
+        for action_data in actions_list:
+            action = self.action_row_to_action(action_data)
+            if date < action.created_date:
+                actions.append({"action": action, "timedelta": date - date})
+                data_store.update_row({"created_date": date.strftime("%d/%m/%Y %H:%M:%S"), "id": action.id}, "id")
+            else:
+                actions.append({"action": action, "timedelta": date - action.created_date})
+                # timedelta_list.append(date - action.created_date)
+
         actions_list = sorted(actions, key=lambda d: d["timedelta"])
         actions = []
 
