@@ -1373,18 +1373,24 @@ def maintenance():
         return redirect(url_for("multilingual.main_page"))
 
     endpoint = request.endpoint
+    message_error, status_code = session.get('message_error'), session.get('status_code')
+    if message_error is not None:
+        session.pop('message_error')
+
+    if status_code is not None:
+        session.pop('status_code')
 
     if request.method == "POST":
         action_name = request.form['submit_button']
 
         if action_name == "upload_users_from_json_to_sql":
-            page_controller.upload_users_from_json_to_sql(current_user_id)
+            session['message_error'], session['status_code'] = page_controller.upload_users_from_json_to_sql(current_user_id)
 
         elif action_name == 'upload_action_from_json_to_sql':
-            page_controller.upload_actions_from_json_to_sql()
+            session['message_error'], session['status_code'] = page_controller.upload_actions_from_json_to_sql()
 
         else:
-            page_controller.create_table_in_sql(action_name)
+            session['message_error'], session['status_code'] = page_controller.create_table_in_sql(action_name)
 
         return redirect(url_for('multilingual.maintenance'))
 
@@ -1396,7 +1402,8 @@ def maintenance():
     return render_template('maintenance.html', view="maintenance", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _endpoint=endpoint, _user_page_data=upload_users_from_json_to_sql_page_data, _lang_code=get_locale(),
-                           _languages=config.LANGUAGES, _action_page_data=upload_actions_from_json_to_sql_page_data)
+                           _languages=config.LANGUAGES, _action_page_data=upload_actions_from_json_to_sql_page_data,
+                           _status_code=status_code, _message_error=message_error)
 
 
 @multilingual.route('/settings/estimated_values', methods=['GET', 'POST'])

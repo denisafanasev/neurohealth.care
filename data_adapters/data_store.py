@@ -1,6 +1,7 @@
 from tinydb import TinyDB, Query, where
 import json
 from tinydb.operations import delete, increment, add
+from sqlalchemy import text, exc
 
 from data_adapters.tinydb_data_adapter import TinyDBDataAdapter
 from data_adapters.postgresql_data_adapter import PostgreSQLDataAdapter
@@ -34,8 +35,7 @@ class DataStore():
         if force_adapter == "PostgreSQLDataAdapter":
             try:
                 self.data_store = PostgreSQLDataAdapter(_table_name)
-
-            except:
+            except exc.NoSuchTableError:
                 self.data_store = TinyDBDataAdapter(_table_name, tinydb_table_name)
                 self.current_data_adapter = 'TinyDBDataAdapter'
                 # raise NoSuchTableError('Данной таблицы в PostgreSQL не существует. Данные берутся из TinyDB')

@@ -176,22 +176,22 @@ class ActionManager():
 
         return actions
 
-    def get_actions_by_login(self, _login):
+    def get_actions_by_user(self, _user):
         """
         Возвращает все действия пользователя по логину
 
         Args:
-            _login(String): логин пользователя
+            _user(String): пользователь
 
         Returns:
             List(Action): список действий пользователя
         """
         data_store = DataStore('action', force_adapter='PostgreSQLDataAdapter')
 
-        if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
-            actions_list_data = data_store.get_rows({'where': f"action.login = '{_login}'"})
+        if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
+            actions_list_data = data_store.get_rows({'where': f"action.user_id = '{_user.user_id}'"})
         else:
-            actions_list_data = data_store.get_rows({"login": _login})
+            actions_list_data = data_store.get_rows({"login": _user.login})
 
         actions_list = []
         for action_data in actions_list_data:

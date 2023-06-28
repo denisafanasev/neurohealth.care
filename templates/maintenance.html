@@ -2,6 +2,19 @@
 
 {% block maintenance %}
 
+    {% if _status_code=='Successful' %}
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <div class="alert-message">
+                <strong>Успешно</strong> {{ _message_error }}
+            </div>
+        </div>
+    {% elif _status_code=='Error' %}
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <div class="alert-message">
+                <strong>Ошибка</strong> {{ _message_error }}
+            </div>
+        </div>
+    {% endif %}
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Создание таблиц в SQL базу</h5>

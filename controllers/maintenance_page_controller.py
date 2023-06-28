@@ -19,7 +19,12 @@ class MaintenancePageController():
         @params:
         """
         service = MaintenanceService()
-        service.upload_users_from_json_to_sql(_current_user_id)
+        error = service.upload_users_from_json_to_sql(_current_user_id)
+        # if not isinstance(status, tuple):
+        if error is None:
+            return 'Данные таблицы "users" из TinyDB были перенесены в Postgresql', 'Successful'
+        # else:
+        #     return 'При переносе данных таблицы "users" из TinyDB в Postgresql возникла ошибка', 'Error'
     
     def get_upload_users_from_json_to_sql_page_data(self, _current_user_id):
         """
@@ -41,7 +46,12 @@ class MaintenancePageController():
         @params:
         """
         service = MaintenanceService()
-        service.upload_actions_from_json_to_sql()
+        error = service.upload_actions_from_json_to_sql()
+        # if not isinstance(status, tuple):
+        if error is None:
+            return 'Данные таблицы "action" из TinyDB были перенесены в Postgresql', 'Successful'
+        # else:
+        #     return 'При переносе данных таблицы "action" из TinyDB в Postgresql возникла ошибка', 'Error'
 
     def get_upload_actions_from_json_to_sql_page_data(self, _current_user_id):
         """
@@ -63,4 +73,9 @@ class MaintenancePageController():
         """
         service = MaintenanceService()
 
-        service.create_table_in_sql(_table_name)
+        error = service.create_table_in_sql(_table_name)
+        # if not isinstance(status, tuple):
+        if error is None:
+            return f'Таблица "{_table_name}" создана в Postgresql', 'Successful'
+        # else:
+        #     return str(status), 'Error'

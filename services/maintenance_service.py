@@ -135,14 +135,15 @@ class MaintenanceService():
             # convert Action object to Dict
             action = action_manager.action_row_to_action(action_data)
             user = user_manager.get_user_by_login(action.user_login)
-            action_raw = {"doc_id": action.id, 'user_id': user.user_id, 'action': action.action,
-                          'created_date': action.created_date, 'comment_action': action.comment_action}
-            if data_store_postgresql.get_row_by_id(action.id):
-                # if action existed in the table, make change
-                data_store_postgresql.update_row_by_id(action_raw, action.id)
-            else:
-                # if action non existed, make insert of a new row
-                data_store_postgresql.insert_row(action_raw)
+            if user is not None:
+                action_raw = {"doc_id": action.id, 'user_id': user.user_id, 'action': action.action,
+                              'created_date': action.created_date, 'comment_action': action.comment_action}
+                if data_store_postgresql.get_row_by_id(action.id):
+                    # if action existed in the table, make change
+                    data_store_postgresql.update_row_by_id(action_raw, action.id)
+                else:
+                    # if action non existed, make insert of a new row
+                    data_store_postgresql.insert_row(action_raw)
 
     def create_table_in_sql(self, _table_name):
         """
