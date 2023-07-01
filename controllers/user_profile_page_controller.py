@@ -43,19 +43,20 @@ class UserProfilePageController():
             user_view['education_stream_list'] = []
 
             user_view['active'] = user.active
-        else:
-            user_view["login"] = gettext("введите логин пользователя..")
-            user_view["name"] = gettext("введите имя пользователя..")
-            user_view["email"] = gettext("введите email пользователя..")
-            user_view["password"] = gettext("введите пароль..")
-            user_view["password2"] = gettext("введите повторно пароль..")
-            user_view["role"] = gettext("Выберите роль пользователя")
-            user_view["probationers_number"] = gettext("Выберите количество доступных тестируемых")
-            user_view["token"] = ""
-            user_view["active"] = True
-            user_view["email_confirmed"] = False
 
-        return user_view
+        data_placeholder = {}
+        data_placeholder["login"] = gettext("введите логин пользователя..")
+        data_placeholder["name"] = gettext("введите имя пользователя..")
+        data_placeholder["email"] = gettext("введите email пользователя..")
+        data_placeholder["password"] = gettext("введите пароль..")
+        data_placeholder["password2"] = gettext("введите повторно пароль..")
+        data_placeholder["role"] = gettext("Выберите роль пользователя")
+        data_placeholder["probationers_number"] = gettext("Выберите количество доступных тестируемых")
+        data_placeholder["token"] = ""
+        data_placeholder["active"] = True
+        data_placeholder["email_confirmed"] = False
+
+        return user_view, data_placeholder
 
     def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _current_user_id):
         """

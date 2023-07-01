@@ -81,4 +81,5 @@ dependencies:
   - zlib=1.2.12
   - pip:
       - pyyaml==6.0
+      - pybabel-json=0.2.0
 prefix: /Users/shaman/opt/anaconda3/envs/nhc_dev

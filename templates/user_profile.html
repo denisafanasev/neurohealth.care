@@ -86,19 +86,19 @@
                         <fieldset {% if _mode == 'view' %}disabled{% endif %}>
                             <div class="mb-2">
                                 <label class="form-label"><strong>Login</strong></label>
-                                <input type="text" name="login" class="form-control" {% if _mode!="new" %} disabled {% endif %} {% if _data_edit['login'] != _data['login'] or _mode != "new" %} value="{{ _data_edit['login'] }}" {% else %} placeholder="{{_("Введите логин пользователя")}}" {% endif %}>
+                                <input type="text" name="login" class="form-control" {% if _mode!="new" %} disabled {% endif %} value="{{ _data['login'] }}"  placeholder="{{_data_placeholder['login']}}">
                             </div>
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>{{_("Имя пользователя")}}</strong></label>
-                                <input type="text" name="user_name" class="form-control" {% if _data_edit['name'] != _data['name'] or _mode != "new"%} value="{{ _data_edit['name'] }}" {% else %} placeholder="{{_("Введите имя пользователя")}}" {% endif %}>
+                                <input type="text" name="user_name" class="form-control" value="{{ _data['name'] }}" placeholder="{{_data_placeholder['name']}}">
                             </div>
 
                             {% if _mode=="new" %}
                                 <div class="mb-2">
                                     <label class="form-label"><strong>{{_("Пароль")}}</strong></label>
                                     <div class="password">
-                                        <input id="password" type="password" name="password" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="{{_("Введите пароль")}}" {% endif %}>
+                                        <input id="password" type="password" name="password" class="form-control" value="{{ _data['password'] }}" placeholder="{{_data_placeholder['password']}}">
                                         <div style="float: right"><a class="password-control" ></a></div>
                                     </div>
                                 </div>
@@ -106,7 +106,7 @@
                                 <div class="mb-2">
                                     <label class="form-label"><strong>{{_("Повтор пароля")}}</strong></label>
                                     <div class="password">
-                                        <input id="password2" type="password" name="password2" class="form-control" {% if _data_edit['password2']!= _data['password2'] %} value="{{ _data_edit['password2'] }}" {% else %} placeholder="{{_("Повторно введите пароль")}}" {% endif %}>
+                                        <input id="password2" type="password" name="password2" class="form-control" value="{{ _data['password2'] }}" placeholder="{{_data_placeholder['password2']}}">
                                         <a href="#" class="password-control2" ></a>
                                     </div>
                                 </div>
@@ -114,7 +114,7 @@
 
                             <div class="mb-2">
                                 <label class="form-label"><strong>Email</strong></label>
-                                <input type="email" name="email" class="form-control"  {% if _data_edit['email'] != _data['email'] or _mode != "new"%} value="{{ _data_edit['email'] }}" {% else %} placeholder="{{_("Введите email пользователя")}}" {% endif %}>
+                                <input type="email" name="email" class="form-control" value="{{ _data['email'] }}" placeholder="{{_data_placeholder['email']}}">
                             </div>
                         </fieldset>
                             <div class="mb-2">
@@ -122,10 +122,10 @@
                                 <div class="form-check form-switch">
                                     <input id="is_active" name="is_active" class="form-check-input" type="checkbox"
                                            value="True"
-                                           {% if _data_edit['active'] == true %}checked{% endif %}
+                                           {% if _data['active'] == true %}checked{% endif %}
                                             {% if _mode == "new" %}disabled{% endif %}
                                             {% if _mode == "view" %} onchange="edit_is_active(); this.form.submit()" {% endif %}>
-                                    <label class="form-check-label" for="is_active">{% if _data_edit['active'] == true %}{{_("Разблокирован")}}{% else %}{{_("Заблокирован")}}{% endif %}</label>
+                                    <label class="form-check-label" for="is_active">{% if _data['active'] == true %}{{_("Разблокирован")}}{% else %}{{_("Заблокирован")}}{% endif %}</label>
                                 </div>
                             </div>
                         </div>
@@ -143,10 +143,10 @@
                                     {% if _mode != "view" %}
                                         <option value="placeholder">{{_("Выберите роль пользователя")}}</option>
                                         {% for i in _settings['role'] %}
-                                            <option {% if i == _data_edit['role'] %} selected {% endif %} value="{{ i }}">{{ i }}</option>
+                                            <option {% if i == _data['role'] %} selected {% endif %} value="{{ i }}">{{ i }}</option>
                                         {% endfor %}
                                     {% else %}
-                                        <option>{{ _data_edit['role'] }}</option>
+                                        <option>{{ _data['role'] }}</option>
                                     {% endif %}
                                 </select>
                             </div>
@@ -157,10 +157,10 @@
                                     {% if _mode != "view" %}
                                         <option value="placeholder">{{_("Выберите количество доступных тестируемых")}}</option>
                                         {% for i in _settings['probationers_number'] %}
-                                                <option {% if _data_edit['probationers_number'] == i %} selected {% endif %}value="{{ i }}"> {{ i }} </option>
+                                                <option {% if _data['probationers_number'] == i %} selected {% endif %}value="{{ i }}"> {{ i }} </option>
                                         {% endfor %}
                                     {% else %}
-                                        <option>{{ _data_edit['probationers_number'] }}</option>
+                                        <option>{{ _data['probationers_number'] }}</option>
                                     {% endif %}
                                 </select>
                             </div>
@@ -168,7 +168,7 @@
                             {% if _mode == "view" %}
                                 <div class="mb-2">
                                     <label class="form-label"><strong>{{_("Доступ к дополнительным курсам")}}</strong></label>
-                                    <input class="form-control" disabled value="{{ _data_edit['education_module_expiration_date'] }}">
+                                    <input class="form-control" disabled value="{{ _data['education_module_expiration_date'] }}">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#extension" style="float: right; margin-top: 1%"
                             onclick="document.getElementById('extension').style.display = 'block';">{{_("Продление доступа")}}</button>
                                 </div>
@@ -332,7 +332,7 @@
                         <div class="mb-2">
                             <label class="form-label"><strong>{{_("Пароль")}}</strong></label>
                             <div class="password">
-                                <input id="password" type="password" name="password" class="form-control" {% if _data_edit['password']!= _data['password']%} value="{{ _data_edit['password'] }}" {% else %} placeholder="{{_("Введите пароль")}}" {% endif %}>
+                                <input id="password" type="password" name="password" class="form-control" value="{{ _data['password'] }}" placeholder="{{_data_placeholder['password']}}">
                                 <div style="float: right"><a id="password-control" class="password-control" ></a></div>
                             </div>
                         </div>
@@ -340,7 +340,7 @@
                         <div class="mb-2">
                             <label class="form-label"><strong>{{_("Повтор пароля")}}</strong></label>
                             <div class="password">
-                                <input id="password2" type="password" name="password2" class="form-control" {% if _data_edit['password2']!= _data['password2']%} value="{{ _data_edit['password2'] }}" {% else %} placeholder="{{_("Введите пароль")}}" {% endif %}>
+                                <input id="password2" type="password" name="password2" class="form-control" value="{{ _data['password2'] }}" placeholder="{{_data_placeholder['password2']}}">
                                 <div style="float: right"><a href="#" class="password-control2" ></a></div>
                             </div>
                         </div>
