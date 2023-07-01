@@ -68,6 +68,8 @@ class MaintenanceService():
         data_store = DataStore("users", force_adapter="PostgreSQLDataAdapter")
         for user_data in users:
             user = user_manager.user_row_to_user(user_data)
+            if user.token == '':
+                user.token = user_manager.create_token(user.email)
             # convert User object to Dict
             user_raw = {"doc_id": user.user_id, "active": user.active, "password": user_data['password'], "created_date": user.created_date,
                             "education_module_expiration_date": user.education_module_expiration_date, "email": user.email,
