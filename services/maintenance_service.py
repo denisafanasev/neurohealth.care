@@ -32,7 +32,7 @@ class MaintenanceService():
         users_number = data_store_tinydb.get_rows_count()
 
         data_store_postgresql = DataStore("users", force_adapter="PostgreSQLDataAdapter")
-        current_data_adapter = data_store_postgresql.get_current_data_adapter()
+        current_data_adapter = data_store_postgresql.current_data_adapter
         if current_data_adapter == 'PostgreSQLDataAdapter':
             db_users_number = data_store_postgresql.get_rows_count()
             is_there_table = 'Created'
@@ -99,7 +99,7 @@ class MaintenanceService():
         actions_number = data_store_tinydb.get_rows_count()
 
         data_store_postgresql = DataStore("action", force_adapter="PostgreSQLDataAdapter")
-        current_data_adapter = data_store_postgresql.get_current_data_adapter()
+        current_data_adapter = data_store_postgresql.current_data_adapter
         if current_data_adapter == 'PostgreSQLDataAdapter':
             db_actions_number = data_store_postgresql.get_rows_count()
             is_there_table = 'Created'
@@ -111,7 +111,7 @@ class MaintenanceService():
         _data["data_folder"] = config.DATA_FOLDER
         _data["actions_number"] = actions_number
         _data["PostgreSQLDataAdapter_connection_string"] = config.PostgreSQLDataAdapter_connection_string()
-        _data['current_data_adapter'] = data_store_postgresql.get_current_data_adapter()
+        _data['current_data_adapter'] = data_store_postgresql.current_data_adapter
         _data["db_actions_number"] = db_actions_number
         _data['is_there_table'] = is_there_table
 

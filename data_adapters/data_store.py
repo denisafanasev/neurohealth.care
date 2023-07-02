@@ -154,10 +154,3 @@ class DataStore():
         """
 
         self.data_store.delete_row(_data_ids)
-
-    def get_current_data_adapter(self):
-        """
-        Возвращает
-        """
-        return self.current_data_adapter
-

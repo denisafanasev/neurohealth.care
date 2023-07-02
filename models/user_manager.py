@@ -224,7 +224,7 @@ class UserManager():
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
         # user_data = data_store.get_rows(f"users.login = '{login}' and users.password = '{password}'")
-        if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
+        if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
             user_data = data_store.get_rows({'where': f"users.login = '{login}' and users.password = '{password}'"})
             if len(user_data) == 0:
                 data_store = DataStore("users")
@@ -257,7 +257,7 @@ class UserManager():
         login = _login.lower().strip()
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
-        if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
+        if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
             user_data = data_store.get_rows({'where': f"users.login = '{login}'"})
         else:
             user_data = data_store.get_rows({"login": login})
@@ -284,7 +284,7 @@ class UserManager():
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
         # user_data = data_store.get_rows(f"select * from users where users.email = '{email}'")
-        if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
+        if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
             user_data = data_store.get_rows({'where': f"users.email = '{email}'"})
         else:
             user_data = data_store.get_rows({"email": email})
@@ -404,7 +404,7 @@ class UserManager():
         user = User(_login=login, _name=name, _email=email, _role=role, _probationers_number=_probationers_number,
                     _token=token, _email_confirmed=email_confirmed)
 
-        if data_store.get_current_data_adapter() == 'TinyDBDataAdapter':
+        if data_store.current_data_adapter == 'TinyDBDataAdapter':
             created_date = user.created_date.strftime('%d/%m/%Y')
             education_module_expiration_date = user.education_module_expiration_date.strftime('%d/%m/%Y')
         else:
@@ -463,7 +463,7 @@ class UserManager():
                     _education_module_expiration_date=_education_module_expiration_date, _active=_active)
 
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
-        if data_store.get_current_data_adapter() == 'TinyDBDataAdapter':
+        if data_store.current_data_adapter == 'TinyDBDataAdapter':
             created_date = user.created_date.strftime('%d/%m/%Y')
             education_module_expiration_date = user.education_module_expiration_date.strftime('%d/%m/%Y')
         else:
@@ -583,7 +583,7 @@ class UserManager():
         users_list = []
         # Если роль текущего пользователя superuser, то он получит список пользователей.
         # Иначе, получит пустой список
-        if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
+        if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
             if self.get_user_role(_user_id) == 'superuser':
                 users_data_list = data_store.get_rows({'where': f'users.doc_id in {tuple(_ids_list)}'})
                 for user_data in users_data_list:
@@ -608,7 +608,7 @@ class UserManager():
         # Если роль текущего пользователя superuser, то он получит список пользователей.
         # Иначе, получит пустой список
         if self.get_user_role(_id_user) == 'superuser':
-            if data_store.get_current_data_adapter() == 'PostgreSQLDataAdapter':
+            if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
                 users_data_list = data_store.get_rows({'where': f"users.role = '{_role}'"})
             else:
                 users_data_list = data_store.get_rows({'role': _role})
@@ -623,4 +623,4 @@ class UserManager():
         """
         data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
 
-        return data_store.get_current_data_adapter()
+        return data_store.current_data_adapter
