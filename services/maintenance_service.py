@@ -1,3 +1,4 @@
+import os
 from distutils.command.config import config
 
 from sqlalchemy import text
@@ -93,9 +94,37 @@ class MaintenanceService():
         Args:
             _current_user_id (Int): id of current user looged into the system
         """
-        _data = []
-
-        data_store_tinydb = DataStore("action")
+        # actions_number = 0
+        # file_list = os.listdir(os.path.join(config.DATA_FOLDER))
+        # for name_file in file_list:
+        #     if 'action.json.' in name_file:
+        #         with open(config.DATA_FOLDER + name_file, 'r', encoding='utf8') as action_file:
+        #             actions = action_file.read()
+        #             if '\x00' in actions:
+        #                 actions = actions.replace('\x00','')
+        #
+        #             while actions[-1] != '}':
+        #                 actions = actions[:-1]
+        #
+        #             if not actions.endswith('}}}'):
+        #                 count = actions[-3:].count('}')
+        #                 actions += '}' * (3 - count)
+        #
+        #         name_file_list = name_file.split('.')
+        #         action_name_file = f'action.save.{name_file_list[-1]}.json'
+        #         with open(config.DATA_FOLDER + action_name_file, 'w', encoding='utf8') as action_file:
+        #             action_file.write(actions)
+        #
+        #     elif 'action.json' == name_file:
+        #         action_name_file = 'action'
+        #
+        #     else:
+        #         continue
+        #
+        #
+        #     data_store_tinydb = DataStore(action_name_file.replace('.json', ''))
+        #     actions_number += data_store_tinydb.get_rows_count()
+        data_store_tinydb = DataStore('action')
         actions_number = data_store_tinydb.get_rows_count()
 
         data_store_postgresql = DataStore("action", force_adapter="PostgreSQLDataAdapter")
