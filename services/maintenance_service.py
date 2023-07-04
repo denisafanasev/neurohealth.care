@@ -98,32 +98,20 @@ class MaintenanceService():
         # file_list = os.listdir(os.path.join(config.DATA_FOLDER))
         # for name_file in file_list:
         #     if 'action.json.' in name_file:
-        #         with open(config.DATA_FOLDER + name_file, 'r', encoding='utf8') as action_file:
-        #             actions = action_file.read()
-        #             if '\x00' in actions:
-        #                 actions = actions.replace('\x00','')
-        #
-        #             while actions[-1] != '}':
-        #                 actions = actions[:-1]
-        #
-        #             if not actions.endswith('}}}'):
-        #                 count = actions[-3:].count('}')
-        #                 actions += '}' * (3 - count)
-        #
-        #         name_file_list = name_file.split('.')
-        #         action_name_file = f'action.save.{name_file_list[-1]}.json'
-        #         with open(config.DATA_FOLDER + action_name_file, 'w', encoding='utf8') as action_file:
-        #             action_file.write(actions)
+        #         action_name_file = self.fixed_action_file(name_file).replace('.json', '')
         #
         #     elif 'action.json' == name_file:
         #         action_name_file = 'action'
         #
+        #     elif 'action.save' in name_file:
+        #         action_name_file = name_file.replace('.json', '')
+        #
         #     else:
         #         continue
         #
-        #
-        #     data_store_tinydb = DataStore(action_name_file.replace('.json', ''))
+        #     data_store_tinydb = DataStore(action_name_file)
         #     actions_number += data_store_tinydb.get_rows_count()
+
         data_store_tinydb = DataStore('action')
         actions_number = data_store_tinydb.get_rows_count()
 
@@ -154,20 +142,29 @@ class MaintenanceService():
 
         # get all actions in the system
         action_manager = ActionManager()
-        data_store_tinydb = DataStore('action')
         user_manager = UserManager()
-
-        action_list = data_store_tinydb.get_rows()
 
         # create data store with SQL data adapter
         data_store_postgresql = DataStore("action", force_adapter="PostgreSQLDataAdapter")
-
+        # import time
+        # start_time = time.time()
+        # names_files_list = os.listdir(config.DATA_FOLDER)
+        # # print('\n'.join(names_files_list))
+        # action_list = []
+        # names_files = [i for i in names_files_list if 'action' in i]
+        # for name_file in names_files:
+        #     if 'action' in name_file:
+                # print(f'Начало импорта файла {name_file}')
+                # data_store_tinydb = DataStore(name_file.replace('.json', ''))
+        data_store_tinydb = DataStore('action')
+        # action_list.extend(data_store_tinydb.get_rows())
+        action_list = data_store_tinydb.get_rows()
         for action_data in action_list:
             # convert Action object to Dict
             action = action_manager.action_row_to_action(action_data)
             user = user_manager.get_user_by_login(action.user_login)
             if user is not None:
-                action_raw = {"doc_id": action.id, 'user_id': user.user_id, 'action': action.action,
+                action_raw = {'user_id': user.user_id, 'action': action.action,
                               'created_date': action.created_date, 'comment_action': action.comment_action}
                 if data_store_postgresql.get_row_by_id(action.id):
                     # if action existed in the table, make change
@@ -175,6 +172,13 @@ class MaintenanceService():
                 else:
                     # if action non existed, make insert of a new row
                     data_store_postgresql.insert_row(action_raw)
+
+        #         print(f'{name_file} импортирован в PostgreSQL')
+        #         print("--- %s seconds ---" % (time.time() - start_time))
+        #         print('-------------------------------------------------')
+        #
+        # print('Окончательное время:')
+        # print("--- %s seconds ---" % (time.time() - start_time))
 
     def create_table_in_sql(self, _table_name):
         """
@@ -198,3 +202,28 @@ class MaintenanceService():
             if _table_name in sql_script:
                 data_store.data_store.data_store.execute(text(sql_script))
                 break
+
+    def fixed_action_file(self, _name_file):
+        """
+
+        """
+        with open(config.DATA_FOLDER + _name_file, 'r', encoding='utf8') as action_file:
+            actions = action_file.read()
+            if '\x00' in actions:
+                actions = actions.replace('\x00', '')
+
+            while actions[-1] != '}':
+                actions = actions[:-1]
+
+            if not actions.endswith('}}}'):
+                count = actions[-3:].count('}')
+                actions += '}' * (3 - count)
+
+        name_file_list = _name_file.split('.')
+        action_name_file = f'action.save.{name_file_list[-1]}.json'
+        # open(os.path.join(config.DATA_FOLDER, _name_file)).close()
+        os.rename(os.path.join(config.DATA_FOLDER, _name_file), action_name_file)
+        with open(config.DATA_FOLDER + action_name_file, 'w', encoding='utf8') as action_file:
+            action_file.write(actions)
+
+        return action_name_file

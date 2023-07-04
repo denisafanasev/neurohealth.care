@@ -105,8 +105,10 @@ class PostgreSQLDataAdapter():
 
         if _data.get('doc_id') is None:
             doc_id_last = self.data_store.execute(select(db.func.max(self.table.columns['doc_id']))).scalar()
-            _data['doc_id'] = doc_id_last + 1
-
+            if doc_id_last is not None:
+                _data['doc_id'] = doc_id_last + 1
+            else:
+                _data['doc_id'] = 1
         result = self.data_store.execute(
             insert(self.table), [_data],
         )
