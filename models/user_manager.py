@@ -297,7 +297,7 @@ class UserManager():
 
         return user
 
-    def get_users(self, _user_id):
+    def get_users(self, _user_id, _page=None):
         """
         Возвращает список пользователей в системе, в соответствии с ролью пользователя, который запрашивает список
 
@@ -311,7 +311,13 @@ class UserManager():
         users = []
 
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
-        users_list_data = data_store.get_rows()
+        if _page is None:
+            users_list_data = data_store.get_rows()
+        else:
+            if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
+                users_list_data = data_store.get_rows({'limit': 20, 'offset': (_page - 1) * 20})
+            else:
+                users_list_data = data_store.get_rows()
 
         for user_data in users_list_data:
 
@@ -624,3 +630,13 @@ class UserManager():
         data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
 
         return data_store.current_data_adapter
+
+    def get_numbers_users(self, _current_user_id):
+        """
+
+        """
+        data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
+
+        if self.get_user_role(_current_user_id) == 'superuser':
+            if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
+                return data_store.get_rows_count()

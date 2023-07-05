@@ -19,7 +19,7 @@ class UserManagerPageController():
 
         pass
 
-    def get_users_list_view(self, _user_id):
+    def get_users_list_view(self, _user_id, _page):
         """
         Возвращает отформатированный список пользователей
 
@@ -29,7 +29,7 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
 
-        users = user_manager_service.get_users(_user_id)
+        users = user_manager_service.get_users(_user_id, _page)
         users_list_view = []
         for user in users:
 
@@ -50,3 +50,17 @@ class UserManagerPageController():
             users_list_view.append(user_view)
             
         return users_list_view
+
+    def get_numbers_pages(self, _current_user_id):
+        """
+        Возвращает количество страниц с данными пользователей и количество пользователей
+
+        Args:
+            _current_user_id(Int): ID
+
+        Returns:
+            data(Dict): количество возможных страниц и количество пользователей
+        """
+        user_manager_service = UserManagerService()
+
+        return user_manager_service.get_numbers_pages(_current_user_id)

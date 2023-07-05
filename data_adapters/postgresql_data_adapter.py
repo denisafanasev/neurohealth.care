@@ -177,4 +177,7 @@ class PostgreSQLDataAdapter():
         if _query_dict.get('limit') is not None:
             _query = _query.limit(_query_dict['limit'])
 
+        if _query_dict.get('offset') is not None:
+            _query = _query.offset(_query_dict['offset'])
+
         return _query

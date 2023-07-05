@@ -9,9 +9,21 @@
             // DataTables with Buttons
             var datatablesButtons = $("#datatables-buttons").DataTable({
                 lengthChange: !1,
-                displayStart: {{ _num_page * 10 }},
                 responsive: true,
+            {% if _data is not none %}
+                dom: "<'ui stackable grid'"+
+                        "<'row'"+
+                            "<'eight wide column'l>"+
+                            "<'right aligned eight wide column'f>"+
+                        ">"+
+                        "<'row dt-table'"+
+                            "<'sixteen wide column'tr>"+
+                        ">"+
+                    ">",
+                paging: false,
+            {% else %}
                 pageLength: 20
+            {% endif %}
             });
 
             datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
@@ -153,6 +165,48 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                {% if _data is not none %}
+                                    <div style="display: flex; justify-content: space-between">
+                                        {% set current_page = request.args.get('page')|int %}
+                                        {% if current_page < 5 %}
+                                            {% set page_range = range(2, 6) %}
+                                        {% elif current_page >= _data['numbers_pages'] - 3 %}
+                                            {% set page_range = range(_data['numbers_pages'] - 4, _data['numbers_pages']) %}
+                                        {% else %}
+                                            {% set page_range = range(current_page - 1, current_page + 2) %}
+                                        {% endif %}
+
+                                        <p>Showing {{ 1 + (current_page - 1) * 20 }} to {{ current_page * 20 }} of {{ _data['users_numbers'] }} entries</p>
+                                        <nav aria-label="...">
+
+                                            <ul class="pagination">
+                                                <li class="page-item" {% if current_page == 1 %} disabled {% endif %}>
+                                                    <a class="page-link" href="{{ url_for('multilingual.user_manager', page=(current_page - 1)) }}">Previous</a>
+                                                </li>
+                                                <li class="page-item {% if current_page == 1 %}active{% endif %}">
+                                                    <a class="page-link" href="{{ url_for('multilingual.user_manager', page=1) }}">1</a>
+                                                </li>
+                                                {% if current_page > 4 %}
+                                                    <li class="page-item"><a class="page-link" disabled="" href="">...</a></li>
+                                                {% endif %}
+                                                {% for page in page_range %}
+                                                    <li class="page-item{% if current_page == page %}
+                                                    active
+                                                    {% endif %}"><a class="page-link" href="{{ url_for('multilingual.user_manager', page=page) }}">{{ page }}</a></li>
+                                                {% endfor %}
+                                            {% if current_page < _data['numbers_pages'] - 3 %}
+                                                <li class="page-item"><a class="page-link" disabled="" href="">...</a></li>
+                                            {% endif %}
+                                                <li class="page-item{% if current_page == _data['numbers_pages'] %}active{% endif %}">
+                                                    <a class="page-link" href="{{ url_for('multilingual.user_manager', page=_data['numbers_pages']) }}">{{ _data['numbers_pages'] }}</a>
+                                                </li>
+                                                <li class="page-item" {% if current_page == _data['numbers_pages'] %} disabled {% endif %}>
+                                                    <a class="page-link" href="{{ url_for('multilingual.user_manager', page=(current_page + 1)) }}">Next</a>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

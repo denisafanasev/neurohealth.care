@@ -294,8 +294,25 @@ def user_manager():
     if not flask_login.current_user.is_admin():
         return redirect(url_for("multilingual.main_page"))
 
+    page = request.args.get('page')
+    data = page_controller.get_numbers_pages(current_user_id)
+    if data is None:
+        if page is not None:
+            return redirect(url_for('multilingual.user_manager'))
+
+    if page is not None:
+        page = int(page)
+        if page < 1:
+            return redirect(url_for('multilingual.user_manager', page=1))
+        elif page > data['numbers_pages']:
+            return redirect(url_for('multilingual.user_manager', page=data['numbers_pages']))
+    else:
+        if data is not None:
+            return redirect(url_for('multilingual.user_manager', page=1))
+
     endpoint = request.endpoint
-    users_list = page_controller.get_users_list_view(current_user_id)
+    users_list = page_controller.get_users_list_view(current_user_id, page)
+
 
     error = None
     error_type = None
@@ -305,7 +322,7 @@ def user_manager():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _users_list=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),
                            _error=error, _error_type=error_type, _num_page=num_page, _languages=config.LANGUAGES,
-                           _lang_code=get_locale())
+                           _lang_code=get_locale(), _data=data)
 
 
 @multilingual.route('/user_profile', methods=['GET', 'POST'])
