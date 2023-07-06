@@ -640,3 +640,29 @@ class UserManager():
         if self.get_user_role(_current_user_id) == 'superuser':
             if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
                 return data_store.get_rows_count()
+
+    def get_users_by_search_text(self, _search_text, _current_user_id):
+        """
+        Возвращает список пользователей, у которых логин, email или имя пользователя совпадает с текстом
+
+        Args:
+            _search_text(Str): текст
+            _current_user_id(Int): ID текущего пользователя
+
+        Returns:
+            users_list: список пользователей
+        """
+
+        data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
+
+        if self.get_user_role(_current_user_id) == 'superuser':
+            if _search_text.isalpha():
+                users_data_list = data_store.get_rows(
+                    {'where': f'users.login = "{_search_text}%" or users.email = "{_search_text}%" or users.name ='
+                              f' "{_search_text}%"'})
+
+            users_list = []
+            for user_data in users_data_list:
+                users_list.append(self.user_row_to_user(user_data))
+
+            return users_list

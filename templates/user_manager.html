@@ -21,6 +21,7 @@
                         ">"+
                     ">",
                 paging: false,
+                searching: false,
             {% else %}
                 pageLength: 20
             {% endif %}
@@ -77,6 +78,10 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row dataTables_filter" style="display:flex;">
+                                    <label class="col-form-label text-sm-end" for="search">Search:<input id="search" class="form-control form-control-sm" name="search"></label>
+                                </div>
+
                             {% endif %}
 
                             <div class="row">

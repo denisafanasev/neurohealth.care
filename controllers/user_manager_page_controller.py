@@ -25,14 +25,13 @@ class UserManagerPageController():
 
         Returns:
             List: список пользователей, каждый из которых представлен структурой типа Dict
-        """ 
+        """
 
         user_manager_service = UserManagerService()
 
         users = user_manager_service.get_users(_user_id, _page)
         users_list_view = []
         for user in users:
-
             user_view = {}
 
             user_view['user_id'] = user.user_id
@@ -41,14 +40,15 @@ class UserManagerPageController():
             user_view['email'] = user.email
             user_view['role'] = user.role
             user_view['created_date'] = str(user.created_date.strftime("%d/%m/%Y"))
-            user_view['education_module_expiration_date'] = str(user.education_module_expiration_date.strftime("%d/%m/%Y"))
+            user_view['education_module_expiration_date'] = str(
+                user.education_module_expiration_date.strftime("%d/%m/%Y"))
             user_view['probationers_number'] = user.probationers_number
             user_view['is_active'] = user.active
             user_view['active_education_module'] = user.active_education_module
             user_view['email_confirmed'] = user.email_confirmed
 
             users_list_view.append(user_view)
-            
+
         return users_list_view
 
     def get_numbers_pages(self, _current_user_id):
@@ -64,3 +64,40 @@ class UserManagerPageController():
         user_manager_service = UserManagerService()
 
         return user_manager_service.get_numbers_pages(_current_user_id)
+
+    def get_users_by_search_text(self, _search_text, _current_user_id):
+        """
+        Возвращает список пользователей, у которых логин, email или имя пользователя совпадает с текстом
+
+        Args:
+            _search_text(Str): текст
+            _current_user_id(Int): ID текущего пользователя
+
+        Returns:
+            users_list: список пользователей
+        """
+        user_manager_service = UserManagerService()
+
+        users_list = user_manager_service.get_users_by_search_text(_search_text, _current_user_id)
+
+        users_list_view = []
+        if users_list is not None:
+            for user in users_list:
+                user_view = {
+                    'user_id': user.user_id,
+                    'login': user.login,
+                    'name': user.name,
+                    'email': user.email,
+                    'role': user.role,
+                    'created_date': str(user.created_date.strftime("%d/%m/%Y")),
+                    'education_module_expiration_date': str(
+                        user.education_module_expiration_date.strftime("%d/%m/%Y")),
+                    'probationers_number': user.probationers_number,
+                    'is_active': user.active,
+                    'active_education_module': user.active_education_module,
+                    'email_confirmed': user.email_confirmed,
+                }
+
+                users_list_view.append(user_view)
+
+        return users_list_view

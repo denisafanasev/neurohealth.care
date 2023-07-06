@@ -295,6 +295,10 @@ def user_manager():
         return redirect(url_for("multilingual.main_page"))
 
     page = request.args.get('page')
+    search_text = ''
+    if session.get('search') is not None:
+        search_text = session['search']
+
     data = page_controller.get_numbers_pages(current_user_id)
     if data is None:
         if page is not None:
@@ -311,9 +315,10 @@ def user_manager():
             return redirect(url_for('multilingual.user_manager', page=1))
 
     endpoint = request.endpoint
-    users_list = page_controller.get_users_list_view(current_user_id, page)
-
-
+    if not search_text:
+        users_list = page_controller.get_users_list_view(current_user_id, page)
+    else:
+        users_list = page_controller
     error = None
     error_type = None
     num_page = 0

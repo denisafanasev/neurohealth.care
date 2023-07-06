@@ -47,3 +47,18 @@ class UserManagerService():
                 'numbers_pages': numbers_pages
             }
             return data
+
+    def get_users_by_search_text(self, _search_text, _current_user_id):
+        """
+        Возвращает список пользователей, у которых логин, email или имя пользователя совпадает с текстом
+
+        Args:
+            _search_text(Str): текст
+            _current_user_id(Int): ID текущего пользователя
+
+        Returns:
+            users_list: список пользователей
+        """
+        user_manager = UserManager()
+
+        return user_manager.get_users_by_search_text(_search_text, _current_user_id)
