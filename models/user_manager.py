@@ -315,7 +315,7 @@ class UserManager():
             users_list_data = data_store.get_rows()
         else:
             if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
-                users_list_data = data_store.get_rows({'limit': 20, 'offset': (_page - 1) * 20})
+                users_list_data = data_store.get_rows({'limit': 5, 'offset': (_page - 1) * 5})
             else:
                 users_list_data = data_store.get_rows()
 
@@ -625,7 +625,10 @@ class UserManager():
 
     def get_current_data_adapter(self):
         """
+        Возвращает название текущего адаптера
 
+        Returns:
+            Str: название текущего адаптера
         """
         data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
 
@@ -633,7 +636,13 @@ class UserManager():
 
     def get_numbers_users(self, _current_user_id):
         """
+        Возвращает количество пользователей в базе данных, если текущий адаптер PostgreSQLDataAdapter
 
+        Args:
+            _current_user_id(Int): ID текущего пользователя
+
+        Returns:
+            Int: количество пользователей
         """
         data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
 
@@ -641,7 +650,7 @@ class UserManager():
             if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
                 return data_store.get_rows_count()
 
-    def get_users_by_search_text(self, _search_text, _current_user_id):
+    def get_users_by_search_text(self, _search_text, _current_user_id, _page):
         """
         Возвращает список пользователей, у которых логин, email или имя пользователя совпадает с текстом
 
@@ -655,11 +664,26 @@ class UserManager():
 
         data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
 
+        users_data_list = []
         if self.get_user_role(_current_user_id) == 'superuser':
-            if _search_text.isalpha():
-                users_data_list = data_store.get_rows(
-                    {'where': f'users.login = "{_search_text}%" or users.email = "{_search_text}%" or users.name ='
-                              f' "{_search_text}%"'})
+            date_format = '%d/%m/%Y'
+            try:
+                date = datetime.strptime(_search_text, date_format)
+            except ValueError:
+                date = None
+
+            if date is not None:
+                users_data_list.extend(data_store.get_rows(
+                    {
+                        'where': f"users.created_date = '{date.date()}' or users.education_module_expiration_date = '{date.date()}'",
+                        'limit': 5, 'offset': (_page - 1) * 5
+                    }
+                ))
+            else:
+                users_data_list.extend(data_store.get_rows(
+                    {
+                        'where': f"users.login like '{_search_text}%' or users.email like '{_search_text}%' or users.name like '{_search_text}%'",
+                        'limit': 5, 'offset': (_page - 1) * 5}))
 
             users_list = []
             for user_data in users_data_list:

@@ -80,7 +80,10 @@
                                 </div>
                                 {% if _data is not none %}
                                     <div class="row dataTables_filter" style="display:flex;">
-                                        <label class="col-form-label text-sm-end" for="search">Search:<input id="search" class="form-control form-control-sm" name="search"></label>
+                                    <form method="post">
+                                        <label class="col-form-label text-sm-end" for="search">Search:<input id="search" class="form-control form-control-sm"
+                                                                                                             onchange="this.form.submit()" name="search"></label>
+                                        </form>
                                     </div>
                                 {% endif %}
 
@@ -127,7 +130,7 @@
                                                 <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg") }}" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
 
                                                 <td class="sorting_1 dtr-control" style="display: flex">
-                                                    <div class="col{% if item['role'] == "superuser" %} bg-primary {% else %} bg-success {% endif %} bg-gradient" style="text-align: center;position: center; margin-right: 16%; color: white">
+                                                    <div class="col{% if item['role'] == "superuser" %} bg-primary {% else %} bg-success {% endif %} bg-gradient" style="text-align: center; margin-right: 16%; color: white">
                                                         <a style="display: inline-block; width: 100%"  href="{{ url_for('multilingual.user_profile', user_id=item['user_id']) }}">
                                                             <span class="">{{ item['login'] }}</span>
                                                         </a>
@@ -140,30 +143,30 @@
 
                                                 {% if item['is_active'] %}
                                                     <td style="display: flex">
-                                                        <div class="col" style="position: center; margin-left: 27%">
+                                                        <div class="col" style="margin-left: 27%">
                                                             <a><span class="fas fa-circle chat-online"></span></a>
                                                         </div>
                                                     </td>
                                                 {% else %}
                                                     <td style="display: flex">
-                                                        <div class="col" style="position: center; margin-left: 27%">
+                                                        <div class="col" style="margin-left: 27%">
                                                             <a><span class="fas fa-circle chat-offline"></span></a>
                                                         </div>
                                                     </td>
                                                 {% endif %}
 
                                                 {% if item['active_education_module'] == 'active' %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-success" >Self service</span></div></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="badge bg-success" >Self service</span></div></td>
                                                 {% elif item['active_education_module'] == 'inactive' %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-info">Overview</span></div></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="badge bg-info">Overview</span></div></td>
                                                 {% elif item['active_education_module'] == 'ends' %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="badge bg-warning">Expiring</span></div></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="badge bg-warning">Expiring</span></div></td>
                                                 {% endif %}
 
                                                 {% if item['email_confirmed'] %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="fas fa-circle chat-online"></span></div></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="fas fa-circle chat-online"></span></div></td>
                                                 {% else %}
-                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%; position: center"><span class="fas fa-circle chat-offline"></span></div></td>
+                                                    <td style="display: flex"><div style="text-align: center; margin-right: 16%;"><span class="fas fa-circle chat-offline"></span></div></td>
                                                 {% endif %}
 
                                             </tr>
@@ -175,7 +178,9 @@
                                 {% if _data is not none %}
                                     <div style="display: flex; justify-content: space-between">
                                         {% set current_page = request.args.get('page')|int %}
-                                        {% if current_page < 5 %}
+                                        {% if _data['numbers_pages'] < 5 %}
+                                            {% set page_range = range(1, _data['numbers_pages'] + 1) %}
+                                        {% elif current_page < 5 %}
                                             {% set page_range = range(2, 6) %}
                                         {% elif current_page >= _data['numbers_pages'] - 3 %}
                                             {% set page_range = range(_data['numbers_pages'] - 4, _data['numbers_pages']) %}
@@ -184,34 +189,42 @@
                                         {% endif %}
 
                                         <p>Showing {{ 1 + (current_page - 1) * 20 }} to {{ current_page * 20 }} of {{ _data['users_numbers'] }} entries</p>
-                                        <nav aria-label="...">
+                                        <form method="post">
+                                            <nav aria-label="...">
+                                                <ul class="pagination">
+                                                    <li class="page-item" {% if current_page == 1 %} disabled {% endif %}>
+                                                        <button class="page-link" type="submit" name="page" value="{{ current_page - 1 }}">Previous</button>
+                                                    </li>
+                                                    {% if _data['numbers_pages'] > 5 %}
+                                                        <li class="page-item {% if current_page == 1 %}active{% endif %}">
+                                                            <button class="page-link" type="submit" name="page" value="1">1</button>
+                                                        </li>
+                                                    {% endif %}
 
-                                            <ul class="pagination">
-                                                <li class="page-item" {% if current_page == 1 %} disabled {% endif %}>
-                                                    <a class="page-link" href="{{ url_for('multilingual.user_manager', page=(current_page - 1)) }}">Previous</a>
-                                                </li>
-                                                <li class="page-item {% if current_page == 1 %}active{% endif %}">
-                                                    <a class="page-link" href="{{ url_for('multilingual.user_manager', page=1) }}">1</a>
-                                                </li>
-                                                {% if current_page > 4 %}
-                                                    <li class="page-item"><a class="page-link" disabled="" href="">...</a></li>
-                                                {% endif %}
-                                                {% for page in page_range %}
-                                                    <li class="page-item{% if current_page == page %}
-                                                    active
-                                                    {% endif %}"><a class="page-link" href="{{ url_for('multilingual.user_manager', page=page) }}">{{ page }}</a></li>
-                                                {% endfor %}
-                                            {% if current_page < _data['numbers_pages'] - 3 %}
-                                                <li class="page-item"><a class="page-link" disabled="" href="">...</a></li>
-                                            {% endif %}
-                                                <li class="page-item{% if current_page == _data['numbers_pages'] %}active{% endif %}">
-                                                    <a class="page-link" href="{{ url_for('multilingual.user_manager', page=_data['numbers_pages']) }}">{{ _data['numbers_pages'] }}</a>
-                                                </li>
-                                                <li class="page-item" {% if current_page == _data['numbers_pages'] %} disabled {% endif %}>
-                                                    <a class="page-link" href="{{ url_for('multilingual.user_manager', page=(current_page + 1)) }}">Next</a>
-                                                </li>
-                                            </ul>
-                                        </nav>
+                                                    {% if current_page > 4 %}
+                                                        <li class="page-item"><a class="page-link" disabled href="">...</a></li>
+                                                    {% endif %}
+
+                                                    {% for page in page_range %}
+                                                        <li class="page-item{% if current_page == page %}
+                                                        active
+                                                        {% endif %}"><button class="page-link" type="submit" name="page" value="{{ page }}">{{ page }}</button></li>
+                                                    {% endfor %}
+
+                                                    {% if current_page < _data['numbers_pages'] - 3 %}
+                                                        <li class="page-item"><a class="page-link" disabled="" href="">...</a></li>
+                                                    {% endif %}
+                                                    {% if _data['numbers_pages'] > 5 %}
+                                                        <li class="page-item{% if current_page == _data['numbers_pages'] %}active{% endif %}">
+                                                            <button class="page-link" type="submit" name="page" value="{{ _data['numbers_pages'] }}">{{ _data['numbers_pages'] }}</button>
+                                                        </li>
+                                                    {% endif %}
+                                                    <li class="page-item" {% if current_page == _data['numbers_pages'] %} disabled {% endif %}>
+                                                        <button type="submit" name="page" value="{{ current_page + 1 }}" class="page-link">Next</button>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </form>
                                     </div>
                                 {% endif %}
                             </div>

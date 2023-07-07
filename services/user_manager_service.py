@@ -25,7 +25,7 @@ class UserManagerService():
 
         return users
 
-    def get_numbers_pages(self, _current_user_id):
+    def get_numbers_pages(self, _current_user_id, _search_text):
         """
         Возвращает количество страниц с данными пользователей и количество пользователей
         Args:
@@ -36,11 +36,15 @@ class UserManagerService():
         """
         user_manager = UserManager()
 
-        users_numbers = user_manager.get_numbers_users(_current_user_id)
+        if not _search_text:
+            users_numbers = user_manager.get_numbers_users(_current_user_id)
+        else:
+            users_numbers = len(user_manager.get_users_by_search_text(_search_text, _current_user_id))
+
         if users_numbers is not None:
-            numbers_pages = users_numbers / 20
-            if users_numbers % 20 != 0:
-                numbers_pages = int(numbers_pages + 1)
+            numbers_pages = int(users_numbers / 5)
+            if users_numbers % 5 != 0:
+                numbers_pages = numbers_pages + 1
 
             data = {
                 'users_numbers': users_numbers,
@@ -48,7 +52,7 @@ class UserManagerService():
             }
             return data
 
-    def get_users_by_search_text(self, _search_text, _current_user_id):
+    def get_users_by_search_text(self, _search_text, _current_user_id, _page):
         """
         Возвращает список пользователей, у которых логин, email или имя пользователя совпадает с текстом
 
@@ -61,4 +65,4 @@ class UserManagerService():
         """
         user_manager = UserManager()
 
-        return user_manager.get_users_by_search_text(_search_text, _current_user_id)
+        return user_manager.get_users_by_search_text(_search_text, _current_user_id, _page)

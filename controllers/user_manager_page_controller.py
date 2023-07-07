@@ -51,7 +51,7 @@ class UserManagerPageController():
 
         return users_list_view
 
-    def get_numbers_pages(self, _current_user_id):
+    def get_numbers_pages(self, _current_user_id, _search_text):
         """
         Возвращает количество страниц с данными пользователей и количество пользователей
 
@@ -63,9 +63,9 @@ class UserManagerPageController():
         """
         user_manager_service = UserManagerService()
 
-        return user_manager_service.get_numbers_pages(_current_user_id)
+        return user_manager_service.get_numbers_pages(_current_user_id, _search_text)
 
-    def get_users_by_search_text(self, _search_text, _current_user_id):
+    def get_users_by_search_text(self, _search_text, _current_user_id, _page):
         """
         Возвращает список пользователей, у которых логин, email или имя пользователя совпадает с текстом
 
@@ -78,7 +78,7 @@ class UserManagerPageController():
         """
         user_manager_service = UserManagerService()
 
-        users_list = user_manager_service.get_users_by_search_text(_search_text, _current_user_id)
+        users_list = user_manager_service.get_users_by_search_text(_search_text, _current_user_id, _page)
 
         users_list_view = []
         if users_list is not None:
