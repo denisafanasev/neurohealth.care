@@ -42,8 +42,8 @@ class UserManagerService():
             users_numbers = len(user_manager.get_users_by_search_text(_search_text, _current_user_id))
 
         if users_numbers is not None:
-            numbers_pages = int(users_numbers / 5)
-            if users_numbers % 5 != 0:
+            numbers_pages = int(users_numbers / 20)
+            if users_numbers % 20 != 0:
                 numbers_pages = numbers_pages + 1
 
             data = {

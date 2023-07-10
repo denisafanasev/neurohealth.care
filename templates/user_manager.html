@@ -31,7 +31,25 @@
 
         });
     </script>
+    <script>
+        $("#search_input").keyup(function(event) {
+            if (event.keyCode === 13) {
+                $('#search_button').click()
+            }
+        });
 
+        document.getElementById("search_input").addEventListener("keyup", function(event) {
+            event.preventDefault();
+            if (event.code === 13) {
+                document.getElementById("search_button").click();
+            }
+        });
+
+        function submit_post(){
+            document.getElementById("search_input").value = ' ';
+            document.getElementById("search_button").click();
+        }
+    </script>
     <script src="{{url_for('static' , filename="js/nhc_utils.js")}}"></script>
     <style>
 
@@ -80,9 +98,12 @@
                                 </div>
                                 {% if _data is not none %}
                                     <div class="row dataTables_filter" style="display:flex;">
-                                    <form method="post">
-                                        <label class="col-form-label text-sm-end" for="search">Search:<input id="search" class="form-control form-control-sm"
-                                                                                                             onchange="this.form.submit()" name="search"></label>
+                                    <form method="post" onsubmit="return submit_post()">
+                                        <label class="col-form-label text-sm-end" for="search_input">Search:
+                                            <input id="search_input" class="form-control form-control-sm"
+                                                   value="{% if request.args.get('search') is none %}{% else %}{{ request.args.get('search') }}{% endif %}"
+                                                    name="search"></label>
+                                            <button id="search_button" type="submit" style="display: none"></button>
                                         </form>
                                     </div>
                                 {% endif %}
@@ -187,13 +208,17 @@
                                         {% else %}
                                             {% set page_range = range(current_page - 1, current_page + 2) %}
                                         {% endif %}
-
-                                        <p>Showing {{ 1 + (current_page - 1) * 20 }} to {{ current_page * 20 }} of {{ _data['users_numbers'] }} entries</p>
+                                        {% if _data['users_numbers'] >= current_page * 20 %}
+                                            <p>Showing {{ 1 + (current_page - 1) * 20 }} to {{ current_page * 20 }} of {{ _data['users_numbers'] }} entries</p>
+                                        {% else %}
+                                            <p>Showing {{ 1 + (current_page - 1) * 20 }} to {{ _data['users_numbers'] }} of {{ _data['users_numbers'] }} entries</p>
+                                        {% endif %}
                                         <form method="post">
                                             <nav aria-label="...">
                                                 <ul class="pagination">
-                                                    <li class="page-item" {% if current_page == 1 %} disabled {% endif %}>
-                                                        <button class="page-link" type="submit" name="page" value="{{ current_page - 1 }}">Previous</button>
+                                                    <li class="page-item" >
+                                                        <button class="page-link" type="submit" {% if current_page == 1 %} disabled {% endif %}
+                                                                name="page" value="{{ current_page - 1 }}">Previous</button>
                                                     </li>
                                                     {% if _data['numbers_pages'] > 5 %}
                                                         <li class="page-item {% if current_page == 1 %}active{% endif %}">
@@ -206,21 +231,23 @@
                                                     {% endif %}
 
                                                     {% for page in page_range %}
-                                                        <li class="page-item{% if current_page == page %}
-                                                        active
-                                                        {% endif %}"><button class="page-link" type="submit" name="page" value="{{ page }}">{{ page }}</button></li>
+                                                        <li class="page-item{% if current_page == page %} active{% endif %}">
+                                                            <button class="page-link" type="submit" name="page" value="{{ page }}">{{ page }}</button>
+                                                        </li>
                                                     {% endfor %}
 
                                                     {% if current_page < _data['numbers_pages'] - 3 %}
                                                         <li class="page-item"><a class="page-link" disabled="" href="">...</a></li>
                                                     {% endif %}
+
                                                     {% if _data['numbers_pages'] > 5 %}
                                                         <li class="page-item{% if current_page == _data['numbers_pages'] %}active{% endif %}">
                                                             <button class="page-link" type="submit" name="page" value="{{ _data['numbers_pages'] }}">{{ _data['numbers_pages'] }}</button>
                                                         </li>
                                                     {% endif %}
-                                                    <li class="page-item" {% if current_page == _data['numbers_pages'] %} disabled {% endif %}>
-                                                        <button type="submit" name="page" value="{{ current_page + 1 }}" class="page-link">Next</button>
+                                                    <li class="page-item">
+                                                        <button type="submit" {% if current_page == _data['numbers_pages'] %} disabled {% endif %}
+                                                                name="page" value="{{ current_page + 1 }}" class="page-link">Next</button>
                                                     </li>
                                                 </ul>
                                             </nav>
@@ -233,6 +260,5 @@
                 </div>
             </div>
         </div>
-
     </div>
 {% endblock %}

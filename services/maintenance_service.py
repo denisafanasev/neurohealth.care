@@ -205,7 +205,13 @@ class MaintenanceService():
 
     def fixed_action_file(self, _name_file):
         """
+        Исправляет поврежденный файл json, в котором хранятся действия пользователя и возвращает новое имя этого файла
 
+        Args:
+            _name_file(str): имя файла, который нужно исправить
+
+        Returns:
+            action_name_file(Str): новое имя
         """
         with open(config.DATA_FOLDER + _name_file, 'r', encoding='utf8') as action_file:
             actions = action_file.read()
@@ -221,7 +227,6 @@ class MaintenanceService():
 
         name_file_list = _name_file.split('.')
         action_name_file = f'action.save.{name_file_list[-1]}.json'
-        # open(os.path.join(config.DATA_FOLDER, _name_file)).close()
         os.rename(os.path.join(config.DATA_FOLDER, _name_file), action_name_file)
         with open(config.DATA_FOLDER + action_name_file, 'w', encoding='utf8') as action_file:
             action_file.write(actions)

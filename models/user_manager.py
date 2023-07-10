@@ -178,7 +178,7 @@ class UserManager():
 
             user_data = user_data
             user = self.user_row_to_user(user_data)
-            
+
             # if user_data.get("education_module_expiration_date") is None:
             #
             #     self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
@@ -315,7 +315,7 @@ class UserManager():
             users_list_data = data_store.get_rows()
         else:
             if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
-                users_list_data = data_store.get_rows({'limit': 5, 'offset': (_page - 1) * 5})
+                users_list_data = data_store.get_rows({'limit': 20, 'offset': (_page - 1) * 20})
             else:
                 users_list_data = data_store.get_rows()
 
@@ -573,7 +573,7 @@ class UserManager():
                          user.created_date, user.education_module_expiration_date,
                          user.token, user.email_confirmed, user.active)
 
-    def get_users_by_ids_list(self, _user_id,_ids_list):
+    def get_users_by_ids_list(self, _user_id, _ids_list):
         """
         Возвращает список пользователей по ID из списка
 
@@ -650,9 +650,10 @@ class UserManager():
             if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
                 return data_store.get_rows_count()
 
-    def get_users_by_search_text(self, _search_text, _current_user_id, _page):
+    def get_users_by_search_text(self, _search_text, _current_user_id, _page=None):
         """
-        Возвращает список пользователей, у которых логин, email или имя пользователя совпадает с текстом
+        Возвращает список пользователей, у которых логин, email, имя пользователя, дата создания или
+        срок действия модуля образования совпадает с текстом
 
         Args:
             _search_text(Str): текст
@@ -664,7 +665,6 @@ class UserManager():
 
         data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
 
-        users_data_list = []
         if self.get_user_role(_current_user_id) == 'superuser':
             date_format = '%d/%m/%Y'
             try:
@@ -673,20 +673,20 @@ class UserManager():
                 date = None
 
             if date is not None:
-                users_data_list.extend(data_store.get_rows(
-                    {
-                        'where': f"users.created_date = '{date.date()}' or users.education_module_expiration_date = '{date.date()}'",
-                        'limit': 5, 'offset': (_page - 1) * 5
-                    }
-                ))
-            else:
-                users_data_list.extend(data_store.get_rows(
-                    {
-                        'where': f"users.login like '{_search_text}%' or users.email like '{_search_text}%' or users.name like '{_search_text}%'",
-                        'limit': 5, 'offset': (_page - 1) * 5}))
+                query = {
+                    'where': f"users.created_date = '{date.date()}' or users.education_module_expiration_date = '{date.date()}'"
+                }
 
+            else:
+                query = {
+                    'where': f"users.login like '{_search_text}%' or users.email like '{_search_text}%' or users.name like '{_search_text}%'"
+                }
+            if _page is not None:
+                query.update({'limit': 20, 'offset': (_page - 1) * 20})
+
+            users_data_list = data_store.get_rows(query)
             users_list = []
             for user_data in users_data_list:
                 users_list.append(self.user_row_to_user(user_data))
 
-            return users_list
+        return users_list

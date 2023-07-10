@@ -300,8 +300,10 @@ def user_manager():
     if request.method == 'POST':
         if request.form.get('search'):
             search_text = request.form['search']
-
-            return redirect(url_for('multilingual.user_manager', page=1, search=search_text))
+            if search_text != ' ':
+                return redirect(url_for('multilingual.user_manager', page=1, search=search_text))
+            else:
+                return redirect(url_for('multilingual.user_manager', page=1))
 
         elif request.form.get('page'):
             page = request.form['page']
@@ -313,28 +315,14 @@ def user_manager():
     page = request.args.get('page')
 
     data = page_controller.get_numbers_pages(current_user_id, search_text)
-    if data is None:
-        if page is not None:
-            return redirect(url_for('multilingual.user_manager'))
-
     if page is not None:
         page = int(page)
-        if page < 1:
-            if search_text is not None:
-                return redirect(url_for('multilingual.user_manager', page=1, search=search_text))
-
-            return redirect(url_for('multilingual.user_manager', page=1))
-
-        elif page > data['numbers_pages']:
-            if search_text is not None:
-                return redirect(url_for('multilingual.user_manager', page=data['numbers_pages'], search=search_text))
-
-            return redirect(url_for('multilingual.user_manager', page=data['numbers_pages']))
+        if data is None:
+            return redirect(url_for('multilingual.user_manager'))
     else:
         if data is not None:
             if not search_text:
                 return redirect(url_for('multilingual.user_manager', page=1))
-
 
     if not search_text:
         users_list = page_controller.get_users_list_view(current_user_id, page)
