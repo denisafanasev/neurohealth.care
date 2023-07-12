@@ -65,7 +65,7 @@ class ActionManager():
 
         elif _name_place == "course_manager":
             _name_place = "урок"
-            comment_action = f"{_place.lessons.name[0:-1]} модуля {_place.lessons.id_module}"
+            comment_action = _place.lessons.name.replace('\n', '') + f" модуля {_place.lessons.id_module}"
 
         elif _name_place == "homework_manager":
             _name_place = "домашнюю работу"

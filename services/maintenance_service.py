@@ -1,7 +1,8 @@
 import os
 from distutils.command.config import config
 
-from sqlalchemy import text
+import pandas as pd
+from sqlalchemy import text, create_engine
 
 from models.action_manager import ActionManager
 from models.user_manager import UserManager
@@ -9,15 +10,16 @@ from data_adapters.data_store import DataStore
 
 import config
 
+
 class MaintenanceService():
     """
     Service for maintenance page
     """
-    
+
     def init(self):
         """
         Constructor
-        """        
+        """
         pass
 
     def get_upload_users_from_json_to_sql_page_data(self, _current_user_id):
@@ -56,7 +58,7 @@ class MaintenanceService():
         Uploads users from json file to sql
         @params:
         """
-        
+
         # get all users in the system
         user_manager = UserManager()
         data_store_tiny_db = DataStore('users')
@@ -72,10 +74,11 @@ class MaintenanceService():
             if user.token == '':
                 user.token = user_manager.create_token(user.email)
             # convert User object to Dict
-            user_raw = {"doc_id": user.user_id, "active": user.active, "password": user_data['password'], "created_date": user.created_date,
-                            "education_module_expiration_date": user.education_module_expiration_date, "email": user.email,
-                            "email_confirmed": user.email_confirmed, "login": user.login, "name": user.name,
-                            "probationers_number": user.probationers_number, "role": user.role, "token": user.token}
+            user_raw = {"doc_id": user.user_id, "active": user.active, "password": user_data['password'],
+                        "created_date": user.created_date,
+                        "education_module_expiration_date": user.education_module_expiration_date, "email": user.email,
+                        "email_confirmed": user.email_confirmed, "login": user.login, "name": user.name,
+                        "probationers_number": user.probationers_number, "role": user.role, "token": user.token}
 
             if data_store.get_row_by_id(user.user_id):
 
@@ -94,26 +97,32 @@ class MaintenanceService():
         Args:
             _current_user_id (Int): id of current user looged into the system
         """
-        # actions_number = 0
-        # file_list = os.listdir(os.path.join(config.DATA_FOLDER))
-        # for name_file in file_list:
-        #     if 'action.json.' in name_file:
-        #         action_name_file = self.fixed_action_file(name_file).replace('.json', '')
-        #
-        #     elif 'action.json' == name_file:
-        #         action_name_file = 'action'
-        #
-        #     elif 'action.save' in name_file:
-        #         action_name_file = name_file.replace('.json', '')
-        #
-        #     else:
-        #         continue
-        #
-        #     data_store_tinydb = DataStore(action_name_file)
-        #     actions_number += data_store_tinydb.get_rows_count()
+        actions_number = 0
+        file_list = os.listdir(os.path.join(config.DATA_FOLDER))
+        actions_files_list = sorted([file for file in file_list if 'action.save' in file or 'action.json' == file])
+        print('\n'.join(actions_files_list))
+        for name_file in file_list:
+            if 'action.json.' in name_file:
+                name_file_list = name_file.split('.')
+                action_name_fixed_file = f'action.save.{name_file_list[-1]}.json'
+                if action_name_fixed_file in file_list:
+                    continue
+                action_name_file = self.fixed_action_file(name_file).replace('.json', '')
 
-        data_store_tinydb = DataStore('action')
-        actions_number = data_store_tinydb.get_rows_count()
+            elif 'action.json' == name_file:
+                action_name_file = 'action'
+
+            elif 'action.save' in name_file:
+                action_name_file = name_file.replace('.json', '')
+
+            else:
+                continue
+
+            data_store_tinydb = DataStore(action_name_file)
+            actions_number += data_store_tinydb.get_rows_count()
+        #
+        # data_store_tinydb = DataStore('action')
+        # actions_number = data_store_tinydb.get_rows_count()
 
         data_store_postgresql = DataStore("action", force_adapter="PostgreSQLDataAdapter")
         current_data_adapter = data_store_postgresql.current_data_adapter
@@ -134,51 +143,89 @@ class MaintenanceService():
 
         return _data
 
+    # def upload_actions_from_json_to_sql(self):
+    #     """
+    #     Uploads actions  from json file to sql
+    #     @params:
+    #     """
+    #
+    #     # get all actions in the system
+    #     action_manager = ActionManager()
+    #     user_manager = UserManager()
+    #
+    #     # create data store with SQL data adapter
+    #     data_store_postgresql = DataStore("action", force_adapter="PostgreSQLDataAdapter")
+    #     # import time
+    #     # start_time = time.time()
+    #     # names_files_list = os.listdir(config.DATA_FOLDER)
+    #     # # print('\n'.join(names_files_list))
+    #     # action_list = []
+    #     # names_files = [i for i in names_files_list if 'action' in i]
+    #     # for name_file in names_files:
+    #     #     if 'action' in name_file:
+    #             # print(f'Начало импорта файла {name_file}')
+    #             # data_store_tinydb = DataStore(name_file.replace('.json', ''))
+    #     data_store_tinydb = DataStore('action')
+    #     # action_list.extend(data_store_tinydb.get_rows())
+    #     action_list = data_store_tinydb.get_rows()
+    #     for action_data in action_list:
+    #         # convert Action object to Dict
+    #         action = action_manager.action_row_to_action(action_data)
+    #         user = user_manager.get_user_by_login(action.user_login)
+    #         if user is not None:
+    #             action_raw = {'user_id': user.user_id, 'action': action.action,
+    #                           'created_date': action.created_date, 'comment_action': action.comment_action}
+    #             if data_store_postgresql.get_row_by_id(action.id):
+    #                 # if action existed in the table, make change
+    #                 data_store_postgresql.update_row_by_id(action_raw, action.id)
+    #             else:
+    #                 # if action non existed, make insert of a new row
+    #                 data_store_postgresql.insert_row(action_raw)
+    #
+    #     #         print(f'{name_file} импортирован в PostgreSQL')
+    #     #         print("--- %s seconds ---" % (time.time() - start_time))
+    #     #         print('-------------------------------------------------')
+    #     #
+    #     # print('Окончательное время:')
+    #     # print("--- %s seconds ---" % (time.time() - start_time))
+
     def upload_actions_from_json_to_sql(self):
         """
         Uploads actions  from json file to sql
-        @params:
         """
 
-        # get all actions in the system
-        action_manager = ActionManager()
-        user_manager = UserManager()
-
+        # create list of name file in directory
+        file_list = os.listdir(os.path.join(config.DATA_FOLDER))
         # create data store with SQL data adapter
-        data_store_postgresql = DataStore("action", force_adapter="PostgreSQLDataAdapter")
-        # import time
-        # start_time = time.time()
-        # names_files_list = os.listdir(config.DATA_FOLDER)
-        # # print('\n'.join(names_files_list))
-        # action_list = []
-        # names_files = [i for i in names_files_list if 'action' in i]
-        # for name_file in names_files:
-        #     if 'action' in name_file:
-                # print(f'Начало импорта файла {name_file}')
-                # data_store_tinydb = DataStore(name_file.replace('.json', ''))
-        data_store_tinydb = DataStore('action')
-        # action_list.extend(data_store_tinydb.get_rows())
-        action_list = data_store_tinydb.get_rows()
-        for action_data in action_list:
-            # convert Action object to Dict
-            action = action_manager.action_row_to_action(action_data)
-            user = user_manager.get_user_by_login(action.user_login)
-            if user is not None:
-                action_raw = {'user_id': user.user_id, 'action': action.action,
-                              'created_date': action.created_date, 'comment_action': action.comment_action}
-                if data_store_postgresql.get_row_by_id(action.id):
-                    # if action existed in the table, make change
-                    data_store_postgresql.update_row_by_id(action_raw, action.id)
-                else:
-                    # if action non existed, make insert of a new row
-                    data_store_postgresql.insert_row(action_raw)
+        data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
+        # create database connection
+        con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
+        # create a list of file names with user actions data
+        actions_files_list = sorted([file for file in file_list if 'action.save' in file or 'action.json' == file])
+        # create DataFrame with users data(login and user_id)
+        users_list = data_store.get_rows()
+        users_df = pd.DataFrame(users_list)
+        users_df = users_df[['login', 'doc_id']]
+        for action_file in actions_files_list:
+            # retrieve data from the file
+            with open(config.DATA_FOLDER + action_file, encoding='utf-8') as inputfile:
+                json_text = inputfile.read()
+            # prepare data for DataFrame
+            if '"_default": {' in json_text:
+                json_text = json_text.replace('"_default": {', '')
+                ind = json_text.rfind('}')
+                json_text = json_text[:ind]
 
-        #         print(f'{name_file} импортирован в PostgreSQL')
-        #         print("--- %s seconds ---" % (time.time() - start_time))
-        #         print('-------------------------------------------------')
-        #
-        # print('Окончательное время:')
-        # print("--- %s seconds ---" % (time.time() - start_time))
+            # create DataFrame with user actions data
+            df = pd.read_json(json_text, orient='index')
+            # merge DataFrame with user actions data and users data
+            res_df = pd.merge(df, users_df, how='inner', on=['login'])
+            # remove unnecessary columns
+            res_df.rename(columns={'doc_id': 'user_id'}, inplace=True)
+            res_df = res_df.drop('login', axis=1)
+            res_df = res_df.drop('id', axis=1)
+            # import user actions data into PostgreSQL
+            res_df.to_sql('action', con, if_exists='append', index=False)
 
     def create_table_in_sql(self, _table_name):
         """
@@ -227,7 +274,7 @@ class MaintenanceService():
 
         name_file_list = _name_file.split('.')
         action_name_file = f'action.save.{name_file_list[-1]}.json'
-        os.rename(os.path.join(config.DATA_FOLDER, _name_file), action_name_file)
+        # os.rename(os.path.join(config.DATA_FOLDER, _name_file), action_name_file)
         with open(config.DATA_FOLDER + action_name_file, 'w', encoding='utf8') as action_file:
             action_file.write(actions)
 
