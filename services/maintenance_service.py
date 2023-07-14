@@ -99,8 +99,6 @@ class MaintenanceService():
         """
         actions_number = 0
         file_list = os.listdir(os.path.join(config.DATA_FOLDER))
-        actions_files_list = sorted([file for file in file_list if 'action.save' in file or 'action.json' == file])
-        print('\n'.join(actions_files_list))
         for name_file in file_list:
             if 'action.json.' in name_file:
                 name_file_list = name_file.split('.')
@@ -155,15 +153,12 @@ class MaintenanceService():
     #
     #     # create data store with SQL data adapter
     #     data_store_postgresql = DataStore("action", force_adapter="PostgreSQLDataAdapter")
-    #     # import time
-    #     # start_time = time.time()
     #     # names_files_list = os.listdir(config.DATA_FOLDER)
     #     # # print('\n'.join(names_files_list))
     #     # action_list = []
     #     # names_files = [i for i in names_files_list if 'action' in i]
     #     # for name_file in names_files:
     #     #     if 'action' in name_file:
-    #             # print(f'Начало импорта файла {name_file}')
     #             # data_store_tinydb = DataStore(name_file.replace('.json', ''))
     #     data_store_tinydb = DataStore('action')
     #     # action_list.extend(data_store_tinydb.get_rows())
@@ -181,13 +176,6 @@ class MaintenanceService():
     #             else:
     #                 # if action non existed, make insert of a new row
     #                 data_store_postgresql.insert_row(action_raw)
-    #
-    #     #         print(f'{name_file} импортирован в PostgreSQL')
-    #     #         print("--- %s seconds ---" % (time.time() - start_time))
-    #     #         print('-------------------------------------------------')
-    #     #
-    #     # print('Окончательное время:')
-    #     # print("--- %s seconds ---" % (time.time() - start_time))
 
     def upload_actions_from_json_to_sql(self):
         """
