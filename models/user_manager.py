@@ -283,7 +283,6 @@ class UserManager():
         email = _email.lower().strip()
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
-        # user_data = data_store.get_rows(f"select * from users where users.email = '{email}'")
         if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
             user_data = data_store.get_rows({'where': f"users.email = '{email}'"})
         else:

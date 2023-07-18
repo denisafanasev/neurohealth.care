@@ -118,9 +118,6 @@ class MaintenanceService():
 
             data_store_tinydb = DataStore(action_name_file)
             actions_number += data_store_tinydb.get_rows_count()
-        #
-        # data_store_tinydb = DataStore('action')
-        # actions_number = data_store_tinydb.get_rows_count()
 
         data_store_postgresql = DataStore("action", force_adapter="PostgreSQLDataAdapter")
         current_data_adapter = data_store_postgresql.current_data_adapter
@@ -153,8 +150,6 @@ class MaintenanceService():
     #
     #     # create data store with SQL data adapter
     #     data_store_postgresql = DataStore("action", force_adapter="PostgreSQLDataAdapter")
-    #     # names_files_list = os.listdir(config.DATA_FOLDER)
-    #     # # print('\n'.join(names_files_list))
     #     # action_list = []
     #     # names_files = [i for i in names_files_list if 'action' in i]
     #     # for name_file in names_files:
@@ -205,15 +200,14 @@ class MaintenanceService():
                 json_text = json_text[:ind]
 
             # create DataFrame with user actions data
-            df = pd.read_json(json_text, orient='index')
+            actions_json_df = pd.read_json(json_text, orient='index')
             # merge DataFrame with user actions data and users data
-            res_df = pd.merge(df, users_df, how='inner', on=['login'])
+            actions_df = pd.merge(actions_json_df, users_df, how='inner', on=['login'])
             # remove unnecessary columns
-            res_df.rename(columns={'doc_id': 'user_id'}, inplace=True)
-            res_df = res_df.drop('login', axis=1)
-            res_df = res_df.drop('id', axis=1)
+            actions_df.rename(columns={'doc_id': 'user_id'}, inplace=True)
+            actions_df = actions_df.drop(['login', 'id'], axis=1)
             # import user actions data into PostgreSQL
-            res_df.to_sql('action', con, if_exists='append', index=False)
+            actions_df.to_sql('action', con, if_exists='append', index=False)
 
     def create_table_in_sql(self, _table_name):
         """

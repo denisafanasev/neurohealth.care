@@ -765,9 +765,6 @@ def education_course_lesson():
         if not data['available']:
             return redirect(url_for('multilingual.education_program_subscription'))
 
-    if id_video is None:
-        id_video = 1
-
     if request.method == "POST":
         # сохраняем новое сообщение
         if request.form.get("send"):
