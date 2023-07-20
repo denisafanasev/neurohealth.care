@@ -442,8 +442,8 @@
                 </div>
             </div>
 
-            <div class="d-flex align-items-stretch" style="margin-left: auto; margin-right: auto; ">
-                <div class="p-1" align="right">
+            <div class="d-flex align-items-stretch" style="margin-left: auto; margin-right: auto; display: flex; justify-content: flex-end">
+                <div class="p-1" style="">
                     <button type="submit" name="button" value="{% if _mode == 'new' %}new{% elif _mode == "view" %}edit{% else %}save{% endif %}" class="btn btn-primary ">
                         {% if _mode == 'new' %}{{_("Создать")}}{% elif _mode == "view" %}{{_("Редактировать")}}{% else %}{{_("Сохранить")}}{% endif %}
                     </button>

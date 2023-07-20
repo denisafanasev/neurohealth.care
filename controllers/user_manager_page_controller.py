@@ -29,7 +29,6 @@ class UserManagerPageController():
 
         users = user_manager_service.get_users(_user_id, _filters)
         users_list_view = []
-        # number_of_users_subscriptions = 0
         for user in users:
 
             user_view = {}
