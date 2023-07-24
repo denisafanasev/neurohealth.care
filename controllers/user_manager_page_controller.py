@@ -63,6 +63,6 @@ class UserManagerPageController():
 
         user_manager_service = UserManagerService()
 
-        number_of_users_subscriptions, number_of_users = user_manager_service.get_number_of_users_with_subscriptions(_user_id)
+        return user_manager_service.get_number_of_users_with_subscriptions(_user_id)
 
-        return number_of_users_subscriptions, number_of_users
+

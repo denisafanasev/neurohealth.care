@@ -46,9 +46,13 @@ class UserManagerService():
         user_manager = UserManager()
 
         users = user_manager.get_users(_user_id, {'role': 'user'})
-        number_of_users_with_subscriptions = 0
+        data = {
+            'number_of_users_with_subscriptions': 0
+        }
         for user in users:
             if user.education_module_expiration_date >= datetime.now():
-                number_of_users_with_subscriptions += 1
+                data['number_of_users_with_subscriptions'] += 1
 
-        return number_of_users_with_subscriptions, len(users)
+        data['number_of_users'] = len(users)
+
+        return data

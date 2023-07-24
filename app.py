@@ -300,7 +300,7 @@ def user_manager():
     filters = request.args.get('filters')
 
     users_list = page_controller.get_users_list_view(current_user_id, filters)
-    number_of_users_subscriptions, number_of_users = page_controller.get_number_of_users_with_subscriptions(current_user_id)
+    subscription_data = page_controller.get_number_of_users_with_subscriptions(current_user_id)
     if request.method == 'POST':
         if request.form.get('button') == 'subscription':
             return redirect(url_for('multilingual.user_manager', filters='with_subscription'))
@@ -313,8 +313,7 @@ def user_manager():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _users_list=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),
                            _error=error, _error_type=error_type, _num_page=num_page, _languages=config.LANGUAGES,
-                           _lang_code=get_locale(), _number_of_users_subscriptions=number_of_users_subscriptions,
-                           _number_of_users=number_of_users)
+                           _lang_code=get_locale(), _subscription_data=subscription_data)
 
 
 @multilingual.route('/user_profile', methods=['GET', 'POST'])
