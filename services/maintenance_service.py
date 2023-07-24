@@ -98,8 +98,10 @@ class MaintenanceService():
             _current_user_id (Int): id of current user looged into the system
         """
         actions_number = 0
+        # create list file names in DATA_FOLDER
         file_list = os.listdir(os.path.join(config.DATA_FOLDER))
         for name_file in file_list:
+            # choose files with user actions data
             if 'action.json.' in name_file:
                 name_file_list = name_file.split('.')
                 action_name_fixed_file = f'action.save.{name_file_list[-1]}.json'
@@ -115,10 +117,11 @@ class MaintenanceService():
 
             else:
                 continue
-
+            # sum number of data from files
             data_store_tinydb = DataStore(action_name_file)
             actions_number += data_store_tinydb.get_rows_count()
 
+        # get number of data from PostgreSQL and check if the table has been created
         data_store_postgresql = DataStore("action", force_adapter="PostgreSQLDataAdapter")
         current_data_adapter = data_store_postgresql.current_data_adapter
         if current_data_adapter == 'PostgreSQLDataAdapter':
@@ -191,8 +194,8 @@ class MaintenanceService():
         users_df = users_df[['login', 'doc_id']]
         for action_file in actions_files_list:
             # retrieve data from the file
-            with open(config.DATA_FOLDER + action_file, encoding='utf-8') as inputfile:
-                json_text = inputfile.read()
+            with open(config.DATA_FOLDER + action_file, encoding='utf-8') as json_file:
+                json_text = json_file.read()
             # prepare data for DataFrame
             if '"_default": {' in json_text:
                 json_text = json_text.replace('"_default": {', '')

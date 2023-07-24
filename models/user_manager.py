@@ -179,26 +179,6 @@ class UserManager():
             user_data = user_data
             user = self.user_row_to_user(user_data)
 
-            # if user_data.get("education_module_expiration_date") is None:
-            #
-            #     self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
-            #                      _probationers_number=user.probationers_number, _created_date=user.created_date,
-            #                      _education_module_expiration_date=user.education_module_expiration_date,
-            #                      _token=user.token, _email_confirmed=user.email_confirmed)
-            #
-            # elif user_data.get("token") is None:
-            #
-            #     self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
-            #                      _probationers_number=user.probationers_number, _created_date=user.created_date,
-            #                      _education_module_expiration_date=user.education_module_expiration_date,
-            #                      _token=user.token, _email_confirmed=user.email_confirmed)
-            #
-            # elif user_data.get("email_confirmed") is None:
-            #
-            #     self.chenge_user(_login=user.login, _name=user.name, _email=user.email, _role=user.role,
-            #                      _probationers_number=user.probationers_number, _created_date=user.created_date,
-            #                      _education_module_expiration_date=user.education_module_expiration_date,
-            #                      _token=user.token, _email_confirmed=user.email_confirmed)
         else:
             if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
                 data_store = DataStore("users")
