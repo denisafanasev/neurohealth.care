@@ -54,13 +54,13 @@
                 <div class="card">
                     <div class="card-header">
                         <div>
-                            <a class="btn {% if _endpoint == "age_range_list" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for("multilingual.age_range_list") }}" role="tab">
+                            <a class="btn {% if _endpoint == "'multilingual.age_range_list'" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons" href="{{ url_for("multilingual.age_range_list") }}" role="tab">
                                 {{_("Справочник диапазонов возрастов")}}
                             </a>
-                            <a class="btn {% if _endpoint == "estimated_values" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("multilingual.estimated_values") }}" role="tab">
+                            <a class="btn {% if _endpoint == "multilingual.estimated_values" %} btn-primary {% else %}btn-light {% endif %} buttons-copy buttons-html5" aria-controls="datatables-buttons"  href="{{ url_for("multilingual.estimated_values") }}" role="tab">
                                 {{_("Справочник оценочных значений")}}
                             </a>
-                            <a class="btn {% if _endpoint == "maintenance" %} btn-primary {% else %}btn-light {% endif %} buttons-copy
+                            <a class="btn {% if _endpoint == "multilingual.maintenance" %} btn-primary {% else %}btn-light {% endif %} buttons-copy
                                 buttons-html5" aria-controls="datatables-buttons" href="{{ url_for("multilingual.maintenance") }}" role="tab">
                                 {{_("Обслуживание системы")}}
                             </a>

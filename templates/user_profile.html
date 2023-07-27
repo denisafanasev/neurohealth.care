@@ -78,7 +78,7 @@
     </script>
         <form id="add_user" name="add_user" method="post" enctype="multipart/form-data" onsubmit="return checkData(this);">
 
-            <div class="row d-flex align-items-stretch">
+            <div class="row d-flex align-items-stretch mb-2">
                 <div class="col-sm-6 bd-highlight">
                     <div class="card d-flex align-self-baseline" style="height: 100%;">
                         <div class="card-header">
@@ -179,90 +179,84 @@
             </div>
         </form>
 {% if _mode == 'view' %}
-    <div class="row d-flex align-items-stretch">
-        <div class="col-sm p-2 bd-highlight">
-            <div class="card d-flex align-self-baseline" style="height: 100%;">
-                <div class="card-header">
-                    <h5 class="card-title">{{_("Обучающие потоки")}}</h5>
+        <div class="card d-flex align-self-baseline ">
+            <div class="card-header">
+                <h5 class="card-title">{{_("Обучающие потоки")}}</h5>
 
-                    <div class="mb-2">
-                        <table id="education_stream_table" class="table table-striped dataTable no-footer dtr-inline" style="font-size: 13px" >
-                            <thead>
-                            <tr>
-                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                    style="width:20%; text-align: left;" aria-label="Position: activate to sort column ascending">
-                                    {{_("Название")}}
-                                </th>
-                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                    style="width:20%; text-align: left;" aria-label="Position: activate to sort column ascending">
-                                    {{_("Роль пользователя в потоке")}}
-                                </th>
-                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                    style="width:10%; text-align: center;" aria-label="Position: activate to sort column ascending">
-                                    {{_("Преподаватель")}}
-                                </th>
-                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
-                                    {{_("Дата старта")}}
-                                </th>
-                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                    style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
-                                    {{_("Дата окончания")}}
-                                </th>
-                                <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                    style="width:15%; text-align: center;" aria-label="Position: activate to sort column ascending">
-                                    {{_("Обучающий курс")}}
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for education_stream in _education_streams_list %}
-                                <tr class="even">
-                                    <td>
-                                        <div style="text-align: left">
-                                            <a href="{{ url_for('multilingual.education_stream_card', id=education_stream['id'] ) }}">{{ education_stream['name'] }}</a>
-                                        </div>
-                                    </td>
-                                    <td><div style="text-align: left">{{ education_stream['role_selected_user'] }}</div></td>
-                                    <td><div style="text-align: center; margin-right: 6%">{{ education_stream['teacher'] }}</div></td>
-                                    <td><div style="text-align: center; margin-right: 13%;">{{ education_stream['date_start'] }}</div></td>
-                                    <td><div style="text-align: center; margin-right: 13%;">{{ education_stream['date_end'] }}</div></td>
-                                    <td><div style="text-align: center; margin-right: 4%">{{ education_stream['course'] }}</div></td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <table id="education_stream_table" class="table table-striped dataTable no-footer dtr-inline" style="font-size: 13px" >
+                    <thead>
+                    <tr>
+                        <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                            style="width:20%; text-align: left;" aria-label="Position: activate to sort column ascending">
+                            {{_("Название")}}
+                        </th>
+                        <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                            style="width:20%; text-align: left;" aria-label="Position: activate to sort column ascending">
+                            {{_("Роль пользователя в потоке")}}
+                        </th>
+                        <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                            style="width:10%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                            {{_("Преподаватель")}}
+                        </th>
+                        <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                            style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                            {{_("Дата старта")}}
+                        </th>
+                        <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                            style="width:5%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                            {{_("Дата окончания")}}
+                        </th>
+                        <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                            style="width:15%; text-align: center;" aria-label="Position: activate to sort column ascending">
+                            {{_("Обучающий курс")}}
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for education_stream in _education_streams_list %}
+                        <tr class="even">
+                            <td>
+                                <div style="text-align: left">
+                                    <a href="{{ url_for('multilingual.education_stream_card', id=education_stream['id'] ) }}">{{ education_stream['name'] }}</a>
+                                </div>
+                            </td>
+                            <td><div style="text-align: left">{{ education_stream['role_selected_user'] }}</div></td>
+                            <td><div style="text-align: center; margin-right: 6%">{{ education_stream['teacher'] }}</div></td>
+                            <td><div style="text-align: center; margin-right: 13%;">{{ education_stream['date_start'] }}</div></td>
+                            <td><div style="text-align: center; margin-right: 13%;">{{ education_stream['date_end'] }}</div></td>
+                            <td><div style="text-align: center; margin-right: 4%">{{ education_stream['course'] }}</div></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
+        </div>
+{% endif %}
+    <div class="d-flex align-items-stretch" style="justify-content: flex-end">
+        <div class="p-2">
+            <a type="submit" href="{% if _mode == "edit" %}{{ url_for('multilingual.user_profile', user_id=_data['user_id']) }}{% else %}{{ url_for('multilingual.user_manager') }}{% endif %}"
+               class="btn btn-primary">
+                {% if _mode != "view" %}{{_("Отмена")}}{% else %}{{_("Назад")}}{% endif %}
+            </a>
+            {% if _mode !="discharge" %}
+                <button form="add_user" type="submit" name="button"
+                        value="{% if _mode=="new" %}add{% elif _mode=="edit"%}save{% else %}edit{% endif %}" class="btn btn-primary">
+                    {% if _mode=="new" %}{{_("Добавить пользователя")}}
+                    {% elif _mode=="edit" %}{{_("Сохранить")}}
+                    {% else %}{{_("Редактировать")}}
+                    {% endif %}
+                </button>
+            {% endif %}
+            {% if _mode == "view"%}
+                <button name="button" value="{% if _mode=="view" %}discharge{% elif _mode=="discharge" %}save_discharge{% endif %}"
+                        class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#extension"
+                        onclick="document.getElementById('extension').style.display = 'none'; document.getElementById('reset').style.display = 'block';">
+                    {{_("Сброс пароля")}}
+
+                </button>
+            {% endif %}
         </div>
     </div>
-{% endif %}
-    <div class="row d-flex align-items-stretch bd-highlight" align="right">
-            <div class="col-12 p-2">
-                <a type="submit" href="{% if _mode == "edit" %}{{ url_for('multilingual.user_profile', user_id=_data['user_id']) }}{% else %}{{ url_for('multilingual.user_manager') }}{% endif %}"
-                   class="btn btn-primary">
-                    {% if _mode != "view" %}{{_("Отмена")}}{% else %}{{_("Назад")}}{% endif %}
-                </a>
-                {% if _mode !="discharge" %}
-                    <button form="add_user" type="submit" name="button"
-                            value="{% if _mode=="new" %}add{% elif _mode=="edit"%}save{% else %}edit{% endif %}" class="btn btn-primary">
-                        {% if _mode=="new" %}{{_("Добавить пользователя")}}
-                        {% elif _mode=="edit" %}{{_("Сохранить")}}
-                        {% else %}{{_("Редактировать")}}
-                        {% endif %}
-                    </button>
-                {% endif %}
-                {% if _mode == "view"%}
-                    <button name="button" value="{% if _mode=="view" %}discharge{% elif _mode=="discharge" %}save_discharge{% endif %}"
-                            class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#extension"
-                            onclick="document.getElementById('extension').style.display = 'none'; document.getElementById('reset').style.display = 'block';">
-                        {{_("Сброс пароля")}}
-
-                    </button>
-                {% endif %}
-            </div>
-        </div>
     <script>
         // Get the modal
         const modal_extension = document.getElementById('extension');
@@ -280,7 +274,7 @@
         <div class="modal-content animate " style="width: 31%">
             <h3 class="modal-title">{{_("Доступ к дополнительным курсам")}}</h3>
             <form id="extension" name="form" method="post" enctype="multipart/form-data" onsubmit="return checkExtension(this);">
-                <div class="row d-flex align-items-stretch bd-highlight">
+                <div class="d-flex align-items-stretch bd-highlight">
                     <div class="card d-flex align-self-baseline border" style="margin-left: auto; margin-right: auto;">
                         <div class="card-header">
                             <div class="mb-2">
@@ -308,7 +302,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row d-flex align-items-stretch bd-highlight" style="text-align: end;">
+                <div class="d-flex align-items-stretch bd-highlight" style="text-align: end;">
                     <div class="p-1">
                         <button type="submit" class="btn btn-primary" name="button" value="extension">
                             {{_("Продлить")}}

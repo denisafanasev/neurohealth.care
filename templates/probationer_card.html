@@ -22,76 +22,72 @@
                 </div>
             </div>
         {% endif %}
-        <div class="row d-flex align-items-stretch bd-highlight">
-                <div class="col-6 p-2 bd-highlight">
-                    <div class="card d-flex align-self-baseline">
+        <div class="row d-flex align-items-stretch">
+            <div class="col-sm-6">
+                <div class="card d-flex align-self-baseline" style="height: 100%">
                         <div class="card-header">
                             <h5 class="card-title">{{_("Данные тестируемого")}}</h5>
 
-                            {% if _is_current_user_admin and _mode=="view" %}
-                                <div class="mb-2">
-                                    <label class="form-label"><strong>Login</strong></label>
-                                    <input required type="text" name="user_login" class="form-control" readonly value="{{ _data['user_login'] }}">
-                                </div>
-                            {% endif %}
+                        {% if _is_current_user_admin and _mode=="view" %}
                             <div class="mb-2">
-                                <label class="form-label"><strong>{{_("Имя тестируемого")}}</strong></label>
-                                <input required type="text" name="name_probationer" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _data['name_probationer']!=_data_begin['name_probationer'] or _mode != "new" %} value="{{ _data['name_probationer'] }}" {% else %} placeholder= "{{ _data_begin['name_probationer'] }}" {% endif %}>
+                                <label class="form-label"><strong>Login</strong></label>
+                                <input required type="text" name="user_login" class="form-control" readonly value="{{ _data['user_login'] }}">
                             </div>
-
-                            <div class="mb-2">
-                                <label class="form-label"><strong>{{_("Сопутствующие диагнозы")}}</strong></label>
-                                <textarea required name="diagnoses" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _data['diagnoses']==_data_begin['diagnoses'] or _mode == "new" %} placeholder= "{{ _data_begin['diagnoses'] }}" {% endif %}>{% if _data['diagnoses']!=_data_begin['diagnoses'] or _mode != "new" %}{{ _data['diagnoses'] }}{% endif %}</textarea>
-                            </div>
-
-                            <div class="mb-2">
-                                <label class="form-label"><strong>{{_("Причины обращения")}}</strong></label>
-                                <textarea required name="reasons_for_contact" class="form-control"  {% if _mode=="view"%} readonly {% endif %} {% if _data['reasons_for_contact']==_data_begin['reasons_for_contact'] or _mode == "new"  %}  placeholder= "{{ _data_begin['reasons_for_contact'] }}" {% endif %}>{% if _data['reasons_for_contact']!=_data_begin['reasons_for_contact'] or _mode != "new"  %}{{ _data['reasons_for_contact'] }}{% endif %}</textarea>
-                            </div>
-
+                        {% endif %}
+                        <div class="mb-2">
+                            <label class="form-label"><strong>{{_("Имя тестируемого")}}</strong></label>
+                            <input required type="text" name="name_probationer" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _data['name_probationer']!=_data_begin['name_probationer'] or _mode != "new" %} value="{{ _data['name_probationer'] }}" {% else %} placeholder= "{{ _data_begin['name_probationer'] }}" {% endif %}>
                         </div>
-                    </div>
-                </div>
 
-                <div class="col-6 p-2 bd-highlight">
-                    <div class="card d-flex align-self-baseline">
-                        <div class="card-header">
-                            <div class="mb-2">
-                                <label class="form-label"><strong>{{_("Дата Рождения")}}</strong></label>
-                                <input required type="date" name="date_of_birth" class="form-control" {% if _mode == "view" %} readonly {% endif %} value="{{ _data['date_of_birth'] }}" >
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label"><strong>{{_("ФИО родителя")}}</strong></label>
-                                <input required type="text" name="name_parent" class="form-control" {% if _mode == "view" %} readonly {% endif %} {% if _data['name_parent']!=_data_begin['name_parent'] or _mode != "new" %} value="{{ _data['name_parent'] }}" {% else %}  placeholder="{{ _data_begin['name_parent'] }}" {% endif %}>
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label"><strong>{{_("Учебное заведение")}}</strong></label>
-                                <select required type="text" name="educational_institution" class="form-control" {% if _mode=="view"%} disabled {% endif %}>
-                                    <option selected disabled value="">{{_("Выберите название учебного заведения")}}..</option>
-                                    {% for i_setting in _settings['educational_institution'] %}
-                                        <option {% if i_setting == _data['educational_institution'] %}selected{% endif %} value="{{ i_setting }}">{{ i_setting }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label"><strong>{{_("Контакты")}}</strong></label>
-                                <input required type="text" name="contacts" class="form-control" {% if _mode=="view" %} readonly {% endif %} {% if _data['contacts']!=_data_begin['contacts'] or _mode!="new" %} value="{{ _data['contacts'] }}" {% else %} placeholder= "{{ _data_begin['contacts'] }}" {% endif %}>
-                            </div>
+                        <div class="mb-2">
+                            <label class="form-label"><strong>{{_("Сопутствующие диагнозы")}}</strong></label>
+                            <textarea required name="diagnoses" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _data['diagnoses']==_data_begin['diagnoses'] or _mode == "new" %} placeholder= "{{ _data_begin['diagnoses'] }}" {% endif %}>{% if _data['diagnoses']!=_data_begin['diagnoses'] or _mode != "new" %}{{ _data['diagnoses'] }}{% endif %}</textarea>
                         </div>
+
+                        <div class="mb-2">
+                            <label class="form-label"><strong>{{_("Причины обращения")}}</strong></label>
+                            <textarea required name="reasons_for_contact" class="form-control"  {% if _mode=="view"%} readonly {% endif %} {% if _data['reasons_for_contact']==_data_begin['reasons_for_contact'] or _mode == "new"  %}  placeholder= "{{ _data_begin['reasons_for_contact'] }}" {% endif %}>{% if _data['reasons_for_contact']!=_data_begin['reasons_for_contact'] or _mode != "new"  %}{{ _data['reasons_for_contact'] }}{% endif %}</textarea>
+                        </div>
+
                     </div>
-                </div>
-        </div>
-        <div class="row d-flex align-items-stretch bd-highlight" align="right">
-            <div class="col-12 p-2 bd-highlight">
-                <div align="right">
-                    <button type="submit" name="button" value="{% if _mode=="new" %}add{% elif _mode=="edit" %}save{% else %}edit{% endif %}" class="btn btn-primary ">{% if _mode=="new" %}{{_("Добавить
-                            тестируемого")}}
-                                                                    {% elif _mode=="edit" %}{{_("Сохранить")}}
-                                                                    {% else %}{{_("Редактировать")}}
-                                                                    {% endif %}
-                    </button>
                 </div>
             </div>
+
+            <div class="col-sm-6 ">
+                <div class="card d-flex align-self-baseline" style="height: 100%">
+                    <div class="card-header">
+                        <div class="mb-2">
+                            <label class="form-label"><strong>{{_("Дата Рождения")}}</strong></label>
+                            <input required type="date" name="date_of_birth" class="form-control" {% if _mode == "view" %} readonly {% endif %} value="{{ _data['date_of_birth'] }}" >
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label"><strong>{{_("ФИО родителя")}}</strong></label>
+                            <input required type="text" name="name_parent" class="form-control" {% if _mode == "view" %} readonly {% endif %} {% if _data['name_parent']!=_data_begin['name_parent'] or _mode != "new" %} value="{{ _data['name_parent'] }}" {% else %}  placeholder="{{ _data_begin['name_parent'] }}" {% endif %}>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label"><strong>{{_("Учебное заведение")}}</strong></label>
+                            <select required type="text" name="educational_institution" class="form-control" {% if _mode=="view"%} disabled {% endif %}>
+                                <option selected disabled value="">{{_("Выберите название учебного заведения")}}..</option>
+                                {% for i_setting in _settings['educational_institution'] %}
+                                    <option {% if i_setting == _data['educational_institution'] %}selected{% endif %} value="{{ i_setting }}">{{ i_setting }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label"><strong>{{_("Контакты")}}</strong></label>
+                            <input required type="text" name="contacts" class="form-control" {% if _mode=="view" %} readonly {% endif %} {% if _data['contacts']!=_data_begin['contacts'] or _mode!="new" %} value="{{ _data['contacts'] }}" {% else %} placeholder= "{{ _data_begin['contacts'] }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex align-items-stretch p-2" style="justify-content: flex-end">
+            <button type="submit" name="button" value="{% if _mode=="new" %}add{% elif _mode=="edit" %}save{% else %}edit{% endif %}" class="btn btn-primary ">{% if _mode=="new" %}{{_("Добавить
+                    тестируемого")}}
+                                                            {% elif _mode=="edit" %}{{_("Сохранить")}}
+                                                            {% else %}{{_("Редактировать")}}
+                                                            {% endif %}
+            </button>
         </div>
     </form>
 </div>
