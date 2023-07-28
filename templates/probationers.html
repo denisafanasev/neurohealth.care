@@ -10,7 +10,6 @@
             var datatablesButtons = $("#datatables-buttons").DataTable({
                 responsive: true,
                 lengthChange: !1,
-                {#displayStart: {{ _num_page * 10 }}#}
             });
             datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)")
         });
@@ -34,88 +33,85 @@
         <h1 class="h3 mb-3">{{ _("Тестируемые") }}</h1>
 
         <div class="card card-body">
-            <div class="col-sm-12 col-md-6">
-                <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
-                   data-bs-toggle="modal" data-bs-target="#0"
-                   href="{{ url_for('multilingual.probationer_card') }}">
-                    <span>{{ _("Добавить тестируемого") }}</span>
-                </a>
-            </div>
+            <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
+               data-bs-toggle="modal" data-bs-target="#0"
+               href="{{ url_for('multilingual.probationer_card') }}">
+                <span>{{ _("Добавить тестируемого") }}</span>
+            </a>
 
-            <div class="col-sm-12">
-                <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline"
+            <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline"
                        style="width: 100%; font-size: 13px"
                        role="grid" aria-describedby="datatables-buttons_info">
-                    <thead>
-                    <tr role="row" style="text-align: center">
-                        <th style="width:1%;">#</th>
+                <thead>
+                <tr role="row" style="text-align: center">
+                    <th style="width:1%;">#</th>
+                    <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
+                        rowspan="1" colspan="1"
+                        style="width:10%;" aria-label="Position: activate to sort column ascending">
+                        {{ _("Имя испытуемого") }}</th>
+                    {% if _is_current_user_admin %}
                         <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
                             rowspan="1" colspan="1"
                             style="width:10%;" aria-label="Position: activate to sort column ascending">
-                            {{ _("Имя испытуемого") }}</th>
+                            User_Login
+                        </th>
+                    {% endif %}
+                    <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
+                        rowspan="1" colspan="1"
+                        style="width:10%;" aria-label="Position: activate to sort column ascending">
+                        {{ _("Дата рождения") }}</th>
+                    <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
+                        rowspan="1" colspan="1"
+                        style="width:15%;" aria-label="Position: activate to sort column ascending">
+                        {{ _("ФИО родителя") }}</th>
+                    <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
+                        rowspan="1" colspan="1"
+                        style="width:10%;" aria-label="Position: activate to sort column ascending">
+                        {{ _("Контакты") }}</th>
+                    <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
+                        rowspan="1" colspan="1"
+                        style="width:15%;" aria-label="Position: activate to sort column ascending">
+                        {{ _("Учебное заведение") }}</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for item in _probationers_list %}
+                    <tr class="even">
+
+                        <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg") }}"
+                                 width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+
+                        <td class="sorting_1 dtr-control">
+                            <div class="bg-success bg-gradient" style="text-align: center;">
+                                <a style="color: white;"
+                                   href="{{ url_for('multilingual.probationer_card', probationer_id=item['probationer_id']) }}">
+                                    <span>{{ item['name_probationer'] }}</span>
+                                </a>
+                            </div>
+                        </td>
                         {% if _is_current_user_admin %}
-                            <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
-                                rowspan="1" colspan="1"
-                                style="width:10%;" aria-label="Position: activate to sort column ascending">
-                                User_Login
-                            </th>
+                            <td class="text-center">
+                                <div>{{ item['user_login'] }}</div>
+                            </td>
                         {% endif %}
-                        <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
-                            rowspan="1" colspan="1"
-                            style="width:10%;" aria-label="Position: activate to sort column ascending">
-                            {{ _("Дата рождения") }}</th>
-                        <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
-                            rowspan="1" colspan="1"
-                            style="width:15%;" aria-label="Position: activate to sort column ascending">
-                            {{ _("ФИО родителя") }}</th>
-                        <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
-                            rowspan="1" colspan="1"
-                            style="width:10%;" aria-label="Position: activate to sort column ascending">
-                            {{ _("Контакты") }}</th>
-                        <th class="sorting text-center" tabindex="0" aria-controls="datatables-buttons"
-                            rowspan="1" colspan="1"
-                            style="width:15%;" aria-label="Position: activate to sort column ascending">
-                            {{ _("Учебное заведение") }}</th>
+                        <td class="text-center">
+                            <div>{{ item['date_of_birth'] }}</div>
+                        </td>
+                        <td class="text-center">
+                            <div>{{ item['name_parent'] }}</div>
+                        </td>
+                        <td class="text-center">
+                            <div>{{ item['contacts'] }}</div>
+                        </td>
+                        <td class="text-center">
+                            <div>{{ item['educational_institution'] }}</div>
+                        </td>
+
                     </tr>
-                    </thead>
-                    <tbody>
-
-                    {% for item in _probationers_list %}
-                        <tr class="even">
-
-                            <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg") }}"
-                                     width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
-
-                            <td class="sorting_1 dtr-control">
-                                <div class="bg-success bg-gradient" style="text-align: center;">
-                                    <a style="color: white;"
-                                       href="{{ url_for('multilingual.probationer_card', probationer_id=item['probationer_id']) }}">
-                                        <span>{{ item['name_probationer'] }}</span>
-                                    </a>
-                                </div>
-                            </td>
-                            {% if _is_current_user_admin %}
-                                <td class="text-center">
-                                    <div>{{ item['user_login'] }}</div>
-                                </td>
-                            {% endif %}
-                            <td class="text-center">
-                                <div>{{ item['date_of_birth'] }}</div>
-                            </td>
-                            <td class="text-center">
-                                <div>{{ item['name_parent'] }}</div>
-                            </td>
-                            <td class="text-center">
-                                <div>{{ item['contacts'] }}</div>
-                            </td>
-                            <td class="text-center">
-                                <div>{{ item['educational_institution'] }}</div>
-                            </td>
-
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                {% endfor %}
+                </tbody>
+            </table>
             </div>
         </div>
     </div>
