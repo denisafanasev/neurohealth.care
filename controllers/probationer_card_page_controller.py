@@ -73,7 +73,7 @@ class ProbationerCardPageController():
 
         probationer_card_service = ProbationerCardService()
 
-        return probationer_card_service.change_probationer(_probationer_id, _name_probationer, _date_of_birth, _name_parent,
+        return probationer_card_service.change_probationer(int(_probationer_id), _name_probationer, _date_of_birth, _name_parent,
                            _educational_institution,
                            _contacts, _diagnoses, _reasons_for_contact, _id_user)
 
@@ -82,9 +82,7 @@ class ProbationerCardPageController():
         Возвращает возможные настройки тестируемого
         """
 
-        settings = {}
-
-        settings["educational_institution"] = config.EDUCATIONAL_INSTITUSION
+        settings = {"educational_institution": config.EDUCATIONAL_INSTITUSION}
 
         return settings
 

@@ -33,11 +33,13 @@
         <h1 class="h3 mb-3">{{ _("Тестируемые") }}</h1>
 
         <div class="card card-body">
-            <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
-               data-bs-toggle="modal" data-bs-target="#0"
-               href="{{ url_for('multilingual.probationer_card') }}">
-                <span>{{ _("Добавить тестируемого") }}</span>
-            </a>
+            <div class="justify-content-around">
+                <a class="btn btn-secondary buttons-copy buttons-html5" aria-controls="datatables-buttons"
+                   data-bs-toggle="modal" data-bs-target="#0"
+                   href="{{ url_for('multilingual.probationer_card') }}">
+                    <span>{{ _("Добавить тестируемого") }}</span>
+                </a>
+            </div>
 
             <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline"
                        style="width: 100%; font-size: 13px"
@@ -112,7 +114,6 @@
                 {% endfor %}
                 </tbody>
             </table>
-            </div>
         </div>
     </div>
 {% endblock %}
