@@ -71,7 +71,11 @@
                         <p><strong><label>actions number:</label></strong> {{ _action_page_data["actions_number"] }}</p>
                         <p><strong><label>PostgreSQLDataAdapter connection string:</label></strong> {{ _action_page_data["PostgreSQLDataAdapter_connection_string"] }}</p>
                         <p><strong><label>db actions number:</label></strong> {{ _action_page_data["db_actions_number"] }}</p>
-                        <button {% if _action_page_data['is_there_table'] != "Created" %} {% if _user_page_data['users_number'] > _user_page_data["db_users_number"] %} disabled {% endif %}{% endif %}
+                        <button {% if _action_page_data['is_there_table'] == "No created" %}
+                                    {% if _user_page_data["db_users_number"] > 0 %}
+                                        disabled
+                                    {% endif %}
+                                {% endif %}
                                 type="submit" name="submit_button" value="upload_action_from_json_to_sql" class="btn btn-primary">Upload data
                         </button>
                     </form>
