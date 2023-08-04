@@ -206,9 +206,7 @@ class UserManager():
         # user_data = data_store.get_rows(f"users.login = '{login}' and users.password = '{password}'")
         if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
             user_data = data_store.get_rows({'where': f"users.login = '{login}' and users.password = '{password}'"})
-            if len(user_data) == 0:
-                data_store = DataStore("users")
-                user_data = data_store.get_rows({"login": login, "password": password})
+
         else:
             user_data = data_store.get_rows({"login": login, "password": password})
 
@@ -294,7 +292,7 @@ class UserManager():
             users_list_data = data_store.get_rows()
         else:
             if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
-                users_list_data = data_store.get_rows({'limit': 20, 'offset': (_page - 1) * 20})
+                users_list_data = data_store.get_rows({'limit': 20, 'offset': (_page - 1) * 20, 'order_by': 'doc_id asc'})
             else:
                 users_list_data = data_store.get_rows()
 
@@ -487,7 +485,7 @@ class UserManager():
                 raise UserManagerException('Введите текущий пароль')
             current_password = self.hash_password(_current_password)
             user = data_store.get_row_by_id(_user_id)
-            if current_password != user[0]['password']:
+            if current_password != user['password']:
                 raise UserManagerException("Введенный текущий пароль неправильный")
 
         user_data = {"password": password}

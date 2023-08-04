@@ -58,7 +58,7 @@ class MainPageService():
         error = user_manager.chenge_password(_user_id, _password, _password2, _current_password)
         user = user_manager.get_user_by_id(_user_id)
 
-        action_manager.add_notifications(user, "изменил", 'пароль', "user_manager", user)
+        action_manager.add_notifications(user.login, "изменил", 'пароль', "user_manager", user)
 
         return error
 

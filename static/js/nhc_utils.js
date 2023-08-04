@@ -103,3 +103,36 @@ function validate(form) {
         return false;
     }
 }
+
+$(document).on('click', '.password-control', function(){
+    if ($('#password').attr('type') === 'password'){
+        $(this).addClass('view');
+        $('#password').attr('type', 'text');
+    } else {
+        $(this).removeClass('view');
+        $('#password').attr('type', 'password');
+    }
+    return false;
+});
+
+$(document).on('click', '.password-control2', function(){
+    if ($('#password2').attr('type') === 'password'){
+        $(this).addClass('view');
+        $('#password2').attr('type', 'text');
+    } else {
+        $(this).removeClass('view');
+        $('#password2').attr('type', 'password');
+    }
+    return false;
+});
+
+$(document).on('click', '.current-password-control', function(){
+    if ($('#current_password').attr('type') === 'password'){
+        $(this).addClass('view');
+        $('#current_password').attr('type', 'text');
+    } else {
+        $(this).removeClass('view');
+        $('#current_password').attr('type', 'password');
+    }
+    return false;
+});

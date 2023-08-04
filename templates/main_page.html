@@ -3,19 +3,6 @@
 {% block main_block %}
     <script src="{{ url_for('static' , filename="js/nhc_utils.js") }}" type="text/javascript"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            {#        {% if _error_type == "Error" %}#}
-            {#        var modal = document.getElementById('discharge');#}
-            {#        modal.style.display = "block";#}
-            {#        {% elif _error_type == 'Successful' %}#}
-            {#        document.querySelector('h3[id=title_message]').textContent = 'Успешно';#}
-            {#        document.querySelector('p[id=text_message]').textContent = "{{ _error }}";#}
-            {#        var message = document.getElementById('message');#}
-            {#        message.style.display = "block";#}
-            {#        {% endif %}#}
-        });
-    </script>
-    <script>
         var modal_reset = document.getElementById('discharge');
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function (event) {

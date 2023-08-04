@@ -111,7 +111,7 @@ class UserProfileService():
         current_user = user_manager.get_user_by_id(_current_user_id)
         user = user_manager.get_user_by_id(_user_id)
 
-        action_manager.add_notifications(user, "изменил", 'пароль', "user_manager", current_user)
+        action_manager.add_notifications(user.login, "изменил", 'пароль', "user_manager", current_user)
 
         return error
 
