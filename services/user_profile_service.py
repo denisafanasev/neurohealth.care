@@ -28,18 +28,13 @@ class UserProfileService():
 
         return user
 
-    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _current_user_id):
+    def create_user(self, _user, _current_user_id):
         """
         Создает в системе суперпользователя
 
         Args:
-            _login (String): логин пользователя
-            _name (String): имя пользователя
-            _password (String): пароль пользователя
-            _password2 (String): контрольный ввод пароля пользователя
-            _email (String): email пользователя
-            _role (String): роль пользователя [user/superuser]
-            _probationers_number (int): количество доступных тестируемых
+            _user (Dict): данные нового пользователь
+            _current_user_id(Int): ID текущего пользователя
 
         Returns:
             List: список ошибок при создании пользователя
@@ -48,7 +43,7 @@ class UserProfileService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        error = user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number)
+        error = user_manager.create_user(_user)
         current_user = user_manager.get_user_by_id(_current_user_id)
 
         if isinstance(error, int):
@@ -56,21 +51,13 @@ class UserProfileService():
 
         return error
 
-    def chenge_user(self, _user_id, _login, _name, _email, _role, _probationers_number, _created_date,
-                    _education_module_expiration_date, _is_active,_current_user_id):
+    def chenge_user(self, _user_id, _user, _current_user_id):
         """
         Обновляет информацию о пользователе и возвращает ее
 
         Args:
-            _user_id(Int): ID пользователя
-            _login (String): логин пользователя
-            _name (String): имя пользователя
-            _email (String): email пользователя
-            _role (String): роль пользователя [user/superuser]
-            _probationers_number(String): количество доступных тестируемых
-            _created_date(String): дата создания пользователя
-            _education_module_expiration_date(String): дата до которой пользователь активен
-            _is_active(String): активирован/заблокирован пользователь
+            _user_id(Int): ID пользователя, чьи данные обновляют
+            _user (Dict): обновленные данные пользователя
             _current_user_id(Int): ID текущего пользователя
 
         Returns:
@@ -80,8 +67,7 @@ class UserProfileService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        user = user_manager.chenge_user(_user_id, _login,_name, _email, _role, _probationers_number, _created_date,
-                                        _education_module_expiration_date, _active=_is_active)
+        user = user_manager.chenge_user(_user_id, _user, _active=_user['active'])
 
         current_user = user_manager.get_user_by_id(_current_user_id)
 

@@ -175,15 +175,7 @@ class UserManager():
         user_data = data_store.get_row_by_id(_user_id)
 
         if user_data is not None:
-
-            user_data = user_data
             user = self.user_row_to_user(user_data)
-
-        else:
-            if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
-                data_store = DataStore("users")
-                user_data = data_store.get_row_by_id(_user_id)
-                user = self.user_row_to_user(user_data)
 
         return user
 
@@ -331,7 +323,7 @@ class UserManager():
 
         return False
 
-    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number):
+    def create_user(self, _user):
         """
         Процедура создания нового пользователя в системе
 
@@ -350,18 +342,18 @@ class UserManager():
         Returns:
             _error (List): список ошибок при создании пользователя
         """
-        self.validate_password(_password)
-        self.validate_login(_login)
+        self.validate_password(_user['password'])
+        self.validate_login(_user['login'])
 
-        if len(_email) == 0:
+        if len(_user['email']) == 0:
             raise UserManagerException('Введите email')
 
-        password = self.hash_password(_password)
-        password2 = self.hash_password(_password2)
-        login = _login.lower().strip()
-        email = _email.lower().strip()
-        role = _role
-        name = _name
+        password = self.hash_password(_user['password'])
+        password2 = self.hash_password(_user['password2'])
+        login = _user['login'].lower().strip()
+        email = _user['email'].lower().strip()
+        role = _user['role']
+        name = _user['name']
         email_confirmed = False
 
         # создаем токен для подтверждения регистрации
@@ -384,7 +376,7 @@ class UserManager():
             raise UserManagerException("Пользователь с таким email уже существует")
 
         # создаем новую запись
-        user = User(_login=login, _name=name, _email=email, _role=role, _probationers_number=_probationers_number,
+        user = User(_login=login, _name=name, _email=email, _role=role, _probationers_number=_user['probationers_number'],
                     _token=token, _email_confirmed=email_confirmed)
 
         if data_store.current_data_adapter == 'TinyDBDataAdapter':
@@ -417,8 +409,8 @@ class UserManager():
 
         return user_role
 
-    def chenge_user(self, _user_id, _login, _name, _email, _role, _probationers_number, _created_date,
-                    _education_module_expiration_date="", _token="", _email_confirmed=False, _active=True):
+    def chenge_user(self, _user_id, _user_data, _education_module_expiration_date="", _token="", _email_confirmed=False,
+                    _active=True):
         """
         Обновляет информацию о пользователе и возвращает ее
 
@@ -433,16 +425,18 @@ class UserManager():
         Returns:
             Dict: словарь с информацией о пользователе
         """
-        if len(_email) == 0:
+        if len(_user_data['email']) == 0:
             raise UserManagerException('Введите email')
 
-        user = self.get_user_by_email(_email)
+        user = self.get_user_by_email(_user_data['email'])
         if user is not None:
-            if user.login != _login:
+            if user.login != _user_data['login']:
                 raise UserManagerException("Пользователь с таким email уже существует")
 
-        user = User(_user_id=_user_id, _login=_login, _name=_name, _email=_email, _role=_role, _created_date=_created_date,
-                    _probationers_number=_probationers_number, _token=_token, _email_confirmed=_email_confirmed,
+        user = User(_user_id=_user_id, _login=_user_data['login'], _name=_user_data['name'], _email=_user_data['email'],
+                    _role=_user_data['role'], _created_date=_user_data['created_date'],
+                    _probationers_number=_user_data['probationers_number'], _token=_token,
+                    _email_confirmed=_email_confirmed,
                     _education_module_expiration_date=_education_module_expiration_date, _active=_active)
 
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
@@ -503,12 +497,11 @@ class UserManager():
             _active (bool): Активирован пользователь
         """
 
-        user = self.get_user_by_id(_user_id)
-        user.active = True
+        data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
 
-        self.chenge_user(user.user_id, user.login, user.name, user.email, user.role, user.probationers_number,
-                         user.created_date, user.education_module_expiration_date,
-                         user.token, user.email_confirmed, user.active)
+        user = self.get_user_by_id(_user_id)
+        if user is not None:
+            data_store.update_row_by_id({'active': True}, _user_id)
 
     def deactivation(self, _user_id):
         """
@@ -521,12 +514,11 @@ class UserManager():
             _active (bool): Заблокирован пользователь
         """
 
-        user = self.get_user_by_id(_user_id)
-        user.active = False
+        data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
 
-        self.chenge_user(user.user_id, user.login, user.name, user.email, user.role, user.probationers_number,
-                         user.created_date, user.education_module_expiration_date,
-                         user.token, user.email_confirmed, user.active)
+        user = self.get_user_by_id(_user_id)
+        if user is not None:
+            data_store.update_row_by_id({'active': False}, _user_id)
 
     def access_extension(self, _period, _reference_point, _user_id):
         """
@@ -538,17 +530,18 @@ class UserManager():
             _user_id(Int): ID пользователя, которому продлевают срок доступа
         """
 
+        data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
+
         user = self.get_user_by_id(_user_id)
+        if user is not None:
+            if _reference_point == "end":
+                user.education_module_expiration_date = (
+                        user.education_module_expiration_date + relativedelta(months=_period))
+            elif _reference_point == "today":
+                user.education_module_expiration_date = (datetime.now() + relativedelta(months=_period))
 
-        if _reference_point == "end":
-            user.education_module_expiration_date = (
-                    user.education_module_expiration_date + relativedelta(months=_period))
-        elif _reference_point == "today":
-            user.education_module_expiration_date = (datetime.now() + relativedelta(months=_period))
+            data_store.update_row_by_id({'education_module_expiration_date': user.education_module_expiration_date}, _user_id)
 
-        self.chenge_user(user.user_id, user.login, user.name, user.email, user.role, user.probationers_number,
-                         user.created_date, user.education_module_expiration_date,
-                         user.token, user.email_confirmed, user.active)
 
     def get_users_by_ids_list(self, _user_id, _ids_list):
         """

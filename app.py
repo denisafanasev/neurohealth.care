@@ -385,19 +385,18 @@ def user_profile():
                 if mode == "new":
                     # добавляем нового пользователя и получаем список с ошибками
                     # если их нет, то получаем id пользователя
-                    user = {}
-                    user["login"] = request.form["login"]
-                    user["name"] = request.form["user_name"]
-                    user["password"] = request.form["password"]
-                    user["password2"] = request.form["password2"]
-                    user["email"] = request.form["email"]
-                    user["role"] = request.form["role"]
-                    user["probationers_number"] = int(request.form["probationers_number"])
-                    user['active'] = True
+                    user = {
+                        "login": request.form["login"],
+                        "name": request.form["user_name"],
+                        "password": request.form["password"],
+                        "password2": request.form["password2"],
+                        "email": request.form["email"],
+                        "role": request.form["role"],
+                        "probationers_number": int(request.form["probationers_number"]),
+                        'active': True
+                    }
 
-                    message_error = page_controller.create_user(user["login"], user["name"], user["password"],
-                                                                user["password2"], user["email"], user["role"],
-                                                                user["probationers_number"], current_user_id)
+                    message_error = page_controller.create_user(user, current_user_id)
                     if isinstance(message_error, int):
                         session['message_error'] = "Пользователь сохранён!"
                         session['status_code'] = "Successful"
@@ -414,25 +413,22 @@ def user_profile():
 
             elif request.form.get("button") == "save":
                 if mode == "edit":
-                    user = {}
-                    user["login"] = data['login']
-                    user["name"] = request.form["user_name"]
-                    user["email"] = request.form["email"]
-                    user["role"] = request.form["role"]
-                    user["probationers_number"] = int(request.form["probationers_number"])
-                    user["created_date"] = data["created_date"]
-                    user['education_module_expiration_date'] = data["education_module_expiration_date"]
-                    user['active'] = request.form.get('is_active')
+                    user = {
+                        "login": data['login'],
+                        "name": request.form["user_name"],
+                        "email": request.form["email"],
+                        "role": request.form["role"],
+                        "probationers_number": int(request.form["probationers_number"]),
+                        "created_date": data["created_date"],
+                        'education_module_expiration_date': data["education_module_expiration_date"],
+                        'active': request.form.get('is_active')
+                    }
                     if user['active'] is not None:
                         user['active'] = True
                     else:
                         user['active'] = False
 
-                    message_error = page_controller.chenge_user(user_id, user["login"], user["name"], user["email"],
-                                                                user["role"],
-                                                                user["probationers_number"], user["created_date"],
-                                                                user['education_module_expiration_date'],
-                                                                user['active'], current_user_id)
+                    message_error = page_controller.chenge_user(user_id, user, current_user_id)
                     if message_error is None:
                         session['message_error'] = "Изменения сохранены!"
                         session['status_code'] = "Successful"
@@ -632,7 +628,8 @@ def education_program_subscription():
     _data = page_controller.get_page_data(1)
 
     return render_template('education_program_subscription.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=_data, _lang_code=get_locale(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=_data,
+                           _lang_code=get_locale(),
                            _languages=config.LANGUAGES)
 
 
@@ -715,7 +712,8 @@ def education_course():
 
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
-                           _user=user, _course_type=course.get('type'), _course_name=course.get('name'), _lang_code=get_locale(),
+                           _user=user, _course_type=course.get('type'), _course_name=course.get('name'),
+                           _lang_code=get_locale(),
                            _languages=config.LANGUAGES)
 
 
@@ -1060,7 +1058,8 @@ def probe_profile():
             date_of_birth = probationer["date_of_birth"]
 
             probe_id = page_controller.add_probe(name_probationer, probationer_id, date_of_birth, user_id)
-            return redirect(url_for("multilingual.probe_profile", probationer_id=probationer_id, probe_id=probe_id, test_id=1))
+            return redirect(
+                url_for("multilingual.probe_profile", probationer_id=probationer_id, probe_id=probe_id, test_id=1))
 
         elif mode == "add_value_tests":
             probe_id = request.args.get("probe_id")
@@ -1079,7 +1078,8 @@ def probe_profile():
                 next_test_id = int(request.form["action"])
 
                 return redirect(
-                    url_for("multilingual.probe_profile", probationer_id=probationer_id, probe_id=probe_id, test_id=next_test_id))
+                    url_for("multilingual.probe_profile", probationer_id=probationer_id, probe_id=probe_id,
+                            test_id=next_test_id))
 
     return render_template('probe_profile.html', view="probe_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
@@ -1408,7 +1408,8 @@ def maintenance():
         action_name = request.form['submit_button']
 
         if action_name == "upload_users_from_json_to_sql":
-            session['message_error'], session['status_code'] = page_controller.upload_users_from_json_to_sql(current_user_id)
+            session['message_error'], session['status_code'] = page_controller.upload_users_from_json_to_sql(
+                current_user_id)
 
         elif action_name == 'upload_action_from_json_to_sql':
             session['message_error'], session['status_code'] = page_controller.upload_actions_from_json_to_sql()
@@ -1425,7 +1426,8 @@ def maintenance():
 
     return render_template('maintenance.html', view="maintenance", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _endpoint=endpoint, _user_page_data=upload_users_from_json_to_sql_page_data, _lang_code=get_locale(),
+                           _endpoint=endpoint, _user_page_data=upload_users_from_json_to_sql_page_data,
+                           _lang_code=get_locale(),
                            _languages=config.LANGUAGES, _action_page_data=upload_actions_from_json_to_sql_page_data,
                            _status_code=status_code, _message_error=message_error)
 
