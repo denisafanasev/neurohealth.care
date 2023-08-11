@@ -13,8 +13,7 @@ class ProbationerCardService():
     def __init__(self):
         pass
 
-    def create_probationer(self, _user_id, _name_probationer, _date_of_birth, _name_parent,
-                 _educational_institution, _contacts, _diagnoses, _reasons_for_contact):
+    def create_probationer(self, _user_id, _probationer):
         """
         Создает в системе испытуемого
 
@@ -33,9 +32,7 @@ class ProbationerCardService():
         user_service = UserManager()
         action_manager = ActionManager()
 
-        probationer_id, name_probationer = probationer_manager.create_probationer(_user_id, _name_probationer, _date_of_birth,
-                                               _name_parent, _educational_institution, _contacts, _diagnoses,
-                                               _reasons_for_contact)
+        probationer_id, name_probationer = probationer_manager.create_probationer(_user_id, _probationer)
         login_user = user_service.get_user_by_id(_user_id).login
 
         action_manager.add_notifications(name_probationer, "добавил", 'нового', "probationer_manager", login_user)
@@ -54,28 +51,24 @@ class ProbationerCardService():
 
         return probationer_manager.get_probationer_by_id(probationer_id)
 
-    def change_probationer(self, _probationer_id, _name_probationer, _date_of_birth, _name_parent,
-                           _educational_institution, _contacts, _diagnoses, _reasons_for_contact, _id_user):
+    def change_probationer(self, _probationer_id, _probationer, _id_user):
         """
-        Записывает изменения данных тестируемого
+        Обновляет информацию о тестируемом
 
         Args:
-            _probationer_id(Int): id тестируемого
-            _name_probationer(String): имя тестируемого
-            _date_of_birth(date, optional): дата рождения тестируемого
-            _name_parent(String): ФИО родителя тестируемого
-            _educational_institution(String): учебное заведение тестируемого
-            _contacts(String): контакты для связи
-            _diagnoses(String): сопутствующие диагнозы
-            _reasons_for_contact(String): причины обращения
+            _probationer_id(Int): ID тестируемого
+            _probationer(Dict): обновленные данные тестируемого
+            _id_user(Int): ID текущего пользователя
+
+        Returns:
+            None
         """
 
         probationer_manager = ProbationerManager()
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        name_probationer = probationer_manager.change_probationer(_probationer_id, _name_probationer, _date_of_birth,
-                            _name_parent, _educational_institution, _contacts, _diagnoses, _reasons_for_contact)
+        name_probationer = probationer_manager.change_probationer(_probationer_id, _probationer)
 
         login_user = user_manager.get_user_by_id(_id_user).login
 

@@ -36,17 +36,17 @@
                         {% endif %}
                         <div class="mb-2">
                             <label class="form-label"><strong>{{_("Имя тестируемого")}}</strong></label>
-                            <input required type="text" name="name_probationer" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _data['name_probationer']!=_data_begin['name_probationer'] or _mode != "new" %} value="{{ _data['name_probationer'] }}" {% else %} placeholder= "{{ _data_begin['name_probationer'] }}" {% endif %}>
+                            <input required type="text" name="name_probationer" class="form-control" value="{{ _data['name_probationer'] }}" placeholder="{{ _data_placeholder['name_probationer'] }}">
                         </div>
 
                         <div class="mb-2">
                             <label class="form-label"><strong>{{_("Сопутствующие диагнозы")}}</strong></label>
-                            <textarea required name="diagnoses" class="form-control"  {% if _mode=="view" %} readonly {% endif %} {% if _data['diagnoses']==_data_begin['diagnoses'] or _mode == "new" %} placeholder= "{{ _data_begin['diagnoses'] }}" {% endif %}>{% if _data['diagnoses']!=_data_begin['diagnoses'] or _mode != "new" %}{{ _data['diagnoses'] }}{% endif %}</textarea>
+                            <textarea required name="diagnoses" class="form-control"  {% if _mode=="view" %} readonly {% endif %}  placeholder="{{ _data_placeholder['diagnoses'] }}">{{ _data['diagnoses'] }}</textarea>
                         </div>
 
                         <div class="mb-2">
                             <label class="form-label"><strong>{{_("Причины обращения")}}</strong></label>
-                            <textarea required name="reasons_for_contact" class="form-control"  {% if _mode=="view"%} readonly {% endif %} {% if _data['reasons_for_contact']==_data_begin['reasons_for_contact'] or _mode == "new"  %}  placeholder= "{{ _data_begin['reasons_for_contact'] }}" {% endif %}>{% if _data['reasons_for_contact']!=_data_begin['reasons_for_contact'] or _mode != "new"  %}{{ _data['reasons_for_contact'] }}{% endif %}</textarea>
+                            <textarea required name="reasons_for_contact" class="form-control"  {% if _mode=="view"%} readonly {% endif %} placeholder="{{ _data_placeholder['reasons_for_contact'] }}">{{ _data['reasons_for_contact'] }}</textarea>
                         </div>
 
                     </div>
@@ -62,7 +62,7 @@
                         </div>
                         <div class="mb-2">
                             <label class="form-label"><strong>{{_("ФИО родителя")}}</strong></label>
-                            <input required type="text" name="name_parent" class="form-control" {% if _mode == "view" %} readonly {% endif %} {% if _data['name_parent']!=_data_begin['name_parent'] or _mode != "new" %} value="{{ _data['name_parent'] }}" {% else %}  placeholder="{{ _data_begin['name_parent'] }}" {% endif %}>
+                            <input required type="text" name="name_parent" class="form-control" {% if _mode == "view" %} readonly {% endif %} value="{{ _data['name_parent'] }}" placeholder="{{ _data_placeholder['name_parent'] }}">
                         </div>
                         <div class="mb-2">
                             <label class="form-label"><strong>{{_("Учебное заведение")}}</strong></label>
@@ -75,7 +75,7 @@
                         </div>
                         <div class="mb-2">
                             <label class="form-label"><strong>{{_("Контакты")}}</strong></label>
-                            <input required type="text" name="contacts" class="form-control" {% if _mode=="view" %} readonly {% endif %} {% if _data['contacts']!=_data_begin['contacts'] or _mode!="new" %} value="{{ _data['contacts'] }}" {% else %} placeholder= "{{ _data_begin['contacts'] }}" {% endif %}>
+                            <input required type="text" name="contacts" class="form-control" {% if _mode=="view" %} readonly {% endif %} value="{{ _data['contacts'] }}" placeholder="{{ _data_placeholder['contacts'] }}">
                         </div>
                     </div>
                 </div>

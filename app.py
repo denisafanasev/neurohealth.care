@@ -1114,7 +1114,6 @@ def probationers():
 
     page_controller = ProbationersPageController()
     mpc = MainMenuPageController(flask_login.current_user.user_id)
-    profile_page_controller = ProbationerCardPageController()
 
     probationers_list = page_controller.get_probationers_list_view(user_id)
 
@@ -1122,7 +1121,6 @@ def probationers():
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _probationers_list=probationers_list,
                            _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _settings=profile_page_controller.get_settings_probationer(),
                            _lang_code=get_locale(), _languages=config.LANGUAGES)
 
 
@@ -1161,8 +1159,7 @@ def probationer_card():
 
     user_id = flask_login.current_user.user_id
 
-    data_begin = page_controller.get_probationer_card_view(probationer_id)
-    data = {}
+    data, data_placeholder = page_controller.get_probationer_card_view(probationer_id)
 
     try:
         if request.method == 'POST':
@@ -1170,21 +1167,16 @@ def probationer_card():
                 if mode == "new":
                     # добавляем нового тестируемого и получаем список с ошибками
                     # если их нет, то получаем пустой список
-                    probationer = {}
-                    probationer["name_probationer"] = request.form["name_probationer"]
-                    probationer["date_of_birth"] = request.form["date_of_birth"]
-                    probationer["name_parent"] = request.form["name_parent"]
-                    probationer["educational_institution"] = request.form["educational_institution"]
-                    probationer["contacts"] = request.form["contacts"]
-                    probationer["diagnoses"] = request.form["diagnoses"]
-                    probationer["reasons_for_contact"] = request.form["reasons_for_contact"]
+                    probationer = {
+                        "name_probationer": request.form["name_probationer"],
+                        "date_of_birth": request.form["date_of_birth"],
+                        "name_parent": request.form["name_parent"],
+                        "educational_institution": request.form["educational_institution"],
+                        "contacts": request.form["contacts"],
+                        "diagnoses": request.form["diagnoses"],
+                        "reasons_for_contact": request.form["reasons_for_contact"]}
 
-                    probationer_id = page_controller.create_probationers(user_id, probationer["name_probationer"],
-                                                                probationer["date_of_birth"],
-                                                                probationer["name_parent"],
-                                                                probationer["educational_institution"],
-                                                                probationer["contacts"], probationer["diagnoses"],
-                                                                probationer["reasons_for_contact"])
+                    probationer_id = page_controller.create_probationers(user_id, probationer)
 
                     if probationer_id is not None:
                         session['mode'] = "view"
@@ -1199,21 +1191,16 @@ def probationer_card():
 
             elif request.form["button"] == "save":
                 if mode == "edit":
-                    probationer = {}
+                    probationer = {
+                        "name_probationer": request.form["name_probationer"],
+                        "date_of_birth": request.form["date_of_birth"],
+                        "name_parent": request.form["name_parent"],
+                        "educational_institution": request.form["educational_institution"],
+                        "contacts": request.form["contacts"],
+                        "diagnoses": request.form["diagnoses"],
+                        "reasons_for_contact": request.form["reasons_for_contact"]}
 
-                    probationer["name_probationer"] = request.form["name_probationer"]
-                    probationer["date_of_birth"] = request.form["date_of_birth"]
-                    probationer["name_parent"] = request.form["name_parent"]
-                    probationer["educational_institution"] = request.form["educational_institution"]
-                    probationer["contacts"] = request.form["contacts"]
-                    probationer["diagnoses"] = request.form["diagnoses"]
-                    probationer["reasons_for_contact"] = request.form["reasons_for_contact"]
-
-                    page_controller.change_probationer(probationer_id, probationer["name_probationer"],
-                                                       probationer["date_of_birth"], probationer["name_parent"],
-                                                       probationer["educational_institution"],
-                                                       probationer["contacts"],
-                                                       probationer["diagnoses"], probationer["reasons_for_contact"], user_id)
+                    page_controller.change_probationer(probationer_id, probationer, user_id)
 
                     session['mode'] = "view"
                     session['message_error'] = gettext("Изменения сохранены!")
@@ -1224,12 +1211,9 @@ def probationer_card():
     except exceptions.BadRequestKeyError:
         mode = "view"
 
-    if data == {}:
-        data = data_begin
-
     return render_template('probationer_card.html', view="probationer_card", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
-                           _mode=mode, _data_begin=data_begin, _error=message_error, _error_type=status_code,
+                           _mode=mode, _data_placeholder=data_placeholder, _error=message_error, _error_type=status_code,
                            _settings=page_controller.get_settings_probationer(), _lang_code=get_locale(),
                            _languages=config.LANGUAGES)
 

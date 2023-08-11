@@ -79,8 +79,7 @@ class ProbationerManager():
 
         return probationers
 
-    def create_probationer(self, _user_id, _name_probationer, _date_of_birth, _name_parent,
-                           _educational_institution, _contacts, _diagnoses, _reasons_for_contact):
+    def create_probationer(self, _user_id, _probationer):
         """
         Процедура создания нового испытуемого в системе
 
@@ -99,11 +98,12 @@ class ProbationerManager():
         data_store = DataStore("probationers")
 
         # создаем новую запись
-        probationer = Probationer(_user_id=_user_id, _name_probationer=_name_probationer,
-                                  _name_parent=_name_parent, _educational_institution=_educational_institution,
-                                  _contacts=_contacts, _diagnoses=_diagnoses, _reasons_for_contact=_reasons_for_contact)
+        probationer = Probationer(_user_id=_user_id, _name_probationer=_probationer['name_probationer'],
+                                  _name_parent=_probationer['name_parent'], _educational_institution=_probationer['educational_institution'],
+                                  _contacts=_probationer['contacts'], _diagnoses=_probationer['diagnoses'],
+                                  _reasons_for_contact=_probationer['reasons_for_contact'])
 
-        probationer.date_of_birth = datetime.strptime(_date_of_birth, "%Y-%m-%d").strftime("%d/%m/%Y")
+        probationer.date_of_birth = datetime.strptime(_probationer['date_of_birth'], "%Y-%m-%d").strftime("%d/%m/%Y")
 
         probationer_data = {"user_id": probationer.user_id, "name_probationer": probationer.name_probationer,
                             "date_of_birth": probationer.date_of_birth, "name_parent": probationer.name_parent,
@@ -115,29 +115,25 @@ class ProbationerManager():
 
         return probationer_id, probationer.name_probationer
 
-    def change_probationer(self, _probationer_id, _name_probationer, _date_of_birth, _name_parent,
-                           _educational_institution,
-                           _contacts, _diagnoses, _reasons_for_contact):
+    def change_probationer(self, _probationer_id, _probationer):
         """
-        Записывает изменения данных тестируемого
+        Обновляет информацию о тестируемом
 
         Args:
-            _probationer_id(Int): id тестируемого
-            _name_probationer(String): имя тестируемого
-            _date_of_birth(date, optional): дата рождения тестируемого
-            _name_parent(String): ФИО родителя тестируемого
-            _educational_institution(String): учебное заведение тестируемого
-            _contacts(String): контакты для связи
-            _diagnoses(String): сопутствующие диагнозы
-            _reasons_for_contact(String): причины обращения
+            _probationer_id(Int): ID тестируемого
+            _probationer(Dict): обновленные данные тестируемого
+
+        Returns:
+            None
         """
         data_store = DataStore("probationers")
 
-        probationer = Probationer(_probationer_id=_probationer_id, _name_probationer=_name_probationer,
-                                  _name_parent=_name_parent, _educational_institution=_educational_institution,
-                                  _contacts=_contacts, _diagnoses=_diagnoses, _reasons_for_contact=_reasons_for_contact)
+        probationer = Probationer(_probationer_id=_probationer_id, _name_probationer=_probationer['name_probationer'],
+                                  _name_parent=_probationer['name_parent'], _educational_institution=_probationer['educational_institution'],
+                                  _contacts=_probationer['contacts'], _diagnoses=_probationer['diagnoses'],
+                                  _reasons_for_contact=_probationer['reasons_for_contact'])
 
-        probationer.date_of_birth = datetime.strptime(_date_of_birth, "%Y-%m-%d").strftime("%d/%m/%Y")
+        probationer.date_of_birth = datetime.strptime(_probationer['date_of_birth'], "%Y-%m-%d").strftime("%d/%m/%Y")
 
         probationer_data = {"name_probationer": probationer.name_probationer,
                             "date_of_birth": probationer.date_of_birth, "name_parent": probationer.name_parent,
