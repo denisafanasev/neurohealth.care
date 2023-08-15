@@ -71,7 +71,7 @@ class UserProfileService():
 
         current_user = user_manager.get_user_by_id(_current_user_id)
 
-        action_manager.add_notifications(user, "изменил", 'данные', "user_manager", current_user)
+        action_manager.add_notifications(user.login, "изменил", 'данные', "user_manager", current_user)
 
         return user
 
@@ -117,7 +117,7 @@ class UserProfileService():
         user = user_manager.get_user_by_id(_user_id)
 
         current_user = user_manager.get_user_by_id(_current_user_id)
-        action_manager.add_notifications(user, "изменил", 'доступ', "user_manager", current_user)
+        action_manager.add_notifications(user.login, "изменил", 'доступ', "user_manager", current_user)
 
     def deactivation(self, _user_id, _current_user_id):
         """
@@ -135,7 +135,7 @@ class UserProfileService():
         user = user_manager.get_user_by_id(_user_id)
 
         current_user = user_manager.get_user_by_id(_current_user_id)
-        action_manager.add_notifications(user, "изменил", 'доступ', "user_manager", current_user)
+        action_manager.add_notifications(user.login, "изменил", 'доступ', "user_manager", current_user)
 
         return active
 
@@ -171,7 +171,7 @@ class UserProfileService():
         current_user = user_manager.get_user_by_id(_current_user_id)
         user = user_manager.get_user_by_id(_user_id)
 
-        action_manager.add_notifications(user, "продлил", 'срок доступа', "user_manager", current_user)
+        action_manager.add_notifications(user.login, "продлил", 'срок доступа', "user_manager", current_user)
 
     def get_education_streams_list(self, _user_id, _role_user):
         """
