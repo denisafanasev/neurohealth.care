@@ -807,31 +807,31 @@ def education_home_tasks():
     else:
         filter_homework = 'education_home_tasks'
 
-    id_education_stream = request.args.get('education_stream_id')
+    education_stream_id = request.args.get('education_stream_id')
 
     # если ID обучающего потока не найден, то берем ID первого обучающего потока из списка
-    if id_education_stream is None:
-        id_education_stream = education_streams_list[0]['id']
+    if education_stream_id is None:
+        education_stream_id = education_streams_list[0]['id']
 
-        education_stream = page_controller.get_current_education_stream(id_education_stream, current_user_id)
+        education_stream = page_controller.get_current_education_stream(education_stream_id, current_user_id)
         if education_stream['students_list']:
             user_id = education_stream['students_list'][0]['user_id']
         else:
-            return redirect(url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream))
+            return redirect(url_for('multilingual.education_home_tasks', education_stream_id=education_stream_id))
 
-        return redirect(url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream,
+        return redirect(url_for('multilingual.education_home_tasks', education_stream_id=education_stream_id,
                                 user_id=user_id))
     else:
-        id_education_stream = int(id_education_stream)
+        education_stream_id = int(education_stream_id)
 
     if request.method == 'POST':
         if request.form.get('button') == 'id_education_stream':
-            id_education_stream = request.form['education_stream']
-            education_stream = page_controller.get_current_education_stream(id_education_stream, current_user_id)
+            education_stream_id = request.form['education_stream']
+            education_stream = page_controller.get_current_education_stream(education_stream_id, current_user_id)
             if education_stream['students_list']:
                 user_id = education_stream['students_list'][0]['user_id']
             else:
-                return redirect(url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream))
+                return redirect(url_for('multilingual.education_home_tasks', education_stream_id=education_stream_id))
 
         elif request.form.get('button') == 'filter_homework':
             session['filter_homework'] = request.form['filter_homework']
@@ -840,18 +840,18 @@ def education_home_tasks():
             user_id = request.form.get('user_id')
 
         return redirect(
-            url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream, user_id=user_id))
+            url_for('multilingual.education_home_tasks', education_stream_id=education_stream_id, user_id=user_id))
 
     # если есть ID пользователя, то возвращаем список домашних работ по фильтрам
     # (по умолчанию - непроверенные домашние работы)
 
-    current_education_stream = page_controller.get_current_education_stream(id_education_stream, current_user_id)
+    current_education_stream = page_controller.get_current_education_stream(education_stream_id, current_user_id)
     if user_id is None:
         if current_education_stream['students_list']:
             user_id = current_education_stream['students_list'][0]['user_id']
 
             return redirect(
-                url_for('multilingual.education_home_tasks', education_stream_id=id_education_stream, user_id=user_id))
+                url_for('multilingual.education_home_tasks', education_stream_id=education_stream_id, user_id=user_id))
 
         user = None
     else:
@@ -859,20 +859,21 @@ def education_home_tasks():
 
     # список чатов по урокам, по которым не сданы домашние работы
     if filter_homework == 'chat_without_homework':
-        data = page_controller.get_chat_without_homework(current_user_id, id_education_stream, user_id)
+        data = page_controller.get_chat_without_homework(current_user_id, education_stream_id, user_id)
+
     # список проверенных домашних работ
     elif filter_homework == 'homework_verified':
+        data = page_controller.get_homework_verified(current_user_id, education_stream_id, user_id)
 
-        data = page_controller.get_homework_verified(current_user_id, id_education_stream, user_id)
     # список непроверенных домашних работ
     elif filter_homework == 'education_home_tasks':
-        data = page_controller.get_homework_no_verified(current_user_id, id_education_stream, user_id)
+        data = page_controller.get_homework_no_verified(current_user_id, education_stream_id, user_id)
     else:
         data = None
 
     return render_template('education_home_tasks.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
-                           _education_streams_list=education_streams_list, _id_education_stream=id_education_stream,
+                           _education_streams_list=education_streams_list, _id_education_stream=education_stream_id,
                            _current_education_stream=current_education_stream, _user=user,
                            _current_filter_homework=filter_homework,
                            _filters_homework_list=config.FILTERS_HOMEWORK_LIST, _lang_code=get_locale(),
