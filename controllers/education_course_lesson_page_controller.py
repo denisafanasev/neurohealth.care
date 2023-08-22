@@ -84,7 +84,7 @@ class EducationCourseLessonPageController():
                 "message": None
             }
             if homework_chat.message is not None:
-                message_list = []
+                chat['message'] = []
                 for i_message in homework_chat.message:
                     # ищем данные пользователя, который отправил данное сообщения
                     user = lesson_service.get_user_by_id(i_message.id_user)
@@ -95,9 +95,7 @@ class EducationCourseLessonPageController():
                         "name": user.name
                     }
 
-                    message_list.append(message)
-
-                chat["message"] = message_list
+                    chat['message'].append(message)
 
             return chat
 
@@ -142,15 +140,6 @@ class EducationCourseLessonPageController():
             "education_stream": {}
         }
 
-        '''
-        if type(user.education_stream_list) is not list:
-            user_view["education_stream"] = {
-                "id": user.education_stream_list.id,
-                "date_end": user.education_stream_list.date_end,
-                "status": user.education_stream_list.status
-            }
-        '''
-
         return user_view
     
     def get_course_by_id(self, _id):
@@ -167,10 +156,11 @@ class EducationCourseLessonPageController():
         lesson_service = EducationCourseLessonService()
         course = lesson_service.get_course_by_id(_id)
 
-        course_formated = {}
-        course_formated["id"] = course.id
-        course_formated["name"] = course.name
-        course_formated["type"] = course.type
+        course_formated = {
+            "id": course.id,
+            "name": course.name,
+            "type": course.type
+        }
 
         return course_formated
 

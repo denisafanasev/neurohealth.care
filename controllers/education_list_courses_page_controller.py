@@ -71,6 +71,18 @@ class EducationListCoursesPageController():
 
     def get_user_education_progress(self, _user_id):
         """
+        Возвращает количество выполненных/не выполненных модулей/домашних заданий
+
+        Args:
+            _user_id(Int): ID пользователя
+
+        Returns:
+            data_list_view(Dict):
+                -education_stream_name (Str): название потока, в котором есть пользователь
+                -amount_modules_passed (Int): количество невыполненных модулей
+                -amount_modules_no_passed (Int): количество не выполненных модулей
+                -amount_homework_accepted (Int): количество выполненных домашних заданий
+                -amount_homework_no_accepted (Int): количество невыполненных домашних заданий
 
         """
         course_service = EducationListCoursesService()

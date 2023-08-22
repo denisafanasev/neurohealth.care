@@ -328,13 +328,7 @@ class UserManager():
         Процедура создания нового пользователя в системе
 
         Args:
-            _login (String): логин пользователя
-            _name (String): имя пользователя
-            _password (String): пароль пользователя
-            _password2 (String): контрольный ввод пароля пользователя
-            _email (String): email пользователя
-            _role (String): роль пользователя [user/superuser]
-            _probationers_number (Integer): количество доступных тестирумых
+            _user (Dict): данные нового пользователя
 
         Raises:
             UserManagerException: ошибка создания нового пользователя
@@ -416,11 +410,10 @@ class UserManager():
 
         Args:
             _user_id (Int): ID пользователя
-            _name (String): имя пользователя
-            _email (String): email пользователя
-            _role (String): роль пользователя [user/superuser]
-            _probationers_number (Int): максимальное количество испытуемых у пользователя
-            _created_date (String): дата создания пользователя
+            _user_data (Dict): данные пользователя
+            _education_module_expiration_date (String): дата окончания подписки
+            _token (Int): токен пользователя
+            _email_confirmed (Boolean): подтверждена ли почта[True - да/False - нет]
 
         Returns:
             Dict: словарь с информацией о пользователе

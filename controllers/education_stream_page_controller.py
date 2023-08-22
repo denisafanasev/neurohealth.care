@@ -200,9 +200,10 @@ class EducationStreamPageController():
 
         education_stream_service = EducationStreamService()
 
-        education_stream_service.save_education_stream(_education_stream, _timetables_list, _current_user_id)
+        for timetable in _timetables_list:
+            timetable['date_start'] = datetime.strptime(timetable['date_start'], '%d/%m/%Y')
 
-        _education_stream['course'] = _education_stream.pop("id_course")
+        education_stream_service.save_education_stream(_education_stream, _timetables_list, _current_user_id)
 
         return 'Редактирование обучающего потока успешно завершено.', 'Successful'
 

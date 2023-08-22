@@ -5,7 +5,11 @@ from data_adapters.data_store import DataStore
 
 
 class TimetableManager():
-
+    """
+    Класс модели управления расписанием открытия модулей для обучающего потока.
+    Взаимодействует с модулем хранения данных, преобразую доменные структуры в объекты типа Dict.
+    Возвращает в слой бизнес-логики приложения объекты в доменных структурах
+    """
     def timetable_row_to_timetable(self, _data_row):
         """
         Преобразует структуру данных, в которой хранится информация о пользователи в структуру Timetable
@@ -79,7 +83,7 @@ class TimetableManager():
 
     def save_timetable(self, _data, _id_education_stream):
         """
-        Обновляем расписание
+        Обновляем расписание(удаляет предыдущее, а после его создает новое)
 
         Args:
             _data(List): список с расписаниями модулей обучающего потока
@@ -91,7 +95,14 @@ class TimetableManager():
 
         data_store = DataStore('timetables')
 
-        timetables_list = self.get_timetables_list_by_id_education_stream(_id_education_stream)
-        data_store.delete_row([timetable.id for timetable in timetables_list])
+        # timetables_list = self.get_timetables_list_by_id_education_stream(_id_education_stream)
+        # data_store.delete_row([timetable.id for timetable in timetables_list])
+        for timetable_edit in _data:
+            timetable_data = data_store.get_rows({'id_education_stream': _id_education_stream, 'id_module': timetable_edit['id_module']})
+            if timetable_data is not None:
+                timetable = self.timetable_row_to_timetable(timetable_data[0])
+                timetable.date_start = timetable_edit['date_start']
 
-        self.create_timetable(_data, _id_education_stream)
+                data_store.update_row_by_id({'date_start': timetable.date_start.strftime('%d/%m/%Y')}, timetable.id)
+
+        # self.create_timetable(_data, _id_education_stream)
