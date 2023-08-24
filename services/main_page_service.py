@@ -38,7 +38,7 @@ class MainPageService():
 
         return user
 
-    def chenge_password(self, _user_id, _password, _password2, _current_password=''):
+    def chenge_password(self, _user_id, _password, _password2, _current_password):
         """
         Обновляет в системе пароль пользователя
 
@@ -46,7 +46,7 @@ class MainPageService():
             _user_id (Integer): ID пользователя
             _password (String): пароль пользователя
             _password2 (String): контрольный ввод пароля пользователя
-            _current_password (String): текущий пароль пользователя. Defaults to ''
+            _current_password (String): текущий пароль пользователя
 
         Returns:
             String: ошибка при обновлении пароля пользователя

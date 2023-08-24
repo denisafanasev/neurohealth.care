@@ -75,7 +75,7 @@ class UserProfileService():
 
         return user
 
-    def chenge_password(self, _user_id, _password, _password2, _current_user_id, _current_password=''):
+    def chenge_password(self, _user_id, _password, _password2, _current_user_id):
         """
         Обновляет в системе пароль пользователя
 
@@ -93,7 +93,7 @@ class UserProfileService():
         user_manager = UserManager()
         action_manager = ActionManager()
 
-        error = user_manager.chenge_password(_user_id, _password, _password2, _current_password)
+        error = user_manager.chenge_password(_user_id, _password, _password2)
         current_user = user_manager.get_user_by_id(_current_user_id)
         user = user_manager.get_user_by_id(_user_id)
 

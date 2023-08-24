@@ -649,9 +649,8 @@ def evolution_centre_dummy():
     user_id = flask_login.current_user.user_id
 
     return render_template('evolution_centre_dummy.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data="", _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _data="", _lang_code=get_locale(), _languages=config.LANGUAGES)
 
 
 @multilingual.route('/education_list_courses')
@@ -757,11 +756,11 @@ def education_course_lesson():
         session.pop('status_code')
 
     if data is not None:
-        course = page_controller.get_course_by_id(data['id_course'])
-
-        neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
         if not data['available']:
             return redirect(url_for('multilingual.education_program_subscription'))
+
+        course = page_controller.get_course_by_id(data['id_course'])
+        neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
 
     if request.method == "POST":
         # сохраняем новое сообщение
@@ -954,9 +953,8 @@ def education_home_task_card():
             return redirect(url_for('multilingual.education_home_task_card', id_homework=id_homework))
 
     if data is not None:
-        if id_homework is not None:
-            if homework is not None:
-                homework_chat = page_controller.get_homework_chat_by_id_homework(int(id_homework), homework['id_user'])
+        if homework is not None:
+            homework_chat = page_controller.get_homework_chat_by_id_homework(int(id_homework), homework['id_user'])
         else:
             homework_chat = page_controller.homework_chat_entry(int(id_homework_chat), data['user']['id'])
 
@@ -1480,6 +1478,12 @@ def estimated_values():
 @multilingual.route('/education_streams', methods=['GET', 'POST'])
 @login_required
 def education_streams():
+    """
+    Страница просмотра списка обучающих потоков
+
+    Returns:
+
+    """
     page_controller = EducationStreamsPageController()
     endpoint = "education_streams"
     mpc = MainMenuPageController(flask_login.current_user.user_id)
@@ -1495,6 +1499,12 @@ def education_streams():
 @multilingual.route('/education_stream_card', methods=['GET', 'POST'])
 @login_required
 def education_stream_card():
+    """
+    Страница для просмотра/редактирования/создания обучающих потоков
+
+    Returns:
+
+    """
     endpoint = "education_streams"
 
     page_controller = EducationStreamPageController()
