@@ -909,17 +909,11 @@ def education_home_task_card():
     id_homework = request.args.get("id_homework")
     id_homework_chat = request.args.get("id_chat")
 
-    data = None
-    homework = None
-    if id_homework is not None:
-        homework = page_controller.get_homework(int(id_homework))
-        if homework is not None:
-            data = page_controller.get_data_by_id_homework(int(id_homework))
-    elif id_homework_chat is not None:
-        data = page_controller.get_data_by_id_homework_chat(id_homework_chat, user_id)
+    data, homework = page_controller.get_data_by_id_homework(id_homework)
+    if data is None:
+        data, homework_chat = page_controller.get_data_by_id_homework_chat(id_homework_chat, user_id)
 
     user = page_controller.get_user_by_id(user_id)
-    homework_chat = None
     message_error = session.get('message_error')
     status_code = session.get('status_code')
     if session.get('message_error') is not None:
@@ -952,14 +946,12 @@ def education_home_task_card():
         else:
             return redirect(url_for('multilingual.education_home_task_card', id_homework=id_homework))
 
-    if data is not None:
-        if homework is not None:
-            homework_chat = page_controller.get_homework_chat_by_id_homework(int(id_homework), homework['id_user'])
-        else:
-            homework_chat = page_controller.homework_chat_entry(int(id_homework_chat), data['user']['id'])
+    if homework is not None:
+        homework_chat = page_controller.get_homework_chat_by_id_homework(int(id_homework), homework['id_user'])
 
-    return render_template('education_home_task_card.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+
+    return render_template('education_home_task_card.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _user=user,
                            _homework_chat=homework_chat, _lang_code=get_locale(), _languages=config.LANGUAGES,
                            _homework=homework, _data=data, _message_error=message_error, _status_code=status_code)
 
