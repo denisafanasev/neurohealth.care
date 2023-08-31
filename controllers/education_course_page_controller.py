@@ -98,14 +98,13 @@ class EducationCoursePageController():
         """
 
         course_service = EducationCourseService()
-        user = course_service.get_user_by_id_and_course_id(_user_id, _id_course)
+        user = course_service.get_user_by_id_and_course_id(_user_id, int(_id_course))
 
         user_view = {
             "login": user.login,
             "role": user.role,
             "active_education_module": user.active_education_module,
             "education_module_expiration_date": user.education_module_expiration_date.strftime("%d/%m/%Y"),
-            "education_stream": {}
         }
 
         return user_view

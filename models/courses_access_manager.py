@@ -6,6 +6,7 @@ from models.education_stream_manager import EducationStreamManager
 from models.user_manager import UserManager
 from models.timetable_manager import TimetableManager
 
+
 class CoursesAccessManager():
     """
     Manage access user to education programms, courses and modules

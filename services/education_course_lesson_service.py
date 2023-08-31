@@ -1,8 +1,5 @@
-import os
 from datetime import datetime
 
-import config
-from models import timetable_manager
 from models.action_manager import ActionManager
 from models.course_manager import EducationCourseManager
 from models.education_stream_manager import EducationStreamManager
@@ -15,8 +12,6 @@ from models.module_manager import EducationModuleManager
 from models.lesson_manager import EducationLessonManager
 from models.message_manager import MessageManager
 from models.courses_access_manager import CoursesAccessManager
-
-from error import HomeworkManagerException, EducationCourseLessonServiceException
 
 
 class EducationCourseLessonService():

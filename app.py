@@ -741,6 +741,24 @@ def education_course_lesson():
     except (ValueError, TypeError) as e:
         return redirect(url_for('multilingual.education_course_lesson', id_video=1, id_lesson=id_lesson))
 
+    if request.method == "POST":
+        # сохраняем новое сообщение
+        if request.form.get("send"):
+            text = request.form.get("text")
+            session['error_message'] = page_controller.add_message({"text": text, "id_user": user_id}, id_lesson)
+            if session.get('error_message') is not None:
+                session['status_code'] = 'Error'
+
+        # сохраняем домашнюю работу
+        elif request.form.get("button") == "homework":
+            files = request.files.getlist("files")
+            text = request.form.get("text_homework")
+            session['error_message'] = page_controller.save_homework(files, user_id, text, id_lesson)
+            if session.get('error_message') is not None:
+                session['status_code'] = 'Error'
+
+        return redirect(url_for('multilingual.education_course_lesson', id_video=1, id_lesson=id_lesson))
+
     user = page_controller.get_user_view_by_id(user_id)
     data = page_controller.get_lesson(user_id, id_lesson, id_video)
     homework = None
@@ -761,24 +779,6 @@ def education_course_lesson():
 
         course = page_controller.get_course_by_id(data['id_course'])
         neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
-
-    if request.method == "POST":
-        # сохраняем новое сообщение
-        if request.form.get("send"):
-            text = request.form.get("text")
-            session['error_message'] = page_controller.add_message({"text": text, "id_user": user_id}, id_lesson)
-            if session.get('error_message') is not None:
-                session['status_code'] = 'Error'
-
-        # сохраняем домашнюю работу
-        elif request.form.get("button") == "homework":
-            files = request.files.getlist("files")
-            text = request.form.get("text_homework")
-            session['error_message'] = page_controller.save_homework(files, user_id, text, id_lesson)
-            if session.get('error_message') is not None:
-                session['status_code'] = 'Error'
-
-        return redirect(url_for('multilingual.education_course_lesson', id_video=1, id_lesson=id_lesson))
 
     if data is not None:
         if data['available']:
@@ -948,7 +948,6 @@ def education_home_task_card():
 
     if homework is not None:
         homework_chat = page_controller.get_homework_chat_by_id_homework(int(id_homework), homework['id_user'])
-
 
     return render_template('education_home_task_card.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _user=user,
