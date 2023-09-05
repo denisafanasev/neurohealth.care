@@ -49,8 +49,16 @@ class RegistrationPageController():
 
         # создаем суперпользователя
         registration_service = RegistrationService()
-        user = registration_service.create_user(
-            _login, _name, _password, _password2, _email, _create_superuser)
+        user_data = {
+            'login': _login,
+            'name': _name,
+            'password': _password,
+            'password2': _password2,
+            'email': _email,
+            'create_superuser': _create_superuser,
+            'probationers_number': 5
+        }
+        user = registration_service.create_user(user_data)
 
         return user.token
 

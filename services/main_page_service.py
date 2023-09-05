@@ -111,7 +111,10 @@ class MainPageService():
         Args:
             _id_course(Int): ID
             _id_accepted_lessons_list
-        Returns
+        Returns:
+            course.name: название курса
+            count_accepted_homework: количество принятый домашних работ
+            count_no_accepted_homeworkЖ количество непринятый домашних работ
         """
 
         course_manager = EducationCourseManager()

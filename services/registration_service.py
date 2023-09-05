@@ -1,5 +1,7 @@
 from models.user_manager import UserManager
 from models.email_confirmation_manager import EmailConfirmationManager
+
+
 class RegistrationService():
     """
     Класс реализующий бизнес-логику приложения, связанную с регистрацией нового пользователя
@@ -23,17 +25,12 @@ class RegistrationService():
         
         return False
     
-    def create_user(self, _login, _name, _password, _password2, _email, _create_superuser):
+    def create_user(self, _user_data):
         """
         Создает в системе суперпользователя
 
         Args:
-            _login (String): логин пользователя
-            _name (String): имя пользователя
-            _password (String): пароль пользователя
-            _password2 (String): контрольный ввод пароля пользователя
-            _email (String): email пользователя
-            _create_superuser (Boolean): признак создания суперпользователя
+            _user_data(Dict): данные пользователя для создания в системе
         
         Returns:
             user: созданный пользователь
@@ -41,15 +38,15 @@ class RegistrationService():
 
         user_manager = UserManager()
 
-        _role = "user"
-        if _create_superuser:
-            _role = "superuser"
+        _user_data['role'] = "user"
+        if _user_data['create_superuser']:
+            _user_data['role'] = "superuser"
 
-        # создаем запись нового пользователя  базе данных пользователей
-        user_manager.create_user(_login, _name, _password, _password2, _email, _role, _probationers_number=5)
+        # создаем запись нового пользователя базе данных пользователей
+        user_manager.create_user(_user_data)
 
-        # если ппользователь успешно создан, находим нового только что созданного пользователя
-        user = user_manager.get_user_by_login(_login)
+        # если пользователь успешно создан, находим нового только что созданного пользователя
+        user = user_manager.get_user_by_login(_user_data['login'])
         return user
 
     def send_confirmation_email(self, _email, _subject, _template):
