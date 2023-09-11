@@ -1,6 +1,3 @@
-from datetime import datetime
-
-import config
 from models.action_manager import ActionManager
 from models.course_manager import EducationCourseManager
 from models.homework_manager import HomeworkManager
@@ -8,6 +5,8 @@ from models.lesson_manager import EducationLessonManager
 from models.module_manager import EducationModuleManager
 from models.user_manager import UserManager
 from models.education_stream_manager import EducationStreamManager
+
+
 class MainPageService():
     """
     MainPageService - класс бизнес-логики сервиса управления настройками приложения

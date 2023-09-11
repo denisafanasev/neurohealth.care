@@ -41,19 +41,20 @@ class UserProfilePageController():
             user_view['education_stream_list'] = []
 
             user_view['active'] = user.active
-        else:
-            user_view["login"] = "введите логин пользователя.."
-            user_view["name"] = "введите имя пользователя.."
-            user_view["email"] = "введите email пользователя.."
-            user_view["password"] = "введите пароль.."
-            user_view["password2"] = "введите повторно пароль.."
-            user_view["role"] = "Выберите роль пользователя"
-            user_view["probationers_number"] = "Выберите количество доступных тестируемых"
-            user_view["token"] = ""
-            user_view["active"] = True
-            user_view["email_confirmed"] = False
 
-        return user_view
+        data_placeholder = {
+            "login": "введите логин пользователя..",
+            "name": "введите имя пользователя..",
+            "email": "введите email пользователя..",
+            "password": "введите пароль..",
+            "password2": "введите повторно пароль..",
+            "role": "Выберите роль пользователя",
+            "probationers_number": "Выберите количество доступных тестируемых",
+            "token": "",
+            "active": True,
+            "email_confirmed": False}
+
+        return user_view, data_placeholder
 
     def create_user(self, _user, _current_user_id):
         """

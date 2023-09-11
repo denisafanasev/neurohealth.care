@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from services.education_stream_service import EducationStreamService
+from services.education_stream_card_service import EducationStreamCardService
 
 class EducationStreamPageController():
     """
@@ -18,7 +18,7 @@ class EducationStreamPageController():
             students_list(List): список пользователей
         """
 
-        education_stream_service = EducationStreamService()
+        education_stream_service = EducationStreamCardService()
 
         students = education_stream_service.get_students_list(_user_id, _id_education_stream)
         students_list = []
@@ -47,7 +47,7 @@ class EducationStreamPageController():
             curators_list(List): список пользователей
         """
 
-        education_stream_service = EducationStreamService()
+        education_stream_service = EducationStreamCardService()
 
         curators = education_stream_service.get_curators_list(_user_id, _id_education_stream)
         curators_list = []
@@ -75,7 +75,7 @@ class EducationStreamPageController():
             (List): список курсов
         """
 
-        education_stream_service = EducationStreamService()
+        education_stream_service = EducationStreamCardService()
 
         courses = education_stream_service.get_courses_list()
         courses_list = []
@@ -111,7 +111,7 @@ class EducationStreamPageController():
             _id(Int): идентификатор обучающего потока
         """
 
-        education_stream_service = EducationStreamService()
+        education_stream_service = EducationStreamCardService()
 
         if _id is not None:
             education_stream = education_stream_service.get_education_stream(_id)
@@ -178,7 +178,7 @@ class EducationStreamPageController():
         Returns:
             id(Int): идентификатор обучающего потока
         """
-        education_stream_manager = EducationStreamService()
+        education_stream_manager = EducationStreamCardService()
 
         id_education_stream = education_stream_manager.create_education_stream(_education_stream, _timetables_list,
                                                                                _current_user_id)
@@ -198,7 +198,7 @@ class EducationStreamPageController():
             None
         """
 
-        education_stream_service = EducationStreamService()
+        education_stream_service = EducationStreamCardService()
 
         for timetable in _timetables_list:
             timetable['date_start'] = datetime.strptime(timetable['date_start'], '%d/%m/%Y')
@@ -217,7 +217,7 @@ class EducationStreamPageController():
         Returns
             List(Dict): список расписаний
         """
-        education_stream_service = EducationStreamService()
+        education_stream_service = EducationStreamCardService()
 
         if _id is not None:
             timetables_list = education_stream_service.get_timetables_list(_id)

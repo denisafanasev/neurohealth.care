@@ -5,7 +5,8 @@ from models.course_manager import EducationCourseManager
 from models.module_manager import EducationModuleManager
 from models.timetable_manager import TimetableManager
 
-class EducationStreamService():
+
+class EducationStreamCardService():
     """
     Класс сервиса карточки обучающего потока
     """

@@ -228,7 +228,7 @@
                                             {% endif %}
 
                                             {% if _data['numbers_pages'] > 5 %}
-                                                <li class="page-item{% if current_page == _data['numbers_pages'] %}active{% endif %}">
+                                                <li class="page-item {% if _data['numbers_pages'] == current_page %}active{% endif %}">
                                                     <button class="page-link" type="submit" name="page" value="{{ _data['numbers_pages'] }}">{{ _data['numbers_pages'] }}</button>
                                                 </li>
                                             {% endif %}

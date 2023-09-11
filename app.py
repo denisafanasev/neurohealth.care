@@ -374,9 +374,12 @@ def user_profile():
     else:
         user_id = int(user_id)
 
-    data = page_controller.get_users_profile_view(user_id)
-    education_streams_list = page_controller.get_education_streams_list(user_id, data['role'])
-    data_edit = {}
+    data, data_placeholder = page_controller.get_users_profile_view(user_id)
+    if data:
+        education_streams_list = page_controller.get_education_streams_list(user_id, data['role'])
+    else:
+        education_streams_list = []
+
     active_tab = 'user_profile'
 
     try:
@@ -405,7 +408,7 @@ def user_profile():
                     else:
                         status_code = 'Error'
 
-                    data_edit = user
+                    data = user
 
             elif request.form.get("button") == "edit":
                 if mode == "view":
@@ -437,7 +440,7 @@ def user_profile():
                     else:
                         status_code = 'Error'
 
-                    data_edit = user
+                    data = user
 
             elif request.form.get("button") == "reset":
                 user = {}
@@ -489,16 +492,12 @@ def user_profile():
     except exceptions.BadRequestKeyError:
         mode = "view"
 
-    if data_edit == {}:
-        data_edit = data
-
     return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data_edit=data_edit, _data=data, _settings=settings_user,
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
                            _is_current_user_admin=flask_login.current_user.is_admin(), _user_id=user_id,
-                           _mode=mode, _message_error=message_error, _status_code=status_code,
+                           _mode=mode, _message_error=message_error, _status_code=status_code, _settings=settings_user,
                            _education_streams_list=education_streams_list, _active_tab=active_tab,
-                           _lang_code=get_locale(), _languages=config.LANGUAGES)
+                           _lang_code=get_locale(), _languages=config.LANGUAGES, _data_placeholder=data_placeholder)
 
 
 @multilingual.route('/user_actions', methods=['GET', 'POST'])
