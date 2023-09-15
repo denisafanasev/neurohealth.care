@@ -192,6 +192,14 @@ class MaintenanceService():
         users_list = data_store.get_rows()
         users_df = pd.DataFrame(users_list)
         users_df = users_df[['login', 'doc_id']]
+        action_data_store = DataStore('action', force_adapter='PostgreSQLDataAdapter')
+        actions_list = action_data_store.get_rows()
+        actions_df = None
+        if actions_list:
+            actions_df = pd.DataFrame(actions_list)
+            actions_df.drop(columns=['doc_id'], inplace=True)
+            # actions_df['created_date'] = pd.to_datetime(actions_df['created_date']).dt.strftime('%d-%m-%Y %H:%M:%S')
+
         for action_file in actions_files_list:
             # retrieve data from the file
             with open(config.DATA_FOLDER + action_file, encoding='utf-8') as json_file:
@@ -205,12 +213,23 @@ class MaintenanceService():
             # create DataFrame with user actions data
             actions_json_df = pd.read_json(json_text, orient='index')
             # merge DataFrame with user actions data and users data
-            actions_df = pd.merge(actions_json_df, users_df, how='inner', on=['login'])
+            actions_old_df = pd.merge(actions_json_df, users_df, how='inner', on=['login'])
             # remove unnecessary columns
-            actions_df.rename(columns={'doc_id': 'user_id'}, inplace=True)
-            actions_df = actions_df.drop(['login', 'id'], axis=1)
+            actions_old_df.rename(columns={'doc_id': 'user_id'}, inplace=True)
+            actions_old_df = actions_old_df.drop(['login', 'id'], axis=1)
+            # if actions_df is not None:
+            # actions_old_df = pd.concat([actions_df, actions_old_df], join='outer')
+            if actions_df is not None:
+                # actions_old_df['created_date'] = pd.to_datetime(actions_old_df['created_date']).dt.strftime('%d-%m-%Y %H:%M:%S')
+                actions_old_df = pd.merge(actions_df, actions_old_df, how='outer', indicator=True)
+                actions_old_df.drop(actions_old_df[actions_old_df['_merge'] != 'right_only'].index, inplace=True)
+                actions_old_df.drop('_merge', axis=1, inplace=True)
+
+                actions_df = actions_df.append(actions_old_df)
+            else:
+                actions_df = actions_old_df
             # import user actions data into PostgreSQL
-            actions_df.to_sql('action', con, if_exists='append', index=False)
+        actions_df.to_sql('action', con, if_exists='replace', index_label='doc_id')
 
     def create_table_in_sql(self, _table_name):
         """
