@@ -7,11 +7,13 @@ from flask_login import LoginManager, login_required, login_user, logout_user
 import flask_login
 
 import sentry_sdk
+from flask_mail import Mail
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 # general page controllers
 from werkzeug import exceptions
 
+from controllers.email_confirmation_page_controller import EmailConfirmationPageController
 from controllers.main_page_controller import MainPageController
 from controllers.main_menu_controller import MainMenuPageController
 
@@ -69,6 +71,15 @@ logger.addHandler(handler)
 app = Flask(__name__)
 app.secret_key = 'super secret key'
 app.debug = config.DEBUG
+app.config.update(
+    MAIL_SERVER=config.MAIL_SERVER,
+    MAIL_PORT=config.MAIL_PORT,
+    MAIL_USE_SSL=config.MAIL_USE_SSL,
+    MAIL_USERNAME=config.MAIL_USERNAME,
+    MAIL_PASSWORD=config.MAIL_PASSWORD
+)
+
+mail = Mail(app)
 
 login_manager = LoginManager()
 login_manager.login_view = "multilingual.login"
@@ -224,10 +235,10 @@ def registration():
 
             # TODO: доделать подтверждение почты
 
-            # confirm_url = url_for(user_email, token=token, _external=True)
-            # html = render_template('email_confirmation.html', confirm_url=confirm_url)
+            confirm_url = url_for('multilingual.email_confirmation', token=token, _external=True)
+            html = render_template('email_confirmation.html', confirm_url=confirm_url)
 
-            # login_page_controller.send_confirmation_email(user_email, html)
+            login_page_controller.send_confirmation_email(user_email, html, mail)
 
             return render_template('registration.html', view="registration", _user_created=True,
                                    _error_message="", _create_superuser=False)
@@ -238,6 +249,22 @@ def registration():
 
     return render_template('registration.html', view="registration", _user_created=False,
                            _error_message=error_message, _create_superuser=is_create_superuser)
+
+
+@multilingual.route('/email_confirmation', methods=['GET', 'POST'])
+def email_confirmation():
+    """
+
+    """
+    page_controller = EmailConfirmationPageController()
+
+    user_token = request.args['token']
+    user, error_message, status_code = page_controller.email_confirmation(user_token)
+    if user is not None:
+        login_user(user)
+
+    return render_template('result_email_confirmation.html', view='result_email_confirmation',
+                           _error_message=error_message, _status_code=status_code)
 
 
 @multilingual.route('/login', methods=['GET', 'POST'])

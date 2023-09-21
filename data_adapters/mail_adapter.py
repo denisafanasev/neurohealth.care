@@ -5,7 +5,7 @@ import config
 
 class MailAdapter():
 
-    def send_email(to, subject, template):
+    def send_email(self, to, subject, template, mail):
         msg = Message(
             subject,
             recipients=[to],
@@ -13,7 +13,7 @@ class MailAdapter():
             sender=config.MAIL_DEFAULT_SENDER
         )
 
-        app = Flask(__name__)
-        mail = Mail(app)
+        # app = Flask(__name__)
+        # mail = Mail(app)
 
         mail.send(msg)

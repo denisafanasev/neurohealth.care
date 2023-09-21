@@ -52,7 +52,7 @@ class RegistrationService():
         user = user_manager.get_user_by_login(_login)
         return user
 
-    def send_confirmation_email(self, _email, _subject, _template):
+    def send_confirmation_email(self, _email, _subject, _template, _mail):
         """
         Отправляет пользователю письмо подтверждения регистрации
 
@@ -62,4 +62,4 @@ class RegistrationService():
         """
 
         email_manager = EmailConfirmationManager()
-        email_manager.send_email(_email, _subject, _template)
+        email_manager.send_email(_email, _subject, _template, _mail)

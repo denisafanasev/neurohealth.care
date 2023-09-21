@@ -54,7 +54,7 @@ class RegistrationPageController():
 
         return user.token
 
-    def send_confirmation_email(self, _email, _html):
+    def send_confirmation_email(self, _email, _html, _mail):
         """
         Отправляет пользователю письмо с подтверждением регистрации
 
@@ -64,4 +64,4 @@ class RegistrationPageController():
         """
 
         registration_service = RegistrationService()
-        registration_service.send_confirmation_email(_email, "подтверждение регистрации", _html)
+        registration_service.send_confirmation_email(_email, "подтверждение регистрации", _html, _mail)

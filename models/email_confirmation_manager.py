@@ -5,5 +5,5 @@ class EmailConfirmationManager():
     def __init__(self):
         self.mail_adapter = MailAdapter()
 
-    def send_email(self, to, subject, template):
-        self.mail_adapter.send_email(to, subject, template)
+    def send_email(self, to, subject, template, mail):
+        self.mail_adapter.send_email(to, subject, template, mail)

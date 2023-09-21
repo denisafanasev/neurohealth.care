@@ -522,3 +522,22 @@ class UserManager():
         self.chenge_user(user.user_id, user.login, user.name, user.email, user.role, user.probationers_number,
                          user.created_date, user.education_module_expiration_date,
                          user.token, user.email_confirmed, user.active)
+
+    def get_user_by_token(self, _token):
+        """
+
+        """
+        data_store = DataStore('users')
+
+        user = data_store.get_rows({'token': _token})
+        if user:
+            return self.user_row_to_user(user[0])
+
+
+    def email_confirmation(self, _user_id):
+        """
+
+        """
+        data_store = DataStore('users')
+
+        data_store.update_row_by_id({'email_confirmed': True}, _user_id)
