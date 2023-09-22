@@ -232,3 +232,18 @@ def PostgreSQLDataAdapter_connection_string() -> str:
         pass
 
     return _PostgreSQLDataAdapter_connection_string
+
+def data_mail():
+
+    _data_mail = None
+
+    try:
+        with open(DATA_FOLDER + CONFIG_FILE_NAME, "r") as f:
+            cfg = yaml.safe_load(f)
+
+        _data_mail = cfg['CONFIG']['MAIL']
+
+    except:
+        pass
+
+    return _data_mail

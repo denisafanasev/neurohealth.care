@@ -129,4 +129,4 @@ class User(UserMixin):
             return True
         else:
             #TODO реализовать логику определения подтвержденного email
-            return False
+            return self.email_confirmed

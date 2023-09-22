@@ -71,12 +71,13 @@ logger.addHandler(handler)
 app = Flask(__name__)
 app.secret_key = 'super secret key'
 app.debug = config.DEBUG
+mail = config.data_mail()
 app.config.update(
-    MAIL_SERVER=config.MAIL_SERVER,
-    MAIL_PORT=config.MAIL_PORT,
-    MAIL_USE_SSL=config.MAIL_USE_SSL,
-    MAIL_USERNAME=config.MAIL_USERNAME,
-    MAIL_PASSWORD=config.MAIL_PASSWORD
+    MAIL_SERVER=mail['MAIL_SERVER'],
+    MAIL_PORT=mail['MAIL_PORT'],
+    MAIL_USE_SSL=mail['MAIL_USE_SSL'],
+    MAIL_USERNAME=mail['MAIL_USERNAME'],
+    MAIL_PASSWORD=mail['MAIL_PASSWORD']
 )
 
 mail = Mail(app)
@@ -258,13 +259,17 @@ def email_confirmation():
     """
     page_controller = EmailConfirmationPageController()
 
-    user_token = request.args['token']
+    user_token = request.args.get('token')
     user, error_message, status_code = page_controller.email_confirmation(user_token)
     if user is not None:
         login_user(user)
 
+        is_email_confirmed = True
+    else:
+        is_email_confirmed = False
+
     return render_template('result_email_confirmation.html', view='result_email_confirmation',
-                           _error_message=error_message, _status_code=status_code)
+                           _error_message=error_message, _status_code=status_code, _is_email_confirmed=is_email_confirmed)
 
 
 @multilingual.route('/login', methods=['GET', 'POST'])
@@ -298,8 +303,11 @@ def login():
             if isinstance(user, Exception):
                 login_error = user
             else:
-                login_user(user)
-                return redirect(url_for('multilingual.main_page'))
+                if user.email_confirmed:
+                    login_user(user)
+                    return redirect(url_for('multilingual.main_page'))
+                else:
+                    return redirect(url_for('multilingual.empty_function'))
 
     return render_template('login.html', view="login", _login_error=login_error)
 
@@ -543,7 +551,7 @@ def user_actions():
 @login_required
 def main_page():
     """
-    Просмотр и редактирование собственнного профиля
+    Просмотр и редактирование собственного профиля
 
     Returns:
         

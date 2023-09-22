@@ -7,7 +7,9 @@ class EmailConfirmationPageController():
 
         email_confirmation_service = EmailConfirmationService()
 
-        user = email_confirmation_service.email_confirmation(_token)
+        user = None
+        if _token is not None:
+            user = email_confirmation_service.email_confirmation(_token)
 
         if user is not None:
             error_message = 'Почто успешно подтверждена! Вы можете войти в систему!'
