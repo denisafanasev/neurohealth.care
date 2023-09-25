@@ -13,7 +13,4 @@ class EmailConfirmationService():
         if user is not None:
             user_manager.email_confirmation(user.user_id)
 
-
             return user
-
-        return False

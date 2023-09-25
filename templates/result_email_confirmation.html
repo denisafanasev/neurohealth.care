@@ -33,7 +33,7 @@
                                 </div>
                             </div>
                             <div>
-                                <a href={{ url_for('multilingual.main_page') }}>
+                                <a href={{ url_for('multilingual.login') }}>
                                     <button type="submit" class="btn btn-lg btn-primary">Главная страница</button>
                                 </a>
                             </div>
@@ -43,11 +43,11 @@
                                     <strong>{{ _error_message  }}</strong>
                                 </div>
                             </div>
-                            <div>
-                                <a href={{ url_for('multilingual.main_page') }}>
-                                    <button type="submit" class="btn btn-lg btn-primary">Повторная отправка сообщения</button>
-                                </a>
-                            </div>
+{#                            <div>#}
+{#                                <a href=''>#}
+{#                                    <button type="submit" class="btn btn-lg btn-primary">Повторная отправка сообщения</button>#}
+{#                                </a>#}
+{#                            </div>#}
                         {% endif %}
                     </div>
                 </div>

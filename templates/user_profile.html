@@ -324,6 +324,9 @@
                         {% endif %}
                     </button>
                 {% endif %}
+                {% if _mode == 'view' %}
+                    <button form="add_user" name="button" value="email_confirmation" class="btn btn-primary" type="submit">Подтвердить почту</button>
+                {% endif %}
                 {% if _mode == "view"%}
                     <button name="button" value="{% if _mode=="view" %}discharge{% elif _mode=="discharge" %}save_discharge{% endif %}"
                             class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#extension"

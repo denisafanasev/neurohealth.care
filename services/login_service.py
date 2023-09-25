@@ -1,3 +1,5 @@
+import datetime
+
 from models.user_manager import UserManager
 from models.action_manager import ActionManager
 from error import UserManagerException
@@ -45,9 +47,8 @@ class LoginService():
 
         # делаем проверки, что пользователь может входить в систему
         if (user.email_confirmed is False) and (user.token != "") and (user.role != "superuser"):
-            # raise UserManagerException("Email пользователя не подтвержден")
-            pass
-            
+            raise UserManagerException("Email пользователя не подтвержден")
+
         if not user.active:
             raise UserManagerException("Данный пользователь заблокирован")
         elif user.role != "superuser":
@@ -91,4 +92,4 @@ class LoginService():
         if _create_superuser:
             _role = "superuser"
 
-        user_manager.create_user(_login, _name, _password, _password2, _email, _role, _access_time = "бессрочно")
+        user_manager.create_user(_login, _name, _password, _password2, _email, _role, 30)

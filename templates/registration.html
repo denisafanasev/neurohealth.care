@@ -163,14 +163,17 @@
                             {% if _user_created %}
                                 <div class="alert alert-success alert-dismissible" role="alert">
                                     <div class="alert-message">
-                                        <strong>Пользователь создан! Вы можете войти в систему!</strong>
+{#                                        <strong>Пользователь создан! Вы можете войти в систему!</strong>#}
+                                        <p><strong>Пользователь создан! Вам отправлено сообщение на почту.</strong></p>
+                                        <p><strong>Перейдите по ссылке, чтобы завершить регистрацию!</strong></p>
+                                        <p><strong>Если письмо на почту не пришло, обратитесь в поддержку.</strong></p>
                                     </div>
                                 </div>
-                                <div>
-                                    <a href={{ url_for('multilingual.login') }}>
-                                        <button type="submit" class="btn btn-lg btn-primary">Войти</button>
-                                    </a>
-                                </div>
+{#                                <div>#}
+{#                                    <a href={{ url_for('multilingual.login') }}>#}
+{#                                        <button type="submit" class="btn btn-lg btn-primary">Войти</button>#}
+{#                                    </a>#}
+{#                                </div>#}
                             {% else %}
                                 <div class="card">
                                     <div class="card-body">

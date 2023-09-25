@@ -1,4 +1,10 @@
+from typing import Union
+
+from flask import url_for, render_template
+from flask_mail import Mail
+
 from models.course_manager import EducationCourseManager
+from models.email_confirmation_manager import EmailConfirmationManager
 from models.user_manager import UserManager
 from models.action_manager import ActionManager
 from models.education_stream_manager import EducationStreamManager
@@ -213,3 +219,18 @@ class UserProfileService():
             education_streams_list.append(education_stream)
 
         return education_streams_list
+
+    def send_confirmation_email(self, _user_id: int, _mail: Mail) -> Union[None, str]:
+
+        email_confirmation_manager = EmailConfirmationManager()
+        user_manager = UserManager()
+
+        user = user_manager.get_user_by_id(_user_id)
+        if user is not None:
+            confirm_url = url_for('multilingual.email_confirmation', token=user.token, _external=True)
+            html = render_template('email_confirmation.html', confirm_url=confirm_url)
+
+            email_confirmation_manager.send_email(user.email, "подтверждение регистрации", html, _mail)
+
+        else:
+            return 'Пользователь не найден'

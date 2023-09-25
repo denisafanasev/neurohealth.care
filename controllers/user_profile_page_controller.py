@@ -1,3 +1,7 @@
+from typing import Union
+
+from flask_mail import Mail
+
 import config
 from services.user_profile_service import UserProfileService
 from error import UserManagerException
@@ -239,3 +243,19 @@ class UserProfilePageController():
 
         return education_streams_list_view
 
+    def send_confirmation_email(self, _user_id: int, _mail: Mail) -> Union[None, str]:
+        """
+        Отправляет сообщение пользователю для подтверждения почты
+
+        Args:
+            _user_id: ID пользователя
+
+        Return:
+            None - если нет ошибок.
+            error_message - текст ошибки
+        """
+        user_profile_service = UserProfileService()
+
+        error_message = user_profile_service.send_confirmation_email(_user_id, _mail)
+
+        return error_message

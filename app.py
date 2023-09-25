@@ -236,10 +236,7 @@ def registration():
 
             # TODO: доделать подтверждение почты
 
-            confirm_url = url_for('multilingual.email_confirmation', token=token, _external=True)
-            html = render_template('email_confirmation.html', confirm_url=confirm_url)
-
-            login_page_controller.send_confirmation_email(user_email, html, mail)
+            login_page_controller.send_confirmation_email(user_email, token, mail)
 
             return render_template('registration.html', view="registration", _user_created=True,
                                    _error_message="", _create_superuser=False)
@@ -252,7 +249,7 @@ def registration():
                            _error_message=error_message, _create_superuser=is_create_superuser)
 
 
-@multilingual.route('/email_confirmation', methods=['GET', 'POST'])
+@multilingual.route('/email_confirmation', methods=['GET'])
 def email_confirmation():
     """
 
@@ -260,16 +257,20 @@ def email_confirmation():
     page_controller = EmailConfirmationPageController()
 
     user_token = request.args.get('token')
-    user, error_message, status_code = page_controller.email_confirmation(user_token)
-    if user is not None:
-        login_user(user)
-
-        is_email_confirmed = True
-    else:
-        is_email_confirmed = False
+    user, error_message, is_email_confirmed = page_controller.email_confirmation(user_token)
 
     return render_template('result_email_confirmation.html', view='result_email_confirmation',
-                           _error_message=error_message, _status_code=status_code, _is_email_confirmed=is_email_confirmed)
+                           _error_message=error_message,  _is_email_confirmed=is_email_confirmed)
+
+
+@multilingual.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+
+    page_controller = ''
+    current_user_id = flask_login.current_user.user_id
+    mpc = MainMenuPageController(current_user_id)
+
+    return
 
 
 @multilingual.route('/login', methods=['GET', 'POST'])
@@ -307,7 +308,7 @@ def login():
                     login_user(user)
                     return redirect(url_for('multilingual.main_page'))
                 else:
-                    return redirect(url_for('multilingual.empty_function'))
+                    return redirect(url_for('multilingual.email_confirmation'))
 
     return render_template('login.html', view="login", _login_error=login_error)
 
@@ -480,6 +481,15 @@ def user_profile():
                 session['status_code'] = "Successful"
 
                 return redirect(url_for('multilingual.user_profile', user_id=user_id))
+
+            elif request.form.get('button') == 'email_confirmation':
+
+                error_message = page_controller.send_confirmation_email(user_id, mail)
+                if error_message is not None:
+                    session['error_message'] = error_message
+                    session['status_code'] = 'Error'
+
+                mode = 'view'
 
             elif request.form.get("is_active"):
                 if mode == 'view':

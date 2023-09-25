@@ -1,3 +1,5 @@
+from flask import url_for, render_template
+
 import utils.ada as ada
 from services.registration_service import RegistrationService
 from error import UserManagerException
@@ -54,7 +56,7 @@ class RegistrationPageController():
 
         return user.token
 
-    def send_confirmation_email(self, _email, _html, _mail):
+    def send_confirmation_email(self, _email, _token, _mail):
         """
         Отправляет пользователю письмо с подтверждением регистрации
 
@@ -64,4 +66,8 @@ class RegistrationPageController():
         """
 
         registration_service = RegistrationService()
-        registration_service.send_confirmation_email(_email, "подтверждение регистрации", _html, _mail)
+
+        confirm_url = url_for('multilingual.email_confirmation', token=_token, _external=True)
+        html = render_template('email_confirmation.html', confirm_url=confirm_url)
+
+        registration_service.send_confirmation_email(_email, "подтверждение регистрации", html, _mail)

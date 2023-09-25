@@ -62,4 +62,5 @@ class RegistrationService():
         """
 
         email_manager = EmailConfirmationManager()
+
         email_manager.send_email(_email, _subject, _template, _mail)
