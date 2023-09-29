@@ -221,7 +221,9 @@ class UserProfileService():
         return education_streams_list
 
     def send_confirmation_email(self, _user_id: int, _mail: Mail) -> Union[None, str]:
+        """
 
+        """
         email_confirmation_manager = EmailConfirmationManager()
         user_manager = UserManager()
 
@@ -230,7 +232,7 @@ class UserProfileService():
             confirm_url = url_for('multilingual.email_confirmation', token=user.token, _external=True)
             html = render_template('email_confirmation.html', confirm_url=confirm_url)
 
-            email_confirmation_manager.send_email(user.email, "подтверждение регистрации", html, _mail)
+            email_confirmation_manager.send_email(user.email, "Подтверждение регистрации", html, _mail)
 
         else:
             return 'Пользователь не найден'

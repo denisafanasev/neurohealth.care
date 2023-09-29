@@ -19,6 +19,7 @@ from controllers.main_menu_controller import MainMenuPageController
 
 from controllers.login_page_controller import LoginPageController
 from controllers.registration_page_controller import RegistrationPageController
+from controllers.reset_password_page_controller import ResetPasswordPageController
 
 from controllers.user_manager_page_controller import UserManagerPageController
 from controllers.corrections_page_controller import CorrectionsPageController
@@ -262,15 +263,24 @@ def email_confirmation():
     return render_template('result_email_confirmation.html', view='result_email_confirmation',
                            _error_message=error_message,  _is_email_confirmed=is_email_confirmed)
 
+@multilingual.route('/reset_password', defaults={'link': ''})
+@multilingual.route('/reset_password/<link>', methods=['GET', 'POST'])
+def reset_password(link):
 
-@multilingual.route('/reset_password', methods=['GET', 'POST'])
-def reset_password():
-
-    page_controller = ''
+    page_controller = ResetPasswordPageController()
     current_user_id = flask_login.current_user.user_id
     mpc = MainMenuPageController(current_user_id)
+    
+    if request.method == 'POST':
+        if not link:
+            email = request.args.get('email')
+            
+            page_controller.send_link_for_email(email, mail)
+        
+        else:
+            pass
 
-    return
+    return render_template()
 
 
 @multilingual.route('/login', methods=['GET', 'POST'])
