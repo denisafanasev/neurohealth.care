@@ -67,7 +67,4 @@ class RegistrationPageController():
 
         registration_service = RegistrationService()
 
-        confirm_url = url_for('multilingual.email_confirmation', token=_token, _external=True)
-        html = render_template('email_confirmation.html', confirm_url=confirm_url)
-
-        registration_service.send_confirmation_email(_email, "подтверждение регистрации", html, _mail)
+        registration_service.send_confirmation_email(_email, _token,"подтверждение регистрации", _mail)

@@ -1,3 +1,7 @@
+from flask import url_for, render_template
+from flask_mail import Mail
+
+from models.email_message_text_manager import EmailMessageTextManager
 from models.user_manager import UserManager
 from models.email_confirmation_manager import EmailConfirmationManager
 class RegistrationService():
@@ -52,15 +56,23 @@ class RegistrationService():
         user = user_manager.get_user_by_login(_login)
         return user
 
-    def send_confirmation_email(self, _email, _subject, _template, _mail):
+    def send_confirmation_email(self, _email: str, _token: str, _subject: str, _mail: Mail) -> None:
         """
         Отправляет пользователю письмо подтверждения регистрации
 
         Args:
             _email (String): email пользователя
-            _html (String): текст письма
+            _token (String): текст письма
+            _subject (String): заголовок сообщения
+            _mail (String): экземпляр класса Mail
         """
 
         email_manager = EmailConfirmationManager()
+        email_message_text_manager = EmailMessageTextManager()
 
-        email_manager.send_email(_email, _subject, _template, _mail)
+        email_message_text = email_message_text_manager.get_email_message_text('email_confirmation')
+        confirm_url = url_for('multilingual.email_confirmation', token=_token, _external=True)
+        html = render_template('email_message_form.html', confirm_url=confirm_url,
+                               text=email_message_text.text, footer=email_message_text.footer)
+
+        email_manager.send_email(_email, _subject, html, _mail)

@@ -24,3 +24,6 @@ class EducationCourseLessonServiceException(NeuroHealthAppException):
 
 class HomeworkCardServiceException(NeuroHealthAppException):
     pass
+
+class OneTimeLinkManagerException(NeuroHealthAppException):
+    pass

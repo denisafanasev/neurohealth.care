@@ -4,6 +4,7 @@ import shortuuid
 from datetime import datetime
 
 from data_adapters.data_store import DataStore
+from error import OneTimeLinkManagerException
 from models.one_time_link import OneTimeLink
 
 
@@ -71,7 +72,11 @@ class OneTimeLinkManager:
 
         one_time_link_list = data_store.get_rows({'link': _link})
         if one_time_link_list:
-            return self.one_time_link_row_to_one_time_link(one_time_link_list[0])
+            one_time_link = self.one_time_link_row_to_one_time_link(one_time_link_list[0])
+            if not one_time_link.is_active:
+                raise OneTimeLinkManagerException('Данная ссылка уже была использована')
+
+            return one_time_link
 
     def deactivate_link(self, _id: int) -> None:
         """

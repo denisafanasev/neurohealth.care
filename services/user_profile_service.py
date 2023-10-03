@@ -5,6 +5,7 @@ from flask_mail import Mail
 
 from models.course_manager import EducationCourseManager
 from models.email_confirmation_manager import EmailConfirmationManager
+from models.email_message_text_manager import EmailMessageTextManager
 from models.user_manager import UserManager
 from models.action_manager import ActionManager
 from models.education_stream_manager import EducationStreamManager
@@ -226,11 +227,14 @@ class UserProfileService():
         """
         email_confirmation_manager = EmailConfirmationManager()
         user_manager = UserManager()
+        email_message_text_manager = EmailMessageTextManager()
 
         user = user_manager.get_user_by_id(_user_id)
         if user is not None:
+            email_message_text = email_message_text_manager.get_email_message_text('email_confirmation')
             confirm_url = url_for('multilingual.email_confirmation', token=user.token, _external=True)
-            html = render_template('email_confirmation.html', confirm_url=confirm_url)
+            html = render_template('email_message_form.html', confirm_url=confirm_url,
+                                   text=email_message_text.text, footer=email_message_text.footer)
 
             email_confirmation_manager.send_email(user.email, "Подтверждение регистрации", html, _mail)
 
