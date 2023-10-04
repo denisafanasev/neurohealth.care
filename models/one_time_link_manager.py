@@ -3,6 +3,8 @@ import datetime
 import shortuuid
 from datetime import datetime
 
+from flask import url_for
+
 from data_adapters.data_store import DataStore
 from error import OneTimeLinkManagerException
 from models.one_time_link import OneTimeLink
@@ -16,7 +18,7 @@ class OneTimeLinkManager:
         """
 
         """
-        one_time_link = OneTimeLink(_id=_data_row['doc_id'], _user_id=_data_row['user_id'],
+        one_time_link = OneTimeLink(_id=_data_row.doc_id, _user_id=_data_row['user_id'],
                                     _is_active=_data_row['is_active'], _link=_data_row['link'],
                                     _type=_data_row['type'])
 
@@ -29,7 +31,7 @@ class OneTimeLinkManager:
         """
         Создает одноразовую ссылку, записывает в БД и возвращает ее
         Args:
-            _user_id:
+            _user_id: ID ссылки
             _type: тип ссылки(для чего она нужна)
 
         Returns:
@@ -40,9 +42,11 @@ class OneTimeLinkManager:
 
         one_time_link_list = [0]
         while one_time_link_list:
-            link = shortuuid.uuid()
+            uuid = shortuuid.uuid()
 
-            one_time_link_list = data_store.get_rows({'link': link})
+            one_time_link_list = data_store.get_rows({'uuid': uuid, 'type': _type})
+
+        link = url_for('multilingual.reset_password', uuid=uuid, _external=True)
 
         one_time_link = OneTimeLink(_user_id=_user_id, _is_active=True,
                                     _link=link, _type=_type)
@@ -57,7 +61,7 @@ class OneTimeLinkManager:
 
         data_store.insert_row(one_time_link_data)
 
-        return link
+        return one_time_link
 
     def get_one_time_link(self, _link) -> OneTimeLink:
         """

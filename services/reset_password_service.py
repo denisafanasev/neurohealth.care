@@ -8,7 +8,7 @@ from models.one_time_link_manager import OneTimeLinkManager
 from models.user import User
 from models.user_manager import UserManager
 from data_adapters.mail_adapter import MailAdapter
-from error import UserManagerException
+from error import UserManagerException, OneTimeLinkManagerException
 
 
 class ResetPasswordService:
@@ -28,31 +28,13 @@ class ResetPasswordService:
         if user is None:
             raise UserManagerException('Пользователь с такой почтой не найден. Проверьте свою почту.')
 
-        link = one_time_link_manager.created_one_time_link(user.user_id, 'reset_password')
-        email_message_text = email_message_text_manager.get_email_message_text('email_confirmation')
+        one_time_link = one_time_link_manager.created_one_time_link(user.user_id, 'reset_password')
+        email_message_text = email_message_text_manager.get_email_message_text('reset_password')
 
-        confirm_url = url_for('multilingual.reset_password', _anchor=link, _external=True)
-        html = render_template('email_message_form.html', confirm_url=confirm_url, text=email_message_text.text,
+        html = render_template('email_message_form.html', confirm_url=one_time_link.link, text=email_message_text.text,
                                footer=email_message_text.footer)
 
         mail_adapter.send_email(_email, 'Восстановление пароля', html, _mail)
-
-    def get_user(self, _link: str) -> Union[User, None]:
-        """
-        Возвращает пользователя
-
-        Args:
-            _link: одноразовая ссылка для сброса пароля
-        """
-        user_manager = UserManager()
-        one_time_link_manager = OneTimeLinkManager()
-
-        one_time_link = one_time_link_manager.get_one_time_link(_link)
-        if one_time_link is not None:
-
-            user = user_manager.get_user_by_id(one_time_link.user_id)
-
-            return user
 
     def reset_password(self, _link: str, _password: str, _password2: str) -> None:
         """
@@ -67,8 +49,6 @@ class ResetPasswordService:
         one_time_link_manager = OneTimeLinkManager()
 
         one_time_link = one_time_link_manager.get_one_time_link(_link)
-        if one_time_link is None:
-            return
 
         user_manager.chenge_password(one_time_link.user_id, _password, _password2)
         one_time_link_manager.deactivate_link(one_time_link.id)

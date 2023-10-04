@@ -49,55 +49,7 @@
 {#        });#}
 {#    </script>#}
     <script>
-        function checkData(form){
-            const role = form.role.value;
-            const probationers_number = form.probationers_number.value;
-            const user_name = form.user_name.value;
-            const message = document.getElementById('message');
 
-            if (role === 'placeholder') {
-                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                document.querySelector('p[id=text_message]').textContent = "Выберите роль пользователю.";
-                message.style.display = 'block'
-                return false;
-            }
-            if (probationers_number === 'placeholder') {
-                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                document.querySelector('p[id=text_message]').textContent = "Выберите количество доступных тестируемых для пользователя.";
-                message.style.display = 'block'
-                return false;
-            }
-            if (user_name === '') {
-                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                document.querySelector('p[id=text_message]').textContent = "Введите имя пользователя";
-                message.style.display = 'block'
-                return false;
-            }
-
-            return checkRole(form);
-        }
-
-        function checkExtension(form) {
-            const period = form.period.value;
-            const reference_point = form.reference_point.value;
-            const message = document.getElementById('message');
-
-            if (period === 'placeholder'){
-                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                document.querySelector('p[id=text_message]').textContent = "Выберите срок, на который хотите продлить доступ пользователю.";
-                message.style.display = 'block'
-                return false;
-            }
-
-            if (reference_point === 'placeholder'){
-                document.querySelector('h3[id=title_message]').textContent = 'Ошибка';
-                document.querySelector('p[id=text_message]').textContent = "Выберите начальное время отсчета.";
-                message.style.display = 'block'
-                return false;
-            }
-
-            return true;
-        }
     </script>
     <script>
         function edit_is_active() {
@@ -143,7 +95,7 @@
 {#            <a class="nav-link" href="{{ url_for('/user_profile/actions', user_id=_data['user_id']) }}">Действия</a>#}
 {#        </li>#}
 {#    </ul>#}
-        <form id="add_user" name="add_user" method="post" enctype="multipart/form-data" onsubmit="return checkData(this);">
+        <form id="add_user" name="add_user" method="post" enctype="multipart/form-data" onsubmit="return checkUserForm(this)">
 
             <div class="row d-flex align-items-stretch bd-highlight">
                 <div class="col-sm-6 bd-highlight">

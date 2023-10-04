@@ -264,9 +264,9 @@ def email_confirmation():
                            _error_message=error_message,  _is_email_confirmed=is_email_confirmed)
 
 
-@multilingual.route('/reset_password', defaults={'link': ''})
-@multilingual.route('/reset_password/<link>', methods=['GET', 'POST'])
-def reset_password(link):
+@multilingual.route('/reset_password', defaults={'uuid': ''}, methods=['GET', 'POST'])
+@multilingual.route('/reset_password/<uuid>', methods=['GET', 'POST'])
+def reset_password(uuid):
     """
 
     """
@@ -280,35 +280,27 @@ def reset_password(link):
     if status_code is not None:
         session.pop('status_code')
 
-    user_name = ''
-    if request.method == 'POST':
-        if not link:
-            email = request.args.get('email')
-            
-            message_error = page_controller.send_link_for_email(email, mail)
-            if message_error is not None:
-                session['message_error'] = message_error
-                session['status_code'] = 'Error'
+    if uuid:
+        is_uuid = True
+    else:
+        is_uuid = False
 
-            else:
-                session['message_error'] = message_error
-                session['status_code'] = 'Successful'
+    if request.method == 'POST':
+        if not uuid:
+            email = request.form.get('email')
+
+            session['message_error'], session['status_code'] = page_controller.send_link_for_email(email, mail)
 
         else:
-            password = request.args.get('password')
-            password2 = request.args.get('password2')
+            password = request.form.get('password')
+            password2 = request.form.get('password2')
 
-            message_error = page_controller.reset_password(link, password, password2)
-            session['message_error'] = message_error
-            session['status_code'] = 'Successful'
+            session['message_error'], session['status_code'] = page_controller.reset_password(request.base_url, password, password2)
 
-        return redirect(url_for('multilingual.reset_password', link=link))
-
-    else:
-        user_name = page_controller.get_user_name(link)
+        return redirect(url_for('multilingual.reset_password', uuid=uuid))
 
     return render_template('reset_password.html', _message_error=message_error, _status_code=status_code,
-                           _user_name=user_name)
+                           _is_uuid=is_uuid)
 
 
 @multilingual.route('/login', methods=['GET', 'POST'])

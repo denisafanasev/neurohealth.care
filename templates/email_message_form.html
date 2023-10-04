@@ -12,51 +12,49 @@
 {#    </div>#}
 {#</div>#}
 
-{#<table>#}
-{#    <thead>#}
-{#    <tr>#}
-{#        <th style="width: 25%" rowspan="1" colspan="1"></th>#}
-{#        <th style="width: 50%" rowspan="1" colspan="1"></th>#}
-{#        <th style="width: 25%" rowspan="1" colspan="1"></th>#}
-{#    </tr>#}
-{#    </thead>#}
-{#    <tbody>#}
-{#    <tr>#}
-{#        <td></td>#}
-{#        <td>#}
-{#            <div style="vertical-align: middle; text-align: center">#}
-{#                <img align="middle" src="https://app.neurohealth.care/static/img/logo/nhc_logo_flat.png"#}
-{#                     type="image/png" width="100%" alt="" style="display: block; margin: 0">#}
-{#            </div>#}
-{#        </td>#}
-{#        <td></td>#}
-{#    </tr>#}
-{#    <tr>#}
-{#        <td></td>#}
-{#        <td>#}
-{#            <div style="text-align: center">#}
-{#                <p>Добро пожаловать на платформу NeuroHealth.Care! Ваша учетная запись создана. Для начала работы,#}
-{#                    пожалуйста, подтвердите ваш email перейдя по ссылке:</p>#}
-{#                {{ text }}#}
-{#                <p><a href="{{ confirm_url }}">{{ confirm_url }}</a></p>#}
-{#                <br>#}
-{#                <p>Спасибо!</p>#}
-{#            </div>#}
-{#        </td>#}
-{#        <td></td>#}
-{#    </tr>#}
-{#    </tbody>#}
-{#</table>#}
+<div style="background-color: #f8f8f8; width: 100%; border: 0;">
+    <table style="margin: auto">
+        <tbody>
+        <tr>
+            <td>
+                <table style="width: 100%; max-width: 600px; background-color: #ffffff; margin: 0">
+                    <tbody>
+                    <tr>
+                        <td>
+                            <div style="vertical-align: middle; text-align: center; width: 100%; margin: auto">
+                                <img align="middle" src="https://app.neurohealth.care/static/img/logo/nhc_logo_flat.png"
+                                     type="image/png" width="100%" alt="" style="display: inline;">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="text-align: center; font-size: 15px">
+                                {{ text }}
+                                <p><a href="{{ confirm_url }}">{{ confirm_url }}</a></p>
+                                <p>{{ footer }}</p>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
 
-<div style="background: #ffffff; margin: 0">
-    <div style="vertical-align: middle; text-align: center">
-        <img align="middle" src="https://app.neurohealth.care/static/img/logo/nhc_logo_flat.png"
-             type="image/png" width="25%" alt="" style="display: block; margin: 0">
-    </div>
-    <div style="text-align: center; white-space: pre-line; background: white">
-        {{ text }}
-        <p><a href="{{ confirm_url }}">{{ confirm_url }}</a></p>
-        <br>
-        <p>{{ footer }}</p>
-    </div>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
 </div>
+
+{#<div style="background: #f8f8f8; margin: 0">#}
+{#    <div style="vertical-align: middle; text-align: center">#}
+{#        <img align="middle" src="https://app.neurohealth.care/static/img/logo/nhc_logo_flat.png"#}
+{#             type="image/png" width="25%" alt="" style="display: inline; margin: 0">#}
+{#    </div>#}
+{#    <div style="text-align: center; white-space: pre-line; background: white; margin-left: 25%; margin-right: 25%">#}
+{#        {{ text }}#}
+{#        <p><a href="{{ confirm_url }}">{{ confirm_url }}</a></p>#}
+{#        <br>#}
+{#        <p>{{ footer }}</p>#}
+{#    </div>#}
+{#</div>#}

@@ -2,7 +2,7 @@ from typing import Union
 
 from flask_mail import Mail
 
-from error import UserManagerException
+from error import UserManagerException, OneTimeLinkManagerException
 from services.reset_password_service import ResetPasswordService
 
 
@@ -11,9 +11,9 @@ class ResetPasswordPageController:
     
     """
 
-    def send_link_for_email(self, _email: str, _mail: Mail) -> str:
+    def send_link_for_email(self, _email: str, _mail: Mail) -> (str, str):
         """
-
+        Передает почту пользователя для отправки одноразовой ссылки
         """
         reset_password_service = ResetPasswordService()
 
@@ -22,33 +22,19 @@ class ResetPasswordPageController:
 
         except UserManagerException as error:
 
-            return str(error)
+            return str(error), 'Error'
 
-        return 'Сообщение для восстановления пароля была отправлена на вашу почту'
+        return 'Сообщение для восстановления пароля была отправлена на вашу почту', 'Successful'
 
-    def reset_password(self, _link: str, _password: str, _password2: str) -> str:
+    def reset_password(self, _link: str, _password: str, _password2: str) -> (str, str):
         """
-
-        """
-        reset_password_service = ResetPasswordService()
-
-        reset_password_service.reset_password(_link, _password, _password2)
-
-        return 'Пароль успешно изменен!'
-
-    def get_user_name(self, _link: str) -> dict:
-        """
-        Возвращает имя пользователе
-
-        Args:
-            _link: одноразовая ссылка для сброса пароля
-
-        Returns:
-            user_name
+        Передает новый пароль пользователя
         """
         reset_password_service = ResetPasswordService()
 
-        user = reset_password_service.get_user(_link)
+        try:
+            reset_password_service.reset_password(_link, _password, _password2)
+        except OneTimeLinkManagerException as error:
+            return str(error), 'Error'
 
-        if user is not None:
-            return user.name
+        return 'Пароль успешно изменен!', 'Successful'
