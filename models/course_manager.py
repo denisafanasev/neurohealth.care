@@ -36,7 +36,7 @@ class EducationCourseManager():
             courses(List): список курсов
         """
 
-        data_store = DataStore("courses_list")
+        data_store = DataStore("courses_list", force_adapter='PostgreSQLDataAdapter')
 
         courses_list = data_store.get_rows()
         courses = []
@@ -51,7 +51,7 @@ class EducationCourseManager():
         Возвращает курс по id
 
         Args:
-            _id(Int): индентификатор курса
+            _id(Int): ID курса
 
         Returns:
             course(Course): курс
@@ -59,7 +59,7 @@ class EducationCourseManager():
 
         course = None
 
-        data_store = DataStore("courses_list")
+        data_store = DataStore("courses_list", force_adapter='PostgreSQLDataAdapter')
         course_data = data_store.get_row_by_id(_id)
         if course_data is not None:
             course = self.course_row_to_course(course_data)

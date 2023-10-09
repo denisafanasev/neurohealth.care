@@ -20,3 +20,27 @@ create table action(
 	comment_action VARCHAR ( 250 ) NOT NULL,
 	created_date TIMESTAMP NOT NULL
 );
+
+create table courses_list(
+    doc_id INT PRIMARY KEY,
+    name VARCHAR ( 50 ) NOT NULL,
+    description VARCHAR ( 200 ) NOT NULL,
+    type VARCHAR ( 20 ) NOT NULL,
+    image VARCHAR ( 200 ) NOT NULL
+);
+
+create table modules(
+    doc_id INT PRIMARY KEY,
+    course_id INT NOT NULL,
+    name VARCHAR ( 50 ) NOT NULL
+);
+
+create table lessons(
+    doc_id INT PRIMARY KEY,
+    module_id INT NOT NULL,
+    name VARCHAR ( 50 ) NOT NULL,
+    materials anyarray,
+    task TEXT NOT NULL,
+    text TEXT NOT NULL,
+    link anyarray
+);

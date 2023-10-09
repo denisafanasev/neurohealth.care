@@ -1407,8 +1407,7 @@ def maintenance():
 
         return redirect(url_for('multilingual.maintenance'))
 
-    upload_users_from_json_to_sql_page_data = page_controller.get_upload_users_from_json_to_sql_page_data(
-        current_user_id)
+    upload_users_from_json_to_sql_page_data = page_controller.get_upload_users_from_json_to_sql_page_data()
     upload_actions_from_json_to_sql_page_data = page_controller.get_upload_actions_from_json_to_sql_page_data(
         current_user_id)
 

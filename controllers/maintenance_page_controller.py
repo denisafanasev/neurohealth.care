@@ -1,3 +1,5 @@
+from typing import Union
+
 from services.maintenance_service import MaintenanceService
 
 
@@ -25,7 +27,7 @@ class MaintenancePageController():
         if error is None:
             return 'Данные таблицы "users" из TinyDB были перенесены в Postgresql', 'Successful'
     
-    def get_upload_users_from_json_to_sql_page_data(self, _current_user_id):
+    def get_upload_users_from_json_to_sql_page_data(self):
         """
         Get data for page view
 
@@ -35,7 +37,7 @@ class MaintenancePageController():
         _data = []
 
         service = MaintenanceService()
-        _data = service.get_upload_users_from_json_to_sql_page_data(_current_user_id)
+        _data = service.get_upload_models_from_json_to_sql_page_data('users')
 
         return _data
 
@@ -63,9 +65,9 @@ class MaintenancePageController():
 
         return _data
 
-    def create_table_in_sql(self, _table_name):
+    def create_table_in_sql(self, _table_name: str):
         """
-
+        Create table
         """
         service = MaintenanceService()
 

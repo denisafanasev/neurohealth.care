@@ -47,9 +47,9 @@
                     <form id="upload_users_from_json_to_sql" method="post" enctype="multipart/form-data">
                         <p><strong><label>data folder:</label></strong> {{ _user_page_data["data_folder"] }}</p>
                         <p><strong><label>current data adapter:</label></strong> {{ _user_page_data["current_data_adapter"] }}</p>
-                        <p><strong><label>users number:</label></strong> {{ _user_page_data["users_number"] }}</p>
+                        <p><strong><label>users number:</label></strong> {{ _user_page_data["rows_number"] }}</p>
                         <p><strong><label>PostgreSQLDataAdapter connection string:</label></strong> {{ _user_page_data["PostgreSQLDataAdapter_connection_string"] }}</p>
-                        <p><strong><label>db users number:</label></strong> {{ _user_page_data["db_users_number"] }}</p>
+                        <p><strong><label>db users number:</label></strong> {{ _user_page_data["db_rows_number"] }}</p>
                         <button{% if _user_page_data['is_there_table'] != "Created" %} disabled {% endif %}
                                 type="submit" name="submit_button" value="upload_users_from_json_to_sql" class="btn btn-primary">Upload data
                         </button>
