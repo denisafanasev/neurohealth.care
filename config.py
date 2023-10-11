@@ -44,6 +44,7 @@ LANGUAGES = [
         'title': 'English'
     }
 ]
+MODELS_FOR_IMPORT_IN_SQL = ['users', 'courses_list', 'modules', 'lessons']
 
 # mail accounts
 MAIL_DEFAULT_SENDER = 'from@example.com'

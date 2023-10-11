@@ -1402,18 +1402,27 @@ def maintenance():
         elif action_name == 'upload_action_from_json_to_sql':
             session['message_error'], session['status_code'] = page_controller.upload_actions_from_json_to_sql()
 
+        elif action_name == 'upload_courses_list_from_json_to_sql':
+            session['message_error'], session['status_code'] = page_controller.upload_courses_from_json_to_sql()
+
+        elif action_name == 'upload_modules_from_json_to_sql':
+            session['message_error'], session['status_code'] = page_controller.upload_modules_from_json_to_sql()
+
+        elif action_name == 'upload_lessons_from_json_to_sql':
+            session['message_error'], session['status_code'] = page_controller.upload_lessons_from_json_to_sql()
+
         else:
             session['message_error'], session['status_code'] = page_controller.create_table_in_sql(action_name)
 
         return redirect(url_for('multilingual.maintenance'))
 
-    upload_users_from_json_to_sql_page_data = page_controller.get_upload_users_from_json_to_sql_page_data()
+    upload_models_from_json_to_sql_page_data = page_controller.get_upload_models_from_json_to_sql_page_data(config.MODELS_FOR_IMPORT_IN_SQL)
     upload_actions_from_json_to_sql_page_data = page_controller.get_upload_actions_from_json_to_sql_page_data(
         current_user_id)
 
     return render_template('maintenance.html', view="maintenance", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _endpoint=endpoint, _user_page_data=upload_users_from_json_to_sql_page_data,
+                           _endpoint=endpoint, _models_page_data=upload_models_from_json_to_sql_page_data,
                            _lang_code=get_locale(),
                            _languages=config.LANGUAGES, _action_page_data=upload_actions_from_json_to_sql_page_data,
                            _status_code=status_code, _message_error=message_error)

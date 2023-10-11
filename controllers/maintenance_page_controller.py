@@ -6,7 +6,7 @@ from services.maintenance_service import MaintenanceService
 class MaintenancePageController():
     """
     controller for maintenance page
-    """    
+    """
 
     def __init__(self):
         """
@@ -26,18 +26,33 @@ class MaintenancePageController():
         # if not isinstance(status, tuple):
         if error is None:
             return 'Данные таблицы "users" из TinyDB были перенесены в Postgresql', 'Successful'
-    
+
     def get_upload_users_from_json_to_sql_page_data(self):
         """
         Get data for page view
 
         Args:
             _current_user_id (Int): id of current user looged into the system
-        """     
+        """
         _data = []
 
         service = MaintenanceService()
         _data = service.get_upload_models_from_json_to_sql_page_data('users')
+
+        return _data
+
+    def get_upload_models_from_json_to_sql_page_data(self, _models_for_import_to_sql: list):
+        """
+        Get data for page view
+
+        Args:
+            _current_user_id (Int): id of current user looged into the system
+        """
+        _data = []
+
+        service = MaintenanceService()
+        for model in _models_for_import_to_sql:
+            _data.append(service.get_upload_models_from_json_to_sql_page_data(model))
 
         return _data
 
@@ -74,3 +89,55 @@ class MaintenancePageController():
         error = service.create_table_in_sql(_table_name)
         if error is None:
             return f'Таблица "{_table_name}" создана в Postgresql', 'Successful'
+
+    def upload_courses_from_json_to_sql(self):
+        """
+        Get data for page view
+
+        Args:
+        """
+        _data = []
+
+        service = MaintenanceService()
+        # try:
+        service.upload_courses_list_from_json_to_sql()
+        # except:
+        #     return 'Не удалось импортировать данные таблицы "courses_list" из TinyDB в Postgresql', 'Error'
+
+        return 'Данные таблицы "courses_list" из TinyDB импортированы в Postgresql', 'Successful'
+
+    def upload_modules_from_json_to_sql(self):
+        """
+        Get data for page view
+
+        Args:
+            _current_user_id (Int): id of current user looged into the system
+        """
+        _data = []
+
+        service = MaintenanceService()
+        # try:
+        service.upload_modules_list_from_json_to_sql()
+        #
+        # except:
+        #     return 'Не удалось импортировать данные таблицы "modules" из TinyDB в Postgresql', 'Error'
+
+        return 'Данные таблицы "modules" из TinyDB были перенесены в Postgresql', 'Successful'
+
+    def upload_lessons_from_json_to_sql(self):
+        """
+        Get data for page view
+
+        Args:
+            _current_user_id (Int): id of current user looged into the system
+        """
+        _data = []
+
+        service = MaintenanceService()
+        # try:
+        service.upload_lessons_list_from_json_to_sql()
+        #
+        # except:
+        #     return 'Не удалось импортировать данные таблицы "lessons" из TinyDB в Postgresql', 'Error'
+
+        return 'Данные таблицы "lessons" из TinyDB были перенесены в Postgresql', 'Successful'

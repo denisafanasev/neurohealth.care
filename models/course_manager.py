@@ -24,7 +24,8 @@ class EducationCourseManager():
             Course: урок
         """
 
-        course = Course(_data_row.doc_id, _data_row["name"], _data_row["description"], _data_row["type"], _data_row["image"])
+        doc_id = _data_row['doc_id'] if _data_row.get('doc_id') is not None else _data_row.doc_id
+        course = Course(doc_id, _data_row["name"], _data_row["description"], _data_row["type"], _data_row["image"])
 
         return course
 

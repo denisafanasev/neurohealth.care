@@ -4,8 +4,11 @@ from distutils.command.config import config
 import pandas as pd
 from sqlalchemy import text, create_engine
 
+from error import UserManagerException
 from models.action_manager import ActionManager
 from models.course_manager import EducationCourseManager
+from models.module_manager import EducationModuleManager
+from models.lesson_manager import EducationLessonManager
 from models.user_manager import UserManager
 from data_adapters.data_store import DataStore
 
@@ -54,6 +57,25 @@ class MaintenanceService():
     #
     #     return _data
 
+    def add_row_to_sql(self, _data_store, _id, _data_row):
+
+        if _data_store.get_row_by_id(_id) is None:
+
+            # _data_store.update_row_by_id(_data_row, _id)
+            # if data non existed, make insert of a new row
+            _data_store.insert_row(_data_row)
+
+    # def is_superuser(self, func):
+    #     def wrapper(*args):
+    #         user_manager = UserManager()
+    #         if user_manager.get_user_role(args[0]) == 'superuser':
+    #             func()
+    #         else:
+    #             raise UserManagerException('У вас нет доступа')
+    #
+    #     return wrapper
+
+
     def upload_users_from_json_to_sql(self, _current_user_id):
         """
         Uploads users from json file to sql
@@ -81,17 +103,19 @@ class MaintenanceService():
                         "email_confirmed": user.email_confirmed, "login": user.login, "name": user.name,
                         "probationers_number": user.probationers_number, "role": user.role, "token": user.token}
 
-            if data_store.get_row_by_id(user.user_id):
+            self.add_row_to_sql(data_store, user.user_id, user_raw)
 
-                # if user existed in the table, make change
-                data_store.update_row_by_id(user_raw, user.user_id)
+            # if data_store.get_row_by_id(user.user_id):
+            #
+            #     # if user existed in the table, make change
+            #     data_store.update_row_by_id(user_raw, user.user_id)
+            #
+            # else:
+            #
+            #     # if user non existed, make insert of a new row
+            #     data_store.insert_row(user_raw)
 
-            else:
-
-                # if user non existed, make insert of a new row
-                data_store.insert_row(user_raw)
-
-    def get_upload_actions_from_json_to_sql_page_data(self, _current_user_id):
+    def get_upload_actions_from_json_to_sql_page_data(self, _current_user_id) -> dict:
         """
         Get data for page view
 
@@ -142,7 +166,7 @@ class MaintenanceService():
 
         return _data
 
-    def upload_actions_from_json_to_sql(self):
+    def upload_actions_from_json_to_sql(self) -> None:
         """
         Uploads actions  from json file to sql
         """
@@ -198,7 +222,7 @@ class MaintenanceService():
             # import user actions data into PostgreSQL
         actions_df.to_sql('action', con, if_exists='replace', index_label='doc_id')
 
-    def create_table_in_sql(self, _table_name):
+    def create_table_in_sql(self, _table_name: str) -> None:
         """
         Создает таблицу в PostgreSQL
 
@@ -221,7 +245,7 @@ class MaintenanceService():
                 data_store.data_store.data_store.execute(text(sql_script))
                 break
 
-    def fixed_action_file(self, _name_file):
+    def fixed_action_file(self, _name_file: str) -> str:
         """
         Исправляет поврежденный файл json, в котором хранятся действия пользователя и возвращает новое имя этого файла
 
@@ -251,7 +275,7 @@ class MaintenanceService():
 
         return action_name_file
 
-    def upload_courses_list_from_json_to_sql(self, _current_user_id):
+    def upload_courses_list_from_json_to_sql(self) -> None:
         """
         Uploads courses list from json file to sql
         @params:
@@ -274,50 +298,62 @@ class MaintenanceService():
                 'type': course.type,
                 'image': course.image
             }
-            if data_store.get_row_by_id(course.id):
 
-                # if course existed in the table, make change
-                data_store.update_row_by_id(course_raw, course.id)
+            self.add_row_to_sql(data_store, course.id, course_raw)
 
-            else:
-
-                # if course non existed, make insert of a new row
-                data_store.insert_row(course_raw)
-
-    def upload_modules_list_from_json_to_sql(self, _current_user_id):
+    def upload_modules_list_from_json_to_sql(self) -> None:
         """
         Uploads courses list from json file to sql
         @params:
         """
 
         # get all courses in the system
-        course_manager = EducationCourseManager()
-        data_store_tiny_db = DataStore('courses_list')
+        module_manager = EducationModuleManager()
+        data_store_tiny_db = DataStore('modules')
 
-        courses_list_data = data_store_tiny_db.get_rows()
+        modules_list_data = data_store_tiny_db.get_rows()
         # create data store with SQL data adapter
-        data_store = DataStore("courses_list", force_adapter="PostgreSQLDataAdapter")
-        for course_data in courses_list_data:
+        data_store = DataStore("modules", force_adapter="PostgreSQLDataAdapter")
+        for module_data in modules_list_data:
             # convert Course object to Dict
-            course = course_manager.course_row_to_course(course_data)
-            course_raw = {
-                'doc_id': course.id,
-                'name': course.name,
-                'description': course.description,
-                'type': course.type,
-                'image': course.image
+            module = module_manager.module_row_to_module(module_data)
+            module_raw = {
+                'doc_id': module.id,
+                'id_course': module.id_course,
+                'name': module.name,
             }
-            if data_store.get_row_by_id(course.id):
 
-                # if course existed in the table, make change
-                data_store.update_row_by_id(course_raw, course.id)
+            self.add_row_to_sql(data_store, module.id, module_raw)
 
-            else:
+    def upload_lessons_list_from_json_to_sql(self) -> None:
+        """
+        Uploads courses list from json file to sql
+        @params:
+        """
 
-                # if course non existed, make insert of a new row
-                data_store.insert_row(course_raw)
+        # get all courses in the system
+        lesson_manager = EducationLessonManager()
+        data_store_tiny_db = DataStore('lessons')
 
-    def get_upload_models_from_json_to_sql_page_data(self, _name_models: str):
+        lessons_list_data = data_store_tiny_db.get_rows()
+        # create data store with SQL data adapter
+        data_store = DataStore("lessons", force_adapter="PostgreSQLDataAdapter")
+        for lesson_data in lessons_list_data:
+            # convert Course object to Dict
+            lesson = lesson_manager.lesson_row_to_lesson(lesson_data)
+            lesson_raw = {
+                'doc_id': lesson.id,
+                'id_module': lesson.id_module,
+                'name': lesson.name,
+                'text': lesson.text,
+                'task': lesson.task,
+                'materials': lesson.materials,
+                'link': lesson.link
+            }
+
+            self.add_row_to_sql(data_store, lesson.id, lesson_raw)
+
+    def get_upload_models_from_json_to_sql_page_data(self, _name_models: str) -> dict:
         """
         Get data for page view
 
@@ -337,6 +373,7 @@ class MaintenanceService():
             is_there_table = 'No created'
 
         _data = {
+            "name_model": _name_models,
             "data_folder": config.DATA_FOLDER,
             "rows_number": rows_number,
             "PostgreSQLDataAdapter_connection_string": config.PostgreSQLDataAdapter_connection_string(),

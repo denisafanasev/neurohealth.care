@@ -19,7 +19,8 @@ class EducationLessonManager():
             Lesson: урок
         """
 
-        lesson = Lesson(_id=_data_row.doc_id, _id_module=_data_row["id_module"], _name=_data_row["name"],
+        doc_id = _data_row['doc_id'] if _data_row.get('doc_id') is not None else _data_row.doc_id
+        lesson = Lesson(_id=doc_id, _id_module=_data_row["id_module"], _name=_data_row["name"],
                         _materials=_data_row["materials"], _link=_data_row['link'])
 
         if _data_row.get("task") != "":

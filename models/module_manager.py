@@ -19,7 +19,8 @@ class EducationModuleManager():
             Module: модуль курса
         """
 
-        module = Module(_id=_data_row.doc_id, _name=_data_row["name"], _id_course=_data_row['id_course'])
+        doc_id = _data_row['doc_id'] if _data_row.get('doc_id') is not None else _data_row.doc_id
+        module = Module(_id=doc_id, _name=_data_row["name"], _id_course=_data_row['id_course'])
 
         if _data_row.get("lessons") is not None:
             module.lessons = _data_row['lessons']

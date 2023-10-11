@@ -23,24 +23,24 @@ create table action(
 
 create table courses_list(
     doc_id INT PRIMARY KEY,
-    name VARCHAR ( 50 ) NOT NULL,
-    description VARCHAR ( 200 ) NOT NULL,
+    name VARCHAR ( 150 ) NOT NULL,
+    description TEXT NOT NULL,
     type VARCHAR ( 20 ) NOT NULL,
     image VARCHAR ( 200 ) NOT NULL
 );
 
 create table modules(
     doc_id INT PRIMARY KEY,
-    course_id INT NOT NULL,
-    name VARCHAR ( 50 ) NOT NULL
+    id_course INT NOT NULL,
+    name VARCHAR ( 150 ) NOT NULL
 );
 
 create table lessons(
     doc_id INT PRIMARY KEY,
-    module_id INT NOT NULL,
-    name VARCHAR ( 50 ) NOT NULL,
-    materials anyarray,
-    task TEXT NOT NULL,
-    text TEXT NOT NULL,
-    link anyarray
+    id_module INT NOT NULL,
+    name VARCHAR ( 150 ) NOT NULL,
+    materials VARCHAR ( 100 ) [] ,
+    task TEXT NULL,
+    text TEXT NULL,
+    link jsonb []
 );
