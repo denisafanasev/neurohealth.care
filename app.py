@@ -1411,6 +1411,9 @@ def maintenance():
         elif action_name == 'upload_lessons_from_json_to_sql':
             session['message_error'], session['status_code'] = page_controller.upload_lessons_from_json_to_sql()
 
+        elif action_name == 'upload_homeworks_from_json_to_sql':
+            session['message_error'], session['status_code'] = page_controller.upload_homeworks_from_json_to_sql()
+
         else:
             session['message_error'], session['status_code'] = page_controller.create_table_in_sql(action_name)
 

@@ -141,3 +141,21 @@ class MaintenancePageController():
         #     return 'Не удалось импортировать данные таблицы "lessons" из TinyDB в Postgresql', 'Error'
 
         return 'Данные таблицы "lessons" из TinyDB были перенесены в Postgresql', 'Successful'
+
+    def upload_homeworks_from_json_to_sql(self):
+        """
+        Get data for page view
+
+        Args:
+            _current_user_id (Int): id of current user looged into the system
+        """
+        _data = []
+
+        service = MaintenanceService()
+        # try:
+        service.upload_homeworks_list_from_json_to_sql()
+        #
+        # except:
+        #     return 'Не удалось импортировать данные таблицы "homeworks" из TinyDB в Postgresql', 'Error'
+
+        return 'Данные таблицы "homeworks" из TinyDB были перенесены в Postgresql', 'Successful'

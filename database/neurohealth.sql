@@ -50,7 +50,7 @@ create table lessons
     link      jsonb[]
 );
 
-create table homework
+create table homeworks
 (
     doc_id           INT PRIMARY KEY,
     id_lesson        INT       NOT NULL,

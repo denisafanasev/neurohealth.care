@@ -7,6 +7,7 @@ from sqlalchemy import text, create_engine
 from error import UserManagerException
 from models.action_manager import ActionManager
 from models.course_manager import EducationCourseManager
+from models.homework_manager import HomeworkManager
 from models.module_manager import EducationModuleManager
 from models.lesson_manager import EducationLessonManager
 from models.user_manager import UserManager
@@ -383,3 +384,31 @@ class MaintenanceService():
         }
 
         return _data
+
+    def upload_homeworks_list_from_json_to_sql(self) -> None:
+        """
+        Uploads courses list from json file to sql
+        @params:
+        """
+
+        # get all courses in the system
+        homework_manager = HomeworkManager()
+        data_store_tiny_db = DataStore('homeworks')
+
+        homeworks_list_data = data_store_tiny_db.get_rows()
+        # create data store with SQL data adapter
+        data_store = DataStore("homeworks", force_adapter="PostgreSQLDataAdapter")
+        for homework_data in homeworks_list_data:
+            # convert Course object to Dict
+            homework = homework_manager.homework_row_to_homework(homework_data)
+            homework_raw = {
+                'doc_id': homework.id,
+                'id_user': homework.id_user,
+                'id_lesson': homework.id_lesson,
+                'users_files_list': homework.users_files_list,
+                'text': homework.text,
+                'status': homework.status,
+                'date_delivery': homework.date_delivery
+            }
+
+            self.add_row_to_sql(data_store, homework.id, homework_raw)
