@@ -98,13 +98,12 @@ class HomeworkManager:
 
             homeworks_list = data_store.get_rows(
                 {
-                    "where": f"id_lesson = {_id_lesson} and id_user = {_id_user} and status is null".format(
+                    "where": "id_lesson = {_id_lesson} and id_user = {_id_user} and status is null".format(
                         _id_lesson=_id_lesson,
                         _id_user=_id_user
-                    ),
-                    'limit': 10,
-                    'offset': (1 - 1) * 10,
-                    'order_by': 'doc_id asc'})
+                    )
+                }
+            )
 
         else:
             data_store = DataStore('homeworks')
@@ -116,6 +115,30 @@ class HomeworkManager:
             homeworks.append(self.homework_row_to_homework(homework))
 
         return homeworks
+
+    def get_homeworks_list_by_id_lessons_list_no_verified(self, _id_lessons_list: list, _id_user: int) -> list:
+        """
+        Возвращает список домашних работ пользователя по урокам из списка
+
+        Args:
+            _id_lessons_list: список ID уроков
+            _id_user: ID пользователя
+
+        Returns:
+            homeworks: список непроверенных домашних работ
+        """
+        if self.is_there_homework_in_sql_db():
+            data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
+
+            homeworks_list_data = data_store.get_rows({
+                'where': f'id_lesson IN (SELECT unnest(ARRAY[{_id_lessons_list}])) AND id_user = {_id_user} AND status IS NULL'
+            })
+
+            homeworks = []
+            for homework in homeworks_list_data:
+                homeworks.append(self.homework_row_to_homework(homework))
+
+            return homeworks
 
     def get_homeworks_list_by_id_lesson(self, _id_lesson, _id_user):
         """

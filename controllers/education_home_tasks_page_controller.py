@@ -29,18 +29,16 @@ class EducationHomeTasksPageController():
 
         user = homeworks_service.get_user_by_id(_id_user)
         education_stream = homeworks_service.get_education_stream(_id_education_stream)
-        lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
+        homework_list, lessons_list = homeworks_service.get_homeworks_list_by_id_user_no_verified(education_stream.id, user.user_id)
         data_list = []
-        for lesson in lessons_list:
-            module = homeworks_service.get_module_by_id(lesson.id_module)
-            homework_list = homeworks_service.get_homeworks_list_by_id_user_no_verified(lesson.id, user.user_id)
-            if homework_list is None:
-                continue
+        if homework_list is not None:
+            for lesson in lessons_list:
+                module = homeworks_service.get_module_by_id(lesson.id_module)
+                homeworks = [homework for homework in homework_list if homework.id_lesson == lesson.id]
+                homework_chat = homeworks_service.get_homework_chat(lesson.id, user.user_id, _id_current_user)
+                data = self.get_view_data(homeworks, homework_chat, module, lesson)
 
-            homework_chat = homeworks_service.get_homework_chat(lesson.id, user.user_id, _id_current_user)
-            data = self.get_view_data(homework_list, homework_chat, module, lesson)
-
-            data_list.append(data)
+                data_list.append(data)
 
         return data_list
 
