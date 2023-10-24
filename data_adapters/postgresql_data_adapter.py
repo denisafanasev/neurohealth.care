@@ -41,10 +41,16 @@ class PostgreSQLDataAdapter():
         #
         # metadata = MetaData(bind=self.data_store)
         # metadata.reflect()
+        if not _filter.get('query'):
+            if _filter.get('select') is None:
+                query = select(self.table)
+            else:
+                query = select(text(_filter['select']))
+            if _filter is not None:
+                query = self.update_query(_filter, query)
 
-        query = select(self.table)
-        if _filter is not None:
-            query = self.update_query(_filter, query)
+        else:
+            query = text(_filter['query'])
 
         query_result = self.data_store.execute(query)
 
@@ -181,3 +187,11 @@ class PostgreSQLDataAdapter():
             _query = _query.offset(_query_dict['offset'])
 
         return _query
+
+    def get_rows_by_query(self, _data):
+
+        query_result = self.data_store.execute(text(_data))
+
+        result = [u._asdict() for u in query_result.all()]
+
+        return result

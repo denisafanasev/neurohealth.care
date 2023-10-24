@@ -819,7 +819,6 @@ def education_home_tasks():
         filter_homework = 'education_home_tasks'
 
     id_education_stream = request.args.get('education_stream_id')
-
     # если ID обучающего потока не найден, то берем ID первого обучающего потока из списка
     if id_education_stream is None:
         id_education_stream = education_streams_list[0]['id']

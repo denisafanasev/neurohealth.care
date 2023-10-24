@@ -285,7 +285,10 @@
                                                     </div>
                                                 </td>
                                                 <td style="text-align: center">
-                                                    <div class='text-center badge {% if homework['status'] == "Принято" %} bg-success {% elif homework['status'] == "Не принято" %} bg-danger {% elif homework['status'] == "Не проверено" %} bg-info {% endif %} bg-gradient text-light'
+                                                    <div class='text-center badge {% if homework['status'] == "Принято" %} bg-success
+                                                                                    {% elif homework['status'] == "Не принято" %} bg-danger
+                                                                                    {% elif homework['status'] == "Не проверено" %} bg-info {% endif %}
+                                                                                     bg-gradient text-light'
                                                     >{{ homework['status'] }}
                                                     </div>
                                                 </td>
@@ -308,7 +311,7 @@
                                         <tr>
                                             <td>{{ item['module']['id'] }}</td>
                                             <td>{{ item['lesson']['id'] }}</td>
-                                            <td>{{ item['module']['name'] }}</td>
+                                            <td style="white-space: break-spaces">{{ item['module']['name'] }}</td>
                                             <td style="white-space: inherit">
                                                 <a href="{{ url_for('multilingual.education_home_task_card', id_chat=item['homework_chat']['id']) }}">Урок: {{ item['lesson']['name'] }}</a></td>
                                             <td></td>

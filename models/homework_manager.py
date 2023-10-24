@@ -1,5 +1,7 @@
 from datetime import datetime
 
+import pandas
+
 from models.homework import Homework
 from data_adapters.data_store import DataStore
 from error import HomeworkManagerException
@@ -130,15 +132,38 @@ class HomeworkManager:
         if self.is_there_homework_in_sql_db():
             data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
 
-            homeworks_list_data = data_store.get_rows({
-                'where': f'id_lesson IN (SELECT unnest(ARRAY[{_id_lessons_list}])) AND id_user = {_id_user} AND status IS NULL'
+            # homeworks_list_data = data_store.get_rows({
+            #     'where': f'id_lesson IN (SELECT unnest(ARRAY[{_id_lessons_list}])) AND id_user = {_id_user} AND status IS NULL',
+            # })
+            #
+            # homework_list = {}
+            # for homework_data in homeworks_list_data:
+            #     homework = self.homework_row_to_homework(homework_data)
+            #     if homework_list.get(homework.id_lesson) is None:
+            #         homework_list[homework.id_lesson] = [homework]
+            #
+            #     else:
+            #         homework_list[homework.id_lesson].append(homework)
+
+            homework_list = data_store.get_rows({
+                'query': f"""
+                select *
+                from homeworks
+                left outer join (select lessons.name   as name_lesson,
+                                    lessons.doc_id as doc_id_lesson,
+                                    modules.doc_id as doc_id_module,
+                                    id_module,
+                                    modules.name   as name_module
+                                from lessons
+                                left outer join modules on lessons.id_module = modules.doc_id) as lesson
+                         on homeworks.id_lesson = lesson.doc_id_lesson
+                where id_lesson IN (SELECT unnest(ARRAY[{_id_lessons_list}])) AND id_user = {_id_user} AND status IS NOT NULL
+                         """,
+                # 'where': f'id_lesson IN (SELECT unnest(ARRAY[{_id_lessons_list}])) AND id_user = {_id_user} AND status IS NOT NULL'
             })
-
-            homeworks = []
-            for homework in homeworks_list_data:
-                homeworks.append(self.homework_row_to_homework(homework))
-
-            return homeworks
+            print(homework_list[0].keys())
+            x = pandas.DataFrame(homework_list)
+            return homework_list
 
     def get_homeworks_list_by_id_lesson(self, _id_lesson, _id_user):
         """

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Markup
 
 from services.homeworks_service import HomeworksService
@@ -34,15 +36,15 @@ class EducationHomeTasksPageController():
         if homework_list is not None:
             for lesson in lessons_list:
                 module = homeworks_service.get_module_by_id(lesson.id_module)
-                homeworks = [homework for homework in homework_list if homework.id_lesson == lesson.id]
+                # homeworks = [homework for homework in homework_list if homework.id_lesson == lesson.id]
                 homework_chat = homeworks_service.get_homework_chat(lesson.id, user.user_id, _id_current_user)
-                data = self.get_view_data(homeworks, homework_chat, module, lesson)
-
-                data_list.append(data)
+                if homework_list.get(lesson.id) is not None:
+                    data = self.get_view_data(homework_list[lesson.id], homework_chat, module, lesson)
+                    data_list.append(data)
 
         return data_list
 
-    def get_chat_without_homework(self, _id_current_user, _id_education_stream, _id_user):
+    def get_chat_without_homework(self, _id_current_user, _id_education_stream, _id_user, _page):
         """
         Возвращает чаты, по урокам которых не были сданы домашние работы
 

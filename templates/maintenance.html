@@ -62,10 +62,10 @@
                 <form id="upload_users_from_json_to_sql" method="post" enctype="multipart/form-data">
                     <p><strong><label>data folder:</label></strong> {{ _model["data_folder"] }}</p>
                     <p><strong><label>current data adapter:</label></strong> {{ _model["current_data_adapter"] }}</p>
-                    <p><strong><label>users number:</label></strong> {{ _model["rows_number"] }}</p>
+                    <p><strong><label>data number:</label></strong> {{ _model["rows_number"] }}</p>
                     <p><strong><label>PostgreSQLDataAdapter connection
                         string:</label></strong> {{ _model["PostgreSQLDataAdapter_connection_string"] }}</p>
-                    <p><strong><label>db users number:</label></strong> {{ _model["db_rows_number"] }}</p>
+                    <p><strong><label>db data number:</label></strong> {{ _model["db_rows_number"] }}</p>
                     <button{% if _model['is_there_table'] != "Created" %} disabled {% endif %}
                                                                            type="submit" name="submit_button"
                                                                            value="upload_{{ _model['name_model'] }}_from_json_to_sql"
