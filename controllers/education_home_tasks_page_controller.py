@@ -1,7 +1,3 @@
-from datetime import datetime
-
-from flask import Markup
-
 from services.homeworks_service import HomeworksService
 
 
@@ -31,16 +27,12 @@ class EducationHomeTasksPageController():
 
         user = homeworks_service.get_user_by_id(_id_user)
         education_stream = homeworks_service.get_education_stream(_id_education_stream)
-        homework_list, lessons_list = homeworks_service.get_homeworks_list_by_id_user_no_verified(education_stream.id, user.user_id)
+        homework_list = homeworks_service.get_homeworks_list_by_id_user_no_verified(education_stream.course.id, user.user_id)
         data_list = []
-        if homework_list is not None:
-            for lesson in lessons_list:
-                module = homeworks_service.get_module_by_id(lesson.id_module)
-                # homeworks = [homework for homework in homework_list if homework.id_lesson == lesson.id]
-                homework_chat = homeworks_service.get_homework_chat(lesson.id, user.user_id, _id_current_user)
-                if homework_list.get(lesson.id) is not None:
-                    data = self.get_view_data(homework_list[lesson.id], homework_chat, module, lesson)
-                    data_list.append(data)
+        for homework in homework_list:
+            homework_chat = homeworks_service.get_homework_chat(homework['lesson'].id, user.user_id, _id_current_user)
+            data = self.get_view_data(homework['homework'], homework_chat, homework['module'], homework['lesson'])
+            data_list.append(data)
 
         return data_list
 
@@ -94,22 +86,16 @@ class EducationHomeTasksPageController():
 
         user = homeworks_service.get_user_by_id(_id_user)
         education_stream = homeworks_service.get_education_stream(_id_education_stream)
-        lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
+        homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(education_stream.course.id, user.user_id)
         data_list = []
-        for lesson in lessons_list:
-            module = homeworks_service.get_module_by_id(lesson.id_module)
-            homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(lesson.id, user.user_id)
-            if homework_list is None:
-                continue
-
-            homework_chat = homeworks_service.get_homework_chat(lesson.id, user.user_id, _id_current_user)
-            data = self.get_view_data(homework_list, homework_chat, module, lesson)
-
+        for homework in homework_list:
+            homework_chat = homeworks_service.get_homework_chat(homework['lesson'].id, user.user_id, _id_current_user)
+            data = self.get_view_data(homework['homework'], homework_chat, homework['module'], homework['lesson'])
             data_list.append(data)
 
         return data_list
 
-    def get_view_data(self, _homework_list, _homework_chat, _module, _lesson):
+    def get_view_data(self, _homework, _homework_chat, _module, _lesson):
         """
         Возвращает представление домашних работ, чатов, модулей и уроков пользователя
 
@@ -124,25 +110,24 @@ class EducationHomeTasksPageController():
         """
 
         data_view = {'homework_list': []}
-        if _homework_list is None:
-            data_view['homework_list'] = None
-        else:
-            for homework in _homework_list:
-                if homework is not None:
-                    if homework.status is None:
-                        homework.status = "Не проверено"
-                    elif homework.status:
-                        homework.status = "Принято"
-                    else:
-                        homework.status = "Не принято"
+        # if _homework_list is None:
+        #     data_view['homework_list'] = None
+        # else:
+        if _homework is not None:
+            if _homework.status is None:
+                _homework.status = "Не проверено"
+            elif _homework.status:
+                _homework.status = "Принято"
+            else:
+                _homework.status = "Не принято"
 
-                homework = {
-                    "id": homework.id,
-                    "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
-                    "status": homework.status,
-                }
+        homework = {
+            "id": _homework.id,
+            "date_delivery": _homework.date_delivery.strftime("%d/%m/%Y"),
+            "status": _homework.status,
+        }
 
-                data_view['homework_list'].append(homework)
+        data_view['homework_list'].append(homework)
 
         if _homework_chat is not None:
             data_view['homework_chat'] = {

@@ -157,12 +157,42 @@ class HomeworkManager:
                                 from lessons
                                 left outer join modules on lessons.id_module = modules.doc_id) as lesson
                          on homeworks.id_lesson = lesson.doc_id_lesson
+                where id_lesson IN (SELECT unnest(ARRAY[{_id_lessons_list}])) AND id_user = {_id_user} AND status IS NULL
+                         """,
+            })
+
+            return homework_list
+
+    def get_homeworks_list_by_id_lessons_list_verified(self, _id_lessons_list: list, _id_user: int) -> list:
+        """
+        Возвращает список домашних работ пользователя по урокам из списка
+
+        Args:
+            _id_lessons_list: список ID уроков
+            _id_user: ID пользователя
+
+        Returns:
+            homeworks: список непроверенных домашних работ
+        """
+        if self.is_there_homework_in_sql_db():
+            data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
+
+            homework_list = data_store.get_rows({
+                'query': f"""
+                select *
+                from homeworks
+                left outer join (select lessons.name   as name_lesson,
+                                    lessons.doc_id as doc_id_lesson,
+                                    modules.doc_id as doc_id_module,
+                                    id_module,
+                                    modules.name   as name_module
+                                from lessons
+                                left outer join modules on lessons.id_module = modules.doc_id) as lesson
+                         on homeworks.id_lesson = lesson.doc_id_lesson
                 where id_lesson IN (SELECT unnest(ARRAY[{_id_lessons_list}])) AND id_user = {_id_user} AND status IS NOT NULL
                          """,
-                # 'where': f'id_lesson IN (SELECT unnest(ARRAY[{_id_lessons_list}])) AND id_user = {_id_user} AND status IS NOT NULL'
             })
-            print(homework_list[0].keys())
-            x = pandas.DataFrame(homework_list)
+
             return homework_list
 
     def get_homeworks_list_by_id_lesson(self, _id_lesson, _id_user):

@@ -41,16 +41,20 @@ class PostgreSQLDataAdapter():
         #
         # metadata = MetaData(bind=self.data_store)
         # metadata.reflect()
-        if not _filter.get('query'):
-            if _filter.get('select') is None:
-                query = select(self.table)
-            else:
-                query = select(text(_filter['select']))
-            if _filter is not None:
+        if _filter is not None:
+            if not _filter.get('query'):
+                if _filter.get('select') is None:
+                    query = select(self.table)
+                else:
+                    query = select(text(_filter['select']))
+
                 query = self.update_query(_filter, query)
 
+            else:
+                query = text(_filter['query'])
+
         else:
-            query = text(_filter['query'])
+            query = select(self.table)
 
         query_result = self.data_store.execute(query)
 

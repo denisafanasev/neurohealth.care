@@ -44,7 +44,7 @@ LANGUAGES = [
         'title': 'English'
     }
 ]
-MODELS_FOR_IMPORT_IN_SQL = ['users', 'courses_list', 'modules', 'lessons', 'homeworks']
+MODELS_FOR_IMPORT_IN_SQL = ['users', 'courses_list', 'modules', 'lessons', 'homeworks', 'homework_chat', 'message']
 
 # mail accounts
 MAIL_DEFAULT_SENDER = 'from@example.com'

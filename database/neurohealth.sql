@@ -60,3 +60,20 @@ create table homeworks
     status           BOOLEAN   NULL,
     date_delivery    TIMESTAMP NOT NULL
 );
+
+create table homework_chat
+(
+    doc_id    INT PRIMARY KEY,
+    id_lesson INT NOT NULL,
+    id_user   INT NOT NULL
+);
+
+create table message
+(
+    doc_id           INT PRIMARY KEY,
+    id_user          INT       NOT NULL,
+    text             TEXT      NOT NULL,
+    date_send        TIMESTAMP NOT NULL,
+    id_homework_chat INT       NOT NULL,
+    read             BOOLEAN   NOT NULL
+)

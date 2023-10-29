@@ -3,6 +3,8 @@ from typing import Union
 import config
 from models.homework_manager import HomeworkManager
 from models.course_manager import EducationCourseManager
+from models.lesson import Lesson
+from models.module import Module
 from models.module_manager import EducationModuleManager
 from models.lesson_manager import EducationLessonManager
 from models.education_stream_manager import EducationStreamManager
@@ -140,7 +142,7 @@ class HomeworksService():
         if homework_list:
             return homework_list
 
-    def get_homeworks_list_by_id_user_verified(self, _id_lesson, _id_user):
+    def get_homeworks_list_by_id_user_verified(self, _id_course, _id_user):
         """
         Возвращает список проверенных домашних работ по ID пользователя и урока
 
@@ -153,10 +155,21 @@ class HomeworksService():
         """
         homework_manager = HomeworkManager()
 
-        homework_list = homework_manager.get_homeworks_list_by_id_lesson(_id_lesson, _id_user)
-        if homework_list:
-            homeworks = [homework for homework in homework_list if homework.status is not None]
-            return homeworks
+        lessons_list = self.get_lessons_by_id_course(_id_course)
+        id_lessons_list = [lesson.id for lesson in lessons_list]
+        homework_list_data = homework_manager.get_homeworks_list_by_id_lessons_list_verified(id_lessons_list,
+                                                                                                _id_user)
+        homework_list = []
+        for homework_data in homework_list_data:
+            homework = {'homework': homework_manager.homework_row_to_homework(homework_data),
+                        'lesson': Lesson(_id=homework_data['doc_id_lesson'], _name=homework_data['name_lesson'],
+                                         _id_module=homework_data['id_module']),
+                        'module': Module(_id=homework_data['doc_id_module'], _name=homework_data['name_module'],
+                                         _id_course=_id_course)}
+
+            homework_list.append(homework)
+
+        return homework_list
 
     def get_homeworks_list_by_id_user_no_verified(self, _id_course: int, _id_user: int):
         """
@@ -170,14 +183,23 @@ class HomeworksService():
             homework_list: список домашних работ
         """
         homework_manager = HomeworkManager()
+        # lesson_manager = EducationLessonManager()
+        # module_manager = EducationModuleManager()
 
         lessons_list = self.get_lessons_by_id_course(_id_course)
         id_lessons_list = [lesson.id for lesson in lessons_list]
-        homework_list = homework_manager.get_homeworks_list_by_id_lessons_list_no_verified(id_lessons_list, _id_user)
-        if homework_list:
-            return homework_list, lessons_list
+        homework_list_data = homework_manager.get_homeworks_list_by_id_lessons_list_no_verified(id_lessons_list, _id_user)
+        homework_list = []
+        for homework_data in homework_list_data:
+            homework = {'homework': homework_manager.homework_row_to_homework(homework_data),
+                        'lesson': Lesson(_id=homework_data['doc_id_lesson'], _name=homework_data['name_lesson'],
+                                         _id_module=homework_data['id_module']),
+                        'module': Module(_id=homework_data['doc_id_module'], _name=homework_data['name_module'],
+                                         _id_course=_id_course)}
 
-        return None, None
+            homework_list.append(homework)
+
+        return homework_list
 
     def get_lessons_by_id_course(self, _id_course):
         """
