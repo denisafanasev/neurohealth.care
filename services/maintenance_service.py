@@ -4,8 +4,8 @@ from distutils.command.config import config
 import pandas as pd
 from sqlalchemy import text, create_engine
 
-from error import UserManagerException
-from models.action_manager import ActionManager
+from models.homework_chat_manager import HomeworkChatManager
+from models.message_manager import MessageManager
 from models.course_manager import EducationCourseManager
 from models.homework_manager import HomeworkManager
 from models.module_manager import EducationModuleManager
@@ -194,16 +194,7 @@ class MaintenanceService():
 
         for action_file in actions_files_list:
             # retrieve data from the file
-            with open(config.DATA_FOLDER + action_file, encoding='utf-8') as json_file:
-                json_text = json_file.read()
-            # prepare data for DataFrame
-            if '"_default": {' in json_text:
-                json_text = json_text.replace('"_default": {', '')
-                ind = json_text.rfind('}')
-                json_text = json_text[:ind]
-
-            # create DataFrame with user actions data
-            actions_json_df = pd.read_json(json_text, orient='index')
+            actions_json_df = self.get_json_data_in_dataframe(action_file)
             # merge DataFrame with user actions data and users data
             actions_old_df = pd.merge(actions_json_df, users_df, how='inner', on=['login'])
             # remove unnecessary columns
@@ -387,7 +378,7 @@ class MaintenanceService():
 
     def upload_homeworks_list_from_json_to_sql(self) -> None:
         """
-        Uploads courses list from json file to sql
+        Uploads homeworks list from json file to sql
         @params:
         """
 
@@ -412,3 +403,65 @@ class MaintenanceService():
             }
 
             self.add_row_to_sql(data_store, homework.id, homework_raw)
+
+    def upload_homework_chat_list_from_json_to_sql(self) -> None:
+        """
+        Uploads homeworks chats list from json file to sql
+        @params:
+        """
+
+        # get all courses in the system
+        # homework_chat_manager = HomeworkChatManager()
+        con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
+        # data_store_tiny_db = DataStore('homework_chat')
+
+        homework_chat_df = self.get_json_data_in_dataframe('homework_chat')
+        homework_chat_df.rename({'id': 'doc_id'})
+        # homework_chat_df.drop(homework_chat_df[homework_chat_df.duplicated(keep='last')].index, inplace=True)
+        # create data store with SQL data adapter
+        # data_store = DataStore("homework_chat", force_adapter="PostgreSQLDataAdapter")
+        # if data_store.get_rows_count() != 0:
+        #     homework_chat_df_sql = pd.DataFrame(data_store.get_rows())
+
+        homework_chat_df.to_sql('homework_chat', con, if_exists='append', index_label='doc_id')
+
+    def upload_message_from_json_to_sql(self) -> None:
+        """
+        Uploads messages list from json file to sql
+        @params:
+        """
+        # create data store with SQL data adapter
+        data_store = DataStore("message", force_adapter="PostgreSQLDataAdapter")
+        con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
+
+        message_json_df = self.get_json_data_in_dataframe('message')
+        message_json_df.rename({'id': 'doc_id'})
+        message_json_df.to_sql('message', con, if_exists='append', index_label='doc_id')
+
+        homework_chat_doc_id_empty = data_store.get_rows({
+            'query': """
+            select chat_without_message.doc_id
+            from (select chat.*, message 
+                    from homework_chat chat
+                        left outer join message
+                            on chat.doc_id = message.id_homework_chat) chat_without_message
+            where message is null
+            """
+        })
+        doc_ids_list = [i['doc_id'] for i in homework_chat_doc_id_empty]
+        data_store.get_rows({'query': f'delete from homework_chat where doc_id in (select unnest({doc_ids_list}))'})
+
+    def get_json_data_in_dataframe(self, _name_file):
+        # retrieve data from the file
+        with open(config.DATA_FOLDER + _name_file, encoding='utf-8') as json_file:
+            json_text = json_file.read()
+        # prepare data for DataFrame
+        if '"_default": {' in json_text:
+            json_text = json_text.replace('"_default": {', '')
+            ind = json_text.rfind('}')
+            json_text = json_text[:ind]
+
+        # create DataFrame with data
+        df = pd.read_json(json_text, orient='index')
+
+        return df

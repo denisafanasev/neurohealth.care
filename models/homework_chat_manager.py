@@ -77,3 +77,30 @@ class HomeworkChatManager():
         homework_chat = data_store.get_rows({"id_user": _id_user, "id_lesson": _id_lesson})
         if homework_chat:
             return self.homework_chat_row_to_homework_chat(homework_chat[0])
+
+    def get_homework_chat_without_homework(self, _id_user: int, _id_lessons_list: list):
+
+        data_store = DataStore('homework_chat', force_adapter='PostgreSQLDataAdapter')
+
+        homework_chats_list_data = data_store.get_rows({
+            'query': """
+            SELECT chat.*,
+       home.doc_id AS doc_id_home
+FROM (SELECT *
+      FROM homeworks
+      WHERE id_user = 272) home
+         FULL JOIN (homework_chat LEFT JOIN (SELECT l.name   AS name_lesson,
+                                                    l.doc_id AS doc_id_lesson,
+                                                    modules.doc_id AS doc_id_module,
+                                                    l.id_module,
+                                                    modules.name   AS name_module
+                                             FROM (SELECT * FROM lessons WHERE task is not null) l
+                                                      LEFT JOIN modules ON l.id_module = modules.doc_id) AS lesson
+                    ON homework_chat.id_lesson = lesson.doc_id_lesson) AS chat
+                   ON home.id_lesson = chat.id_lesson AND chat.id_user = 272
+WHERE chat.id_user = 272
+  AND home.doc_id IS NULL
+  AND chat.name_lesson IS NOT NULL
+  AND chat.doc_id IS NOT NULL;
+            """
+        })

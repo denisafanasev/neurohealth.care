@@ -125,22 +125,23 @@ class HomeworksService():
 
         return users_list
 
-    def get_homeworks_list_by_id_user(self, _id_lesson, _id_user):
+    def get_homeworks_chats_list_by_id_user(self, _id_course, _id_user):
         """
         Возвращает список проверенных домашних работ по ID пользователя и урока
 
         Args:
-            _id_lesson(Integer): ID урока
+            _id_course(Integer): ID урока
             _id_user(Integer): ID пользователя
 
         Returns:
             List: список домашних работ
         """
         homework_manager = HomeworkManager()
+        homework_chat_manager = HomeworkChatManager()
 
-        homework_list = homework_manager.get_homeworks_list_by_id_lesson(_id_lesson, _id_user)
-        if homework_list:
-            return homework_list
+        lessons_list = self.get_lessons_by_id_course(_id_course)
+        id_lessons_list = [lesson.id for lesson in lessons_list]
+        homeworks_chat_list_data = homework_chat_manager.get_homework_chat_without_homework()
 
     def get_homeworks_list_by_id_user_verified(self, _id_course, _id_user):
         """

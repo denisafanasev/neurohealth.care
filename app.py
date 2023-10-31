@@ -1413,6 +1413,12 @@ def maintenance():
         elif action_name == 'upload_homeworks_from_json_to_sql':
             session['message_error'], session['status_code'] = page_controller.upload_homeworks_from_json_to_sql()
 
+        elif action_name == 'upload_homework_chat_from_json_to_sql':
+            session['message_error'], session['status_code'] = page_controller.upload_homework_chat_list_from_json_to_sql()
+
+        elif action_name == 'upload_message_from_json_to_sql':
+            session['message_error'], session['status_code'] = page_controller.upload_message_from_json_to_sql()
+
         else:
             session['message_error'], session['status_code'] = page_controller.create_table_in_sql(action_name)
 

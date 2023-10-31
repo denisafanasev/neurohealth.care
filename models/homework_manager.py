@@ -189,7 +189,7 @@ class HomeworkManager:
                                 from lessons
                                 left outer join modules on lessons.id_module = modules.doc_id) as lesson
                          on homeworks.id_lesson = lesson.doc_id_lesson
-                where id_lesson IN (SELECT unnest(ARRAY[{_id_lessons_list}])) AND id_user = {_id_user} AND status IS NOT NULL
+                where id_lesson IN (SELECT unnest({_id_lessons_list})) AND id_user = {_id_user} AND status IS NOT NULL
                          """,
             })
 
