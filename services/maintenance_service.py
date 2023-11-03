@@ -415,7 +415,7 @@ class MaintenanceService():
         con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
         # data_store_tiny_db = DataStore('homework_chat')
 
-        homework_chat_df = self.get_json_data_in_dataframe('homework_chat')
+        homework_chat_df = self.get_json_data_in_dataframe('homework_chat.json')
         homework_chat_df.rename({'id': 'doc_id'})
         # homework_chat_df.drop(homework_chat_df[homework_chat_df.duplicated(keep='last')].index, inplace=True)
         # create data store with SQL data adapter

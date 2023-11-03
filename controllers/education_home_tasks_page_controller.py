@@ -27,12 +27,26 @@ class EducationHomeTasksPageController():
 
         user = homeworks_service.get_user_by_id(_id_user)
         education_stream = homeworks_service.get_education_stream(_id_education_stream)
-        homework_list = homeworks_service.get_homeworks_list_by_id_user_no_verified(education_stream.course.id, user.user_id)
         data_list = []
-        for homework in homework_list:
-            homework_chat = homeworks_service.get_homework_chat(homework['lesson'].id, user.user_id, _id_current_user)
-            data = self.get_view_data(homework['homework'], homework_chat, homework['module'], homework['lesson'])
-            data_list.append(data)
+        if homeworks_service.is_there_homework_in_sql():
+            homework_list = homeworks_service.get_homeworks_list_by_id_user_no_verified(education_stream.course.id, user.user_id)
+            for homework in homework_list:
+                homework_chat = homeworks_service.get_homework_chat(homework['lesson'].id, user.user_id, _id_current_user)
+                data = self.get_view_data_from_sql(homework['homework'], homework_chat, homework['module'], homework['lesson'])
+                data_list.append(data)
+
+        else:
+            lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
+            for lesson in lessons_list:
+                module = homeworks_service.get_module_by_id(lesson.id_module)
+                homework_list = homeworks_service.get_homeworks_list_by_id_user_no_verified(lesson.id, user.user_id)
+                if homework_list is None:
+                    continue
+
+                homework_chat = homeworks_service.get_homework_chat(lesson.id, user.user_id, _id_current_user)
+                data = self.get_view_data_from_nosql(homework_list, homework_chat, module, lesson)
+
+                data_list.append(data)
 
         return data_list
 
@@ -52,21 +66,25 @@ class EducationHomeTasksPageController():
 
         user = homeworks_service.get_user_by_id(_id_user)
         education_stream = homeworks_service.get_education_stream(_id_education_stream)
-        lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
         data_list = []
-        for lesson in lessons_list:
-            module = homeworks_service.get_module_by_id(lesson.id_module)
-            homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(lesson.id, user.user_id)
-            if homework_list is not None:
-                continue
+        if homeworks_service.is_there_homework_in_sql():
+            pass
+        else:
+            lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
 
-            homework_chat = homeworks_service.get_homework_chat(lesson.id, user.user_id, _id_current_user)
-            if homework_chat is None:
-                continue
+            for lesson in lessons_list:
+                module = homeworks_service.get_module_by_id(lesson.id_module)
+                homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(lesson.id, user.user_id)
+                if homework_list is not None:
+                    continue
 
-            data = self.get_view_data(homework_list, homework_chat, module, lesson)
+                homework_chat = homeworks_service.get_homework_chat(lesson.id, user.user_id, _id_current_user)
+                if homework_chat is None:
+                    continue
 
-            data_list.append(data)
+                data = self.get_view_data_from_nosql(homework_list, homework_chat, module, lesson)
+
+                data_list.append(data)
 
         return data_list
 
@@ -86,18 +104,34 @@ class EducationHomeTasksPageController():
 
         user = homeworks_service.get_user_by_id(_id_user)
         education_stream = homeworks_service.get_education_stream(_id_education_stream)
-        homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(education_stream.course.id, user.user_id)
         data_list = []
-        for homework in homework_list:
-            homework_chat = homeworks_service.get_homework_chat(homework['lesson'].id, user.user_id, _id_current_user)
-            data = self.get_view_data(homework['homework'], homework_chat, homework['module'], homework['lesson'])
-            data_list.append(data)
+        if homeworks_service.is_there_homework_in_sql():
+            # если для хранения домашних работ используется postgresql, то мы проходимся по домашним работам
+            homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(education_stream.course.id, user.user_id)
+            for homework in homework_list:
+                homework_chat = homeworks_service.get_homework_chat(homework['lesson'].id, user.user_id, _id_current_user)
+                data = self.get_view_data_from_sql(homework['homework'], homework_chat, homework['module'], homework['lesson'])
+                data_list.append(data)
+
+        else:
+            # если нет, то проходимся по каждому уроку и проверяем домашние работы
+            lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
+            for lesson in lessons_list:
+                module = homeworks_service.get_module_by_id(lesson.id_module)
+                homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(lesson.id, user.user_id)
+                if homework_list is None:
+                    continue
+
+                homework_chat = homeworks_service.get_homework_chat(lesson.id, user.user_id, _id_current_user)
+                data = self.get_view_data_from_nosql(homework_list, homework_chat, module, lesson)
+
+                data_list.append(data)
 
         return data_list
 
-    def get_view_data(self, _homework, _homework_chat, _module, _lesson):
+    def get_view_data_from_sql(self, _homework, _homework_chat, _module, _lesson):
         """
-        Возвращает представление домашних работ, чатов, модулей и уроков пользователя
+        Возвращает представление домашних работ, чатов, модулей и уроков пользователя (данный из postgresql)
 
         Args:
             _homework_list(List): список домашних работ по уроку
@@ -128,6 +162,61 @@ class EducationHomeTasksPageController():
         }
 
         data_view['homework_list'].append(homework)
+
+        if _homework_chat is not None:
+            data_view['homework_chat'] = {
+                "id": _homework_chat.id,
+                "unread_message_amount": _homework_chat.unread_message_amount
+            }
+        else:
+            data_view['homework_chat'] = None
+
+        if data_view['homework_list'] is not None or data_view['homework_chat'] is not None:
+            data_view['module'] = {
+                "id": _module.id,
+                "name": _module.name
+            }
+            data_view['lesson'] = {
+                "id": _lesson.id,
+                "name": _lesson.name,
+            }
+
+        return data_view
+
+    def get_view_data_from_nosql(self, _homework_list, _homework_chat, _module, _lesson):
+        """
+        Возвращает представление домашних работ, чатов, модулей и уроков пользователя (данные из tinydb)
+
+        Args:
+            _homework_list(List): список домашних работ по уроку
+            _homework_chat(HomeworkChat): чат
+            _module(Module): модуль
+            _lesson(Lesson): урок, по которому сдали домашние работы пользователь
+
+        Returns:
+            data_view: представление данных
+        """
+
+        data_view = {'homework_list': []}
+        if _homework_list is None:
+            data_view['homework_list'] = None
+        else:
+            for homework in _homework_list:
+                if homework is not None:
+                    if homework.status is None:
+                        homework.status = "Не проверено"
+                    elif homework.status:
+                        homework.status = "Принято"
+                    else:
+                        homework.status = "Не принято"
+
+                homework = {
+                    "id": homework.id,
+                    "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
+                    "status": homework.status,
+                }
+
+                data_view['homework_list'].append(homework)
 
         if _homework_chat is not None:
             data_view['homework_chat'] = {
