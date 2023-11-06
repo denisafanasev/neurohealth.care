@@ -144,8 +144,8 @@ class ProtocolsManager():
         # if _protocol_status != "":
         #     data_store.update_row({"protocol_status": _protocol_status, "probe_id": _probe_id}, "probe_id")
 
-        test_file = data_store.get_rows({"probe_id": _probe_id})
-        data_store_test = DataStore("probes", test_file[0]["test"])
+        test_file = data_store.get_row_by_id(_probe_id)
+        data_store_test = DataStore("probes", test_file["test"])
 
         for grade in _grades:
             if "_" in grade["id"]:
