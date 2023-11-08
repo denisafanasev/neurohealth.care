@@ -132,3 +132,42 @@ class EducationLessonManager():
         lessons_list = [self.lesson_row_to_lesson(lesson) for lesson in lessons_data_list if lesson['task'] != '']
 
         return lessons_list
+
+    def get_lessons_by_ids_modules(self, _id_modules_list: list) -> list:
+        """
+        Возвращает список данных об уроках и название модуля, в котором находится урок
+        (Если используется в качестве БД Postgresql)
+
+        Args:
+            _id_modules_list: список из ID модулей
+
+        Returns:
+            lessons_list: список уроков
+        """
+        data_store = DataStore('lessons', force_adapter='PostgreSQLDataAdapter')
+
+        lessons_list = data_store.get_rows({
+            'query': f"""
+            select lessons.*, modules.name
+            from lessons join modules on id_module = modules.doc_id
+            where lessons.doc_id in (select unnest({_id_modules_list}))
+            """
+        })
+
+        return lessons_list
+
+    def get_count_lessons_by_id_course(self, _id_course: int) -> int:
+        """
+        Возвращает количество модулей курса по ID курсу
+
+        Args:
+            _id_course: ID курса
+
+        Returns:
+            список ID модулей
+        """
+        data_store = DataStore('lessons', force_adapter='PostgreSQLDataAdapter')
+
+        data = data_store.get_rows_count({'where': f'id_course = {_id_course}'})
+
+        return data

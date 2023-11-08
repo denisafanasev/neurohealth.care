@@ -66,3 +66,19 @@ class EducationModuleManager():
             module = self.module_row_to_module(module)
 
         return module
+
+    def get_count_modules_by_id_course(self, _id_course: list) -> int:
+        """
+        Возвращает количество модулей курса по ID курсу
+
+        Args:
+            _id_course: ID курса
+
+        Returns:
+            список ID модулей
+        """
+        data_store = DataStore('modules', force_adapter='PostgreSQLDataAdapter')
+
+        data = data_store.get_rows_count({'where': f'id_course = {_id_course}'})
+
+        return data

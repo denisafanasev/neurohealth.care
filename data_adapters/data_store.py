@@ -154,3 +154,15 @@ class DataStore():
         """
 
         self.data_store.delete_row(_data_ids)
+
+    def is_there_model_data_in_sql_db(self) -> bool:
+        """
+
+        """
+        if self.current_data_adapter == 'PostgreSQLDataAdapter':
+            homeworks_count = self.get_rows_count()
+            if homeworks_count > 0:
+                return True
+
+        return False
+

@@ -51,10 +51,7 @@ class HomeworkManager:
             Homework: домашняя работа
         """
 
-        if self.is_there_homework_in_sql_db():
-            data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
-        else:
-            data_store = DataStore('homeworks')
+        data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
 
         homework = Homework(_users_files_list=_homework_files_list, _text=_text, _id_user=_id_user,
                             _id_lesson=_id_lesson, _status=None, _date_delivery=datetime.now())
@@ -71,10 +68,7 @@ class HomeworkManager:
             List: список домашних работ
         """
 
-        if self.is_there_homework_in_sql_db():
-            data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
-        else:
-            data_store = DataStore('homeworks')
+        data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
 
         homeworks = data_store.get_rows()
         homework_list = []
@@ -95,9 +89,8 @@ class HomeworkManager:
             List: список домашних работ
         """
 
-        if self.is_there_homework_in_sql_db():
-            data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
-
+        data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
+        if data_store.is_there_model_data_in_sql_db():
             homeworks_list = data_store.get_rows(
                 {
                     "where": "id_lesson = {_id_lesson} and id_user = {_id_user} and status is null".format(
@@ -108,8 +101,6 @@ class HomeworkManager:
             )
 
         else:
-            data_store = DataStore('homeworks')
-
             homeworks_list = data_store.get_rows({"id_lesson": _id_lesson, "id_user": _id_user, 'status': None})
 
         homeworks = []
@@ -129,22 +120,9 @@ class HomeworkManager:
         Returns:
             homeworks: список непроверенных домашних работ
         """
-        if self.is_there_homework_in_sql_db():
-            data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
 
-            # homeworks_list_data = data_store.get_rows({
-            #     'where': f'id_lesson IN (SELECT unnest(ARRAY[{_id_lessons_list}])) AND id_user = {_id_user} AND status IS NULL',
-            # })
-            #
-            # homework_list = {}
-            # for homework_data in homeworks_list_data:
-            #     homework = self.homework_row_to_homework(homework_data)
-            #     if homework_list.get(homework.id_lesson) is None:
-            #         homework_list[homework.id_lesson] = [homework]
-            #
-            #     else:
-            #         homework_list[homework.id_lesson].append(homework)
-
+        data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
+        if data_store.is_there_model_data_in_sql_db():
             homework_list = data_store.get_rows({
                 'query': f"""
                 select *
@@ -174,9 +152,8 @@ class HomeworkManager:
         Returns:
             homeworks: список непроверенных домашних работ
         """
-        if self.is_there_homework_in_sql_db():
-            data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
-
+        data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
+        if data_store.is_there_model_data_in_sql_db():
             homework_list = data_store.get_rows({
                 'query': f"""
                 select *
@@ -206,19 +183,16 @@ class HomeworkManager:
         Return:
             List: список домашних работ
         """
-
-        if self.is_there_homework_in_sql_db():
-            data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
-
+        data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
+        if data_store.is_there_model_data_in_sql_db():
             homeworks_list = data_store.get_rows(
                 {"where": f"id_lesson = {_id_lesson} and id_user = {_id_user}".format(
                     _id_lesson=_id_lesson,
                     _id_user=_id_user
                 )})
         else:
-            data_store = DataStore('homeworks')
-
             homeworks_list = data_store.get_rows({"id_lesson": _id_lesson, "id_user": _id_user})
+
         homeworks = []
         for homework in homeworks_list:
             homeworks.append(self.homework_row_to_homework(homework))
@@ -237,10 +211,7 @@ class HomeworkManager:
             Homework: домашняя работа
         """
 
-        if self.is_there_homework_in_sql_db():
-            data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
-        else:
-            data_store = DataStore('homeworks')
+        data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
 
         homework = data_store.get_row_by_id(_id)
         if homework is not None:
@@ -256,11 +227,7 @@ class HomeworkManager:
         Returns:
             Homework: домашняя работа
         """
-
-        if self.is_there_homework_in_sql_db():
-            data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
-        else:
-            data_store = DataStore('homeworks')
+        data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
 
         data_store.update_row_by_id({"status": True}, _id_homework)
         homework = data_store.get_row_by_id(_id_homework)
@@ -278,10 +245,7 @@ class HomeworkManager:
             Homework: домашняя работа
         """
 
-        if self.is_there_homework_in_sql_db():
-            data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
-        else:
-            data_store = DataStore('homeworks')
+        data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
 
         data_store.update_row_by_id({"status": False}, _id_homework)
         homework = data_store.get_row_by_id(_id_homework)
@@ -290,7 +254,7 @@ class HomeworkManager:
 
     def is_accepted_homework(self, _user_id, _id_lesson):
         """
-        Проверяет, есть ли принятые домашние работы у пользователя.
+        Проверяет, есть ли принятые домашние работы у пользователя.(Если используется в качестве БД TinyDB)
 
         Args:
             _user_id(Int): ID пользователя
@@ -306,6 +270,36 @@ class HomeworkManager:
                     return True
 
         return False
+
+    def get_count_accepted_homework_for_lessons_id(self, _user_id: int, _id_course: int):
+        """
+        (Если используется в качестве БД PostgreSQL)
+        """
+        data_store = DataStore('homework', force_adapter='')
+
+        data = data_store.get_rows({
+            'query':
+                f"""
+                with lesson as (select lessons.doc_id,
+                                       modules.doc_id as                           module_doc_id,
+                                       count(*) over (partition by modules.doc_id) count_lessons_in_module
+                                from lessons
+                                         join modules on lessons.id_module = modules.doc_id
+                                where modules.id_course = {_id_course} and lessons.task is not null),
+                     homework as (select count(*) AS count_homework, (select count(*) from lesson) count_lessons, lesson.module_doc_id,
+                                         count_lessons_in_module
+                                  from homeworks
+                                           join lesson
+                                                on homeworks.id_lesson = lesson.doc_id
+                                  where id_user = {_user_id}
+                                    AND status is true
+                                  group by lesson.module_doc_id, count_lessons_in_module)
+                select DISTINCT homework.module_doc_id, homework.count_homework, homework.count_lessons_in_module, homework.count_lessons
+                from homework
+                """
+        })
+
+        return data
 
     def get_id_lessons_list_with_completed_homework(self, _user_id):
         """
@@ -339,8 +333,5 @@ class HomeworkManager:
 
         """
         data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
-        homeworks_count = data_store.get_rows_count()
-        if homeworks_count > 0:
-            return True
-        else:
-            return False
+
+        return data_store.is_there_model_data_in_sql_db()

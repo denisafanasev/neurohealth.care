@@ -103,29 +103,40 @@ class EducationListCoursesService():
         lesson_manager = EducationLessonManager()
         homework_manager = HomeworkManager()
 
-        modules_list = module_manager.get_course_modules_list(_id_course)
-
         data = {
             'amount_modules_passed': 0,
             'amount_modules_no_passed': 0,
             'amount_homework_accepted': 0,
             'amount_homework_no_accepted': 0
         }
-        for module in modules_list:
-            lessons_list = lesson_manager.get_lessons_list_by_id_module(module.id)
-            is_passed = True
-            for lesson in lessons_list:
-                if lesson.task is not None:
-                    homework_accepted = homework_manager.is_accepted_homework(_user_id, lesson.id)
-                    if not homework_accepted:
-                        is_passed = False
-                        data['amount_homework_no_accepted'] += 1
-                    else:
-                        data['amount_homework_accepted'] += 1
+        if homework_manager.is_there_homework_in_sql_db():
+            count_lessons = lesson_manager.get_count_lessons_by_id_course(_id_course)
+            count_modules = module_manager.get_count_modules_by_id_course(_id_course)
+            count_homeworks_list = homework_manager.get_count_accepted_homework_for_lessons_id(_user_id, _id_course)
+            for count_homework in count_homeworks_list:
+                data['amount_homework_accepted'] += count_homework['count_homework']
+                if count_homework['count_homework'] == count_homework['count_lessons_in_module']:
+                    data['amount_modules_passed'] += count_homework['count_lessons_in_module']
 
-            if is_passed:
-                data['amount_modules_passed'] += 1
-            else:
-                data['amount_modules_no_passed'] += 1
+            data['amount_modules_no_passed'] = count_modules - data['amount_modules_passed']
+            data['amount_homework_no_accepted'] = count_lessons - data['amount_homework_accepted']
+        else:
+            modules_list = module_manager.get_course_modules_list(_id_course)
+            for module in modules_list:
+                lessons_list = lesson_manager.get_lessons_list_by_id_module(module.id)
+                is_passed = True
+                for lesson in lessons_list:
+                    if lesson.task is not None:
+                        homework_accepted = homework_manager.is_accepted_homework(_user_id, lesson.id)
+                        if not homework_accepted:
+                            is_passed = False
+                            data['amount_homework_no_accepted'] += 1
+                        else:
+                            data['amount_homework_accepted'] += 1
+
+                if is_passed:
+                    data['amount_modules_passed'] += 1
+                else:
+                    data['amount_modules_no_passed'] += 1
 
         return data

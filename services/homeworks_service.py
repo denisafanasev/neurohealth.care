@@ -313,9 +313,14 @@ class HomeworksService():
 
         homework_manager = HomeworkManager()
 
-        id_lessons_set = homework_manager.get_id_lessons_list_with_completed_homework(_user_id)
+        if homework_manager.is_there_homework_in_sql_db():
+            count_accepted_homework = homework_manager.get_count_accepted_homework_for_lessons_id(_user_id, _id_lessons_list)
 
-        count_accepted_homework = len(id_lessons_set.intersection(_id_lessons_list))
+        else:
+            id_lessons_set = homework_manager.get_id_lessons_list_with_completed_homework(_user_id)
+
+            count_accepted_homework = len(id_lessons_set.intersection(_id_lessons_list))
+
         count_no_accepted_homework = len(_id_lessons_list) - count_accepted_homework
 
         return count_accepted_homework, count_no_accepted_homework
