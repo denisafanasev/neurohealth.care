@@ -12,7 +12,6 @@ if str(pathlib.Path().resolve()).find("prod")!=-1:
 else:
     ENVIRONMENT = "dev"
 
-# DATA_FOLDER = "../data/"
 DATA_FOLDER = "../neurohealth.care.data." + ENVIRONMENT + "/"
 CONFIG_FILE_NAME = "config.yaml"
 
