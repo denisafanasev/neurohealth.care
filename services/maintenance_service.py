@@ -222,7 +222,7 @@ class MaintenanceService():
             actions_json_df = self.get_json_data_in_dataframe(action_file)
             # merge DataFrame with user actions data and users data
             actions_old_df = pd.merge(actions_json_df, users_df, how='left', on=['login'])
-            print(f'action_json_df {action_file}: {len(actions_json_df)}\n')
+            # print(f'action_json_df {action_file}: {len(actions_json_df)}\n')
 
             # remove unnecessary columns
             actions_old_df.rename(columns={'doc_id': 'user_id'}, inplace=True)
@@ -255,7 +255,7 @@ class MaintenanceService():
                 actions_old_df.drop(columns=['_merge'], axis=1, inplace=True)
 
                 actions_old_df.index += 1 + len(actions_df)
-            print(f'actions_old_df {action_file}: {len(actions_old_df)}\n')
+            # print(f'actions_old_df {action_file}: {len(actions_old_df)}\n')
 
             # import user actions data into PostgreSQL
             actions_old_df.to_sql('action', con, if_exists='append', index_label='doc_id')
