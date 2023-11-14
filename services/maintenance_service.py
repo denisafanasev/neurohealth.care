@@ -175,6 +175,21 @@ class MaintenanceService():
     #                 # if action non existed, make insert of a new row
     #                 data_store_postgresql.insert_row(action_raw)
 
+    def get_json_data_in_dataframe(self, _name_file):
+        # retrieve data from the file
+        with open(config.DATA_FOLDER + _name_file, encoding='utf-8') as json_file:
+            json_text = json_file.read()
+        # prepare data for DataFrame
+        if '"_default": {' in json_text:
+            json_text = json_text.replace('"_default": {', '')
+            ind = json_text.rfind('}')
+            json_text = json_text[:ind]
+
+        # create DataFrame with data
+        df = pd.read_json(json_text, orient='index')
+
+        return df
+
     def upload_actions_from_json_to_sql(self):
         """
         Uploads actions  from json file to sql
@@ -194,51 +209,54 @@ class MaintenanceService():
         users_df = pd.DataFrame(users_list)
         users_df = users_df[['login', 'doc_id']]
         action_data_store = DataStore('action', force_adapter='PostgreSQLDataAdapter')
-        actions_list = action_data_store.get_rows()
-        actions_df = None
-        if actions_list:
-            actions_df = pd.DataFrame(actions_list)
-            actions_df.drop(columns=['doc_id'], inplace=True)
-            # actions_df['created_date'] = pd.to_datetime(actions_df['created_date']).dt.strftime('%d-%m-%Y %H:%M:%S')
 
         for action_file in actions_files_list:
-            # retrieve data from the file
-            with open(config.DATA_FOLDER + action_file, encoding='utf-8') as json_file:
-                json_text = json_file.read()
-            # prepare data for DataFrame
-            if '"_default": {' in json_text:
-                json_text = json_text.replace('"_default": {', '')
-                ind = json_text.rfind('}')
-                json_text = json_text[:ind]
+            actions_list = action_data_store.get_rows()
+            actions_df = None
+            if actions_list:
+                actions_df = pd.DataFrame(actions_list)
+                actions_df.drop(columns=['doc_id'], inplace=True)
+                actions_df['created_date'] = pd.to_datetime(actions_df['created_date']).dt.strftime(
+                    '%d-%m-%Y %H:%M:%S')
 
-            # create DataFrame with user actions data
-            actions_json_df = pd.read_json(json_text, orient='index')
+            actions_json_df = self.get_json_data_in_dataframe(action_file)
             # merge DataFrame with user actions data and users data
             actions_old_df = pd.merge(actions_json_df, users_df, how='left', on=['login'])
-            print(f'action_json_df {action_file}: {len(actions_json_df)}')
-            print(f'actions_old_df {action_file}: {len(actions_old_df)}')
+            print(f'action_json_df {action_file}: {len(actions_json_df)}\n')
+
             # remove unnecessary columns
             actions_old_df.rename(columns={'doc_id': 'user_id'}, inplace=True)
             actions_with_none = actions_old_df['user_id'].isnull()
+            # If, when merging tables for actions, the user who performed them is not found,
+            # we go through each of them separately
             if True in actions_with_none.values:
                 actions_with_none = actions_with_none[actions_with_none == True]
+                delete_index_list = []
                 for index in actions_with_none.keys():
-                    user = data_store.get_rows({'where': f"login = '{actions_old_df['login'][index].replace(' ', '')}'"})
+                    user = data_store.get_rows(
+                        {'where': f"login = '{actions_old_df['login'][index].replace(' ', '')}'"})
                     if user:
+                        # If the user is found, we record the user
                         actions_old_df['user_id'][index] = user[0]['doc_id']
+                    else:
+                        # Otherwise, write the index of the action to the list and then delete the action
+                        delete_index_list.append(index)
+
+                actions_old_df = actions_old_df.drop(delete_index_list)
 
             actions_old_df = actions_old_df.drop(['login', 'id'], axis=1)
             # if actions_df is not None:
-            # actions_old_df = pd.concat([actions_df, actions_old_df], join='outer')
-            # if actions_df is not None:
-            #     # actions_old_df['created_date'] = pd.to_datetime(actions_old_df['created_date']).dt.strftime('%d-%m-%Y %H:%M:%S')
-            #     actions_old_df = pd.merge(actions_df, actions_old_df, how='outer', indicator=True)
-            #     actions_old_df.drop(actions_old_df[actions_old_df['_merge'] != 'right_only'].index, inplace=True)
-            #     actions_old_df.drop('_merge', axis=1, inplace=True)
-            #
-            #     actions_df = actions_df.append(actions_old_df)
-            # else:
-            #     actions_df = actions_old_df
+            #     actions_old_df = pd.concat([actions_df, actions_old_df], join='outer')
+            if actions_df is not None:
+                actions_old_df['created_date'] = pd.to_datetime(actions_old_df['created_date']).dt.strftime(
+                    '%d-%m-%Y %H:%M:%S')
+                actions_old_df = pd.merge(actions_df, actions_old_df, how='outer', indicator=True)
+                actions_old_df.drop(actions_old_df[actions_old_df['_merge'] != 'right_only'].index, inplace=True)
+                actions_old_df.drop(columns=['_merge'], axis=1, inplace=True)
+
+                actions_old_df.index += 1 + len(actions_df)
+            print(f'actions_old_df {action_file}: {len(actions_old_df)}\n')
+
             # import user actions data into PostgreSQL
             actions_old_df.to_sql('action', con, if_exists='append', index_label='doc_id')
 

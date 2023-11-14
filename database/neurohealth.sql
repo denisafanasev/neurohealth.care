@@ -1,5 +1,5 @@
 create table users(
-	doc_id INT PRIMARY KEY,
+	doc_id INT PRIMARY KEY UNIQUE,
 	login VARCHAR ( 15 ) UNIQUE NOT NULL,
 	password VARCHAR ( 50 ),
 	email VARCHAR ( 50 ) UNIQUE NOT NULL,
@@ -14,7 +14,7 @@ create table users(
 );
 
 create table action(
-	doc_id INT PRIMARY KEY,
+	doc_id INT PRIMARY KEY UNIQUE ,
 	user_id INT NOT NULL,
 	action VARCHAR ( 200 ) NOT NULL,
 	comment_action VARCHAR ( 250 ) NOT NULL,
