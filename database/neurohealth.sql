@@ -14,7 +14,7 @@ create table users(
 );
 
 create table action(
-	doc_id INT PRIMARY KEY UNIQUE ,
+	doc_id INT PRIMARY KEY UNIQUE,
 	user_id INT NOT NULL,
 	action VARCHAR ( 200 ) NOT NULL,
 	comment_action VARCHAR ( 250 ) NOT NULL,
@@ -23,7 +23,7 @@ create table action(
 
 create table courses_list
 (
-    doc_id      INT PRIMARY KEY,
+    doc_id      INT PRIMARY KEY UNIQUE,
     name        VARCHAR(150) NOT NULL,
     description TEXT         NOT NULL,
     type        VARCHAR(20)  NOT NULL,
@@ -32,14 +32,14 @@ create table courses_list
 
 create table modules
 (
-    doc_id    INT PRIMARY KEY,
+    doc_id    INT PRIMARY KEY UNIQUE,
     id_course INT          NOT NULL,
     name      VARCHAR(150) NOT NULL
 );
 
 create table lessons
 (
-    doc_id    INT PRIMARY KEY,
+    doc_id    INT PRIMARY KEY UNIQUE,
     id_module INT          NOT NULL,
     name      VARCHAR(150) NOT NULL,
     materials VARCHAR(100)[],
@@ -50,7 +50,7 @@ create table lessons
 
 create table homeworks
 (
-    doc_id           INT PRIMARY KEY,
+    doc_id           INT PRIMARY KEY UNIQUE,
     id_lesson        INT       NOT NULL,
     id_user          INT       NOT NULL,
     users_files_list VARCHAR(100)[],
@@ -61,14 +61,14 @@ create table homeworks
 
 create table homework_chat
 (
-    doc_id    INT PRIMARY KEY,
+    doc_id    INT PRIMARY KEY UNIQUE,
     id_lesson INT NOT NULL,
     id_user   INT NOT NULL
 );
 
 create table message
 (
-    doc_id           INT PRIMARY KEY,
+    doc_id           INT PRIMARY KEY UNIQUE,
     id_user          INT       NOT NULL,
     text             TEXT      NOT NULL,
     date_send        TIMESTAMP NOT NULL,

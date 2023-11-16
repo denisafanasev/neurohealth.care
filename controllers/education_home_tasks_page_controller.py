@@ -29,10 +29,13 @@ class EducationHomeTasksPageController():
         education_stream = homeworks_service.get_education_stream(_id_education_stream)
         data_list = []
         if homeworks_service.is_there_homework_in_sql():
-            homework_list = homeworks_service.get_homeworks_list_by_id_user_no_verified(education_stream.course.id, user.user_id)
+            homework_list = homeworks_service.get_homeworks_list_by_id_user_no_verified(education_stream.course.id,
+                                                                                        user.user_id)
             for homework in homework_list:
-                homework_chat = homeworks_service.get_homework_chat(homework['lesson'].id, user.user_id, _id_current_user)
-                data = self.get_view_data_from_sql(homework['homework'], homework_chat, homework['module'], homework['lesson'])
+                homework_chat = homeworks_service.get_homework_chat(homework['lesson'].id, user.user_id,
+                                                                    _id_current_user)
+                data = self.get_view_data_from_sql(homework['homework'], homework_chat, homework['module'],
+                                                   homework['lesson'])
                 data_list.append(data)
 
         else:
@@ -50,7 +53,7 @@ class EducationHomeTasksPageController():
 
         return data_list
 
-    def get_chat_without_homework(self, _id_current_user, _id_education_stream, _id_user, _page):
+    def get_chat_without_homework(self, _id_current_user, _id_education_stream, _id_user):
         """
         Возвращает чаты, по урокам которых не были сданы домашние работы
 
@@ -68,13 +71,16 @@ class EducationHomeTasksPageController():
         education_stream = homeworks_service.get_education_stream(_id_education_stream)
         data_list = []
         if homeworks_service.is_there_homework_in_sql():
+            homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(user.user_id,
+                                                                                     _id_course=education_stream.course.id)
             pass
         else:
             lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
 
             for lesson in lessons_list:
                 module = homeworks_service.get_module_by_id(lesson.id_module)
-                homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(lesson.id, user.user_id)
+                homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(_id_lesson=lesson.id,
+                                                                                         _id_user=user.user_id)
                 if homework_list is not None:
                     continue
 
@@ -107,10 +113,13 @@ class EducationHomeTasksPageController():
         data_list = []
         if homeworks_service.is_there_homework_in_sql():
             # если для хранения домашних работ используется postgresql, то мы проходимся по домашним работам
-            homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(education_stream.course.id, user.user_id)
+            homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(user.user_id,
+                                                                                     _id_course=education_stream.course.id)
             for homework in homework_list:
-                homework_chat = homeworks_service.get_homework_chat(homework['lesson'].id, user.user_id, _id_current_user)
-                data = self.get_view_data_from_sql(homework['homework'], homework_chat, homework['module'], homework['lesson'])
+                homework_chat = homeworks_service.get_homework_chat(homework['lesson'].id, user.user_id,
+                                                                    _id_current_user)
+                data = self.get_view_data_from_sql(homework['homework'], homework_chat, homework['module'],
+                                                   homework['lesson'])
                 data_list.append(data)
 
         else:
@@ -248,7 +257,7 @@ class EducationHomeTasksPageController():
         homeworks_service = HomeworksService()
 
         education_streams_list = homeworks_service.get_educations_stream()
-        education_streams_list_view =[]
+        education_streams_list_view = []
         for education_stream in education_streams_list:
             education_stream_view = {
                 "id": education_stream.id,
@@ -291,8 +300,9 @@ class EducationHomeTasksPageController():
             # сколько принято/не принято домашних работ у пользователей потока
             user_view['is_unread_message'] = homeworks_service.is_unread_messages(id_lessons_list, user_data.user_id)
 
-            user_view['amount_accepted_homeworks'], user_view['amount_no_accepted_homeworks'] =\
-                homeworks_service.get_amount_accepted_homework(user_data.user_id, id_lessons_list)
+            user_view['amount_accepted_homeworks'], user_view['amount_no_accepted_homeworks'] = \
+                homeworks_service.get_amount_accepted_homework(user_data.user_id, id_lessons_list,
+                                                               education_stream.course.id)
             education_stream_view['students_list'].append(user_view)
 
         return education_stream_view

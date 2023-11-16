@@ -4,6 +4,7 @@ from distutils.command.config import config
 import pandas as pd
 from sqlalchemy import text, create_engine
 
+from models.action_manager import ActionManager
 from models.homework_chat_manager import HomeworkChatManager
 from models.message_manager import MessageManager
 from models.course_manager import EducationCourseManager

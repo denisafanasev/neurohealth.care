@@ -141,12 +141,12 @@ class HomeworkManager:
 
             return homework_list
 
-    def get_homeworks_list_by_id_lessons_list_verified(self, _id_lessons_list: list, _id_user: int) -> list:
+    def get_homeworks_list_by_id_lessons_list_verified(self, _id_course: int, _id_user: int) -> list:
         """
         Возвращает список домашних работ пользователя по урокам из списка
 
         Args:
-            _id_lessons_list: список ID уроков
+            _id_course: список ID уроков
             _id_user: ID пользователя
 
         Returns:
@@ -162,11 +162,12 @@ class HomeworkManager:
                                     lessons.doc_id as doc_id_lesson,
                                     modules.doc_id as doc_id_module,
                                     id_module,
-                                    modules.name   as name_module
+                                    modules.name   as name_module,
+                                    modules.id_course
                                 from lessons
                                 left outer join modules on lessons.id_module = modules.doc_id) as lesson
                          on homeworks.id_lesson = lesson.doc_id_lesson
-                where id_lesson IN (SELECT unnest({_id_lessons_list})) AND id_user = {_id_user} AND status IS NOT NULL
+                where id_course = {_id_course} AND id_user = {_id_user} AND status IS NOT NULL
                          """,
             })
 
@@ -275,18 +276,21 @@ class HomeworkManager:
         """
         (Если используется в качестве БД PostgreSQL)
         """
-        data_store = DataStore('homework', force_adapter='')
+        data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
 
         data = data_store.get_rows({
             'query':
                 f"""
                 with lesson as (select lessons.doc_id,
-                                       modules.doc_id as                           module_doc_id,
-                                       count(*) over (partition by modules.doc_id) count_lessons_in_module
-                                from lessons
-                                         join modules on lessons.id_module = modules.doc_id
-                                where modules.id_course = {_id_course} and lessons.task is not null),
-                     homework as (select count(*) AS count_homework, (select count(*) from lesson) count_lessons, lesson.module_doc_id,
+                                   modules.doc_id as                           module_doc_id,
+                                   count(*) over (partition by modules.doc_id) count_lessons_in_module
+                            from lessons
+                                     join modules on lessons.id_module = modules.doc_id
+                            where modules.id_course = {_id_course}
+                              and lessons.task is not null),
+                     homework as (select count(*) AS                   count_homework_in_module,
+                                         (select count(*) from lesson) count_lessons,
+                                         lesson.module_doc_id,
                                          count_lessons_in_module
                                   from homeworks
                                            join lesson
@@ -294,8 +298,11 @@ class HomeworkManager:
                                   where id_user = {_user_id}
                                     AND status is true
                                   group by lesson.module_doc_id, count_lessons_in_module)
-                select DISTINCT homework.module_doc_id, homework.count_homework, homework.count_lessons_in_module, homework.count_lessons
+                select count_lessons,
+                       (select sum(count_homework_in_module) from homework) as sum_homework,
+                       count(module_doc_id) as count_modules_passed
                 from homework
+                group by count_lessons
                 """
         })
 
@@ -321,6 +328,7 @@ class HomeworkManager:
             data_store = DataStore('homeworks')
 
             homeworks_list_data = data_store.get_rows({'id_user': _user_id, 'status': True})
+
         id_lessons_list = set()
         if homeworks_list_data:
             for homework_data in homeworks_list_data:

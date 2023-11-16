@@ -103,23 +103,16 @@ class EducationListCoursesService():
         lesson_manager = EducationLessonManager()
         homework_manager = HomeworkManager()
 
-        data = {
-            'amount_modules_passed': 0,
-            'amount_modules_no_passed': 0,
-            'amount_homework_accepted': 0,
-            'amount_homework_no_accepted': 0
-        }
+        data = {}
         if homework_manager.is_there_homework_in_sql_db():
             count_lessons = lesson_manager.get_count_lessons_by_id_course(_id_course)
             count_modules = module_manager.get_count_modules_by_id_course(_id_course)
             count_homeworks_list = homework_manager.get_count_accepted_homework_for_lessons_id(_user_id, _id_course)
-            for count_homework in count_homeworks_list:
-                data['amount_homework_accepted'] += count_homework['count_homework']
-                if count_homework['count_homework'] == count_homework['count_lessons_in_module']:
-                    data['amount_modules_passed'] += count_homework['count_lessons_in_module']
+            data['amount_homework_accepted'] = count_homeworks_list['sum_homework']
+            data['amount_modules_passed'] = count_homeworks_list['count_modules_passed']
 
-            data['amount_modules_no_passed'] = count_modules - data['amount_modules_passed']
-            data['amount_homework_no_accepted'] = count_lessons - data['amount_homework_accepted']
+            data['amount_modules_no_passed'] = count_modules - data['count_modules_passed']
+            data['amount_homework_no_accepted'] = count_lessons - data['sum_homework']
         else:
             modules_list = module_manager.get_course_modules_list(_id_course)
             for module in modules_list:

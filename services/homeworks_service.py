@@ -157,34 +157,40 @@ class HomeworksService():
 
         return homeworks_chat_list
 
-    def get_homeworks_list_by_id_user_verified(self, _id_user: int, _id_course: int = None):
+    def get_homeworks_list_by_id_user_verified(self, _id_user: int, _id_course: int = None, _id_lesson: int = None):
         """
         Возвращает список проверенных домашних работ по ID пользователя и урока
 
         Args:
             _id_course(Integer): ID курса
             _id_user(Integer): ID пользователя
+            _id_lesson: ID урока
 
         Returns:
             List: список домашних работ
             """
         homework_manager = HomeworkManager()
 
-        lessons_list = self.get_lessons_by_id_course(_id_course)
-        id_lessons_list = [lesson.id for lesson in lessons_list]
-        homework_list_data = homework_manager.get_homeworks_list_by_id_lessons_list_verified(id_lessons_list,
-                                                                                             _id_user)
-        homework_list = []
-        for homework_data in homework_list_data:
-            homework = {'homework': homework_manager.homework_row_to_homework(homework_data),
-                        'lesson': {'doc_id': homework_data['doc_id_lesson'], 'name': homework_data['name_lesson'],
-                                   'id_module': homework_data['id_module']},
-                        'module': {'doc_id': homework_data['doc_id_module'], 'name': homework_data['name_module'],
-                                   'id_course': _id_course}}
+        if _id_course is not None:
+            homework_list_data = homework_manager.get_homeworks_list_by_id_lessons_list_verified(_id_course,
+                                                                                                 _id_user)
+            homework_list = []
+            for homework_data in homework_list_data:
+                homework = {'homework': homework_manager.homework_row_to_homework(homework_data),
+                            'lesson': Lesson(_id=homework_data['doc_id_lesson'], _name=homework_data['name_lesson'],
+                                             _id_module=homework_data['id_module']),
+                            'module': Module(_id=homework_data['doc_id_module'], _name=homework_data['name_module'],
+                                             _id_course=homework_data['id_course'])}
 
-            homework_list.append(homework)
+                homework_list.append(homework)
 
-        return homework_list
+            return homework_list
+
+        elif _id_lesson is not None:
+            homework_list = homework_manager.get_homeworks_list_by_id_lesson(_id_lesson, _id_user)
+            if homework_list:
+                homeworks = [homework for homework in homework_list if homework.status is not None]
+                return homeworks
 
     def get_homeworks_list_by_id_user_no_verified(self, _id_course: int, _id_user: int):
         """
@@ -298,13 +304,14 @@ class HomeworksService():
 
         return False
 
-    def get_amount_accepted_homework(self, _user_id, _id_lessons_list):
+    def get_amount_accepted_homework(self, _user_id: int, _id_lessons_list: list, _id_course: int = None):
         """
         Возвращает количества принятых/не принятых домашних работ у пользователя
 
         Args:
             _user_id(Int): ID пользователя
             _id_lessons_list(List): список ID уроков курса
+            _id_course: ID курса
 
         Returns:
             count_accepted_homework(Int): количество принятых домашних работ
@@ -314,7 +321,8 @@ class HomeworksService():
         homework_manager = HomeworkManager()
 
         if homework_manager.is_there_homework_in_sql_db():
-            count_accepted_homework = homework_manager.get_count_accepted_homework_for_lessons_id(_user_id, _id_lessons_list)
+            count_accepted_homework = homework_manager.get_count_accepted_homework_for_lessons_id(_user_id, _id_course)
+            count_accepted_homework = 0 if len(count_accepted_homework) == 0 else count_accepted_homework[0]['sum_homework']
 
         else:
             id_lessons_set = homework_manager.get_id_lessons_list_with_completed_homework(_user_id)
