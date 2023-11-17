@@ -222,7 +222,7 @@ class EducationCourseLessonService():
 
         return neighboring_lessons
 
-    def get_homework_chat(self, _id_lesson, _id_user):
+    def get_homework_chat(self, _id_lesson, _id_user, _id_current_user):
         """
         Возвращает данные чата
 
@@ -235,10 +235,17 @@ class EducationCourseLessonService():
         """
         homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()
+        user_manager = UserManager()
 
-        homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson)
-        if homework_chat is not None:
-            homework_chat.message = message_manager.get_messages_for_user(homework_chat.id, _id_user)
+        if not homework_chat_manager.is_there_homework_chat_in_sql_db():
+            homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson, None)
+            if homework_chat is not None:
+                homework_chat.message = message_manager.get_messages_for_user(homework_chat.id, _id_user)
+
+        else:
+            role_current_user = user_manager.get_user_role(_id_current_user)
+            homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson, role_current_user)
+            homework_chat = homework_chat_manager.homework_chat_row_to_homework_chat(homework_chat)
 
         return homework_chat
 

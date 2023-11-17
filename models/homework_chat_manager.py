@@ -8,18 +8,26 @@ class HomeworkChatManager():
     Взаимодейтвует с модулем хранения данных, преобразую доменные структуры в объекты типа Dict
     Вовзращает в слой бизнес-логики приложения объекты в доменных структурах
     """
-    def homework_chat_row_to_homework_chat(self, _homework_chat):
+
+    def homework_chat_row_to_homework_chat(self, _data_row):
         """
         Преобразует структуру данных, в которой хранится информация о чате в структуру RoomChat
 
         Args:
-            _homework_chat (Dict): структура данных, которую возвращает дата адаптер
+            _data_row (Dict): структура данных, которую возвращает дата адаптер
 
         Returns:
             HomeworkChat: чат
         """
 
-        homework_chat = HomeworkChat(_id=_homework_chat.doc_id, _id_lesson=_homework_chat['id_lesson'], _id_user=_homework_chat["id_user"])
+        homework_chat = HomeworkChat(_id=_data_row.doc_id, _id_lesson=_data_row['id_lesson'],
+                                     _id_user=_data_row["id_user"])
+
+        if _data_row.get('message') is not None:
+            homework_chat.message = _data_row['message']
+
+        if _data_row.get('unread_message_amount') is not None:
+            homework_chat.unread_message_amount = _data_row['unread_message_amount']
 
         return homework_chat
 
@@ -56,11 +64,12 @@ class HomeworkChatManager():
 
         homework_chat = HomeworkChat(_id_user=_id_user, _id_lesson=_id_lesson)
 
-        id_homework_chat = data_store.insert_row({"id_user": homework_chat.id_user, "id_lesson": homework_chat.id_lesson})
+        id_homework_chat = data_store.insert_row(
+            {"id_user": homework_chat.id_user, "id_lesson": homework_chat.id_lesson})
 
         return id_homework_chat
 
-    def get_homework_chat(self, _id_user, _id_lesson):
+    def get_homework_chat(self, _id_user, _id_lesson, _role):
         """
         Возвращает данные чата
 
@@ -72,13 +81,37 @@ class HomeworkChatManager():
             HomeworkChat: чата
         """
 
-        data_store = DataStore("homework_chat")
+        data_store = DataStore("homework_chat", force_adapter='PostgreSQLDataAdapter')
+        if data_store.is_there_model_data_in_sql_db():
+            query = f"""with messages_user AS (SELECT count(*) over (partition by doc_id) AS unread_message_amount, *
+                                                         FROM message
+                                                         WHERE read IS FALSE)
+                                        select homework_chat.doc_id,
+                                               homework_chat.id_lesson,
+                                               homework_chat.id_user id_user_chat,
+                                               unread_message_amount,
+                                               messages_user.*
+                                        from homework_chat
+                                                 left join messages_user on homework_chat.doc_id = messages_user.id_homework_chat
+                                        where id_lesson = {_id_lesson}
+                                          AND homework_chat.id_user = {_id_user}"""
 
-        homework_chat = data_store.get_rows({"id_user": _id_user, "id_lesson": _id_lesson})
+            if _role == 'superuser':
+                query += f'and messages_user.id_user = {_id_user}'
+
+            else:
+                query += f'and messages_user.id_user != {_id_user}'
+
+            homework_chat = data_store.get_rows(query)
+
+            return homework_chat[0]
+        else:
+            homework_chat = data_store.get_rows({"id_user": _id_user, "id_lesson": _id_lesson})
+
         if homework_chat:
             return self.homework_chat_row_to_homework_chat(homework_chat[0])
 
-    def get_homework_chat_without_homework(self, _id_user: int, _id_lessons_list: list):
+    def get_homework_chat_without_homework(self, _id_user: int, _id_course: int):
         """
 
         """
@@ -86,28 +119,44 @@ class HomeworkChatManager():
 
         homework_chats_list_data = data_store.get_rows({
             'query': f"""
-            WITH lesson AS (SELECT l.name         AS name_lesson,
-                       l.doc_id       AS doc_id_lesson,
-                       l.id_module,
-                       modules.name   AS name_module
-                FROM (SELECT * FROM lessons WHERE task is not null) l
-                         LEFT JOIN modules ON l.id_module = modules.doc_id),
-     count_message AS (SELECT count(*) AS count_unread_message, id_user id_user_message, id_homework_chat
-                       FROM message
-                       WHERE read IS FALSE
-                       group by id_homework_chat, id_user)
-SELECT chat_with_message.name_module, chat_with_message.id_user, chat_with_message.id_lesson, chat_with_message.doc_id,
-       chat_with_message.name_lesson, chat_with_message.count_unread_message, chat_with_message.id_module,
-       homeworks.doc_id AS doc_id_home
-FROM homeworks
-         FULL JOIN (count_message RIGHT JOIN (homework_chat LEFT JOIN lesson
-                                              ON homework_chat.id_lesson = lesson.doc_id_lesson) chat
-                    ON chat.doc_id = count_message.id_homework_chat) chat_with_message
-                   ON homeworks.id_lesson = chat_with_message.id_lesson AND homeworks.id_user = chat_with_message.id_user
-
-WHERE chat_with_message.id_user = {_id_user}
-  AND homeworks.doc_id IS NULL
+            WITH lesson AS (SELECT l.name       AS name_lesson,
+                                   l.doc_id     AS doc_id_lesson,
+                                   l.id_module  AS doc_id_module,
+                                   modules.name AS name_module,
+                                   modules.id_course
+                            FROM (SELECT * FROM lessons WHERE task is not null) l
+                                     LEFT JOIN modules ON l.id_module = modules.doc_id
+                            WHERE modules.id_course = 1),
+                 count_message AS (SELECT count(*) AS unread_message_amount, id_user id_user_message, id_homework_chat
+                                   FROM message
+                                   WHERE read IS FALSE
+                                   group by id_homework_chat, id_user)
+            SELECT chat_with_message.name_module,
+                   chat_with_message.id_user,
+                   chat_with_message.doc_id_lesson,
+                   chat_with_message.doc_id,
+                   chat_with_message.name_lesson,
+                   chat_with_message.unread_message_amount,
+                   chat_with_message.doc_id_module
+            FROM homeworks
+                     FULL JOIN (count_message RIGHT JOIN (homework_chat LEFT JOIN lesson
+                                                          ON homework_chat.id_lesson = lesson.doc_id_lesson) chat
+                                ON chat.doc_id = count_message.id_homework_chat) chat_with_message
+                               ON homeworks.id_lesson = chat_with_message.id_lesson AND
+                                  homeworks.id_user = chat_with_message.id_user
+            
+            WHERE chat_with_message.id_user = 272
+              AND homeworks.doc_id IS NULL
+              AND chat_with_message.name_module IS NOT NULL
             """
         })
 
         return homework_chats_list_data
+
+    def is_there_homework_chat_in_sql_db(self) -> bool:
+        """
+
+        """
+        data_store = DataStore('homework_chat', force_adapter='PostgreSQLDataAdapter')
+
+        return data_store.is_there_model_data_in_sql_db()

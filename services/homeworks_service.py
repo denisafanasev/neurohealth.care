@@ -101,8 +101,9 @@ class HomeworksService():
 
         homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson)
         if homework_chat is not None:
-            homework_chat.unread_message_amount = message_manager.get_unread_messages_amount_for_superuser(
-                homework_chat.id, _id_user)
+            if not homework_chat_manager.is_there_homework_chat_in_sql_db():
+                homework_chat.unread_message_amount = message_manager.get_unread_messages_amount_for_superuser(
+                    homework_chat.id, _id_user)
 
         return homework_chat
 
@@ -140,22 +141,22 @@ class HomeworksService():
         """
         homework_chat_manager = HomeworkChatManager()
 
-        lessons_list = self.get_lessons_by_id_course(_id_course)
-        id_lessons_list = [lesson.id for lesson in lessons_list]
-        homeworks_chat_list_data = homework_chat_manager.get_homework_chat_without_homework(_id_user, id_lessons_list)
-        homeworks_chat_list = []
-        for homeworks_chat in homeworks_chat_list_data:
-            homeworks_chat_list.append({
-                'homeworks_chat': HomeworkChat(_id=homeworks_chat['doc_id'], _id_user=homeworks_chat['id_user'],
-                                               _id_lesson=homeworks_chat['id_lesson'],
-                                               _unread_message_amount=homeworks_chat['count_unread_message']),
-                'lesson': {'doc_id': homeworks_chat['doc_id_lesson'], 'name': homeworks_chat['name_lesson'],
-                           'id_module': homeworks_chat['id_module']},
-                'module': {'doc_id': homeworks_chat['doc_id_module'], 'name': homeworks_chat['name_module'],
-                           'id_course': _id_course}
-            })
+        # lessons_list = self.get_lessons_by_id_course(_id_course)
+        # id_lessons_list = [lesson.id for lesson in lessons_list]
+        homeworks_chat_list_data = homework_chat_manager.get_homework_chat_without_homework(_id_user, _id_course)
+        # homeworks_chat_list = []
+        # for homeworks_chat in homeworks_chat_list_data:
+        #     homeworks_chat_list.append({
+        #         'homeworks_chat': {'id': homeworks_chat['doc_id'], 'id_user': homeworks_chat['id_user'],
+        #                            'id_lesson': homeworks_chat['id_lesson'],
+        #                            'unread_message_amount': homeworks_chat['count_unread_message']},
+        #         'lesson': {'doc_id': homeworks_chat['id_lesson'], 'name': homeworks_chat['name_lesson'],
+        #                    'id_module': homeworks_chat['id_module']},
+        #         'module': {'doc_id': homeworks_chat['id_module'], 'name': homeworks_chat['name_module'],
+        #                    'id_course': _id_course}
+        #     })
 
-        return homeworks_chat_list
+        return homeworks_chat_list_data
 
     def get_homeworks_list_by_id_user_verified(self, _id_user: int, _id_course: int = None, _id_lesson: int = None):
         """
@@ -174,17 +175,18 @@ class HomeworksService():
         if _id_course is not None:
             homework_list_data = homework_manager.get_homeworks_list_by_id_lessons_list_verified(_id_course,
                                                                                                  _id_user)
-            homework_list = []
-            for homework_data in homework_list_data:
-                homework = {'homework': homework_manager.homework_row_to_homework(homework_data),
-                            'lesson': Lesson(_id=homework_data['doc_id_lesson'], _name=homework_data['name_lesson'],
-                                             _id_module=homework_data['id_module']),
-                            'module': Module(_id=homework_data['doc_id_module'], _name=homework_data['name_module'],
-                                             _id_course=homework_data['id_course'])}
+            # homework_list = []
+            # for homework_data in homework_list_data:
+            #     homework = {'homework': {'doc_id': homework_data['doc_id'], 'status': homework_data['status'],
+            #                              'date_delivery': homework_data['date_delivery']},
+            #                 'lesson': {'doc_id': homework_data['doc_id_lesson'], 'name': homework_data['name_lesson'],
+            #                            'id_module': homework_data['id_module']},
+            #                 'module': {'doc_id': homework_data['doc_id_module'], 'name': homework_data['name_module'],
+            #                            'id_course': _id_course}}
+            #
+            #     homework_list.append(homework)
 
-                homework_list.append(homework)
-
-            return homework_list
+            return homework_list_data
 
         elif _id_lesson is not None:
             homework_list = homework_manager.get_homeworks_list_by_id_lesson(_id_lesson, _id_user)
@@ -209,17 +211,17 @@ class HomeworksService():
         id_lessons_list = [lesson.id for lesson in lessons_list]
         homework_list_data = homework_manager.get_homeworks_list_by_id_lessons_list_no_verified(id_lessons_list,
                                                                                                 _id_user)
-        homework_list = []
-        for homework_data in homework_list_data:
-            homework = {'homework': homework_manager.homework_row_to_homework(homework_data),
-                        'lesson': Lesson(_id=homework_data['doc_id_lesson'], _name=homework_data['name_lesson'],
-                                         _id_module=homework_data['id_module']),
-                        'module': Module(_id=homework_data['doc_id_module'], _name=homework_data['name_module'],
-                                         _id_course=_id_course)}
+        # homework_list = []
+        # for homework_data in homework_list_data:
+        #     homework = {'homework': homework_manager.homework_row_to_homework(homework_data),
+        #                 'lesson': Lesson(_id=homework_data['doc_id_lesson'], _name=homework_data['name_lesson'],
+        #                                  _id_module=homework_data['id_module']),
+        #                 'module': Module(_id=homework_data['doc_id_module'], _name=homework_data['name_module'],
+        #                                  _id_course=_id_course)}
 
-            homework_list.append(homework)
+            # homework_list.append(homework)
 
-        return homework_list
+        return homework_list_data
 
     def get_lessons_by_id_course(self, _id_course):
         """
@@ -322,7 +324,8 @@ class HomeworksService():
 
         if homework_manager.is_there_homework_in_sql_db():
             count_accepted_homework = homework_manager.get_count_accepted_homework_for_lessons_id(_user_id, _id_course)
-            count_accepted_homework = 0 if len(count_accepted_homework) == 0 else count_accepted_homework[0]['sum_homework']
+            count_accepted_homework = 0 if len(count_accepted_homework) == 0 else count_accepted_homework[0][
+                'sum_homework']
 
         else:
             id_lessons_set = homework_manager.get_id_lessons_list_with_completed_homework(_user_id)
