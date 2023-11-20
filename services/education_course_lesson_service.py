@@ -78,7 +78,7 @@ class EducationCourseLessonService():
         message_manager = MessageManager()
         homework_chat_manager = HomeworkChatManager()
 
-        homework_chat = homework_chat_manager.get_homework_chat(_message['id_user'], _id_lesson)
+        homework_chat = homework_chat_manager.get_homework_chat(_message['id_user'], _id_lesson, 'user')
         if homework_chat is None:
             _message['id_homework_chat'] = homework_chat_manager.add_homework_chat(_message['id_user'], _id_lesson)
         else:
@@ -222,7 +222,7 @@ class EducationCourseLessonService():
 
         return neighboring_lessons
 
-    def get_homework_chat(self, _id_lesson, _id_user, _id_current_user):
+    def get_homework_chat(self, _id_lesson, _id_user):
         """
         Возвращает данные чата
 
@@ -243,9 +243,13 @@ class EducationCourseLessonService():
                 homework_chat.message = message_manager.get_messages_for_user(homework_chat.id, _id_user)
 
         else:
-            role_current_user = user_manager.get_user_role(_id_current_user)
-            homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson, role_current_user)
-            homework_chat = homework_chat_manager.homework_chat_row_to_homework_chat(homework_chat)
+            # role_current_user = user_manager.get_user_role(_id_current_user)
+            homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson, 'user')
+            messages_list = []
+            for user_message in homework_chat.message:
+                messages_list.append(message_manager.message_row_to_message(user_message))
+
+            homework_chat.message = messages_list
 
         return homework_chat
 

@@ -168,6 +168,9 @@ class EducationLessonManager():
         """
         data_store = DataStore('lessons', force_adapter='PostgreSQLDataAdapter')
 
-        data = data_store.get_rows_count({'where': f'id_course = {_id_course}'})
+        data = data_store.get_rows({'query': f"""
+            select count(*) from lessons left join modules on lessons.id_module = modules.doc_id
+            where id_course = {_id_course} and task is not null 
+        """})
 
-        return data
+        return data[0]['count']

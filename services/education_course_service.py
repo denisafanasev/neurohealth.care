@@ -172,9 +172,10 @@ class EducationCourseService():
         homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()
 
-        homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson)
-        if homework_chat is not None:
-            homework_chat.unread_message_amount = message_manager.get_unread_messages_amount_for_user(homework_chat.id, _id_user)
+        homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson, 'user')
+        if not homework_chat_manager.is_there_homework_chat_in_sql_db():
+            if homework_chat is not None:
+                homework_chat.unread_message_amount = message_manager.get_unread_messages_amount_for_user(homework_chat.id, _id_user)
 
             return homework_chat
 

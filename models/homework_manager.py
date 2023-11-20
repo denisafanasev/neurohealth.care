@@ -306,7 +306,7 @@ class HomeworkManager:
                 """
         })
 
-        return data
+        return data[0]
 
     def get_id_lessons_list_with_completed_homework(self, _user_id):
         """

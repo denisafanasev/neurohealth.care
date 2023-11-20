@@ -10,27 +10,31 @@ class MessageManager():
     Взаимодейтвует с модулем хранения данных, преобразую доменные структуры в объекты типа Dict
     Вовзращает в слой бизнес-логики приложения объекты в доменных структурах
     """
-    def message_row_to_message(self, _message):
+    def message_row_to_message(self, _data_row):
         """
         Преобразует структуру данных, в которой хранится информация о сообщение в структуру Message
 
         Args:
-            _message (Dict): структура данных, которую возвращает дата адаптер
+            _data_row (Dict): структура данных, которую возвращает дата адаптер
 
         Returns:
             Message: пользователь
         """
+        doc_id = _data_row['doc_id'] if _data_row.get('doc_id') is not None else _data_row.doc_id
+        message = Message(_id=doc_id, _text=_data_row["text"], _id_homework_chat=_data_row['id_homework_chat'],
+                          _id_user=_data_row['id_user'])
 
-        message = Message(_id=_message.doc_id, _text=_message["text"], _id_homework_chat=_message['id_homework_chat'],
-                          _id_user=_message['id_user'])
-
-        if _message.get("date_send") is not None:
-            message.date_send = datetime.strptime(_message['date_send'], "%d/%m/%Y")
+        if _data_row.get("date_send") is not None:
+            if isinstance(_data_row["date_send"], str):
+                # "%d/%m/%Y"
+                message.date_send = datetime.strptime(_data_row['date_send'], '%Y-%m-%dT%H:%M:%S')
+            else:
+                message.date_send = _data_row['date_send']
         else:
             message.date_send = datetime.today()
 
-        if _message.get("read") is not None:
-            message.read = _message['read']
+        if _data_row.get("read") is not None:
+            message.read = _data_row['read']
 
         return message
 

@@ -20,7 +20,8 @@ class HomeworkChatManager():
             HomeworkChat: чат
         """
 
-        homework_chat = HomeworkChat(_id=_data_row.doc_id, _id_lesson=_data_row['id_lesson'],
+        doc_id = _data_row['doc_id'] if _data_row.get('doc_id') is not None else _data_row.doc_id
+        homework_chat = HomeworkChat(_id=doc_id, _id_lesson=_data_row['id_lesson'],
                                      _id_user=_data_row["id_user"])
 
         if _data_row.get('message') is not None:
@@ -83,28 +84,26 @@ class HomeworkChatManager():
 
         data_store = DataStore("homework_chat", force_adapter='PostgreSQLDataAdapter')
         if data_store.is_there_model_data_in_sql_db():
-            query = f"""with messages_user AS (SELECT count(*) over (partition by doc_id) AS unread_message_amount, *
-                                                         FROM message
-                                                         WHERE read IS FALSE)
-                                        select homework_chat.doc_id,
-                                               homework_chat.id_lesson,
-                                               homework_chat.id_user id_user_chat,
-                                               unread_message_amount,
-                                               messages_user.*
-                                        from homework_chat
-                                                 left join messages_user on homework_chat.doc_id = messages_user.id_homework_chat
-                                        where id_lesson = {_id_lesson}
-                                          AND homework_chat.id_user = {_id_user}"""
-
             if _role == 'superuser':
-                query += f'and messages_user.id_user = {_id_user}'
+                query_text = f'and message.id_user = {_id_user}'
 
             else:
-                query += f'and messages_user.id_user != {_id_user}'
+                query_text = f'and message.id_user != {_id_user}'
 
-            homework_chat = data_store.get_rows(query)
+            query = f"""with count_messages_user as (select count(*) over (partition by doc_id) as unread_message_amount, id_homework_chat
+                                               from message
+                                               where read is false {query_text })
+                        select homework_chat.*, unread_message_amount, array_to_json(array_agg(message)) as message
+                        from homework_chat,
+                             message, count_messages_user
+                        where homework_chat.doc_id = message.id_homework_chat
+                          and homework_chat.id_user = {_id_user} and count_messages_user.id_homework_chat = homework_chat.doc_id
+                          and homework_chat.id_lesson = {_id_lesson}
+                        group by homework_chat.doc_id, id_lesson, homework_chat.id_user, unread_message_amount"""
 
-            return homework_chat[0]
+            homework_chat = data_store.get_rows({'query': query})
+            if homework_chat:
+                return self.homework_chat_row_to_homework_chat(homework_chat[0])
         else:
             homework_chat = data_store.get_rows({"id_user": _id_user, "id_lesson": _id_lesson})
 

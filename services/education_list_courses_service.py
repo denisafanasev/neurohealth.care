@@ -111,8 +111,8 @@ class EducationListCoursesService():
             data['amount_homework_accepted'] = count_homeworks_list['sum_homework']
             data['amount_modules_passed'] = count_homeworks_list['count_modules_passed']
 
-            data['amount_modules_no_passed'] = count_modules - data['count_modules_passed']
-            data['amount_homework_no_accepted'] = count_lessons - data['sum_homework']
+            data['amount_modules_no_passed'] = count_modules - data['amount_modules_passed']
+            data['amount_homework_no_accepted'] = count_lessons - data['amount_homework_accepted']
         else:
             modules_list = module_manager.get_course_modules_list(_id_course)
             for module in modules_list:
