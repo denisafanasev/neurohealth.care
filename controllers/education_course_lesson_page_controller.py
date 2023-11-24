@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Markup
 
 from services.education_course_lesson_service import EducationCourseLessonService
@@ -289,7 +291,7 @@ class EducationCourseLessonPageController():
                         "id_user": message.id_user,
                         "name": user.name,
                         "text": Markup(message.text),
-                        "date_send": message.date_send
+                        "date_send": message.date_send.strftime("%d/%m/%Y")
                     })
 
             return homework_chat_view

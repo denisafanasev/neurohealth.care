@@ -50,7 +50,7 @@ class MessageManager():
             List: список сообщений чата
         """
 
-        data_store = DataStore("message")
+        data_store = DataStore("message", force_adapter='PostgreSQLDataAdapter')
 
         messages_data = data_store.get_rows({"id_homework_chat": _id_homework_chat})
         message_list = []
@@ -105,14 +105,18 @@ class MessageManager():
             Message: сообщение
         """
 
-        data_store = DataStore("message")
+        data_store = DataStore("message", force_adapter='PostgreSQLDataAdapter')
 
         _message["date_send"] = datetime.now()
-        message = Message(_id_user=_message['id_user'], _id_homework_chat=int(_message['id_homework_chat']),
+        message = Message(_id_user=_message['id_user'], _id_homework_chat=_message['id_homework_chat'],
                           _text=_message['text'], _date_send=_message['date_send'])
+        if not data_store.is_there_model_data_in_sql_db():
+            _message['date_send'] = _message['date_send'].strftime("%d/%m/%Y")
+        else:
+            _message['date_send'] = _message['date_send'].date()
 
         data_store.insert_row({"text": message.text, "id_user": message.id_user,
-                            "id_homework_chat": message.id_homework_chat, "date_send": _message['date_send'].strftime("%d/%m/%Y"),
+                            "id_homework_chat": message.id_homework_chat, "date_send": _message['date_send'],
                             "read": message.read})
 
         return message

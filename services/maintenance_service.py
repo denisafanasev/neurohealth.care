@@ -467,22 +467,26 @@ class MaintenanceService():
         data_store = DataStore("message", force_adapter="PostgreSQLDataAdapter")
         con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
 
-        message_json_df = self.get_json_data_in_dataframe('message')
+        message_json_df = self.get_json_data_in_dataframe('message.json')
         message_json_df.rename({'id': 'doc_id'})
+        pd.to_datetime(message_json_df['date_send'])
         message_json_df.to_sql('message', con, if_exists='append', index_label='doc_id')
 
+        data_store = DataStore("homework_chat", force_adapter="PostgreSQLDataAdapter")
         homework_chat_doc_id_empty = data_store.get_rows({
             'query': """
-            select chat_without_message.doc_id
-            from (select chat.*, message 
-                    from homework_chat chat
-                        left outer join message
-                            on chat.doc_id = message.id_homework_chat) chat_without_message
-            where message is null
+            with count_message_for_chat as (
+                select count(message.*) over (partition by homework_chat.doc_id) count_message, homework_chat.doc_id
+                from message right join homework_chat on id_homework_chat = homework_chat.doc_id
+            )
+            select count_message_for_chat.doc_id
+            from count_message_for_chat
+            where count_message = 0
             """
         })
-        doc_ids_list = [i['doc_id'] for i in homework_chat_doc_id_empty]
-        data_store.get_rows({'query': f'delete from homework_chat where doc_id in (select unnest({doc_ids_list}))'})
+        doc_ids_list = tuple([i['doc_id'] for i in homework_chat_doc_id_empty])
+
+        data_store.delete_row({'where': f"doc_id in {doc_ids_list}"})
 
     def get_json_data_in_dataframe(self, _name_file):
         # retrieve data from the file

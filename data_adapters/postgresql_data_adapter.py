@@ -1,6 +1,6 @@
 import sqlalchemy as db
 from sqlalchemy import create_engine, text, func, Table
-from sqlalchemy import insert, select, update
+from sqlalchemy import insert, select, update, delete
 from sqlalchemy import MetaData
 
 import config
@@ -192,10 +192,18 @@ class PostgreSQLDataAdapter():
 
         return _query
 
-    def get_rows_by_query(self, _data):
+    def get_rows_by_query(self, _data: dict):
 
         query_result = self.data_store.execute(text(_data))
 
         result = [u._asdict() for u in query_result.all()]
 
         return result
+
+    def delete_row(self, _data: dict) -> None:
+
+        query = delete(self.table)
+        if _data.get('where'):
+            query = query.where(text(_data['where']))
+
+        self.data_store.execute(query)

@@ -92,14 +92,15 @@ class HomeworkChatManager():
 
             query = f"""with count_messages_user as (select count(*) over (partition by doc_id) as unread_message_amount, id_homework_chat
                                                from message
-                                               where read is false {query_text })
-                        select homework_chat.*, unread_message_amount, array_to_json(array_agg(message)) as message
+                                               where read is false {query_text }),
+                             messages as (select * from message order by message.date_send desc )
+                        select homework_chat.*, unread_message_amount, array_to_json(array_agg(messages)) as message
                         from homework_chat,
-                             message, count_messages_user
-                        where homework_chat.doc_id = message.id_homework_chat
+                             messages, count_messages_user
+                        where homework_chat.doc_id = messages.id_homework_chat
                           and homework_chat.id_user = {_id_user} and count_messages_user.id_homework_chat = homework_chat.doc_id
                           and homework_chat.id_lesson = {_id_lesson}
-                        group by homework_chat.doc_id, id_lesson, homework_chat.id_user, unread_message_amount"""
+                        group by homework_chat.doc_id, id_lesson, homework_chat.id_user, unread_message_amount """
 
             homework_chat = data_store.get_rows({'query': query})
             if homework_chat:
