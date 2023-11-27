@@ -228,7 +228,7 @@ class EducationCourseLessonService():
 
         Args:
             _id_lesson(Integer): ID урока
-            _id_user(Integer): ID пользователя
+            _id_user(Integer): ID текущего пользователя
 
         Return:
             HomeworkChat: чат
@@ -237,21 +237,22 @@ class EducationCourseLessonService():
         message_manager = MessageManager()
         user_manager = UserManager()
 
-        if not homework_chat_manager.is_there_homework_chat_in_sql_db():
-            homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson, None)
-            if homework_chat is not None:
-                homework_chat.message = message_manager.get_messages_for_user(homework_chat.id, _id_user)
+        role_current_user = user_manager.get_user_role(_id_user)
+        if role_current_user == 'user':
+            if not homework_chat_manager.is_there_homework_chat_in_sql_db():
+                homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson, None)
+                if homework_chat is not None:
+                    homework_chat.message = message_manager.get_messages_for_user(homework_chat.id, _id_user)
 
-        else:
-            # role_current_user = user_manager.get_user_role(_id_current_user)
-            homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson, 'user')
-            messages_list = []
-            for user_message in homework_chat.message:
-                messages_list.append(message_manager.message_row_to_message(user_message))
+            else:
+                homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson, 'user')
+                messages_list = []
+                for user_message in homework_chat.message:
+                    messages_list.append(message_manager.message_row_to_message(user_message))
 
-            homework_chat.message = messages_list
+                homework_chat.message = messages_list
 
-        return homework_chat
+            return homework_chat
 
     def is_course_module_avalable_for_user(self, _course_id, _module_id, _user_id):
         """

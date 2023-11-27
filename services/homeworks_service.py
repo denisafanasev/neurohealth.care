@@ -284,12 +284,13 @@ class HomeworksService():
 
         return education_stream.get_education_streams()
 
-    def is_unread_messages(self, _id_lessons_list, _user_id):
+    def is_unread_messages(self, _id_lessons_list: list, _user_id: int, _course_id: int = None):
         """
         Проверяет на наличие непрочитанных суперпользователями сообщений.
         Args:
             _id_lessons_list(Int): список ID уроков курса
             _user_id(Int): ID пользователя
+            _course_id: ID курса
 
         Return:
             True - если есть хотя одно непрочитанное сообщение
@@ -298,13 +299,16 @@ class HomeworksService():
         homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()
 
-        unread_messages_list = message_manager.get_unread_messages_by_id_user(_user_id)
-        for unread_message in unread_messages_list:
-            homework_chat = homework_chat_manager.homework_chat_entry(unread_message.id_homework_chat)
-            if homework_chat.id_lesson in _id_lessons_list:
-                return True
+        unread_messages_list = message_manager.get_unread_messages_by_id_user(_user_id, _course_id)
+        if not homework_chat_manager.is_there_homework_chat_in_sql_db():
+            for unread_message in unread_messages_list:
+                homework_chat = homework_chat_manager.homework_chat_entry(unread_message.id_homework_chat)
+                if homework_chat.id_lesson in _id_lessons_list:
+                    return True
 
-        return False
+            return False
+
+        return unread_messages_list
 
     def get_amount_accepted_homework(self, _user_id: int, _id_lessons_list: list, _id_course: int = None):
         """

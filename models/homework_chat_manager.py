@@ -32,20 +32,44 @@ class HomeworkChatManager():
 
         return homework_chat
 
-    def homework_chat_entry(self, _id_homework_chat):
+    def homework_chat_entry(self, _id_homework_chat: int, _user_id: int = None, _user_role: str = 'user') -> HomeworkChat:
         """
         Подключает пользователя к чату
 
         Args:
             _id_homework_chat(Int): ID чата
+            _user_id: ID текущего пользователя
+            _user_role: роль текущего пользователя
 
         Returns:
-            HomeworkChat: комната чата
+            HomeworkChat: комната чата (Если в качестве БД используется PostgreSQL,
+                                        то также возвращает сообщения из этого чата)
         """
 
-        data_store = DataStore("homework_chat")
+        data_store = DataStore("homework_chat", force_adapter='PostgreSQLDataAdapter')
 
-        homework_chat_data = data_store.get_row_by_id(_id_homework_chat)
+        if not self.is_there_homework_chat_in_sql_db():
+            homework_chat_data = data_store.get_row_by_id(_id_homework_chat)
+        else:
+            if _user_role == 'superuser':
+                query_text = f'and message.id_user = {_user_id}'
+
+            else:
+                query_text = f'and message.id_user != {_user_id}'
+            homework_chat_data = data_store.get_rows({
+                'query': f"""with messages_chat as (select * from message
+                                        where message.id_homework_chat = {_id_homework_chat}
+                                        order by message.date_send)
+                            select homework_chat.*, array_to_json(array_agg(messages_chat)) message
+                            from messages_chat, homework_chat
+                            where homework_chat.doc_id = {_id_homework_chat}
+                            group by homework_chat.doc_id"""})
+            if len(homework_chat_data) == 1:
+                homework_chat_data = homework_chat_data[0]
+
+            else:
+                homework_chat_data = None
+
         if homework_chat_data is not None:
             return self.homework_chat_row_to_homework_chat(homework_chat_data)
 
@@ -92,7 +116,7 @@ class HomeworkChatManager():
 
             query = f"""with count_messages_user as (select count(*) over (partition by doc_id) as unread_message_amount, id_homework_chat
                                                from message
-                                               where read is false {query_text }),
+                                               where read is false {query_text}),
                              messages as (select * from message order by message.date_send desc )
                         select homework_chat.*, unread_message_amount, array_to_json(array_agg(messages)) as message
                         from homework_chat,

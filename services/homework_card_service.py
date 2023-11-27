@@ -30,9 +30,20 @@ class HomeworkCardService():
         homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()
 
-        homework_chat = homework_chat_manager.homework_chat_entry(_id_homework_chat)
-        if homework_chat is not None:
-            homework_chat.message = message_manager.get_messages_for_superuser(_id_homework_chat, _id_user)
+        if not homework_chat_manager.is_there_homework_chat_in_sql_db():
+            homework_chat = homework_chat_manager.homework_chat_entry(_id_homework_chat)
+            if homework_chat is not None:
+                homework_chat.message = message_manager.get_messages_for_superuser(_id_homework_chat, _id_user)
+
+        else:
+            homework_chat = homework_chat_manager.homework_chat_entry(_id_homework_chat, _id_user, 'superuser')
+            if homework_chat is not None:
+                if len(homework_chat.message) > 0:
+                    messages_list = []
+                    for message in homework_chat.message:
+                        messages_list.append(message_manager.message_row_to_message(message))
+
+                    homework_chat.message = messages_list
 
         return homework_chat
 

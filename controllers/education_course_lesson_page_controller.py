@@ -274,7 +274,7 @@ class EducationCourseLessonPageController():
         """
         lesson_service = EducationCourseLessonService()
 
-        homework_chat = lesson_service.get_homework_chat(_id_lesson, _id_user, )
+        homework_chat = lesson_service.get_homework_chat(_id_lesson, _id_user)
         if homework_chat is not None:
             homework_chat_view = {
                 "id": homework_chat.id,

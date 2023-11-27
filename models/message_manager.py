@@ -159,7 +159,7 @@ class MessageManager():
 
         return amount_unread_messages
 
-    def get_unread_messages_by_id_user(self, _id_user):
+    def get_unread_messages_by_id_user(self, _id_user, _course_id):
         """
         Возвращает список непрочитанных суперпользователями сообщений от пользователя
 
@@ -169,10 +169,33 @@ class MessageManager():
         Return:
             unread_messages_list(List(Message)): список непрочитанных сообщений
         """
-        data_store = DataStore('message')
+        data_store = DataStore('message', force_adapter='PostgreSQLDataAdapter')
 
-        unread_messages_data_list = data_store.get_rows({'read': False, 'id_user': _id_user})
+        if not data_store.is_there_model_data_in_sql_db():
+            unread_messages_data_list = data_store.get_rows({'read': False, 'id_user': _id_user})
 
-        unread_messages_list = [self.message_row_to_message(unread_message) for unread_message in unread_messages_data_list]
+            unread_messages_list = [self.message_row_to_message(unread_message) for unread_message in unread_messages_data_list]
 
-        return unread_messages_list
+            return unread_messages_list
+        else:
+            is_unread_messages = data_store.get_rows({
+                'query': f"""with count_messages_user as (select count(*) over (partition by doc_id) as unread_message_amount, id_homework_chat
+                                                         from message
+                                                         where read is false
+                                                           and message.id_user = {_id_user}),
+                                 lesson as (select lessons.*, module.doc_id module_doc_id
+                                            from lessons
+                                                     left join (select modules.*, courses_list.doc_id course_doc_id
+                                                                from modules
+                                                                         left join courses_list on modules.id_course = courses_list.doc_id
+                                                                where courses_list.doc_id = 1) module
+                                                               on lessons.id_module = module.doc_id),
+                                 homework_chats as (select homework_chat.*, lesson.doc_id lesson_doc_id
+                                                    from homework_chat
+                                                             left join lesson on homework_chat.id_lesson = lesson.doc_id)
+                            select exists(select 1
+                                          from homework_chats, count_messages_user
+                                          where count_messages_user.id_homework_chat = homework_chats.doc_id)"""
+            })
+
+            return is_unread_messages[0]['exists']
