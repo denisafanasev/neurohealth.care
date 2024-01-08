@@ -1,8 +1,5 @@
-import os
 from datetime import datetime
 
-import config
-from models import timetable_manager
 from models.action_manager import ActionManager
 from models.course_manager import EducationCourseManager
 from models.education_stream_manager import EducationStreamManager
@@ -15,8 +12,6 @@ from models.module_manager import EducationModuleManager
 from models.lesson_manager import EducationLessonManager
 from models.message_manager import MessageManager
 from models.courses_access_manager import CoursesAccessManager
-
-from error import HomeworkManagerException, EducationCourseLessonServiceException
 
 
 class EducationCourseLessonService():
@@ -151,7 +146,7 @@ class EducationCourseLessonService():
             homework_files_list = upload_service.upload_files(_files_list, user.login)
             homework_manager.create_homework(homework_files_list, _text, _current_user_id, _id_lesson)
 
-            action_manager.add_notifications("", "сдал", lesson.name, "homework_manager", user.login)
+            action_manager.add_notifications("", "сдал", lesson.name, "homework_manager", user)
 
     def get_last_homework(self, _id_lesson, _user_id):
         """

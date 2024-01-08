@@ -105,10 +105,12 @@ class EducationListCoursesService():
 
         modules_list = module_manager.get_course_modules_list(_id_course)
 
-        amount_modules_passed = 0
-        amount_modules_no_passed = 0
-        amount_homework_accepted = 0
-        amount_homework_no_accepted = 0
+        data = {
+            'amount_modules_passed': 0,
+            'amount_modules_no_passed': 0,
+            'amount_homework_accepted': 0,
+            'amount_homework_no_accepted': 0
+        }
         for module in modules_list:
             lessons_list = lesson_manager.get_lessons_list_by_id_module(module.id)
             is_passed = True
@@ -117,13 +119,13 @@ class EducationListCoursesService():
                     homework_accepted = homework_manager.is_accepted_homework(_user_id, lesson.id)
                     if not homework_accepted:
                         is_passed = False
-                        amount_homework_no_accepted += 1
+                        data['amount_homework_no_accepted'] += 1
                     else:
-                        amount_homework_accepted += 1
+                        data['amount_homework_accepted'] += 1
 
             if is_passed:
-                amount_modules_passed += 1
+                data['amount_modules_passed'] += 1
             else:
-                amount_modules_no_passed += 1
+                data['amount_modules_no_passed'] += 1
 
-        return amount_modules_passed, amount_modules_no_passed, amount_homework_accepted, amount_homework_no_accepted
+        return data

@@ -295,17 +295,44 @@ def user_manager():
         return redirect(url_for("multilingual.main_page"))
 
     endpoint = request.endpoint
-    users_list = page_controller.get_users_list_view(current_user_id)
 
-    error = None
-    error_type = None
-    num_page = 0
+    search_text = request.args.get('search')
+    if request.method == 'POST':
+        if request.form.get('search'):
+            search_text = request.form['search']
+            if search_text != ' ':
+                return redirect(url_for('multilingual.user_manager', page=1, search=search_text))
+            else:
+                return redirect(url_for('multilingual.user_manager', page=1))
+
+        elif request.form.get('page'):
+            page = request.form['page']
+            if search_text is not None:
+                return redirect(url_for('multilingual.user_manager', page=page, search=search_text))
+
+            return redirect(url_for('multilingual.user_manager', page=page))
+
+    page = request.args.get('page')
+
+    data = page_controller.get_numbers_pages(current_user_id, search_text)
+    if page is not None:
+        page = int(page)
+        if data is None:
+            return redirect(url_for('multilingual.user_manager'))
+    else:
+        if data is not None:
+            if not search_text:
+                return redirect(url_for('multilingual.user_manager', page=1))
+
+    if not search_text:
+        users_list = page_controller.get_users_list_view(current_user_id, page)
+    else:
+        users_list = page_controller.get_users_by_search_text(search_text, current_user_id, page)
 
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _users_list=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _error=error, _error_type=error_type, _num_page=num_page, _languages=config.LANGUAGES,
-                           _lang_code=get_locale())
+                           _languages=config.LANGUAGES, _lang_code=get_locale(), _data=data)
 
 
 @multilingual.route('/user_profile', methods=['GET', 'POST'])
@@ -347,9 +374,12 @@ def user_profile():
     else:
         user_id = int(user_id)
 
-    data = page_controller.get_users_profile_view(user_id)
-    education_streams_list = page_controller.get_education_streams_list(user_id, data['role'])
-    data_edit = {}
+    data, data_placeholder = page_controller.get_users_profile_view(user_id)
+    if data:
+        education_streams_list = page_controller.get_education_streams_list(user_id, data['role'])
+    else:
+        education_streams_list = []
+
     active_tab = 'user_profile'
 
     try:
@@ -358,19 +388,18 @@ def user_profile():
                 if mode == "new":
                     # добавляем нового пользователя и получаем список с ошибками
                     # если их нет, то получаем id пользователя
-                    user = {}
-                    user["login"] = request.form["login"]
-                    user["name"] = request.form["user_name"]
-                    user["password"] = request.form["password"]
-                    user["password2"] = request.form["password2"]
-                    user["email"] = request.form["email"]
-                    user["role"] = request.form["role"]
-                    user["probationers_number"] = int(request.form["probationers_number"])
-                    user['active'] = True
+                    user = {
+                        "login": request.form["login"],
+                        "name": request.form["user_name"],
+                        "password": request.form["password"],
+                        "password2": request.form["password2"],
+                        "email": request.form["email"],
+                        "role": request.form["role"],
+                        "probationers_number": int(request.form["probationers_number"]),
+                        'active': True
+                    }
 
-                    message_error = page_controller.create_user(user["login"], user["name"], user["password"],
-                                                                user["password2"], user["email"], user["role"],
-                                                                user["probationers_number"], current_user_id)
+                    message_error = page_controller.create_user(user, current_user_id)
                     if isinstance(message_error, int):
                         session['message_error'] = "Пользователь сохранён!"
                         session['status_code'] = "Successful"
@@ -379,7 +408,7 @@ def user_profile():
                     else:
                         status_code = 'Error'
 
-                    data_edit = user
+                    data = user
 
             elif request.form.get("button") == "edit":
                 if mode == "view":
@@ -387,25 +416,22 @@ def user_profile():
 
             elif request.form.get("button") == "save":
                 if mode == "edit":
-                    user = {}
-                    user["login"] = data['login']
-                    user["name"] = request.form["user_name"]
-                    user["email"] = request.form["email"]
-                    user["role"] = request.form["role"]
-                    user["probationers_number"] = int(request.form["probationers_number"])
-                    user["created_date"] = data["created_date"]
-                    user['education_module_expiration_date'] = data["education_module_expiration_date"]
-                    user['active'] = request.form.get('is_active')
+                    user = {
+                        "login": data['login'],
+                        "name": request.form["user_name"],
+                        "email": request.form["email"],
+                        "role": request.form["role"],
+                        "probationers_number": int(request.form["probationers_number"]),
+                        "created_date": data["created_date"],
+                        'education_module_expiration_date': data["education_module_expiration_date"],
+                        'active': request.form.get('is_active')
+                    }
                     if user['active'] is not None:
                         user['active'] = True
                     else:
                         user['active'] = False
 
-                    message_error = page_controller.chenge_user(user_id, user["login"], user["name"], user["email"],
-                                                                user["role"],
-                                                                user["probationers_number"], user["created_date"],
-                                                                user['education_module_expiration_date'],
-                                                                user['active'], current_user_id)
+                    message_error = page_controller.chenge_user(user_id, user, current_user_id)
                     if message_error is None:
                         session['message_error'] = "Изменения сохранены!"
                         session['status_code'] = "Successful"
@@ -414,7 +440,7 @@ def user_profile():
                     else:
                         status_code = 'Error'
 
-                    data_edit = user
+                    data = user
 
             elif request.form.get("button") == "reset":
                 user = {}
@@ -466,16 +492,12 @@ def user_profile():
     except exceptions.BadRequestKeyError:
         mode = "view"
 
-    if data_edit == {}:
-        data_edit = data
-
     return render_template('user_profile.html', view="user_profile", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _data_edit=data_edit, _data=data, _settings=settings_user,
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
                            _is_current_user_admin=flask_login.current_user.is_admin(), _user_id=user_id,
-                           _mode=mode, _message_error=message_error, _status_code=status_code,
+                           _mode=mode, _message_error=message_error, _status_code=status_code, _settings=settings_user,
                            _education_streams_list=education_streams_list, _active_tab=active_tab,
-                           _lang_code=get_locale(), _languages=config.LANGUAGES)
+                           _lang_code=get_locale(), _languages=config.LANGUAGES, _data_placeholder=data_placeholder)
 
 
 @multilingual.route('/user_actions', methods=['GET', 'POST'])
@@ -605,7 +627,8 @@ def education_program_subscription():
     _data = page_controller.get_page_data(1)
 
     return render_template('education_program_subscription.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=_data, _lang_code=get_locale(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=_data,
+                           _lang_code=get_locale(),
                            _languages=config.LANGUAGES)
 
 
@@ -625,12 +648,10 @@ def evolution_centre_dummy():
     user_id = flask_login.current_user.user_id
 
     return render_template('evolution_centre_dummy.html', view="corrections", _menu=mpc.get_main_menu(),
-                           _active_main_menu_item=mpc.get_active_menu_item_number(
-                               endpoint), _data="", _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+                           _data="", _lang_code=get_locale(), _languages=config.LANGUAGES)
 
 
-# @app.route('/education_list_courses', methods=['GET', 'POST'])
 @multilingual.route('/education_list_courses')
 @login_required
 def education_list_courses():
@@ -689,7 +710,8 @@ def education_course():
 
     return render_template('education_course.html', view="corrections", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _data=data,
-                           _user=user, _course_type=course.get('type'), _course_name=course.get('name'), _lang_code=get_locale(),
+                           _user=user, _course_type=course.get('type'), _course_name=course.get('name'),
+                           _lang_code=get_locale(),
                            _languages=config.LANGUAGES)
 
 
@@ -718,30 +740,6 @@ def education_course_lesson():
     except (ValueError, TypeError) as e:
         return redirect(url_for('multilingual.education_course_lesson', id_video=1, id_lesson=id_lesson))
 
-    user = page_controller.get_user_view_by_id(user_id)
-    data = page_controller.get_lesson(user_id, id_lesson, id_video)
-    homework = None
-    homework_chat = None
-    course = None
-    neighboring_lessons = None
-    error_message = session.get('error_message')
-    status_code = session.get('status_code')
-    if session.get('error_message') is not None:
-        session.pop('error_message')
-
-    if session.get('status_code') is not None:
-        session.pop('status_code')
-
-    if data is not None:
-        course = page_controller.get_course_by_id(data['id_course'])
-
-        neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
-        if not data['available']:
-            return redirect(url_for('multilingual.education_program_subscription'))
-
-    if id_video is None:
-        id_video = 1
-
     if request.method == "POST":
         # сохраняем новое сообщение
         if request.form.get("send"):
@@ -759,6 +757,27 @@ def education_course_lesson():
                 session['status_code'] = 'Error'
 
         return redirect(url_for('multilingual.education_course_lesson', id_video=1, id_lesson=id_lesson))
+
+    user = page_controller.get_user_view_by_id(user_id)
+    data = page_controller.get_lesson(user_id, id_lesson, id_video)
+    homework = None
+    homework_chat = None
+    course = None
+    neighboring_lessons = None
+    error_message = session.get('error_message')
+    status_code = session.get('status_code')
+    if session.get('error_message') is not None:
+        session.pop('error_message')
+
+    if session.get('status_code') is not None:
+        session.pop('status_code')
+
+    if data is not None:
+        if not data['available']:
+            return redirect(url_for('multilingual.education_program_subscription'))
+
+        course = page_controller.get_course_by_id(data['id_course'])
+        neighboring_lessons = page_controller.get_neighboring_lessons(user_id, id_lesson, data['id_course'])
 
     if data is not None:
         if data['available']:
@@ -889,17 +908,11 @@ def education_home_task_card():
     id_homework = request.args.get("id_homework")
     id_homework_chat = request.args.get("id_chat")
 
-    data = None
-    homework = None
-    if id_homework is not None:
-        homework = page_controller.get_homework(int(id_homework))
-        if homework is not None:
-            data = page_controller.get_data_by_id_homework(int(id_homework))
-    elif id_homework_chat is not None:
-        data = page_controller.get_data_by_id_homework_chat(id_homework_chat, user_id)
+    data, homework = page_controller.get_data_by_id_homework(id_homework)
+    if data is None:
+        data, homework_chat = page_controller.get_data_by_id_homework_chat(id_homework_chat, user_id)
 
     user = page_controller.get_user_by_id(user_id)
-    homework_chat = None
     message_error = session.get('message_error')
     status_code = session.get('status_code')
     if session.get('message_error') is not None:
@@ -932,15 +945,11 @@ def education_home_task_card():
         else:
             return redirect(url_for('multilingual.education_home_task_card', id_homework=id_homework))
 
-    if data is not None:
-        if id_homework is not None:
-            if homework is not None:
-                homework_chat = page_controller.get_homework_chat_by_id_homework(int(id_homework), homework['id_user'])
-        else:
-            homework_chat = page_controller.homework_chat_entry(int(id_homework_chat), data['user']['id'])
+    if homework is not None:
+        homework_chat = page_controller.get_homework_chat_by_id_homework(int(id_homework), homework['id_user'])
 
-    return render_template('education_home_task_card.html', view="corrections", _menu=mpc.get_main_menu(), _user=user,
-                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
+    return render_template('education_home_task_card.html', view="corrections", _menu=mpc.get_main_menu(),
+                           _active_main_menu_item=mpc.get_active_menu_item_number(endpoint), _user=user,
                            _homework_chat=homework_chat, _lang_code=get_locale(), _languages=config.LANGUAGES,
                            _homework=homework, _data=data, _message_error=message_error, _status_code=status_code)
 
@@ -1037,7 +1046,8 @@ def probe_profile():
             date_of_birth = probationer["date_of_birth"]
 
             probe_id = page_controller.add_probe(name_probationer, probationer_id, date_of_birth, user_id)
-            return redirect(url_for("multilingual.probe_profile", probationer_id=probationer_id, probe_id=probe_id, test_id=1))
+            return redirect(
+                url_for("multilingual.probe_profile", probationer_id=probationer_id, probe_id=probe_id, test_id=1))
 
         elif mode == "add_value_tests":
             probe_id = request.args.get("probe_id")
@@ -1056,7 +1066,8 @@ def probe_profile():
                 next_test_id = int(request.form["action"])
 
                 return redirect(
-                    url_for("multilingual.probe_profile", probationer_id=probationer_id, probe_id=probe_id, test_id=next_test_id))
+                    url_for("multilingual.probe_profile", probationer_id=probationer_id, probe_id=probe_id,
+                            test_id=next_test_id))
 
     return render_template('probe_profile.html', view="probe_profile", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
@@ -1369,24 +1380,44 @@ def maintenance():
     current_user_id = flask_login.current_user.user_id
     page_controller = MaintenancePageController()
     mpc = MainMenuPageController(current_user_id)
-    upload_users_from_json_to_sql_page_data = page_controller.get_upload_users_from_json_to_sql_page_data(
-        current_user_id)
 
     if not flask_login.current_user.is_admin():
         return redirect(url_for("multilingual.main_page"))
 
     endpoint = request.endpoint
+    message_error, status_code = session.get('message_error'), session.get('status_code')
+    if message_error is not None:
+        session.pop('message_error')
+
+    if status_code is not None:
+        session.pop('status_code')
 
     if request.method == "POST":
         action_name = request.form['submit_button']
 
         if action_name == "upload_users_from_json_to_sql":
-            page_controller.upload_users_from_json_to_sql(current_user_id)
+            session['message_error'], session['status_code'] = page_controller.upload_users_from_json_to_sql(
+                current_user_id)
+
+        elif action_name == 'upload_action_from_json_to_sql':
+            session['message_error'], session['status_code'] = page_controller.upload_actions_from_json_to_sql()
+
+        else:
+            session['message_error'], session['status_code'] = page_controller.create_table_in_sql(action_name)
+
+        return redirect(url_for('multilingual.maintenance'))
+
+    upload_users_from_json_to_sql_page_data = page_controller.get_upload_users_from_json_to_sql_page_data(
+        current_user_id)
+    upload_actions_from_json_to_sql_page_data = page_controller.get_upload_actions_from_json_to_sql_page_data(
+        current_user_id)
 
     return render_template('maintenance.html', view="maintenance", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
-                           _endpoint=endpoint, _page_data=upload_users_from_json_to_sql_page_data, _lang_code=get_locale(),
-                           _languages=config.LANGUAGES)
+                           _endpoint=endpoint, _user_page_data=upload_users_from_json_to_sql_page_data,
+                           _lang_code=get_locale(),
+                           _languages=config.LANGUAGES, _action_page_data=upload_actions_from_json_to_sql_page_data,
+                           _status_code=status_code, _message_error=message_error)
 
 
 @multilingual.route('/settings/estimated_values', methods=['GET', 'POST'])
@@ -1435,9 +1466,14 @@ def estimated_values():
 
 
 @multilingual.route('/education_streams', methods=['GET', 'POST'])
-@app.route('/education_streams', methods=['GET', 'POST'])
 @login_required
 def education_streams():
+    """
+    Страница просмотра списка обучающих потоков
+
+    Returns:
+
+    """
     page_controller = EducationStreamsPageController()
     endpoint = "education_streams"
     mpc = MainMenuPageController(flask_login.current_user.user_id)
@@ -1451,9 +1487,14 @@ def education_streams():
 
 
 @multilingual.route('/education_stream_card', methods=['GET', 'POST'])
-@app.route('/education_stream_card', methods=['GET', 'POST'])
 @login_required
 def education_stream_card():
+    """
+    Страница для просмотра/редактирования/создания обучающих потоков
+
+    Returns:
+
+    """
     endpoint = "education_streams"
 
     page_controller = EducationStreamPageController()
@@ -1494,8 +1535,8 @@ def education_stream_card():
     else:
         # Если пользователь просматривает карточку обучающего потока, то ищем только данные пользователей и курса
         # этого обучающего потока
-        curators_list = page_controller.get_curators_list(user_id, education_stream['curators_list'])
-        students_list = page_controller.get_students_list(user_id, education_stream['students_list'])
+        curators_list = page_controller.get_curators_list(user_id, id_education_stream)
+        students_list = page_controller.get_students_list(user_id, id_education_stream)
         courses_list = [education_stream['course']]
 
     if request.method == 'POST':

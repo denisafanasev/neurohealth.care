@@ -1,5 +1,3 @@
-import os
-
 import config
 from models.homework_manager import HomeworkManager
 from models.course_manager import EducationCourseManager

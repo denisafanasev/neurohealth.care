@@ -1,11 +1,13 @@
 from tinydb import TinyDB, Query, where
 import json
 from tinydb.operations import delete, increment, add
+from sqlalchemy import text, exc
 
 from data_adapters.tinydb_data_adapter import TinyDBDataAdapter
 from data_adapters.postgresql_data_adapter import PostgreSQLDataAdapter
 
 import config
+
 
 class DataStore():
     """
@@ -29,8 +31,14 @@ class DataStore():
         if force_adapter is None:
             force_adapter = config.data_adapter()
 
+        self.current_data_adapter = force_adapter
         if force_adapter == "PostgreSQLDataAdapter":
-            self.data_store = PostgreSQLDataAdapter(_table_name)
+            try:
+                self.data_store = PostgreSQLDataAdapter(_table_name)
+            except exc.NoSuchTableError:
+                self.data_store = TinyDBDataAdapter(_table_name, tinydb_table_name)
+                self.current_data_adapter = 'TinyDBDataAdapter'
+                # raise NoSuchTableError('Данной таблицы в PostgreSQL не существует. Данные берутся из TinyDB')
 
         elif force_adapter == "TinyDBDataAdapter":
             self.data_store = TinyDBDataAdapter(_table_name, tinydb_table_name)
@@ -146,4 +154,3 @@ class DataStore():
         """
 
         self.data_store.delete_row(_data_ids)
-

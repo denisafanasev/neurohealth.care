@@ -41,58 +41,50 @@ class UserProfilePageController():
             user_view['education_stream_list'] = []
 
             user_view['active'] = user.active
-        else:
-            user_view["login"] = "введите логин пользователя.."
-            user_view["name"] = "введите имя пользователя.."
-            user_view["email"] = "введите email пользователя.."
-            user_view["password"] = "введите пароль.."
-            user_view["password2"] = "введите повторно пароль.."
-            user_view["role"] = "Выберите роль пользователя"
-            user_view["probationers_number"] = "Выберите количество доступных тестируемых"
-            user_view["token"] = ""
-            user_view["active"] = True
-            user_view["email_confirmed"] = False
 
-        return user_view
+        data_placeholder = {
+            "login": "введите логин пользователя..",
+            "name": "введите имя пользователя..",
+            "email": "введите email пользователя..",
+            "password": "введите пароль..",
+            "password2": "введите повторно пароль..",
+            "role": "Выберите роль пользователя",
+            "probationers_number": "Выберите количество доступных тестируемых",
+            "token": "",
+            "active": True,
+            "email_confirmed": False}
 
-    def create_user(self, _login, _name, _password, _password2, _email, _role, _probationers_number, _current_user_id):
+        return user_view, data_placeholder
+
+    def create_user(self, _user, _current_user_id):
         """
         Создает в системе пользователя. Если нет ошибок при создании пользователя, возвращает id нового пользователя,
         иначе передает сообщение ошибки.
 
         Args:
-            _login (String): логин пользователя
-            _name (String): имя пользователя
-            _password (String): пароль пользователя
-            _password2 (String): контрольный ввод пароля пользователя
-            _email (String): email пользователя
-            _role (String): роль пользователя [user/superuser]
-            _probationers_number (int): количество доступных тестируемых
+            _user (Dict): данные нового пользователя
+            _current_user_id(Int): ID текущего пользователя
 
         Returns:
             String: ошибка при создании пользователя
-
         """
 
         user_profile_service = UserProfileService()
         try:
-            user_id = user_profile_service.create_user(_login, _name, _password, _password2, _email, _role,
-                                             _probationers_number, _current_user_id=_current_user_id)
+            user_id = user_profile_service.create_user(_user, _current_user_id=_current_user_id)
         except UserManagerException as error:
             return error
 
         return user_id
 
-    def chenge_user(self, _user_id, _login, _name, _email, _role, _probationers_number, _created_date,
-                    _education_module_expiration_date, _is_active, _current_user_id):
+    def chenge_user(self, _user_id, _user, _current_user_id):
         """
         Обновляет информацию о пользователе и возвращает ее
 
         Args:
-            _login (String): логин пользователя
-            _name (String): имя пользователя
-            _email (String): email пользователя
-            _role (String): роль пользователя [user/superuser]
+            _user (Dict): обновленные данные пользователя
+            _current_user_id(Int): ID текущего пользователя
+            _user_id(Int): ID пользователя, чьи данные обновляют
 
         Returns:
             Dict: словарь с информацией о пользователе
@@ -101,8 +93,7 @@ class UserProfilePageController():
         user_profile_service = UserProfileService()
 
         try:
-            user_profile_service.chenge_user(_user_id, _login, _name, _email, _role, _probationers_number, _created_date,
-                                         _education_module_expiration_date, _is_active,_current_user_id)
+            user_profile_service.chenge_user(_user_id, _user, _current_user_id)
 
         except UserManagerException as error:
             return error

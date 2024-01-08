@@ -1,9 +1,10 @@
 import sqlalchemy as db
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text, func, Table
 from sqlalchemy import insert, select, update
 from sqlalchemy import MetaData
 
 import config
+
 
 class PostgreSQLDataAdapter():
     """
@@ -26,8 +27,9 @@ class PostgreSQLDataAdapter():
             _table_name    - Required  : имя таблицы данных (String)
         """
 
-        self.table_name = _table_name
         self.data_store = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
+        if _table_name is not None:
+            self.table = Table(_table_name, MetaData(bind=self.data_store), autoload_with=self.data_store)
 
     def get_rows(self, _filter=None):
         """
@@ -36,13 +38,17 @@ class PostgreSQLDataAdapter():
         @params:
             _filter   - Optional  : срока с заданным фильтром (String)
         """
+        #
+        # metadata = MetaData(bind=self.data_store)
+        # metadata.reflect()
 
-        result = []
+        query = select(self.table)
+        if _filter is not None:
+            query = self.update_query(_filter, query)
 
-        #if _filter is not None:
-        #    result = self.data_store.search(Query().fragment(_filter))
-        #else:
-        #    result = self.data_store.all()
+        query_result = self.data_store.execute(query)
+
+        result = [u._asdict() for u in query_result]
 
         return result
 
@@ -56,20 +62,15 @@ class PostgreSQLDataAdapter():
 
         result = None
 
-
         if _id != '':
-
-            # read DB metadata
-            metadata = MetaData(bind=self.data_store)
-            metadata.reflect()
-
             # run select by doc_id (default primary key for each table)
             query_result = self.data_store.execute(
-                select(metadata.tables[self.table_name]).where(metadata.tables[self.table_name].columns["doc_id"] == _id)
+                select(self.table).where(self.table.columns["doc_id"] == _id)
             )
-
             # convert sqlalchemy query result to list of dict
             result = [u._asdict() for u in query_result.all()]
+
+            result = result[0] if result else None
 
         return result
 
@@ -79,17 +80,12 @@ class PostgreSQLDataAdapter():
         @params:
             _filter   - Optional  : срока с заданным фильтром (String)
         """
-
-        result = 0
-
-        # read DB metadata
-        metadata = MetaData(bind=self.data_store)
-        metadata.reflect()
-
-        query_result = db.select([db.func.count()]).select_from(metadata.tables[self.table_name]).scalar()
+        query_result = db.select([db.func.count()]).select_from(self.table)
+        if _filter:
+            query_result = self.update_query(_filter, query_result)
 
         # convert sqlalchemy query result to scalar
-        result = query_result
+        result = query_result.scalar()
 
         return result
 
@@ -107,9 +103,17 @@ class PostgreSQLDataAdapter():
         metadata = MetaData(bind=self.data_store)
         metadata.reflect()
 
+        if _data.get('doc_id') is None:
+            doc_id_last = self.data_store.execute(select(db.func.max(self.table.columns['doc_id']))).scalar()
+            if doc_id_last is not None:
+                _data['doc_id'] = doc_id_last + 1
+            else:
+                _data['doc_id'] = 1
         result = self.data_store.execute(
-            insert(metadata.tables[self.table_name]),[_data],
+            insert(self.table), [_data],
         )
+
+        return _data['doc_id']
 
     '''
     def update_row(self, _data, _where):
@@ -143,5 +147,37 @@ class PostgreSQLDataAdapter():
         metadata.reflect()
 
         result = self.data_store.execute(
-            update(metadata.tables[self.table_name]).where(metadata.tables[self.table_name].columns["doc_id"] == _id),[_data],
+            update(self.table).where(self.table.columns["doc_id"] == _id),
+            [_data],
         )
+
+    def update_query(self, _query_dict, _query):
+        """
+        Дополняет запрос к БД
+
+        Args:
+            _query_dict(Dict):
+            _query(Query)
+
+        Returns:
+            _query(Query): Окончательный запрос
+        """
+        if _query_dict.get('where') is not None:
+            _query = _query.where(text(_query_dict['where']))
+
+        if _query_dict.get('group_by') is not None:
+            _query = _query.group_by(text(_query_dict['group_by']))
+
+        if _query_dict.get('order_by') is not None:
+            _query = _query.order_by(text(_query_dict['order_by']))
+
+        if _query_dict.get('having') is not None:
+            _query = _query.having(text(_query_dict['having']))
+
+        if _query_dict.get('limit') is not None:
+            _query = _query.limit(_query_dict['limit'])
+
+        if _query_dict.get('offset') is not None:
+            _query = _query.offset(_query_dict['offset'])
+
+        return _query

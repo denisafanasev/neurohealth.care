@@ -1,6 +1,3 @@
-from datetime import datetime
-
-import config
 from models.action_manager import ActionManager
 from models.course_manager import EducationCourseManager
 from models.homework_manager import HomeworkManager
@@ -8,6 +5,8 @@ from models.lesson_manager import EducationLessonManager
 from models.module_manager import EducationModuleManager
 from models.user_manager import UserManager
 from models.education_stream_manager import EducationStreamManager
+
+
 class MainPageService():
     """
     MainPageService - класс бизнес-логики сервиса управления настройками приложения
@@ -38,7 +37,7 @@ class MainPageService():
 
         return user
 
-    def chenge_password(self, _user_id, _password, _password2, _current_password=''):
+    def chenge_password(self, _user_id, _password, _password2, _current_password):
         """
         Обновляет в системе пароль пользователя
 
@@ -46,7 +45,7 @@ class MainPageService():
             _user_id (Integer): ID пользователя
             _password (String): пароль пользователя
             _password2 (String): контрольный ввод пароля пользователя
-            _current_password (String): текущий пароль пользователя. Defaults to ''
+            _current_password (String): текущий пароль пользователя
 
         Returns:
             String: ошибка при обновлении пароля пользователя
@@ -56,9 +55,9 @@ class MainPageService():
         action_manager = ActionManager()
 
         error = user_manager.chenge_password(_user_id, _password, _password2, _current_password)
-        login_superuser = user_manager.get_user_by_id(_user_id).login
+        user = user_manager.get_user_by_id(_user_id)
 
-        action_manager.add_notifications(login_superuser, "изменил", 'пароль', "user_manager", login_superuser)
+        action_manager.add_notifications(user.login, "изменил", 'пароль', "user_manager", user)
 
         return error
 
@@ -111,7 +110,10 @@ class MainPageService():
         Args:
             _id_course(Int): ID
             _id_accepted_lessons_list
-        Returns
+        Returns:
+            course.name: название курса
+            count_accepted_homework: количество принятый домашних работ
+            count_no_accepted_homeworkЖ количество непринятый домашних работ
         """
 
         course_manager = EducationCourseManager()

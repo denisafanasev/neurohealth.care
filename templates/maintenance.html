@@ -2,22 +2,86 @@
 
 {% block maintenance %}
 
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Загрузка списка пользователей в SQL базу</h5>
+    {% if _status_code=='Successful' %}
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <div class="alert-message">
+                <strong>Успешно</strong> {{ _message_error }}
+            </div>
+        </div>
+    {% elif _status_code=='Error' %}
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <div class="alert-message">
+                <strong>Ошибка</strong> {{ _message_error }}
+            </div>
+        </div>
+    {% endif %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Создание таблиц в SQL базу</h5>
 
-        <div class="row">
-            <div class="col-sm-12">
-                <form id="upload_users_from_json_to_sql" method="post" enctype="multipart/form-data">
-                    <p><strong><label>data folder:</label></strong> {{ _page_data["data_folder"]}}</p>
-                    <p><strong><label>users number:</label></strong> {{ _page_data["users_number"]}}</p>
-                    <p><strong><label>PostgreSQLDataAdapter connection string:</label></strong> {{ _page_data["PostgreSQLDataAdapter_connection_string"]}}</p>
-                    <p><strong><label>db users number:</label></strong> {{ _page_data["db_users_number"]}}</p>
-                    <button type="submit" name="submit_button" value="upload_users_from_json_to_sql" class="btn btn-primary">Upload data</button>
-                </form>
+            <div class="row">
+                <div class="col-sm-12">
+                    <form id="upload_users_from_json_to_sql" method="post" enctype="multipart/form-data">
+                    <div class="mb-2">
+                        <label for="create_table_users"><strong>users:</strong> {{ _user_page_data['is_there_table'] }}</label>
+                        <button {% if _user_page_data['is_there_table'] == "Created" %} disabled {% endif %}
+                                type="submit" name="submit_button" value="users" class="btn btn-primary">Create table</button>
+                    </div>
+                    <div class="mb-2">
+                        <label for="create_table_action"><strong>action:</strong> {{ _action_page_data['is_there_table'] }}</label>
+                        <button {% if _action_page_data['is_there_table'] == "Created" %} disabled {% endif %}
+                                type="submit" name="submit_button" value="action" class="btn btn-primary">Create table</button>
+                    </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Загрузка списка пользователей в SQL базу</h5>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <form id="upload_users_from_json_to_sql" method="post" enctype="multipart/form-data">
+                        <p><strong><label>data folder:</label></strong> {{ _user_page_data["data_folder"] }}</p>
+                        <p><strong><label>current data adapter:</label></strong> {{ _user_page_data["current_data_adapter"] }}</p>
+                        <p><strong><label>users number:</label></strong> {{ _user_page_data["users_number"] }}</p>
+                        <p><strong><label>PostgreSQLDataAdapter connection string:</label></strong> {{ _user_page_data["PostgreSQLDataAdapter_connection_string"] }}</p>
+                        <p><strong><label>db users number:</label></strong> {{ _user_page_data["db_users_number"] }}</p>
+                        <button{% if _user_page_data['is_there_table'] != "Created" %} disabled {% endif %}
+                                type="submit" name="submit_button" value="upload_users_from_json_to_sql" class="btn btn-primary">Upload data
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Загрузка списка действий пользователей в SQL базу</h5>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <form id="upload_users_from_json_to_sql" method="post" enctype="multipart/form-data">
+                        <p><strong><label>data folder:</label></strong> {{ _action_page_data["data_folder"] }}</p>
+                        <p><strong><label>current data adapter:</label></strong> {{ _action_page_data["current_data_adapter"] }}</p>
+                        <p><strong><label>actions number:</label></strong> {{ _action_page_data["actions_number"] }}</p>
+                        <p><strong><label>PostgreSQLDataAdapter connection string:</label></strong> {{ _action_page_data["PostgreSQLDataAdapter_connection_string"] }}</p>
+                        <p><strong><label>db actions number:</label></strong> {{ _action_page_data["db_actions_number"] }}</p>
+                        <button {% if _action_page_data['is_there_table'] == "No created" %}
+                                    {% if _user_page_data["db_users_number"] > 0 %}
+                                        disabled
+                                    {% endif %}
+                                {% endif %}
+                                type="submit" name="submit_button" value="upload_action_from_json_to_sql" class="btn btn-primary">Upload data
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

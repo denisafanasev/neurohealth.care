@@ -1,82 +1,66 @@
 from datetime import datetime, timedelta
-from services.education_stream_service import EducationStreamService
+from services.education_stream_card_service import EducationStreamCardService
 
 class EducationStreamPageController():
     """
     Класс страницы карточки обучающего потока
     """    
 
-    def get_students_list(self, _user_id, _students_list_education_stream=None):
+    def get_students_list(self, _user_id, _id_education_stream=None):
         """
-        Возвращает список пользователей с ролью user
+        Возвращает список студентов обучающего потока
+
+        Args:
+            _user_id(Int): ID текущего пользователя
+            _id_education_stream(Int): ID обучающего потока
 
         Returns:
             students_list(List): список пользователей
         """
 
-        education_stream_service = EducationStreamService()
+        education_stream_service = EducationStreamCardService()
 
-        students = education_stream_service.get_students_list(_user_id)
+        students = education_stream_service.get_students_list(_user_id, _id_education_stream)
         students_list = []
 
         for i_student in students:
-            if _students_list_education_stream is None:
-                student = {
-                    'id': i_student.user_id,
-                    'login': i_student.login,
-                    'name': i_student.name,
-                    'email': i_student.email
-                }
+            student = {
+                'id': i_student.user_id,
+                'login': i_student.login,
+                'name': i_student.name,
+                'email': i_student.email
+            }
 
-                students_list.append(student)
-            else:
-                if i_student.user_id in _students_list_education_stream:
-                    student = {
-                        'id': i_student.user_id,
-                        'login': i_student.login,
-                        'name': i_student.name,
-                        'email': i_student.email
-                    }
-
-                    students_list.append(student)
-
-
+            students_list.append(student)
 
         return students_list
 
-    def get_curators_list(self, _user_id, _curators_list_education_stream=None):
+    def get_curators_list(self, _user_id, _id_education_stream=None):
         """
-        Возвращает отформатированный список пользователей с ролью superuser
+        Возвращает список кураторов обучающего потока
+
+        Args:
+            _user_id(Int): ID текущего пользователя
+            _id_education_stream(Int): ID обучающего потока
 
         Returns:
-            [List]: список пользователей
+            curators_list(List): список пользователей
         """
 
-        education_stream_service = EducationStreamService()
+        education_stream_service = EducationStreamCardService()
 
-        curators = education_stream_service.get_curators_list(_user_id)
+        curators = education_stream_service.get_curators_list(_user_id, _id_education_stream)
         curators_list = []
 
         for i_curator in curators:
-            if _curators_list_education_stream is None:
-                curator = {
-                    'id': i_curator.user_id,
-                    'login': i_curator.login,
-                    'name': i_curator.name,
-                    'email': i_curator.email
-                }
+            curator = {
+                'id': i_curator.user_id,
+                'login': i_curator.login,
+                'name': i_curator.name,
+                'email': i_curator.email
+            }
 
-                curators_list.append(curator)
-            else:
-                if i_curator.user_id in _curators_list_education_stream:
-                    curator = {
-                        'id': i_curator.user_id,
-                        'login': i_curator.login,
-                        'name': i_curator.name,
-                        'email': i_curator.email
-                    }
-
-                    curators_list.append(curator)
+            curators_list.append(curator)
 
         return curators_list
 
@@ -91,7 +75,7 @@ class EducationStreamPageController():
             (List): список курсов
         """
 
-        education_stream_service = EducationStreamService()
+        education_stream_service = EducationStreamCardService()
 
         courses = education_stream_service.get_courses_list()
         courses_list = []
@@ -127,7 +111,7 @@ class EducationStreamPageController():
             _id(Int): идентификатор обучающего потока
         """
 
-        education_stream_service = EducationStreamService()
+        education_stream_service = EducationStreamCardService()
 
         if _id is not None:
             education_stream = education_stream_service.get_education_stream(_id)
@@ -194,7 +178,7 @@ class EducationStreamPageController():
         Returns:
             id(Int): идентификатор обучающего потока
         """
-        education_stream_manager = EducationStreamService()
+        education_stream_manager = EducationStreamCardService()
 
         id_education_stream = education_stream_manager.create_education_stream(_education_stream, _timetables_list,
                                                                                _current_user_id)
@@ -214,11 +198,12 @@ class EducationStreamPageController():
             None
         """
 
-        education_stream_service = EducationStreamService()
+        education_stream_service = EducationStreamCardService()
+
+        for timetable in _timetables_list:
+            timetable['date_start'] = datetime.strptime(timetable['date_start'], '%d/%m/%Y')
 
         education_stream_service.save_education_stream(_education_stream, _timetables_list, _current_user_id)
-
-        _education_stream['course'] = _education_stream.pop("id_course")
 
         return 'Редактирование обучающего потока успешно завершено.', 'Successful'
 
@@ -232,7 +217,7 @@ class EducationStreamPageController():
         Returns
             List(Dict): список расписаний
         """
-        education_stream_service = EducationStreamService()
+        education_stream_service = EducationStreamCardService()
 
         if _id is not None:
             timetables_list = education_stream_service.get_timetables_list(_id)

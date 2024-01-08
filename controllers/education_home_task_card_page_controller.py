@@ -3,6 +3,7 @@ from flask import Markup
 from services.homework_card_service import HomeworkCardService
 from error import HomeworkManagerException, HomeworkCardServiceException
 
+
 class EducationHomeworkCardPageController():
     """
     EducationChatPageController - класс контроллера представления чата с пользователями, реализующий логику взаимодействия приложения с пользователем.
@@ -10,39 +11,39 @@ class EducationHomeworkCardPageController():
     Взаимодейтвует с классами слоя сервисов, передавая им данные и получая данные в объектах доменной модели
     """
 
-    def homework_chat_entry(self, _id_homework_chat, _id_user):
-        """
-        Подключает пользователя к чату
-
-        Args:
-            _id_homework_chat(Integer): ID чата
-            _id_user(Integer) ID пользователя
-
-        Returns:
-            Dict: чат
-        """
-
-        homework_service = HomeworkCardService()
-
-        homework_chat = homework_service.homework_chat_entry(_id_homework_chat, _id_user)
-        if homework_chat is not None:
-            homework_chat_view = {
-                "id": homework_chat.id,
-                "message": []
-            }
-            if homework_chat.message is not None:
-                for i_message in homework_chat.message:
-                    user = homework_service.get_user_by_id(i_message.id_user)
-                    message = {
-                        "id": i_message.id,
-                        "text": Markup(i_message.text),
-                        "id_user": i_message.id_user,
-                        "name": user.name
-                    }
-
-                    homework_chat_view['message'].append(message)
-
-            return homework_chat_view
+    # def homework_chat_entry(self, _id_homework_chat, _id_user):
+    #     """
+    #     Подключает пользователя к чату
+    #
+    #     Args:
+    #         _id_homework_chat(Integer): ID чата
+    #         _id_user(Integer) ID пользователя
+    #
+    #     Returns:
+    #         Dict: чат
+    #     """
+    #
+    #     homework_service = HomeworkCardService()
+    #
+    #     homework_chat = homework_service.homework_chat_entry(_id_homework_chat, _id_user)
+    #     if homework_chat is not None:
+    #         homework_chat_view = {
+    #             "id": homework_chat.id,
+    #             "message": []
+    #         }
+    #         if homework_chat.message is not None:
+    #             for i_message in homework_chat.message:
+    #                 user = homework_service.get_user_by_id(i_message.id_user)
+    #                 message = {
+    #                     "id": i_message.id,
+    #                     "text": Markup(i_message.text),
+    #                     "id_user": i_message.id_user,
+    #                     "name": user.name
+    #                 }
+    #
+    #                 homework_chat_view['message'].append(message)
+    #
+    #         return homework_chat_view
 
     def add_message(self, _message, _id_lesson, _id_user):
         """
@@ -141,6 +142,9 @@ class EducationHomeworkCardPageController():
         """
         homework_service = HomeworkCardService()
 
+        if _id_homework is None:
+            return None
+
         homework = homework_service.get_homework(_id_homework)
         if homework is not None:
             if homework.status is None:
@@ -174,43 +178,62 @@ class EducationHomeworkCardPageController():
         """
         homework_service = HomeworkCardService()
 
-        homework = homework_service.get_homework(_id_homework)
-        if homework is not None:
-            data = {}
-            try:
-                module = homework_service.get_lesson(homework.id_lesson)
-                course = homework_service.get_course(module.id_course)
+        if _id_homework is None:
+            return None, None
+        else:
+            homework = homework_service.get_homework(int(_id_homework))
 
-                data["module"] = {
-                    "id": module.id,
-                    "name": module.name,
-                    "lesson":
-                        {
-                            "id": module.lessons.id,
-                            "name": module.lessons.name,
-                            "task": Markup(module.lessons.task)
-                        }
+        data = {}
+        try:
+            module = homework_service.get_lesson(homework.id_lesson)
+            course = homework_service.get_course(module.id_course)
+
+            data["module"] = {
+                "id": module.id,
+                "name": module.name,
+                "lesson": {
+                    "id": module.lessons.id,
+                    "name": module.lessons.name,
+                    "task": Markup(module.lessons.task)
                 }
+            }
 
-                data["course"] = {
-                    "id": course.id,
-                    "name": course.name
-                }
-            except HomeworkCardServiceException as error:
-                data['module'] = error
+            data["course"] = {
+                "id": course.id,
+                "name": course.name
+            }
+        except HomeworkCardServiceException as error:
+            data['module'] = error
 
-            user = homework_service.get_user_by_id(homework.id_user)
-            if user is not None:
-                data["user"] = {
-                    "id": user.user_id,
-                    "login": user.login,
-                    "name": user.name,
-                    "email": user.email,
-                }
-            else:
-                data['user'] = 'Данный пользователь не найден'
+        user = homework_service.get_user_by_id(homework.id_user)
+        if user is not None:
+            data["user"] = {
+                "id": user.user_id,
+                "login": user.login,
+                "name": user.name,
+                "email": user.email,
+            }
+        else:
+            data['user'] = 'Данный пользователь не найден'
 
-            return data
+        if homework.status is None:
+            homework.status = "не проверено"
+        elif homework.status:
+            homework.status = "Принято"
+        elif not homework.status:
+            homework.status = "Не принято"
+
+        homework_view = {
+            "id": homework.id,
+            "id_lesson": homework.id_lesson,
+            "id_user": homework.id_user,
+            "date_delivery": homework.date_delivery.strftime("%d/%m/%Y"),
+            "users_files_list": homework.users_files_list,
+            "status": homework.status,
+            "text": Markup(homework.text)
+        }
+
+        return data, homework_view
 
     def get_data_by_id_homework_chat(self, _id_homework_chat, _id_user):
         """
@@ -225,46 +248,65 @@ class EducationHomeworkCardPageController():
         """
         homework_service = HomeworkCardService()
 
-        homework_chat = homework_service.homework_chat_entry(_id_homework_chat, _id_user)
-        if homework_chat is not None:
-            data = {}
-            try:
-                module = homework_service.get_lesson(homework_chat.id_lesson)
+        if _id_homework_chat is None:
+            return None, None
 
-                data["module"] ={
-                    "id": module.id,
-                    "name": module.name,
-                    "lesson":
-                        {
-                            "id": module.lessons.id,
-                            "name": module.lessons.name,
-                            "task": Markup(module.lessons.task)
-                        }
+        else:
+            homework_chat = homework_service.homework_chat_entry(int(_id_homework_chat), _id_user)
+
+        data = {}
+        try:
+            module = homework_service.get_lesson(homework_chat.id_lesson)
+
+            data["module"] = {
+                "id": module.id,
+                "name": module.name,
+                "lesson": {
+                    "id": module.lessons.id,
+                    "name": module.lessons.name,
+                    "task": Markup(module.lessons.task)
                 }
-                course = homework_service.get_course(module.id_course)
+            }
+            course = homework_service.get_course(module.id_course)
 
-                data["course"] = {
-                    "id": course.id,
-                    "name": course.name
+            data["course"] = {
+                "id": course.id,
+                "name": course.name
+            }
+        except HomeworkCardServiceException as error:
+            data['module'] = error
+
+        except TypeError:
+            data['course'] = "Данный курс не найден"
+
+        user = homework_service.get_user_by_id(homework_chat.id_user)
+        if user is not None:
+            data["user"] = {
+                "id": user.user_id,
+                "login": user.login,
+                "name": user.name,
+                "email": user.email,
+            }
+        else:
+            data['user'] = 'Данный пользователь не найден'
+
+        homework_chat_view = {
+            "id": homework_chat.id,
+            "message": []
+        }
+        if homework_chat.message is not None:
+            for i_message in homework_chat.message:
+                user = homework_service.get_user_by_id(i_message.id_user)
+                message = {
+                    "id": i_message.id,
+                    "text": Markup(i_message.text),
+                    "id_user": i_message.id_user,
+                    "name": user.name
                 }
-            except HomeworkCardServiceException as error:
-                data['module'] = error
 
-            except TypeError:
-                data['course'] = "Данный курс не найден"
+                homework_chat_view['message'].append(message)
 
-            user = homework_service.get_user_by_id(homework_chat.id_user)
-            if user is not None:
-                data["user"] = {
-                    "id": user.user_id,
-                    "login": user.login,
-                    "name": user.name,
-                    "email": user.email,
-                }
-            else:
-                data['user'] = 'Данный пользователь не найден'
-
-            return data
+        return data, homework_chat_view
 
     def get_homework_chat_by_id_homework(self, _id_homework, _id_current_user):
         """
@@ -303,5 +345,3 @@ class EducationHomeworkCardPageController():
                     room_chat_view["message"] = message_list
 
                 return room_chat_view
-
-

@@ -156,11 +156,9 @@ class EducationStreamManager():
 
         education_streams_list = data_store.get_rows()
         education_streams = []
-        
         for i_education_stream in education_streams_list:
 
             education_stream = self.education_stream_row_to_education_stream(i_education_stream)
-
             if _role_user == "user":
                 if _id_user in education_stream.students_list:
                     education_streams.append(education_stream)
@@ -196,7 +194,7 @@ class EducationStreamManager():
         Возвращает список обучающих потоков, в которых superuser является учителем
 
         Args:
-            _user_id(Int): ID gjkmpjdfntkz
+            _user_id(Int): ID пользователя
 
         Returns:
             List(EducationStream): список обучающих потоков

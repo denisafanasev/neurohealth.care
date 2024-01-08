@@ -3,20 +3,6 @@
 {% block main_block %}
     <link href="https://cdn.quilljs.com/1.1.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.1.6/quill.js"></script>
-{#    <script>#}
-{#    document.addEventListener("DOMContentLoaded", function () {#}
-{#        var message = document.getElementById('message');#}
-{#        {% if _status_code == "Error" %}#}
-{#            document.querySelector('h3[id=title_message]').textContent = 'Ошибка';#}
-{#            document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";#}
-{#            message.style.display = "block";#}
-{#        {% elif _status_code == 'Successful' %}#}
-{#            document.querySelector('h3[id=title_message]').textContent = 'Успешно';#}
-{#            document.querySelector('p[id=text_message]').textContent = "{{ _error_message }}";#}
-{#            message.style.display = "block";#}
-{#        {% endif %}#}
-{#    });#}
-{#    </script>#}
     <script>
     // Проверяем выбрал ли пользователя ответ перед отправкой
     function checkAnswer(form) {

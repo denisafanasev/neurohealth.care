@@ -29,10 +29,11 @@ class EducationCoursePageController():
 
                 module_order += 1
 
-                module = {}
-                module["id"] = i_module.id
-                module["name"] = i_module.name
-                module["order"] = module_order
+                module = {
+                    "id": i_module.id,
+                    "name": i_module.name,
+                    "order": module_order
+                }
                 lesson_list = []
 
                 # проверим доступность модуля для пользователя
@@ -97,24 +98,14 @@ class EducationCoursePageController():
         """
 
         course_service = EducationCourseService()
-        user = course_service.get_user_by_id_and_course_id(_user_id, _id_course)
+        user = course_service.get_user_by_id_and_course_id(_user_id, int(_id_course))
 
         user_view = {
             "login": user.login,
             "role": user.role,
             "active_education_module": user.active_education_module,
             "education_module_expiration_date": user.education_module_expiration_date.strftime("%d/%m/%Y"),
-            "education_stream": {}
         }
-
-        '''
-        if type(user.education_stream_list) is not list:
-            user_view['education_stream'] = {
-                "id": user.education_stream_list.id,
-                "date_end": user.education_stream_list.date_end.strftime("%d/%m/%Y"),
-                "status": user.education_stream_list.status
-            }
-        '''
 
         return user_view
     

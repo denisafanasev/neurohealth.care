@@ -1,11 +1,8 @@
-import os
-
 from flask import url_for
 from werkzeug.utils import redirect
 
 from models.homework_chat_manager import HomeworkChatManager
 from models.message_manager import MessageManager
-from models.timetable_manager import TimetableManager
 from models.user_manager import UserManager
 from models.course_manager import EducationCourseManager
 from models.module_manager import EducationModuleManager
@@ -16,7 +13,6 @@ from models.action_manager import ActionManager
 from models.courses_access_manager import CoursesAccessManager
 
 from datetime import datetime
-import config
 
 
 class EducationCourseService():
@@ -64,12 +60,12 @@ class EducationCourseService():
 
         user = user_manager.get_user_by_id(_user_id)
 
-        education_streams = education_stream_manager.get_education_streams_list_by_id_user(user.login, user.role)
+        education_streams = education_stream_manager.get_education_streams_list_by_id_user(user.user_id, user.role)
 
-        if _course_id is not None:
-           for education_stream in education_streams:
-               if education_stream.course == _course_id and education_stream.status != "закончен":
-                   user.education_module_expiration_date = education_stream
+        for education_stream in education_streams:
+            if education_stream.id_course == _course_id:
+                if education_stream.status != "закончен":
+                    user.education_module_expiration_date = education_stream.date_end
 
         return user
     
@@ -202,6 +198,6 @@ class EducationCourseService():
 
         if lesson is not None:
             if user.role != "superuser":
-                action_manager.add_notifications(module, "посмотрел", '', "course_manager", user.login)
+                action_manager.add_notifications(module, "посмотрел", '', "course_manager", user)
 
             return redirect(url_for("multilingual.education_course_lesson", id_lesson=lesson.id, id_video=1))

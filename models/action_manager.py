@@ -14,10 +14,14 @@ class ActionManager():
             _action (List): список действий пользователя
         """
 
-        action = Action(_id=_data_row['id'], _user_login=_data_row["login"], _action=_data_row["action"])
+        doc_id = _data_row['doc_id'] if _data_row.get('doc_id') is not None else _data_row.doc_id
+        action = Action(_id=doc_id, _user_login=_data_row.get("login"), _action=_data_row["action"], _user_id=_data_row.get('user_id'))
 
         if _data_row.get("created_date") is not None:
-            action.created_date = datetime.strptime(_data_row["created_date"], '%d/%m/%Y %H:%M:%S')
+            if isinstance(_data_row['created_date'], str):
+                action.created_date = datetime.strptime(_data_row["created_date"], '%d/%m/%Y %H:%M:%S')
+            else:
+                action.created_date = _data_row['created_date']
         else:
             action.created_date = datetime.now()
 
@@ -40,7 +44,7 @@ class ActionManager():
             _place (String): тип места, где было совершенно действие
         """
 
-        data_store = DataStore("action")
+        data_store = DataStore("action", force_adapter='PostgreSQLDataAdapter')
 
         comment_action = ''
         if _name_place == "estimated_values":
@@ -61,7 +65,7 @@ class ActionManager():
 
         elif _name_place == "course_manager":
             _name_place = "урок"
-            comment_action = f"{_place.lessons.name[0:-1]} модуля {_place.lessons.id_module}"
+            comment_action = _place.lessons.name.replace('\n', '') + f" модуля {_place.lessons.id_module}"
 
         elif _name_place == "homework_manager":
             _name_place = "домашнюю работу"
@@ -73,19 +77,26 @@ class ActionManager():
         elif _name_place == "education_stream_manager":
             _name_place = f"обучающий поток {_action_place}"
 
-
             comment_action = f"по курсу {_place}"
 
         action = "{user} {action} {name_place}".format(
-            user=_user,
+            user=_user.login,
             action=_action,
             name_place=_name_place)
-        id = data_store.get_rows_count() + 1
 
-        action = self.action_row_to_action({"id": id, "login": _user, "action": action, "comment_action": comment_action})
+        # action = Action(_user_login= _user, _action=action, _comment_action=comment_action)
+        if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
+            action = Action(_user_id=_user.user_id, _action=action, _comment_action=comment_action)
+            created_date = action.created_date
 
-        data_store.insert_row({"id": action.id, "login": action.user_login, "action": action.action,
-                            "comment_action": action.comment_action, "created_date": action.created_date.strftime("%d/%m/%Y %H:%M:%S")})
+            data_store.insert_row({"user_id": action.user_id, "action": action.action,
+                                   "comment_action": action.comment_action, "created_date": created_date})
+        else:
+            action = Action(_user_login=_user.login, _action=action, _comment_action=comment_action)
+            created_date = action.created_date.strftime("%d/%m/%Y %H:%M:%S")
+
+            data_store.insert_row({"id": data_store.get_rows_count() + 1, "login": action.user_login, "action": action.action,
+                                   "comment_action": action.comment_action, "created_date": created_date})
 
     def get_last_ten_actions(self, _user):
         """
@@ -99,36 +110,34 @@ class ActionManager():
             actions(List): список испытуемых
         """
 
-        data_store = DataStore("action")
-    
-        actions_list = data_store.get_rows()
+        data_store = DataStore("action", force_adapter='PostgreSQLDataAdapter')
 
         date = datetime.now()
         actions = []
 
-        for i_action in actions_list:
-            if not _user.role == "superuser":
-                if _user.login == i_action["login"]:
-                    action = self.action_row_to_action(i_action)
-                    if action.comment_action == '':
-                        data_store.update_row({"comment_action": action.comment_action, "id": action.id}, "id")
-
-                    if date < action.created_date:
-                        actions.append({"action": action, "timedelta": date - date})
-                        data_store.update_row({"created_date": date.strftime("%d/%m/%Y %H:%M:%S"), "id": action.id}, "id")
-                    else:
-                        actions.append({"action": action, "timedelta": date - action.created_date})
-                    # timedelta_list.append(date - action.created_date)
+        # for i_action in actions_list:
+        if not _user.role == "superuser":
+            if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
+                actions_list = data_store.get_rows(
+                    {'where': f'action.user_id = {_user.user_id}', 'order_by': 'action.created_date desc', 'limit': 10})
             else:
-                action = self.action_row_to_action(i_action)
-                if date < action.created_date:
-                    actions.append({"action": action, "timedelta": date - date})
-                    data_store.update_row({"created_date": date.strftime("%d/%m/%Y %H:%M:%S"), "id": action.id}, "id")
-                else:
-                    actions.append({"action": action, "timedelta": date - action.created_date})
+                actions_list = data_store.get_rows({'login': _user.login})
+        else:
+            if data_store.current_data_adapter == '':
+                actions_list = data_store.get_rows(
+                    {'order_by': 'action.created_date desc', 'limit': 10})
+            else:
+                actions_list = data_store.get_rows()
+
+        for action_data in actions_list:
+            action = self.action_row_to_action(action_data)
+            if date < action.created_date:
+                actions.append({"action": action, "timedelta": date - date})
+                data_store.update_row({"created_date": date.strftime("%d/%m/%Y %H:%M:%S"), "id": action.id}, "id")
+            else:
+                actions.append({"action": action, "timedelta": date - action.created_date})
                 # timedelta_list.append(date - action.created_date)
 
-        # timedelta_list.sort()
         actions_list = sorted(actions, key=lambda d: d["timedelta"])
         actions = []
 
@@ -158,7 +167,8 @@ class ActionManager():
                     if time_ago.days < 28:
                         actions_list[i_action]['timedelta'] = f"{time_ago.days // 7} недель назад"
                     else:
-                        actions_list[i_action]['timedelta'] = f"{actions_list[i_action]['action'].created_date.strftime('%d/%m/%Y')}"
+                        actions_list[i_action][
+                            'timedelta'] = f"{actions_list[i_action]['action'].created_date.strftime('%d/%m/%Y')}"
                 else:
                     actions_list[i_action]['timedelta'] = f"{time_ago.days} дней назад"
 
@@ -166,21 +176,60 @@ class ActionManager():
 
         return actions
 
-    def get_actions(self, _login):
+    def get_actions_by_user(self, _user):
         """
         Возвращает все действия пользователя по логину
 
         Args:
-            _login(String): логин пользователя
+            _user(String): пользователь
 
         Returns:
             List(Action): список действий пользователя
         """
-        data_store = DataStore('action')
+        data_store = DataStore('action', force_adapter='PostgreSQLDataAdapter')
 
-        actions_list_data = data_store.get_rows({'login': _login})
+        if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
+            actions_list_data = data_store.get_rows({'where': f"action.user_id = '{_user.user_id}'"})
+        else:
+            actions_list_data = data_store.get_rows({"login": _user.login})
+
         actions_list = []
         for action_data in actions_list_data:
             actions_list.append(self.action_row_to_action(action_data))
 
         return actions_list
+
+    def get_actions(self):
+        """
+        Возвращает действия всех пользователей
+
+        Returns:
+            List: список действий
+        """
+        data_store = DataStore('action', force_adapter='PostgreSQLDataAdapter')
+
+        actions_list_data = data_store.get_rows()
+        actions_list = []
+        for action_data in actions_list_data:
+            actions_list.append(self.action_row_to_action(action_data))
+
+        return actions_list
+
+    def get_current_data_adapter(self):
+        """
+        Возвращает название адаптера, который используется сейчас
+
+        Returns:
+            Str: название адаптера
+        """
+        data_store = DataStore('action', force_adapter='PostgreSQLDataAdapter')
+
+        return data_store.current_data_adapter
+
+    def get_count_actions(self):
+        """
+        Возвращает количество действий пользователей в базе данных
+        """
+        data_store = DataStore('action', force_adapter='PostgreSQLDataAdapter')
+
+        return data_store.get_rows_count()
