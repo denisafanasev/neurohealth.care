@@ -22,7 +22,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <form id="upload_users_from_json_to_sql" method="post" enctype="multipart/form-data">
-                    {% for _model in _models_page_data %}
+                    {% for _model in _models_page_data.values() %}
                         <div class="mb-2">
                             <label for="create_table_users"><strong>{{ _model['name_model'] }}:</strong> {{ _model['is_there_table'] }}
                             </label>
@@ -51,7 +51,7 @@
         </div>
     </div>
 </div>
-{% for _model in _models_page_data %}
+{% for _model in _models_page_data.values() %}
 <div class="card">
     <div class="card-body">
         {#            <h5 class="card-title">Загрузка списка пользователей в SQL базу</h5>#}
@@ -93,8 +93,11 @@
                         string:</label></strong> {{ _action_page_data["PostgreSQLDataAdapter_connection_string"] }}</p>
                     <p><strong><label>db actions number:</label></strong> {{ _action_page_data["db_actions_number"] }}
                     </p>
-                    <button {% if _action_page_data['is_there_table'] == "No created" %}
-                        {% if _models_page_data['users']["db_rows_number"] > 0 %}
+                    <button
+                    {% if _action_page_data['is_there_table'] == "No created" %}
+                        {% if _models_page_data['users']['is_there_table'] == "No created" %}
+                            disabled
+                        {% elif _models_page_data['users']["db_rows_number"] > 0 %}
                             disabled
                         {% endif %}
                     {% endif %}

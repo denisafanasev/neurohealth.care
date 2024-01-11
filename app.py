@@ -1424,7 +1424,8 @@ def maintenance():
 
         return redirect(url_for('multilingual.maintenance'))
 
-    upload_models_from_json_to_sql_page_data = page_controller.get_upload_models_from_json_to_sql_page_data(config.MODELS_FOR_IMPORT_IN_SQL)
+    upload_models_from_json_to_sql_page_data = page_controller.get_upload_models_from_json_to_sql_page_data(
+        config.MODELS_FOR_IMPORT_IN_SQL)
     upload_actions_from_json_to_sql_page_data = page_controller.get_upload_actions_from_json_to_sql_page_data(
         current_user_id)
 

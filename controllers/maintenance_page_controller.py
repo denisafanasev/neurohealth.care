@@ -48,11 +48,11 @@ class MaintenancePageController():
         Args:
             _current_user_id (Int): id of current user looged into the system
         """
-        _data = []
+        _data = {}
 
         service = MaintenanceService()
         for model in _models_for_import_to_sql:
-            _data.append(service.get_upload_models_from_json_to_sql_page_data(model))
+            _data[model] = service.get_upload_models_from_json_to_sql_page_data(model)
 
         return _data
 
