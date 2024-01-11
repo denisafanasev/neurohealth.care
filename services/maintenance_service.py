@@ -47,7 +47,7 @@ class MaintenanceService():
         _data["data_folder"] = config.DATA_FOLDER
         _data["users_number"] = users_number
         _data["PostgreSQLDataAdapter_connection_string"] = config.PostgreSQLDataAdapter_connection_string()
-        _data["current_data_adapter"] = current_data_adapter
+        _data["current_data_adapter"] = current_data_adapter if db_users_number > 0 else 'TinyDBDataAdapter'
         _data["db_users_number"] = db_users_number
         _data["is_there_table"] = is_there_table
 
@@ -135,7 +135,7 @@ class MaintenanceService():
         _data["data_folder"] = config.DATA_FOLDER
         _data["actions_number"] = actions_number
         _data["PostgreSQLDataAdapter_connection_string"] = config.PostgreSQLDataAdapter_connection_string()
-        _data['current_data_adapter'] = data_store_postgresql.current_data_adapter
+        _data['current_data_adapter'] = data_store_postgresql.current_data_adapter if db_actions_number > 0 else 'TinyDBDataAdapter'
         _data["db_actions_number"] = db_actions_number
         _data['is_there_table'] = is_there_table
 

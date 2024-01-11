@@ -111,6 +111,8 @@ class ActionManager():
         """
 
         data_store = DataStore("action", force_adapter='PostgreSQLDataAdapter')
+        if data_store.get_rows_count() == 0:
+            data_store = DataStore("action")
 
         date = datetime.now()
         actions = []
@@ -122,8 +124,9 @@ class ActionManager():
                     {'where': f'action.user_id = {_user.user_id}', 'order_by': 'action.created_date desc', 'limit': 10})
             else:
                 actions_list = data_store.get_rows({'login': _user.login})
+
         else:
-            if data_store.current_data_adapter == '':
+            if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
                 actions_list = data_store.get_rows(
                     {'order_by': 'action.created_date desc', 'limit': 10})
             else:

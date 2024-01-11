@@ -35,6 +35,10 @@ class DataStore():
         if force_adapter == "PostgreSQLDataAdapter":
             try:
                 self.data_store = PostgreSQLDataAdapter(_table_name)
+                # if _table_name is not None:
+                #     if self.data_store.get_rows_count() == 0:
+                #         raise exc.NoSuchTableError
+
             except exc.NoSuchTableError:
                 self.data_store = TinyDBDataAdapter(_table_name, tinydb_table_name)
                 self.current_data_adapter = 'TinyDBDataAdapter'
