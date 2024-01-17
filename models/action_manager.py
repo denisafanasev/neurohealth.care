@@ -1,7 +1,6 @@
 from data_adapters.data_store import DataStore
-from models.user_manager import UserManager
 from models.action import Action
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 class ActionManager():
@@ -87,10 +86,9 @@ class ActionManager():
         # action = Action(_user_login= _user, _action=action, _comment_action=comment_action)
         if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
             action = Action(_user_id=_user.user_id, _action=action, _comment_action=comment_action)
-            created_date = action.created_date
-
+            
             data_store.insert_row({"user_id": action.user_id, "action": action.action,
-                                   "comment_action": action.comment_action, "created_date": created_date})
+                                   "comment_action": action.comment_action, "created_date": action.created_date.replace(microsecond=0)})
         else:
             action = Action(_user_login=_user.login, _action=action, _comment_action=comment_action)
             created_date = action.created_date.strftime("%d/%m/%Y %H:%M:%S")

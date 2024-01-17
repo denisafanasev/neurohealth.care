@@ -253,7 +253,7 @@ class MaintenanceService():
             # if actions_df is not None:
             #     actions_old_df = pd.concat([actions_df, actions_old_df], join='outer')
             if actions_df is not None:
-                actions_old_df['created_date'] = pd.to_datetime(actions_old_df['created_date']).dt.strftime(
+                actions_old_df['created_date'] = pd.to_datetime(actions_old_df['created_date'], dayfirst=True).dt.strftime(
                     '%d-%m-%Y %H:%M:%S')
                 actions_old_df = pd.merge(actions_df, actions_old_df, how='outer', indicator=True, on='created_date')
                 actions_old_df.drop(actions_old_df[actions_old_df['_merge'] != 'right_only'].index, inplace=True)

@@ -197,7 +197,7 @@ class UserManager():
         password = self.hash_password(_password)
 
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
-        if data_store.get_rows_count() > 0:
+        if data_store.get_rows_count() == 0:
             data_store = DataStore("users")
         # user_data = data_store.get_rows(f"users.login = '{login}' and users.password = '{password}'")
         if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
