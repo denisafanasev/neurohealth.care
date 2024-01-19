@@ -39,6 +39,8 @@ class MaintenanceService():
         if current_data_adapter == 'PostgreSQLDataAdapter':
             db_users_number = data_store_postgresql.get_rows_count()
             is_there_table = 'Created'
+            if db_users_number == 0:
+                current_data_adapter = 'TinyDBDataAdapter'
         else:
             db_users_number = None
             is_there_table = 'No created'
@@ -127,6 +129,8 @@ class MaintenanceService():
         if current_data_adapter == 'PostgreSQLDataAdapter':
             db_actions_number = data_store_postgresql.get_rows_count()
             is_there_table = 'Created'
+            if db_actions_number == 0:
+                current_data_adapter = 'TinyDBDataAdapter'
         else:
             db_actions_number = None
             is_there_table = 'No created'
@@ -135,7 +139,7 @@ class MaintenanceService():
         _data["data_folder"] = config.DATA_FOLDER
         _data["actions_number"] = actions_number
         _data["PostgreSQLDataAdapter_connection_string"] = config.PostgreSQLDataAdapter_connection_string()
-        _data['current_data_adapter'] = data_store_postgresql.current_data_adapter
+        _data['current_data_adapter'] = current_data_adapter
         _data["db_actions_number"] = db_actions_number
         _data['is_there_table'] = is_there_table
 
@@ -249,7 +253,7 @@ class MaintenanceService():
             # if actions_df is not None:
             #     actions_old_df = pd.concat([actions_df, actions_old_df], join='outer')
             if actions_df is not None:
-                actions_old_df['created_date'] = pd.to_datetime(actions_old_df['created_date']).dt.strftime(
+                actions_old_df['created_date'] = pd.to_datetime(actions_old_df['created_date'], dayfirst=True).dt.strftime(
                     '%d-%m-%Y %H:%M:%S')
                 actions_old_df = pd.merge(actions_df, actions_old_df, how='outer', indicator=True, on='created_date')
                 actions_old_df.drop(actions_old_df[actions_old_df['_merge'] != 'right_only'].index, inplace=True)
