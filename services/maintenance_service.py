@@ -464,14 +464,25 @@ class MaintenanceService():
         @params:
         """
         # create data store with SQL data adapter
-        data_store = DataStore("message", force_adapter="PostgreSQLDataAdapter")
+        data_store = DataStore("users", force_adapter="PostgreSQLDataAdapter")
         con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
-
+        # receive users data from PostgreSQL
+        users_df = pd.DataFrame(data_store.get_rows())
+        users_df = users_df[['login', 'doc_id']]
+        users_df.rename(columns={'doc_id': 'id_user'}, inplace=True)
+        # receive messages data from TinyDB
         message_json_df = self.get_json_data_in_dataframe('message.json')
-        message_json_df.rename({'id': 'doc_id'})
+        # preparing messages data for import
         pd.to_datetime(message_json_df['date_send'])
+        message_json_df = pd.merge(message_json_df, users_df, how='left', left_on='name_sender', right_on='login')
+        message_json_df.drop(columns=['login', 'name_sender', 'files', 'id_user_y', 'id'], inplace=True)
+        message_json_df.rename(columns={'id_user_x': 'id_user'}, inplace=True)
+        message_json_df['read'] = message_json_df['read'].astype('bool')
+        message_json_df_none = message_json_df['id_user'].isnull()
+        message_json_df = message_json_df.drop(message_json_df_none[message_json_df_none].index)
+        # import messages data to PostgreSQL
         message_json_df.to_sql('message', con, if_exists='append', index_label='doc_id')
-
+        # find homeworks chat without messages and remove
         data_store = DataStore("homework_chat", force_adapter="PostgreSQLDataAdapter")
         homework_chat_doc_id_empty = data_store.get_rows({
             'query': """
