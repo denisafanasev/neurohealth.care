@@ -416,26 +416,39 @@ class MaintenanceService():
         """
 
         # get all courses in the system
-        homework_manager = HomeworkManager()
-        data_store_tiny_db = DataStore('homeworks')
+        # homework_manager = HomeworkManager()
+        con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
+        # data_store_tiny_db = DataStore('homeworks')
 
-        homeworks_list_data = data_store_tiny_db.get_rows()
+        # homeworks_list_data = data_store_tiny_db.get_rows()
+        homeworks_df = self.get_json_data_in_dataframe('homeworks.json')
+        
+        homeworks_df['date_delivery'] = pd.to_datetime(homeworks_df['date_delivery'], format='%d/%m/%Y', dayfirst=True)
+        homeworks_df['status'] = homeworks_df['status'].astype('bool')
+        homeworks_df['doc_id'] = homeworks_df.index
         # create data store with SQL data adapter
         data_store = DataStore("homeworks", force_adapter="PostgreSQLDataAdapter")
-        for homework_data in homeworks_list_data:
-            # convert Course object to Dict
-            homework = homework_manager.homework_row_to_homework(homework_data)
-            homework_raw = {
-                'doc_id': homework.id,
-                'id_user': homework.id_user,
-                'id_lesson': homework.id_lesson,
-                'users_files_list': homework.users_files_list,
-                'text': homework.text,
-                'status': homework.status,
-                'date_delivery': homework.date_delivery
-            }
+        if data_store.get_rows_count() > 0:
+            homeworks_sql_df = pd.read_sql('select * from homeworks', con)
+            homeworks_df = pd.merge(homeworks_sql_df, homeworks_df, how='outer', indicator=True, left_on='doc_id', right_index=True)
+            homeworks_df.drop(homeworks_df[homeworks_df['_merge'] != 'right_only'].index, inplace=True)
 
-            self.add_row_to_sql(data_store, homework.id, homework_raw)
+        # for homework_data in homeworks_list_data:
+        #     # convert Course object to Dict
+        #     homework = homework_manager.homework_row_to_homework(homework_data)
+        #     homework_raw = {
+        #         'doc_id': homework.id,
+        #         'id_user': homework.id_user,
+        #         'id_lesson': homework.id_lesson,
+        #         'users_files_list': homework.users_files_list,
+        #         'text': homework.text,
+        #         'status': homework.status,
+        #         'date_delivery': homework.date_delivery
+        #     }
+
+            # self.add_row_to_sql(data_store, homework.id, homework_raw)
+            
+        homeworks_df.to_sql('homeworks', con, if_exists='append')
 
     def upload_homework_chat_list_from_json_to_sql(self) -> None:
         """
@@ -473,7 +486,7 @@ class MaintenanceService():
         # receive messages data from TinyDB
         message_json_df = self.get_json_data_in_dataframe('message.json')
         # preparing messages data for import
-        pd.to_datetime(message_json_df['date_send'])
+        message_json_df['date_send'] = pd.to_datetime(message_json_df['date_send'])
         message_json_df = pd.merge(message_json_df, users_df, how='left', left_on='name_sender', right_on='login')
         message_json_df.drop(columns=['login', 'name_sender', 'files', 'id_user_y', 'id'], inplace=True)
         message_json_df.rename(columns={'id_user_x': 'id_user'}, inplace=True)
