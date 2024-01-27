@@ -1,5 +1,6 @@
 import logging
 from logging.handlers import RotatingFileHandler
+import time
 
 from flask_babel import Babel
 from flask import Flask, request, redirect, render_template, send_file, abort, session, Blueprint, g, url_for
@@ -285,7 +286,7 @@ def user_manager():
 
     Returns:
     """
-
+    start = time.time()
     page_controller = UserManagerPageController()
     current_user_id = flask_login.current_user.user_id
     mpc = MainMenuPageController(current_user_id)
@@ -296,43 +297,29 @@ def user_manager():
 
     endpoint = request.endpoint
 
-    search_text = request.args.get('search')
-    if request.method == 'POST':
-        if request.form.get('search'):
-            search_text = request.form['search']
-            if search_text != ' ':
-                return redirect(url_for('multilingual.user_manager', page=1, search=search_text))
-            else:
-                return redirect(url_for('multilingual.user_manager', page=1))
+    # if request.method == 'POST':
+    #     if request.form.get('search'):
+    #         search_text = request.form['search']
+    #         if search_text != ' ':
+    #             return redirect(url_for('multilingual.user_manager', page=1, search=search_text))
+    #         else:
+    #             return redirect(url_for('multilingual.user_manager', page=1))
 
-        elif request.form.get('page'):
-            page = request.form['page']
-            if search_text is not None:
-                return redirect(url_for('multilingual.user_manager', page=page, search=search_text))
+    #     elif request.form.get('page'):
+    #         page = request.form['page']
+    #         if search_text is not None:
+    #             return redirect(url_for('multilingual.user_manager', page=page, search=search_text))
 
-            return redirect(url_for('multilingual.user_manager', page=page))
-
-    page = request.args.get('page')
-
-    data = page_controller.get_numbers_pages(current_user_id, search_text)
-    if page is not None:
-        page = int(page)
-        if data is None:
-            return redirect(url_for('multilingual.user_manager'))
-    else:
-        if data is not None:
-            if not search_text:
-                return redirect(url_for('multilingual.user_manager', page=1))
-
-    if not search_text:
-        users_list = page_controller.get_users_list_view(current_user_id, page)
-    else:
-        users_list = page_controller.get_users_by_search_text(search_text, current_user_id, page)
-
+    #         return redirect(url_for('multilingual.user_manager', page=page))
+    
+    end = time.time()
+    users_list = page_controller.get_users_list_view(current_user_id)
+        # users_list = page_controller.get_users_by_search_text(search_text, current_user_id, page)
+    print("Execution time of the program is- ", end-start)
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _users_list=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),
-                           _languages=config.LANGUAGES, _lang_code=get_locale(), _data=data)
+                           _languages=config.LANGUAGES, _lang_code=get_locale())
 
 
 @multilingual.route('/user_profile', methods=['GET', 'POST'])

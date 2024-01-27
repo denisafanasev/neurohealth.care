@@ -10,21 +10,21 @@
             var datatablesButtons = $("#datatables-buttons").DataTable({
                 lengthChange: !1,
                 responsive: true,
-            {% if _data is not none %}
-                dom: "<'ui stackable grid'"+
-                        "<'row'"+
-                            "<'eight wide column'l>"+
-                            "<'right aligned eight wide column'f>"+
-                        ">"+
-                        "<'row dt-table'"+
-                            "<'sixteen wide column'tr>"+
-                        ">"+
-                    ">",
-                paging: false,
-                searching: false,
-            {% else %}
-                pageLength: 20
-            {% endif %}
+                pageLength: 20,
+                paging: true,
+                //{% if _data is not none %}
+                //    dom: "<'ui stackable grid'"+
+                //            "<'row'"+
+                //                "<'eight wide column'l>"+
+                //                "<'right aligned eight wide column'f>"+
+                //            ">"+
+                //            "<'row dt-table'"+
+                //                "<'sixteen wide column'tr>"+
+                //            ">"+
+                //        ">",
+                //    paging: true,
+                //    searching: false,                    
+                //{% endif %}
             });
 
             datatablesButtons.buttons().container().appendTo("#datatables-buttons_wrapper .col-md-6:eq(0)");
@@ -61,7 +61,6 @@
             color: white;
             text-decoration: none;
         }
-
     </style>
 
     <div class="container-fluid p-0">
@@ -83,7 +82,7 @@
                                 </div>
                             </div>
                         </div>
-                        {% if _data is not none %}
+                        <!-- {% if _data is not none %}
                             <div class="row dataTables_filter" style="display:flex;">
                             <form method="post" onsubmit="return send_search_text()">
                                 <label class="col-form-label text-sm-end" for="search_input">Search:
@@ -93,7 +92,7 @@
                                     <button id="search_button" type="submit" style="display: none"></button>
                                 </form>
                             </div>
-                        {% endif %}
+                        {% endif %} -->
 
                     {% endif %}
 
@@ -101,33 +100,40 @@
                         <div class="col-sm-12">
                             <table id="datatables-buttons" class="table table-striped dataTable no-footer dtr-inline" style="width: 100%; font-size: 13px" aria-describedby="datatables-buttons_info">
                                 <thead>
-                                <tr role="row" style="text-align: center">
-                                    <th style="width:5%;">#</th>
-                                    <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                        style="width:15%;" aria-label="Position: activate to sort column ascending">Login
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                        style="width:10%;" aria-label="Position: activate to sort column ascending">Имя пользователя
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                        style="width:40%;" aria-label="Position: activate to sort column ascending">Email
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                        style="width:5%;" aria-label="Position: activate to sort column ascending">Дата создания
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                        style="width:5%;" aria-label="Position: activate to sort column ascending">Срок доступа
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                        style="width:5%;" aria-label="Position: activate to sort column ascending">Доступ
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                        style="width:5%;" aria-label="Position: activate to sort column ascending">Обучение
-                                    </th>
-                                    <th class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                        style="width:5%;" aria-label="Position: activate to sort column ascending">Подтвержден email
-                                    </th>
-                                </tr>
+                                    <form method='post'>
+                                        <tr role="row" style="text-align: center">
+                                            <th style="width:5%;">#</th>
+                                            <th id="th_login" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:15%;" aria-label="Position: activate to sort column ascending">
+                                                <a href='{{url_for("multilingual.user_manager", page=1, sort="desc")}}' style='width: 100%; height: 100%; display: block' >
+                                                    <div style='width: 100%; height: 100%'>
+                                                        Login
+                                                    </div>
+                                                </a>
+                                            </th>
+                                            <th id="th_name_user"class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:10%;" aria-label="Position: activate to sort column ascending">Имя пользователя
+                                            </th>
+                                            <th id="th_email" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:40%;" aria-label="Position: activate to sort column ascending">Email
+                                            </th>
+                                            <th id="th_date_created" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Дата создания
+                                            </th>
+                                            <th id="th_education_module_expiration_date" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Срок доступа
+                                            </th>
+                                            <th id="th_is_active" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Доступ
+                                            </th>
+                                            <th id="th_active_education_module" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Обучение
+                                            </th>
+                                            <th id="th_email_confirmed" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:5%;" aria-label="Position: activate to sort column ascending">Подтвержден email
+                                            </th>
+                                        </tr>
+                                    </form>
                                 </thead>
                                 <tbody>
 
@@ -183,64 +189,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        {% if _data is not none %}
-                            <div style="display: flex; justify-content: space-between">
-                                {% set current_page = request.args.get('page')|int %}
-                                {% if _data['numbers_pages'] < 5 %}
-                                    {% set page_range = range(1, _data['numbers_pages'] + 1) %}
-                                {% elif current_page < 5 %}
-                                    {% set page_range = range(2, 6) %}
-                                {% elif current_page >= _data['numbers_pages'] - 3 %}
-                                    {% set page_range = range(_data['numbers_pages'] - 4, _data['numbers_pages']) %}
-                                {% else %}
-                                    {% set page_range = range(current_page - 1, current_page + 2) %}
-                                {% endif %}
-                                {% if _data['users_numbers'] >= current_page * 20 %}
-                                    <p>Showing {{ 1 + (current_page - 1) * 20 }} to {{ current_page * 20 }} of {{ _data['users_numbers'] }} entries</p>
-                                {% else %}
-                                    <p>Showing {{ 1 + (current_page - 1) * 20 }} to {{ _data['users_numbers'] }} of {{ _data['users_numbers'] }} entries</p>
-                                {% endif %}
-                                <form method="post">
-                                    <nav aria-label="...">
-                                        <ul class="pagination">
-                                            <li class="page-item" >
-                                                <button class="page-link" type="submit" {% if current_page == 1 %} disabled {% endif %}
-                                                        name="page" value="{{ current_page - 1 }}">Previous</button>
-                                            </li>
-                                            {% if _data['numbers_pages'] > 5 %}
-                                                <li class="page-item {% if current_page == 1 %}active{% endif %}">
-                                                    <button class="page-link" type="submit" name="page" value="1">1</button>
-                                                </li>
-                                            {% endif %}
-
-                                            {% if current_page > 4 %}
-                                                <li class="page-item"><a class="page-link" disabled href="">...</a></li>
-                                            {% endif %}
-
-                                            {% for page in page_range %}
-                                                <li class="page-item{% if current_page == page %} active{% endif %}">
-                                                    <button class="page-link" type="submit" name="page" value="{{ page }}">{{ page }}</button>
-                                                </li>
-                                            {% endfor %}
-
-                                            {% if current_page < _data['numbers_pages'] - 3 %}
-                                                <li class="page-item"><a class="page-link" disabled="" href="">...</a></li>
-                                            {% endif %}
-
-                                            {% if _data['numbers_pages'] > 5 %}
-                                                <li class="page-item {% if _data['numbers_pages'] == current_page %}active{% endif %}">
-                                                    <button class="page-link" type="submit" name="page" value="{{ _data['numbers_pages'] }}">{{ _data['numbers_pages'] }}</button>
-                                                </li>
-                                            {% endif %}
-                                            <li class="page-item">
-                                                <button type="submit" {% if current_page == _data['numbers_pages'] %} disabled {% endif %}
-                                                        name="page" value="{{ current_page + 1 }}" class="page-link">Next</button>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </form>
-                            </div>
-                        {% endif %}
+                       
                     </div>
                 </div>
             </div>

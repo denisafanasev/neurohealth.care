@@ -3,6 +3,8 @@ import hashlib
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from itsdangerous import URLSafeTimedSerializer
+import pandas as pd
+from sqlalchemy import text, create_engine
 
 from models.user import User
 from data_adapters.data_store import DataStore
@@ -269,7 +271,7 @@ class UserManager():
 
         return user
 
-    def get_users(self, _user_id, _page=None):
+    def get_users(self, _user_id):
         """
         Возвращает список пользователей в системе, в соответствии с ролью пользователя, который запрашивает список
 
@@ -280,28 +282,41 @@ class UserManager():
             List: список пользователей с типом User
         """
 
-        users = []
+        # users = []
 
-        data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
-        if _page is None:
-            users_list_data = data_store.get_rows()
-        else:
-            if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
-                users_list_data = data_store.get_rows({'limit': 20, 'offset': (_page - 1) * 20, 'order_by': 'doc_id asc'})
-            else:
-                users_list_data = data_store.get_rows()
+        # data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
+        # if _page is None:
+        #     users_list_data = data_store.get_rows()
+        # else:
+        #     if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
+        #         users_list_data = data_store.get_rows({'limit': 20, 'offset': (_page - 1) * 20, 'order_by': 'doc_id asc'})
+        #         users_list_data = pd.read_sql('select * from users', data_store.data_store)
+        #     else:
+        #         users_list_data = data_store.get_rows()
 
-        for user_data in users_list_data:
+        # for user_data in users_list_data:
 
-            user = self.user_row_to_user(user_data)
+        #     user = self.user_row_to_user(user_data)
 
-            if self.get_user_role(_user_id) == "superuser":
-                users.append(user)
-            else:
-                if self.get_user_by_id(_user_id) == user.user_id:
-                    users.append(user)
-
-        return users
+            # if self.get_user_role(_user_id) == "superuser":
+            #     users.append(user)
+            # else:
+            #     if self.get_user_by_id(_user_id) == user.user_id:
+            #         users.append(user)
+        date_today = datetime.today()
+        con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
+        if self.get_user_role(_user_id) == "superuser":
+            # users.append(user)
+            users_df_data = pd.read_sql('select * from users', con)
+            
+            users_df_data['education_module_expiration_date'] = users_df_data['education_module_expiration_date'].where(users_df_data['role'] == 'user', other=date_today + relativedelta(year=date_today.year + 10))
+            # users_df_data.loc[users_df_data['role'] == 'superuser', 'education_module_expiration_date'] = users_df_data['education_module_expiration_date'] + relativedelta(year=date_today.year + 10)
+            # df['Conditioned_Numbers'] = df['Numbers'].where(df['Numbers'] > threshold, other='Below Threshold')
+            users_df_data.loc[users_df_data['education_module_expiration_date'] < date_today, 'active_education_module'] = "inactive"
+            users_df_data.loc[users_df_data['education_module_expiration_date'] - date_today < timedelta(days=31), 'active_education_module'] = "ends"
+            users_df_data.loc[users_df_data['education_module_expiration_date'] - date_today >= timedelta(days=31), 'active_education_module'] = "active"     
+       
+        return users_df_data
 
     def is_there_users(self):
         """

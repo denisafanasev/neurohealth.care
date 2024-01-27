@@ -12,7 +12,7 @@ class UserManagerService():
     def init(self):
         pass
 
-    def get_users(self, _user_id, _page):
+    def get_users(self, _user_id):
         """
         Возвращает список пользователей
 
@@ -21,7 +21,7 @@ class UserManagerService():
         """        
 
         user_manager = UserManager()
-        users = user_manager.get_users(_user_id, _page)
+        users = user_manager.get_users(_user_id)
 
         return users
 
