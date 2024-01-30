@@ -286,7 +286,6 @@ def user_manager():
 
     Returns:
     """
-    start = time.time()
     page_controller = UserManagerPageController()
     current_user_id = flask_login.current_user.user_id
     mpc = MainMenuPageController(current_user_id)
@@ -312,10 +311,8 @@ def user_manager():
 
     #         return redirect(url_for('multilingual.user_manager', page=page))
     
-    end = time.time()
     users_list = page_controller.get_users_list_view(current_user_id)
         # users_list = page_controller.get_users_by_search_text(search_text, current_user_id, page)
-    print("Execution time of the program is- ", end-start)
     return render_template('user_manager.html', view="user_manager", _menu=mpc.get_main_menu(),
                            _active_main_menu_item=mpc.get_active_menu_item_number(endpoint),
                            _users_list=users_list, _is_current_user_admin=flask_login.current_user.is_admin(),

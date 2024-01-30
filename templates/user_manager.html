@@ -2,7 +2,7 @@
 
 {% block main_block %}
 
-    <script src="{{ url_for('static' , filename="js/datatables.js") }}"></script>
+    <script src="{{ url_for('static' , filename='js/datatables.js') }}"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -103,33 +103,28 @@
                                     <form method='post'>
                                         <tr role="row" style="text-align: center">
                                             <th style="width:5%;">#</th>
-                                            <th id="th_login" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
-                                                style="width:15%;" aria-label="Position: activate to sort column ascending">
-                                                <a href='{{url_for("multilingual.user_manager", page=1, sort="desc")}}' style='width: 100%; height: 100%; display: block' >
-                                                    <div style='width: 100%; height: 100%'>
-                                                        Login
-                                                    </div>
-                                                </a>
+                                            <th id="login" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                                style="width:15%;" aria-label="Position: activate to sort column ascending">Login
                                             </th>
-                                            <th id="th_name_user"class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                            <th id="name_user"class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                 style="width:10%;" aria-label="Position: activate to sort column ascending">Имя пользователя
                                             </th>
-                                            <th id="th_email" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                            <th id="email" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                 style="width:40%;" aria-label="Position: activate to sort column ascending">Email
                                             </th>
-                                            <th id="th_date_created" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                            <th id="date_created" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                 style="width:5%;" aria-label="Position: activate to sort column ascending">Дата создания
                                             </th>
-                                            <th id="th_education_module_expiration_date" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                            <th id="education_module_expiration_date" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                 style="width:5%;" aria-label="Position: activate to sort column ascending">Срок доступа
                                             </th>
-                                            <th id="th_is_active" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                            <th id="is_active" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                 style="width:5%;" aria-label="Position: activate to sort column ascending">Доступ
                                             </th>
-                                            <th id="th_active_education_module" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                            <th id="active_education_module" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                 style="width:5%;" aria-label="Position: activate to sort column ascending">Обучение
                                             </th>
-                                            <th id="th_email_confirmed" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
+                                            <th id="email_confirmed" class="sorting" tabindex="0" aria-controls="datatables-buttons" rowspan="1" colspan="1"
                                                 style="width:5%;" aria-label="Position: activate to sort column ascending">Подтвержден email
                                             </th>
                                         </tr>
@@ -141,10 +136,10 @@
                                     {% if item["user_id"] %}
                                     <tr class="even">
 
-                                        <td><img src="{{ url_for('static' , filename="img/avatars/149071.jpg") }}" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
+                                        <td><img src="{{ url_for('static' , filename='img/avatars/149071.jpg') }}" width="32" height="32" class="rounded-circle my-n1" alt="Avatar"></td>
 
                                         <td class="sorting_1 dtr-control" style="display: flex">
-                                            <div class="col{% if item['role'] == "superuser" %} bg-primary {% else %} bg-success {% endif %} bg-gradient" style="text-align: center; margin-right: 16%; color: white">
+                                            <div class="col{% if item['role'] == 'superuser' %} bg-primary {% else %} bg-success {% endif %} bg-gradient" style="text-align: center; margin-right: 16%; color: white">
                                                 <a style="display: inline-block; width: 100%"  href="{{ url_for('multilingual.user_profile', user_id=item['user_id']) }}">
                                                     <span class="">{{ item['login'] }}</span>
                                                 </a>

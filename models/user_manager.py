@@ -304,19 +304,35 @@ class UserManager():
             #     if self.get_user_by_id(_user_id) == user.user_id:
             #         users.append(user)
         date_today = datetime.today()
-        con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
-        if self.get_user_role(_user_id) == "superuser":
-            # users.append(user)
-            users_df_data = pd.read_sql('select * from users', con)
-            
-            users_df_data['education_module_expiration_date'] = users_df_data['education_module_expiration_date'].where(users_df_data['role'] == 'user', other=date_today + relativedelta(year=date_today.year + 10))
-            # users_df_data.loc[users_df_data['role'] == 'superuser', 'education_module_expiration_date'] = users_df_data['education_module_expiration_date'] + relativedelta(year=date_today.year + 10)
-            # df['Conditioned_Numbers'] = df['Numbers'].where(df['Numbers'] > threshold, other='Below Threshold')
-            users_df_data.loc[users_df_data['education_module_expiration_date'] < date_today, 'active_education_module'] = "inactive"
-            users_df_data.loc[users_df_data['education_module_expiration_date'] - date_today < timedelta(days=31), 'active_education_module'] = "ends"
-            users_df_data.loc[users_df_data['education_module_expiration_date'] - date_today >= timedelta(days=31), 'active_education_module'] = "active"     
+        data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
+        if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
+            con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
+            if self.get_user_role(_user_id) == "superuser":
+                # users.append(user)
+                users = pd.read_sql('select * from users', con)
+                users['education_module_expiration_date'] = users['education_module_expiration_date'].where(users['role'] == 'user', other=date_today + relativedelta(year=date_today.year + 10))
+                users.loc[users['education_module_expiration_date'] < date_today, 'active_education_module'] = "inactive"
+                users.loc[users['education_module_expiration_date'] - date_today < timedelta(days=31), 'active_education_module'] = "ends"
+                users.loc[users['education_module_expiration_date'] - date_today >= timedelta(days=31), 'active_education_module'] = "active"
+                            
+                users.drop(columns=['password', 'token'], inplace=True)  
+                
+        else:
+            users_data = data_store.get_rows()
+            users = []
+            for user_data in users_data:
+                user = self.user_row_to_user(user_data)
+                if self.get_user_role(_user_id) == "superuser":
+                    users.append(user)
+                else:
+                    if self.get_user_by_id(_user_id) == user.user_id:
+                        users.append(user)
+                        
+            # users_df_data['created_date'] = pd.to_datetime(users_df_data['created_date'], format='%d/%m/%Y')
+            # users_df_data['education_module_expiration_date'] = pd.to_datetime(users_df_data['education_module_expiration_date'], format='%d/%m/%Y')
+             
        
-        return users_df_data
+        return users
 
     def is_there_users(self):
         """
