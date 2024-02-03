@@ -583,16 +583,18 @@ class UserManager():
         """
         data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
 
-        users_list = []
+        users_data_list = []
         # Если роль текущего пользователя superuser, то он получит список пользователей.
         # Иначе, получит пустой список
         if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
             if self.get_user_role(_user_id) == 'superuser':
-                users_data_list = data_store.get_rows({'where': f'users.doc_id in {tuple(_ids_list)}'})
-                for user_data in users_data_list:
-                    users_list.append(self.user_row_to_user(user_data))
+                con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
+                # users_data_list = data_store.get_rows({'where': f'users.doc_id in {tuple(_ids_list)}'})
+                users_data_list = pd.read_sql(f'select * from users where doc_id in (SELECT unnest(ARRAY[{_ids_list}]))', con=con)
+                # for user_data in users_data_list:
+                #     users_list.append(self.user_row_to_user(user_data))
 
-        return users_list
+        return users_data_list
 
     def get_users_by_role(self, _id_user, _role):
         """
