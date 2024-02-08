@@ -29,7 +29,7 @@ class EducationHomeTasksPageController():
             return None
 
         user = homeworks_service.get_user_by_id(_id_user)
-        education_stream = homeworks_service.get_education_stream(_id_education_stream)
+        education_stream = homeworks_service.get_education_stream(_id_education_stream, _id_current_user)
         lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
         data_list = []
         for lesson in lessons_list:
@@ -60,7 +60,7 @@ class EducationHomeTasksPageController():
         homeworks_service = HomeworksService()
 
         user = homeworks_service.get_user_by_id(_id_user)
-        education_stream = homeworks_service.get_education_stream(_id_education_stream)
+        education_stream = homeworks_service.get_education_stream(_id_education_stream, _id_current_user)
         lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
         data_list = []
         for lesson in lessons_list:
@@ -94,7 +94,7 @@ class EducationHomeTasksPageController():
         homeworks_service = HomeworksService()
 
         user = homeworks_service.get_user_by_id(_id_user)
-        education_stream = homeworks_service.get_education_stream(_id_education_stream)
+        education_stream = homeworks_service.get_education_stream(_id_education_stream, _id_current_user)
         lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
         data_list = []
         for lesson in lessons_list:
@@ -219,8 +219,8 @@ class EducationHomeTasksPageController():
                 # сколько принято/не принято домашних работ у пользователей потока
                 user_view['is_unread_message'] = homeworks_service.is_unread_messages(id_lessons_list, user_data.user_id)
 
-                user_view['amount_accepted_homeworks'], user_view['amount_no_accepted_homeworks'] =\
-                    homeworks_service.get_amount_accepted_homework(user_data.user_id, id_lessons_list)
+                user_view['amount_accepted_homeworks'] = homeworks_service.get_amount_accepted_homework(user_data.user_id, id_lessons_list)
+                user_view['amount_no_accepted_homeworks'] = homeworks_service.get_amount_no_accepted_homework(user_data.user_id, id_lessons_list)
                 education_stream_view['students_list'].append(user_view)
                 
         else:
@@ -229,8 +229,14 @@ class EducationHomeTasksPageController():
             users_df.rename(columns={'doc_id': 'user_id'}, inplace=True)
             
             users_df['is_unread_message'] = users_df['user_id'].apply(lambda x: homeworks_service.is_unread_messages(id_lessons_list, x))
-            # users_df[['amount_accepted_homeworks', 'amount_no_accepted_homeworks']] = 0
-            # users_df[['amount_accepted_homeworks', 'amount_no_accepted_homeworks']] = users_df['user_id'].applymap(lambda x: homeworks_service.get_amount_accepted_homework(x, id_lessons_list))
+            # for index, df in users_df.iterrows():
+            #     amount_accepted_homeworks, amount_no_accepted_homeworks = homeworks_service.get_amount_accepted_homework(df['user_id'], id_lessons_list)
+                
+            #     users_df.at[index, 'amount_accepted_homeworks'] = amount_accepted_homeworks
+            #     users_df.at[index, 'amount_no_accepted_homeworks'] = amount_no_accepted_homeworks
+
+            users_df['amount_accepted_homeworks'] = users_df['user_id'].apply(lambda x: homeworks_service.get_amount_accepted_homework(x, id_lessons_list))
+            users_df['amount_no_accepted_homeworks'] = users_df['user_id'].apply(lambda x: homeworks_service.get_amount_no_accepted_homework(x, id_lessons_list))
             users_df = users_df.to_dict('records')
             education_stream_view['students_list'] = users_df
 

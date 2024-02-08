@@ -205,3 +205,24 @@ class HomeworkManager():
                 id_lessons_list.add(homework_data['id_lesson'])
 
         return id_lessons_list
+    
+    def get_id_lessons_list_with_no_completed_homework(self, _user_id):
+        """
+        Возвращает множество из ID уроков, по которым приняты домашние работы у пользователя
+
+        Args:
+            _user_id(Int): ID пользователя
+
+        Returns:
+            Set(Homework): список принятых домашних работ
+        """
+        data_store = DataStore('homeworks')
+
+        homeworks_list_data = data_store.get_rows({'id_user': _user_id, 'status': False})
+        homeworks_list_data.extend(data_store.get_rows({'id_user': _user_id, 'status': None}))
+        id_lessons_list = set()
+        if homeworks_list_data:
+            for homework_data in homeworks_list_data:
+                id_lessons_list.add(homework_data['id_lesson'])
+
+        return id_lessons_list

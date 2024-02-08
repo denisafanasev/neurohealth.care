@@ -275,6 +275,27 @@ class HomeworksService():
         id_lessons_set = homework_manager.get_id_lessons_list_with_completed_homework(_user_id)
 
         count_accepted_homework = len(id_lessons_set.intersection(_id_lessons_list))
-        count_no_accepted_homework = len(_id_lessons_list) - count_accepted_homework
+        # count_no_accepted_homework = len(_id_lessons_list) - count_accepted_homework
 
-        return count_accepted_homework, count_no_accepted_homework
+        return count_accepted_homework
+    
+    def get_amount_no_accepted_homework(self, _user_id, _id_lessons_list):
+        """
+        Возвращает количества принятых/не принятых домашних работ у пользователя
+
+        Args:
+            _user_id(Int): ID пользователя
+            _id_lessons_list(List): список ID уроков курса
+
+        Returns:
+            count_accepted_homework(Int): количество принятых домашних работ
+            count_no_accepted_homework(Int): количество не принятых домашних работ
+        """
+
+        homework_manager = HomeworkManager()
+
+        id_lessons_set = homework_manager.get_id_lessons_list_with_no_completed_homework(_user_id)
+
+        count_no_accepted_homework = len(id_lessons_set.intersection(_id_lessons_list))
+
+        return count_no_accepted_homework
