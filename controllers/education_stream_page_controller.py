@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+import pandas as pd
+
 from services.education_stream_card_service import EducationStreamCardService
 
 class EducationStreamPageController():
@@ -22,16 +24,24 @@ class EducationStreamPageController():
 
         students = education_stream_service.get_students_list(_user_id, _id_education_stream)
         students_list = []
+        if not isinstance(students, pd.DataFrame):
+            
+            for i_student in students:
+                student = {
+                    'id': i_student.user_id,
+                    'login': i_student.login,
+                    'name': i_student.name,
+                    'email': i_student.email
+                }
 
-        for i_student in students:
-            student = {
-                'id': i_student.user_id,
-                'login': i_student.login,
-                'name': i_student.name,
-                'email': i_student.email
-            }
-
-            students_list.append(student)
+                students_list.append(student)
+        
+        else:
+            
+            students_df = students[['doc_id', 'login', 'name', 'email']]
+            students_df.rename(columns={'doci_id': 'id'})
+            
+            students_list = students_df.to_dict('records')
 
         return students_list
 
@@ -51,16 +61,22 @@ class EducationStreamPageController():
 
         curators = education_stream_service.get_curators_list(_user_id, _id_education_stream)
         curators_list = []
+        if not isinstance(curators, pd.DataFrame):
+             
+            for i_curator in curators:
+                curator = {
+                    'id': i_curator.user_id,
+                    'login': i_curator.login,
+                    'name': i_curator.name,
+                    'email': i_curator.email
+                }
 
-        for i_curator in curators:
-            curator = {
-                'id': i_curator.user_id,
-                'login': i_curator.login,
-                'name': i_curator.name,
-                'email': i_curator.email
-            }
-
-            curators_list.append(curator)
+                curators_list.append(curator)
+        
+        else:
+            curators_df = curators[['doc_id', 'login', 'name', 'email']]
+            curators_df.rename(columns={'doci_id': 'id'}, inplace=True)
+            curators_list = curators_df.to_dict('records')
 
         return curators_list
 

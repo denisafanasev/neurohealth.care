@@ -51,7 +51,7 @@ class EducationStreamCardService():
         if _id_education_stream is not None:
             education_stream = education_stream_manager.get_education_stream(_id_education_stream)
             students_list = user_manager.get_users_by_ids_list(_user_id, education_stream.students_list)
-            if not students_list:
+            if len(students_list) == 0:
                 users_list = user_manager.get_users_by_role(_user_id, 'user')
                 for user in users_list:
                     if user.user_id in education_stream.students_list:
@@ -79,7 +79,7 @@ class EducationStreamCardService():
         if _id_education_stream is not None:
             education_stream = education_stream_manager.get_education_stream(_id_education_stream)
             curators_list = user_manager.get_users_by_ids_list(_user_id, education_stream.curators_list)
-            if not curators_list:
+            if len(curators_list) == 0:
                 users_list = user_manager.get_users_by_role(_user_id, 'superuser')
                 curators_list = []
                 for user in users_list:

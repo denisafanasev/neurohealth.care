@@ -63,34 +63,52 @@ class MaintenanceService():
 
         # get all users in the system
         user_manager = UserManager()
-        data_store_tiny_db = DataStore('users')
+        # data_store_tiny_db = DataStore('users')
         if user_manager.get_user_role(_current_user_id) == 'superuser':
-            users = data_store_tiny_db.get_rows()
+            # users = data_store_tiny_db.get_rows()
+            users_df = self.get_json_data_in_dataframe('users.json')
         else:
             users = []
 
         # create data store with SQL data adapter
-        data_store = DataStore("users", force_adapter="PostgreSQLDataAdapter")
-        for user_data in users:
-            user = user_manager.user_row_to_user(user_data)
-            if user.token == '':
-                user.token = user_manager.create_token(user.email)
-            # convert User object to Dict
-            user_raw = {"doc_id": user.user_id, "active": user.active, "password": user_data['password'],
-                        "created_date": user.created_date,
-                        "education_module_expiration_date": user.education_module_expiration_date, "email": user.email,
-                        "email_confirmed": user.email_confirmed, "login": user.login, "name": user.name,
-                        "probationers_number": user.probationers_number, "role": user.role, "token": user.token}
+        # data_store = DataStore("users", force_adapter="PostgreSQLDataAdapter")
+        # for user_data in users:
+        #     user = user_manager.user_row_to_user(user_data)
+        #     if user.token == '':
+        #         user.token = user_manager.create_token(user.email)
+        #     # convert User object to Dict
+        #     user_raw = {"doc_id": user.user_id, "active": user.active, "password": user_data['password'],
+        #                 "created_date": user.created_date,
+        #                 "education_module_expiration_date": user.education_module_expiration_date, "email": user.email,
+        #                 "email_confirmed": user.email_confirmed, "login": user.login, "name": user.name,
+        #                 "probationers_number": user.probationers_number, "role": user.role, "token": user.token}
 
-            if data_store.get_row_by_id(user.user_id):
+        #     if data_store.get_row_by_id(user.user_id):
 
-                # if user existed in the table, make change
-                data_store.update_row_by_id(user_raw, user.user_id)
+        #         # if user existed in the table, make change
+        #         data_store.update_row_by_id(user_raw, user.user_id)
 
-            else:
+        #     else:
 
-                # if user non existed, make insert of a new row
-                data_store.insert_row(user_raw)
+        #         # if user non existed, make insert of a new row
+        #         data_store.insert_row(user_raw)
+                
+         # create database connection
+        con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
+        users_sql_df = pd.read_sql('select * from users', con)
+        
+        users_df['doc_id'] = users_df.index
+        users_df['created_date'] = pd.to_datetime(users_df['created_date'], format='%d/%m/%Y', dayfirst=True)
+        users_df = pd.merge(users_df, users_sql_df, how='outer', indicator=True, on='login')
+        users_df.drop(users_df[users_df['_merge'] != 'left_only'].index, inplace=True)
+        users_df.rename(columns={'doc_id_x': 'doc_id', 'password_x': 'password', 'email_x': 'email', 'role_x': 'role', 'name_x': 'name',
+                                 'created_date_x': "created_date", 'education_module_expiration_date_x': 'education_module_expiration_date',
+                                 'probationers_number_x': 'probationers_number', 'active_x': 'active', 'email_confirmed_x': 'email_confirmed',
+                                 'token_x': 'token'}, inplace=True)
+        users_df.drop(columns=['_merge',  'password_y', 'email_y', 'role_y', 'name_y', 'created_date_y', 'education_module_expiration_date_y', 'probationers_number_y', 'active_y', 'email_confirmed_y', 'token_y', 'doc_id_y'], axis=1,
+                                    inplace=True)
+        
+        users_df.to_sql('users', con, if_exists='append', index=False)
 
     def get_upload_actions_from_json_to_sql_page_data(self, _current_user_id):
         """

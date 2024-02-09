@@ -3,6 +3,8 @@ import hashlib
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from itsdangerous import URLSafeTimedSerializer
+import pandas as pd
+from sqlalchemy import text, create_engine
 
 from models.user import User
 from data_adapters.data_store import DataStore
@@ -269,7 +271,7 @@ class UserManager():
 
         return user
 
-    def get_users(self, _user_id, _page=None):
+    def get_users(self, _user_id):
         """
         Возвращает список пользователей в системе, в соответствии с ролью пользователя, который запрашивает список
 
@@ -280,27 +282,56 @@ class UserManager():
             List: список пользователей с типом User
         """
 
-        users = []
+        # users = []
 
+        # data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
+        # if _page is None:
+        #     users_list_data = data_store.get_rows()
+        # else:
+        #     if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
+        #         users_list_data = data_store.get_rows({'limit': 20, 'offset': (_page - 1) * 20, 'order_by': 'doc_id asc'})
+        #         users_list_data = pd.read_sql('select * from users', data_store.data_store)
+        #     else:
+        #         users_list_data = data_store.get_rows()
+
+        # for user_data in users_list_data:
+
+        #     user = self.user_row_to_user(user_data)
+
+            # if self.get_user_role(_user_id) == "superuser":
+            #     users.append(user)
+            # else:
+            #     if self.get_user_by_id(_user_id) == user.user_id:
+            #         users.append(user)
+        date_today = datetime.today()
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
-        if _page is None:
-            users_list_data = data_store.get_rows()
-        else:
-            if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
-                users_list_data = data_store.get_rows({'limit': 20, 'offset': (_page - 1) * 20, 'order_by': 'doc_id asc'})
-            else:
-                users_list_data = data_store.get_rows()
-
-        for user_data in users_list_data:
-
-            user = self.user_row_to_user(user_data)
-
+        if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
+            con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
             if self.get_user_role(_user_id) == "superuser":
-                users.append(user)
-            else:
-                if self.get_user_by_id(_user_id) == user.user_id:
+                # users.append(user)
+                users = pd.read_sql('select * from users', con)
+                users['education_module_expiration_date'] = users['education_module_expiration_date'].where(users['role'] == 'user', other=date_today + relativedelta(year=date_today.year + 10))
+                users.loc[users['education_module_expiration_date'] < date_today, 'active_education_module'] = "inactive"
+                users.loc[users['education_module_expiration_date'] - date_today < timedelta(days=31), 'active_education_module'] = "ends"
+                users.loc[users['education_module_expiration_date'] - date_today >= timedelta(days=31), 'active_education_module'] = "active"
+                            
+                users.drop(columns=['password', 'token'], inplace=True)  
+                
+        else:
+            users_data = data_store.get_rows()
+            users = []
+            for user_data in users_data:
+                user = self.user_row_to_user(user_data)
+                if self.get_user_role(_user_id) == "superuser":
                     users.append(user)
-
+                else:
+                    if self.get_user_by_id(_user_id) == user.user_id:
+                        users.append(user)
+                        
+            # users_df_data['created_date'] = pd.to_datetime(users_df_data['created_date'], format='%d/%m/%Y')
+            # users_df_data['education_module_expiration_date'] = pd.to_datetime(users_df_data['education_module_expiration_date'], format='%d/%m/%Y')
+             
+       
         return users
 
     def is_there_users(self):
@@ -552,16 +583,18 @@ class UserManager():
         """
         data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
 
-        users_list = []
+        users_data_list = []
         # Если роль текущего пользователя superuser, то он получит список пользователей.
         # Иначе, получит пустой список
         if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
             if self.get_user_role(_user_id) == 'superuser':
-                users_data_list = data_store.get_rows({'where': f'users.doc_id in {tuple(_ids_list)}'})
-                for user_data in users_data_list:
-                    users_list.append(self.user_row_to_user(user_data))
+                con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
+                # users_data_list = data_store.get_rows({'where': f'users.doc_id in {tuple(_ids_list)}'})
+                users_data_list = pd.read_sql(f'select doc_id, name from users where doc_id in (SELECT unnest(ARRAY[{_ids_list}]))', con=con)
+                # for user_data in users_data_list:
+                #     users_list.append(self.user_row_to_user(user_data))
 
-        return users_list
+        return users_data_list
 
     def get_users_by_role(self, _id_user, _role):
         """

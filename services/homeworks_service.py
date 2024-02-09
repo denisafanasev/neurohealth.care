@@ -36,7 +36,7 @@ class HomeworksService():
 
         return module
 
-    def get_education_stream(self, _id_education_stream):
+    def get_education_stream(self, _id_education_stream, _current_user_id):
         """
         Возвращает данные обучающего потока по его ID
 
@@ -52,11 +52,12 @@ class HomeworksService():
         course_manager = EducationCourseManager()
 
         education_stream = education_stream_manager.get_education_stream(_id_education_stream)
-        students_list = []
-        for user_id in education_stream.students_list:
-            user = user_manager.get_user_by_id(user_id)
-            if user is not None:
-                students_list.append(user)
+        students_list = user_manager.get_users_by_ids_list(_current_user_id, education_stream.students_list)
+        if len(students_list) == 0:
+            for user_id in education_stream.students_list:
+                user = user_manager.get_user_by_id(user_id)
+                if user is not None:
+                    students_list.append(user)
 
         education_stream.students_list = students_list
         education_stream.course = course_manager.get_course_by_id(education_stream.course)
@@ -274,6 +275,27 @@ class HomeworksService():
         id_lessons_set = homework_manager.get_id_lessons_list_with_completed_homework(_user_id)
 
         count_accepted_homework = len(id_lessons_set.intersection(_id_lessons_list))
-        count_no_accepted_homework = len(_id_lessons_list) - count_accepted_homework
+        # count_no_accepted_homework = len(_id_lessons_list) - count_accepted_homework
 
-        return count_accepted_homework, count_no_accepted_homework
+        return count_accepted_homework
+    
+    def get_amount_no_accepted_homework(self, _user_id, _id_lessons_list):
+        """
+        Возвращает количества принятых/не принятых домашних работ у пользователя
+
+        Args:
+            _user_id(Int): ID пользователя
+            _id_lessons_list(List): список ID уроков курса
+
+        Returns:
+            count_accepted_homework(Int): количество принятых домашних работ
+            count_no_accepted_homework(Int): количество не принятых домашних работ
+        """
+
+        homework_manager = HomeworkManager()
+
+        id_lessons_set = homework_manager.get_id_lessons_list_with_no_completed_homework(_user_id)
+
+        count_no_accepted_homework = len(id_lessons_set.intersection(_id_lessons_list))
+
+        return count_no_accepted_homework

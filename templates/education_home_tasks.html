@@ -198,8 +198,8 @@
                                                 {{ user['name'] }}
                                             </a>
                                         </td>
-                                        <td>Сдано: {{ user['amount_accepted_homeworks'] }}/ Не
-                                            сдано: {{ user['amount_no_accepted_homeworks'] }}</td>
+                                        <td>Сдано: {{ user['amount_accepted_homeworks']|int }}/ Не
+                                            сдано: {{ user['amount_no_accepted_homeworks']|int }}</td>
                                         <td class="text-center">{% if user['is_unread_message'] is true %}
                                             <span class="fas fa-circle chat-offline"></span>{% endif %}</td>
                                     </tr>
