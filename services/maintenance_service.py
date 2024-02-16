@@ -62,7 +62,6 @@ class MaintenanceService():
     def add_row_to_sql(self, _data_store, _id, _data_row):
 
         if _data_store.get_row_by_id(_id) is None:
-
             # _data_store.update_row_by_id(_data_row, _id)
             # if data non existed, make insert of a new row
             _data_store.insert_row(_data_row)
@@ -76,7 +75,6 @@ class MaintenanceService():
     #             raise UserManagerException('У вас нет доступа')
     #
     #     return wrapper
-
 
     def upload_users_from_json_to_sql(self, _current_user_id):
         """
@@ -188,14 +186,14 @@ class MaintenanceService():
         users_df = users_df[['login', 'doc_id']]
         action_data_store = DataStore('action', force_adapter='PostgreSQLDataAdapter')
 
-        for action_file in actions_files_list:
-            actions_list = action_data_store.get_rows()
-            actions_df = None
-            if actions_list:
-                actions_df = pd.DataFrame(actions_list)
-                actions_df.drop(columns=['doc_id'], inplace=True)
-                actions_df['created_date'] = pd.to_datetime(actions_df['created_date']).dt.strftime(
-                    '%d-%m-%Y %H:%M:%S')
+        # for action_file in actions_files_list:
+        actions_list = action_data_store.get_rows()
+        actions_df = None
+        if actions_list:
+            actions_df = pd.DataFrame(actions_list)
+            actions_df.drop(columns=['doc_id'], inplace=True)
+            actions_df['created_date'] = pd.to_datetime(actions_df['created_date']).dt.strftime(
+                '%d-%m-%Y %H:%M:%S')
 
         for action_file in actions_files_list:
             # retrieve data from the file
@@ -231,14 +229,16 @@ class MaintenanceService():
             if actions_df is not None:
                 actions_old_df['created_date'] = pd.to_datetime(actions_old_df['created_date']).dt.strftime(
                     '%d-%m-%Y %H:%M:%S')
-                actions_old_df = pd.merge(actions_df, actions_old_df, how='outer', indicator=True, on='created_date')
+                actions_old_df = pd.merge(actions_df, actions_old_df, how='outer', indicator=True, on=['created_date',
+                                                                                                       'user_id',
+                                                                                                       'action',
+                                                                                                       'comment_action'])
                 actions_old_df.drop(actions_old_df[actions_old_df['_merge'] != 'right_only'].index, inplace=True)
-                actions_old_df.drop(columns=['_merge', 'user_id_x', 'action_x', 'comment_action_x'], axis=1,
-                                    inplace=True)
-                actions_old_df.rename(
-                    columns={'user_id_y': 'user_id', 'action_y': 'action', 'comment_action_y': 'comment_action'},
-                    inplace=True)
-
+                # actions_old_df.drop(columns=['_merge', 'user_id_x', 'action_x', 'comment_action_x'], axis=1,
+                #                     inplace=True)
+                actions_old_df = actions_old_df.rename(
+                    columns={'user_id_y': 'user_id', 'action_y': 'action', 'comment_action_y': 'comment_action'})
+                actions_old_df = actions_old_df[['created_date', 'user_id', 'action', 'comment_action']]
                 # actions_old_df.index += len(actions_df)
             # print(f'actions_old_df {action_file}: {len(actions_old_df)}')
             # print(f'разница: {len(actions_json_df) - len(actions_old_df)}\n')
@@ -422,7 +422,7 @@ class MaintenanceService():
 
         # homeworks_list_data = data_store_tiny_db.get_rows()
         homeworks_df = self.get_json_data_in_dataframe('homeworks.json')
-        
+
         homeworks_df['date_delivery'] = pd.to_datetime(homeworks_df['date_delivery'], format='%d/%m/%Y', dayfirst=True)
         homeworks_df['status'] = homeworks_df['status'].astype('bool')
         homeworks_df['doc_id'] = homeworks_df.index
@@ -430,25 +430,32 @@ class MaintenanceService():
         data_store = DataStore("homeworks", force_adapter="PostgreSQLDataAdapter")
         if data_store.get_rows_count() > 0:
             homeworks_sql_df = pd.read_sql('select * from homeworks', con)
-            homeworks_df = pd.merge(homeworks_sql_df, homeworks_df, how='outer', indicator=True, left_on='doc_id', right_index=True)
+            homeworks_df = pd.merge(homeworks_sql_df, homeworks_df, how='outer', indicator=True, left_on='doc_id',
+                                    right_index=True)
             homeworks_df.drop(homeworks_df[homeworks_df['_merge'] != 'right_only'].index, inplace=True)
+            homeworks_df = homeworks_df.rename(columns={'id_lesson_y': "id_lesson", 'id_user_y': 'id_user',
+                                                        'users_files_list_y': 'users_files_list', 'text_y': 'text',
+                                                        'status_y': 'status', 'date_delivery_y': 'date_delivery'})
 
-        # for homework_data in homeworks_list_data:
-        #     # convert Course object to Dict
-        #     homework = homework_manager.homework_row_to_homework(homework_data)
-        #     homework_raw = {
-        #         'doc_id': homework.id,
-        #         'id_user': homework.id_user,
-        #         'id_lesson': homework.id_lesson,
-        #         'users_files_list': homework.users_files_list,
-        #         'text': homework.text,
-        #         'status': homework.status,
-        #         'date_delivery': homework.date_delivery
-        #     }
+            homeworks_df = homeworks_df[['doc_id', 'id_lesson', 'id_user', 'users_files_list', 'text', 'status',
+                                         'date_delivery']]
+
+            # for homework_data in homeworks_list_data:
+            #     # convert Course object to Dict
+            #     homework = homework_manager.homework_row_to_homework(homework_data)
+            #     homework_raw = {
+            #         'doc_id': homework.id,
+            #         'id_user': homework.id_user,
+            #         'id_lesson': homework.id_lesson,
+            #         'users_files_list': homework.users_files_list,
+            #         'text': homework.text,
+            #         'status': homework.status,
+            #         'date_delivery': homework.date_delivery
+            #     }
 
             # self.add_row_to_sql(data_store, homework.id, homework_raw)
-            
-        homeworks_df.to_sql('homeworks', con, if_exists='append')
+
+        homeworks_df.to_sql('homeworks', con, if_exists='append', index=False)
 
     def upload_homework_chat_list_from_json_to_sql(self) -> None:
         """
@@ -493,24 +500,33 @@ class MaintenanceService():
         message_json_df['read'] = message_json_df['read'].astype('bool')
         message_json_df_none = message_json_df['id_user'].isnull()
         message_json_df = message_json_df.drop(message_json_df_none[message_json_df_none].index)
+        message_json_df['doc_id'] = message_json_df.index
+        data_store = DataStore("message", force_adapter="PostgreSQLDataAdapter")
+        if data_store.get_rows_count() > 0:
+            messages_sql_df = pd.read_sql('select * from message', con)
+            message_json_df = pd.merge(messages_sql_df, message_json_df, how='outer', indicator=True,
+                                       left_on='doc_id',
+                                       right_index=True)
+            message_json_df.drop(message_json_df[message_json_df['_merge'] != 'right_only'].index, inplace=True)
+
         # import messages data to PostgreSQL
-        message_json_df.to_sql('message', con, if_exists='append', index_label='doc_id')
+        message_json_df.to_sql('message', con, if_exists='append', index=False)
         # find homeworks chat without messages and remove
         data_store = DataStore("homework_chat", force_adapter="PostgreSQLDataAdapter")
         homework_chat_doc_id_empty = data_store.get_rows({
             'query': """
-            with count_message_for_chat as (
-                select count(message.*) over (partition by homework_chat.doc_id) count_message, homework_chat.doc_id
-                from message right join homework_chat on id_homework_chat = homework_chat.doc_id
-            )
-            select count_message_for_chat.doc_id
-            from count_message_for_chat
-            where count_message = 0
-            """
+        with count_message_for_chat as (
+            select count(message.*) over (partition by homework_chat.doc_id) count_message, homework_chat.doc_id
+            from message right join homework_chat on id_homework_chat = homework_chat.doc_id
+        )
+        select count_message_for_chat.doc_id
+        from count_message_for_chat
+        where count_message = 0
+        """
         })
         doc_ids_list = tuple([i['doc_id'] for i in homework_chat_doc_id_empty])
-
-        data_store.delete_row({'where': f"doc_id in {doc_ids_list}"})
+        if doc_ids_list:
+            data_store.delete_row({'where': f"doc_id in {doc_ids_list}"})
 
     def get_json_data_in_dataframe(self, _name_file):
         # retrieve data from the file
