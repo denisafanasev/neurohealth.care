@@ -172,8 +172,10 @@ class UserManager():
         user = None
 
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
-        user_data = data_store.get_row_by_id(_user_id)
+        if data_store.get_rows_count() == 0:
+            data_store = DataStore("users")
 
+        user_data = data_store.get_row_by_id(_user_id)
         if user_data is not None:
             user = self.user_row_to_user(user_data)
 
@@ -195,6 +197,8 @@ class UserManager():
 
         data_store = DataStore("users", force_adapter='PostgreSQLDataAdapter')
 
+        if data_store.get_rows_count() == 0:
+            data_store = DataStore("users")
         # user_data = data_store.get_rows(f"users.login = '{login}' and users.password = '{password}'")
         if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
             user_data = data_store.get_rows({'where': f"users.login = '{login}' and users.password = '{password}'"})

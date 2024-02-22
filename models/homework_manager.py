@@ -1,10 +1,11 @@
 from datetime import datetime
 
-import pandas
+import pandas as pd
+from sqlalchemy import create_engine
 
+import config
 from models.homework import Homework
 from data_adapters.data_store import DataStore
-from error import HomeworkManagerException
 
 
 class HomeworkManager:
@@ -141,7 +142,7 @@ class HomeworkManager:
 
             return homework_list
 
-    def get_homeworks_list_by_id_lessons_list_verified(self, _id_course: int, _id_user: int) -> list:
+    def get_homeworks_list_by_id_lessons_list_verified(self, _id_course: int, _id_user: int) -> pd.DataFrame:
         """
         Возвращает список домашних работ пользователя по урокам из списка
 
@@ -153,9 +154,11 @@ class HomeworkManager:
             homeworks: список непроверенных домашних работ
         """
         data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
+        con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
+
         if data_store.is_there_model_data_in_sql_db():
-            homework_list = data_store.get_rows({
-                'query': f"""
+            homework_list = pd.read_sql(
+                f"""
                 select *
                 from homeworks
                 left outer join (select lessons.name   as name_lesson,
@@ -168,8 +171,7 @@ class HomeworkManager:
                                 left outer join modules on lessons.id_module = modules.doc_id) as lesson
                          on homeworks.id_lesson = lesson.doc_id_lesson
                 where id_course = {_id_course} AND id_user = {_id_user} AND status IS NOT NULL
-                         """,
-            })
+                         """, con)
 
             return homework_list
 
@@ -338,7 +340,10 @@ class HomeworkManager:
 
     def is_there_homework_in_sql_db(self) -> bool:
         """
+        Проверят, есть ли данные в PostgreSQL
 
+        Returns:
+            Bool: True - если есть / False - если нет
         """
         data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
 

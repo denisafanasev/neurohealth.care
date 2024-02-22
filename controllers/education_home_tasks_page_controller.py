@@ -1,3 +1,5 @@
+import pandas as pd
+
 from services.homeworks_service import HomeworksService
 
 
@@ -75,6 +77,8 @@ class EducationHomeTasksPageController():
             for homework_chat in homeworks_chat_list:
                 data = self.get_view_data_from_sql(_homework=homework_chat, _homework_chat=homework_chat)
                 data_list.append(data)
+
+
         else:
             lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
 
@@ -116,12 +120,16 @@ class EducationHomeTasksPageController():
             # если для хранения домашних работ используется postgresql, то мы проходимся по домашним работам
             homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(user.user_id,
                                                                                      _id_course=education_stream.course.id)
-            for homework in homework_list:
-                homework_chat = homeworks_service.get_homework_chat(homework['doc_id_lesson'], user.user_id,
-                                                                    _id_current_user)
-                data = self.get_view_data_from_sql(homework, homework_chat)
-                data_list.append(data)
-
+            # for homework in homework_list:
+            #     homework_chat = homeworks_service.get_homework_chat(homework['doc_id_lesson'], user.user_id,
+            #                                                         _id_current_user)
+            #     data = self.get_view_data_from_sql(homework, homework_chat)
+            #     data_list.append(data)
+            homework_chats_df = pd.DataFrame(
+                columns=['doc_id', 'id_lesson', 'id_user', 'unread_message_amount', 'message'])
+            homework_chats_df.append(homework_list['doc_id_lesson'].apply(lambda x: homeworks_service.get_homework_chat(
+                x, user.user_id, _id_current_user)))
+            data_list = homework_list.applymap(lambda x: self.get_view_data_from_sql(x, homework_chats_df))
         else:
             # если нет, то проходимся по каждому уроку и проверяем домашние работы
             lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)

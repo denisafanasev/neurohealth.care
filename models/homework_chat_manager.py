@@ -1,3 +1,7 @@
+import pandas as pd
+from sqlalchemy import create_engine
+
+import config
 from models.homework_chat import HomeworkChat
 from data_adapters.data_store import DataStore
 
@@ -56,9 +60,10 @@ class HomeworkChatManager():
 
             else:
                 query_text = f'and message.id_user != {_user_id}'
+
             homework_chat_data = data_store.get_rows({
                 'query': f"""with messages_chat as (select * from message
-                                        where message.id_homework_chat = {_id_homework_chat}
+                                        where message.id_homework_chat = {_id_homework_chat} {query_text}
                                         order by message.date_send)
                             select homework_chat.*, array_to_json(array_agg(messages_chat)) message
                             from messages_chat, homework_chat
@@ -101,12 +106,14 @@ class HomeworkChatManager():
         Args:
             _id_user(Int): ID пользователя
             _id_lesson(Int): ID урока
+            _role(String): роль пользователя
 
         Return:
             HomeworkChat: чата
         """
 
         data_store = DataStore("homework_chat", force_adapter='PostgreSQLDataAdapter')
+        con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
         if data_store.is_there_model_data_in_sql_db():
             if _role == 'superuser':
                 query_text = f'and message.id_user = {_id_user}'
@@ -114,9 +121,10 @@ class HomeworkChatManager():
             else:
                 query_text = f'and message.id_user != {_id_user}'
 
-            query = f"""with count_messages_user as (select count(*) over (partition by doc_id) as unread_message_amount, id_homework_chat
-                                               from message
-                                               where read is false {query_text}),
+            query = f"""with count_messages_user as (select count(*) over (partition by doc_id) as unread_message_amount,
+                                                            id_homework_chat
+                                                       from message
+                                                       where read is false {query_text}),
                              messages as (select * from message order by message.date_send desc )
                         select homework_chat.*, unread_message_amount, array_to_json(array_agg(messages)) as message
                         from homework_chat,
@@ -126,13 +134,15 @@ class HomeworkChatManager():
                           and homework_chat.id_lesson = {_id_lesson}
                         group by homework_chat.doc_id, id_lesson, homework_chat.id_user, unread_message_amount """
 
-            homework_chat = data_store.get_rows({'query': query})
-            if homework_chat:
-                return self.homework_chat_row_to_homework_chat(homework_chat[0])
+            # homework_chat = data_store.get_rows({'query': query})
+            homework_chat = pd.read_sql(query, con)
+            if not homework_chat.empty:
+                # return self.homework_chat_row_to_homework_chat(homework_chat[0])
+                return homework_chat
         else:
             homework_chat = data_store.get_rows({"id_user": _id_user, "id_lesson": _id_lesson})
 
-        if homework_chat:
+        if not homework_chat.empty:
             return self.homework_chat_row_to_homework_chat(homework_chat[0])
 
     def get_homework_chat_without_homework(self, _id_user: int, _id_course: int):

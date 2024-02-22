@@ -1,5 +1,7 @@
 from typing import Union
 
+import pandas as pd
+
 import config
 from models.homework_chat import HomeworkChat
 from models.homework_manager import HomeworkManager
@@ -98,8 +100,10 @@ class HomeworksService():
 
         homework_chat_manager = HomeworkChatManager()
         message_manager = MessageManager()
+        user_manager = UserManager()
 
-        homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson)
+        current_user_role = user_manager.get_user_role(_id_current_user)
+        homework_chat = homework_chat_manager.get_homework_chat(_id_user, _id_lesson, current_user_role)
         if homework_chat is not None:
             if not homework_chat_manager.is_there_homework_chat_in_sql_db():
                 homework_chat.unread_message_amount = message_manager.get_unread_messages_amount_for_superuser(
@@ -158,7 +162,8 @@ class HomeworksService():
 
         return homeworks_chat_list_data
 
-    def get_homeworks_list_by_id_user_verified(self, _id_user: int, _id_course: int = None, _id_lesson: int = None):
+    def get_homeworks_list_by_id_user_verified(self, _id_user: int, _id_course: int = None,
+                                               _id_lesson: int = None) -> pd.DataFrame:
         """
         Возвращает список проверенных домашних работ по ID пользователя и урока
 
@@ -219,7 +224,7 @@ class HomeworksService():
         #                 'module': Module(_id=homework_data['doc_id_module'], _name=homework_data['name_module'],
         #                                  _id_course=_id_course)}
 
-            # homework_list.append(homework)
+        # homework_list.append(homework)
 
         return homework_list_data
 
