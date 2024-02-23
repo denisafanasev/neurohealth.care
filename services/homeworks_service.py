@@ -111,6 +111,32 @@ class HomeworksService():
 
         return homework_chat
 
+    def get_homework_chat_by_course(self, _course_id, _id_user, _id_current_user):
+        """
+        Возвращает данные чата
+
+        Args:
+            _course_id(Integer): ID урока
+            _id_user(Integer): ID пользователя
+            _id_current_user(Integer): ID текущего пользователя
+
+        Returns:
+            RoomChat: комната чата
+        """
+
+        homework_chat_manager = HomeworkChatManager()
+        message_manager = MessageManager()
+        user_manager = UserManager()
+
+        current_user_role = user_manager.get_user_role(_id_current_user)
+        homework_chat = homework_chat_manager.get_user_homework_chat_by_course(_id_user, _course_id, current_user_role)
+        if homework_chat is not None:
+            if not homework_chat_manager.is_there_homework_chat_in_sql_db():
+                homework_chat.unread_message_amount = message_manager.get_unread_messages_amount_for_superuser(
+                    homework_chat.id, _id_user)
+
+        return homework_chat
+
     def get_users_list_in_education_streams_file(self, _id_education_stream):
         """
         Возвращает список пользователей, которые находятся в обучающем потоке

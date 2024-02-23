@@ -75,7 +75,7 @@ class EducationHomeTasksPageController():
             homeworks_chat_list = homeworks_service.get_homeworks_chats_list_by_id_user(_id_user=user.user_id,
                                                                                         _id_course=education_stream.course.id)
             for homework_chat in homeworks_chat_list:
-                data = self.get_view_data_from_sql(_homework=homework_chat, _homework_chat=homework_chat)
+                data = self.get_view_data_from_sql(_homework_chat=homework_chat)
                 data_list.append(data)
 
 
@@ -120,16 +120,15 @@ class EducationHomeTasksPageController():
             # если для хранения домашних работ используется postgresql, то мы проходимся по домашним работам
             homework_list = homeworks_service.get_homeworks_list_by_id_user_verified(user.user_id,
                                                                                      _id_course=education_stream.course.id)
+            homework_chats_df = homeworks_service.get_homework_chat_by_course(education_stream.course.id, _id_user,
+                                                                              _id_current_user)
+            # data_list = homework_list.applymap(lambda x: self.get_view_data_from_sql(x, homework_chats_df))
             # for homework in homework_list:
-            #     homework_chat = homeworks_service.get_homework_chat(homework['doc_id_lesson'], user.user_id,
-            #                                                         _id_current_user)
-            #     data = self.get_view_data_from_sql(homework, homework_chat)
-            #     data_list.append(data)
-            homework_chats_df = pd.DataFrame(
-                columns=['doc_id', 'id_lesson', 'id_user', 'unread_message_amount', 'message'])
-            homework_chats_df.append(homework_list['doc_id_lesson'].apply(lambda x: homeworks_service.get_homework_chat(
-                x, user.user_id, _id_current_user)))
-            data_list = homework_list.applymap(lambda x: self.get_view_data_from_sql(x, homework_chats_df))
+                # homework_chat = homeworks_service.get_homework_chat(homework['doc_id_lesson'], user.user_id,
+                #                                                     _id_current_user)
+                # data = self.get_view_data_from_sql(homework, homework_chat)
+                # data_list.append(data)
+
         else:
             # если нет, то проходимся по каждому уроку и проверяем домашние работы
             lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
@@ -146,7 +145,7 @@ class EducationHomeTasksPageController():
 
         return data_list
 
-    def get_view_data_from_sql(self, _homework, _homework_chat):
+    def get_view_data_from_sql_test(self, _homework: pd.DataFrame, _homework_chat):
         """
         Возвращает представление домашних работ, чатов, модулей и уроков пользователя (данный из postgresql)
 
@@ -161,10 +160,58 @@ class EducationHomeTasksPageController():
         """
 
         data_view = {'homework_list': []}
+        if _homework is not None:
+            _homework.loc[_homework['status'] is None, 'status'] = "Не проверено"
+            _homework.loc[_homework['status'], 'status'] = "Принято"
+            _homework.loc[_homework['status'] is None, 'status'] = "Не принято"
+            _homework['date_delivery'] = _homework['date_delivery'].strftime("%d/%m/%Y")
+
+        else:
+            data_view['homework_list'] = None
+
+        if _homework_chat is not None:
+            _homework_chat = _homework.rename(columns={'doc_id': 'id'})
+            _homework_chat.loc[_homework_chat['unread_message_amount'] is None, 'unread_message_amount'] = 0
+            data_view['homework_chat'] = {"id": _homework_chat['doc_id']}
+            if _homework is not None:
+                pd.merge(_homework, _homework_chat, how='outer', on=['doc_id_lesson', 'id_user'])
+
+            if _homework_chat['unread_message_amount'] is None:
+                data_view['homework_chat']['unread_message_amount'] = 0
+            else:
+                data_view['homework_chat']['unread_message_amount'] = _homework_chat['unread_message_amount']
+        else:
+            data_view['homework_chat'] = None
+
+        if data_view.get('homework_list') is not None or data_view.get('homework_chat') is not None:
+            data_view['module'] = {
+                "id": _homework['doc_id_module'],
+                "name": _homework['name_module']
+            }
+            data_view['lesson'] = {
+                "id": _homework['doc_id_lesson'],
+                "name": _homework['name_lesson'],
+            }
+
+        return data_view
+
+    def get_view_data_from_sql(self, _homework=None, _homework_chat=None):
+        """
+        Возвращает представление домашних работ, чатов, модулей и уроков пользователя (данный из postgresql)
+
+        Args:
+            _homework(List): список домашних работ по уроку
+            _homework_chat(HomeworkChat): чат
+
+        Returns:
+            data_view: представление данных
+        """
+
+        data_view = {'homework_list': []}
         # if _homework_list is None:
         #     data_view['homework_list'] = None
         # else:
-        if _homework.get('date_delivery') is not None:
+        if _homework is not None:
             if _homework['status'] is None:
                 _homework['status'] = "Не проверено"
             elif _homework['status']:
