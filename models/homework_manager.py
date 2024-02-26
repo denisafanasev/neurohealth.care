@@ -159,7 +159,7 @@ class HomeworkManager:
         if data_store.is_there_model_data_in_sql_db():
             homework_list = pd.read_sql(
                 f"""
-                select *
+                select doc_id, doc_id_lesson, doc_id_module, status, date_delivery, name_lesson, name_module, id_user
                 from homeworks
                 left outer join (select lessons.name   as name_lesson,
                                     lessons.doc_id as doc_id_lesson,

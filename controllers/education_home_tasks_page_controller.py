@@ -122,6 +122,8 @@ class EducationHomeTasksPageController():
                                                                                      _id_course=education_stream.course.id)
             homework_chats_df = homeworks_service.get_homework_chat_by_course(education_stream.course.id, _id_user,
                                                                               _id_current_user)
+
+            data_list = self.get_view_data_from_sql_test(homework_list, homework_chats_df)
             # data_list = homework_list.applymap(lambda x: self.get_view_data_from_sql(x, homework_chats_df))
             # for homework in homework_list:
                 # homework_chat = homeworks_service.get_homework_chat(homework['doc_id_lesson'], user.user_id,
@@ -150,10 +152,8 @@ class EducationHomeTasksPageController():
         Возвращает представление домашних работ, чатов, модулей и уроков пользователя (данный из postgresql)
 
         Args:
-            _homework_list(List): список домашних работ по уроку
+            _homework(List): список домашних работ по уроку
             _homework_chat(HomeworkChat): чат
-            _module(Module): модуль
-            _lesson(Lesson): урок, по которому сдали домашние работы пользователь
 
         Returns:
             data_view: представление данных
@@ -161,37 +161,40 @@ class EducationHomeTasksPageController():
 
         data_view = {'homework_list': []}
         if _homework is not None:
-            _homework.loc[_homework['status'] is None, 'status'] = "Не проверено"
-            _homework.loc[_homework['status'], 'status'] = "Принято"
-            _homework.loc[_homework['status'] is None, 'status'] = "Не принято"
-            _homework['date_delivery'] = _homework['date_delivery'].strftime("%d/%m/%Y")
+            _homework['status'] = _homework['status'].apply(lambda x: "Не проверено" if x is None else x)
+            _homework['status'] = _homework['status'].apply(lambda x: "Принято" if x is True else x)
+            _homework['status'] = _homework['status'].apply(lambda x: "Не принято" if x is False else x)
+            pd.to_datetime(_homework['date_delivery'], format='%d/%m/%Y', dayfirst=True)
 
         else:
             data_view['homework_list'] = None
 
         if _homework_chat is not None:
-            _homework_chat = _homework.rename(columns={'doc_id': 'id'})
-            _homework_chat.loc[_homework_chat['unread_message_amount'] is None, 'unread_message_amount'] = 0
-            data_view['homework_chat'] = {"id": _homework_chat['doc_id']}
-            if _homework is not None:
-                pd.merge(_homework, _homework_chat, how='outer', on=['doc_id_lesson', 'id_user'])
+            _homework_chat = _homework_chat.rename(columns={'doc_id': 'id'})
+            _homework_chat['unread_message_amount'] = _homework_chat['unread_message_amount'].apply(lambda x: 0 if x is None else x)
 
-            if _homework_chat['unread_message_amount'] is None:
-                data_view['homework_chat']['unread_message_amount'] = 0
-            else:
-                data_view['homework_chat']['unread_message_amount'] = _homework_chat['unread_message_amount']
+        if _homework is not None and _homework_chat is not None:
+            data = pd.merge(_homework, _homework_chat, how='outer', on=['doc_id_lesson', 'id_user'])
+
+            data_df = pd.DataFrame()
+            data_df_homeworks = data[['status', 'date_delivery', 'doc_id']]
+            data_df_homeworks = data_df_homeworks.rename(columns={'doc_id': 'id'})
+            data_df['homework_list'] = data_df_homeworks.to_dict('records')
+
+            data_df['homework_chat'] = data[['unread_message_amount', 'id']].to_dict('records')
+
+            data_df_module = data[['doc_id_module_x', 'name_module_x']]
+            data_df_module = data_df_module.rename(columns={'name_module_x': 'name', 'doc_id_module_x': 'id'})
+            data_df['module'] = data_df_module.to_dict('records')
+
+            data_df_lesson = data[['doc_id_lesson', 'name_lesson_x']]
+            data_df_lesson = data_df_lesson.rename(columns={'name_lesson_x': 'name', 'doc_id_lesson': 'id'})
+            data_df['lesson'] = data_df_lesson.to_dict('records')
+
+            data_view = data_df.to_dict('records')
+
         else:
             data_view['homework_chat'] = None
-
-        if data_view.get('homework_list') is not None or data_view.get('homework_chat') is not None:
-            data_view['module'] = {
-                "id": _homework['doc_id_module'],
-                "name": _homework['name_module']
-            }
-            data_view['lesson'] = {
-                "id": _homework['doc_id_lesson'],
-                "name": _homework['name_lesson'],
-            }
 
         return data_view
 
