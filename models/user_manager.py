@@ -1,8 +1,11 @@
 import hashlib
 
 from datetime import datetime, timedelta
+
+import pandas as pd
 from dateutil.relativedelta import relativedelta
 from itsdangerous import URLSafeTimedSerializer
+from sqlalchemy import create_engine
 
 from models.user import User
 from data_adapters.data_store import DataStore
@@ -539,28 +542,29 @@ class UserManager():
 
             data_store.update_row_by_id({'education_module_expiration_date': user.education_module_expiration_date}, _user_id)
 
-
-    def get_users_by_ids_list(self, _user_id, _ids_list):
+    def get_users_by_ids_list(self, _user_id: int, _ids_list: list):
         """
         Возвращает список пользователей по ID из списка
 
         Args:
-            _user_id(Int): ID текущего пользователя
-            _ids_list(List): список ID пользователей
+            _user_id: ID текущего пользователя
+            _ids_list: список ID пользователей
 
         Returns:
             List: список пользователей
         """
         data_store = DataStore('users', force_adapter='PostgreSQLDataAdapter')
-
+        con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
         users_list = []
         # Если роль текущего пользователя superuser, то он получит список пользователей.
         # Иначе, получит пустой список
         if data_store.current_data_adapter == 'PostgreSQLDataAdapter':
             if self.get_user_role(_user_id) == 'superuser':
-                users_data_list = data_store.get_rows({'where': f'users.doc_id in {tuple(_ids_list)}'})
-                for user_data in users_data_list:
-                    users_list.append(self.user_row_to_user(user_data))
+                users_data_list = pd.read_sql(f'select * from users where doc_id in (SELECT unnest(ARRAY[{_ids_list}]))', con)
+                users_list = users_data_list[['doc_id', 'login', 'email', 'name']]
+                # users_data_list = data_store.get_rows({'where': f'users.doc_id in {tuple(_ids_list)}'})
+                # for user_data in users_data_list:
+                #     users_list.append(self.user_row_to_user(user_data))
 
         return users_list
 
@@ -657,3 +661,11 @@ class UserManager():
                 users_list.append(self.user_row_to_user(user_data))
 
         return users_list
+
+    def is_there_homework_chat_in_sql_db(self) -> bool:
+        """
+        Проверка на наличие таблицы и данных в PostgreSQL
+        """
+        data_store = DataStore('homework_chat', force_adapter='PostgreSQLDataAdapter')
+
+        return data_store.is_there_model_data_in_sql_db()

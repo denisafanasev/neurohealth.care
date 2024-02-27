@@ -321,20 +321,22 @@ class HomeworkManager:
             Set(Homework): список принятых домашних работ
         """
         if self.is_there_homework_in_sql_db():
-            data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
-
-            homeworks_list_data = data_store.get_rows({'where': f'id_user = {_user_id} and status is True'.format(
-                _user_id=_user_id
-            )})
+            # data_store = DataStore('homeworks', force_adapter='PostgreSQLDataAdapter')
+            con = create_engine("postgresql:" + config.PostgreSQLDataAdapter_connection_string())
+            id_lessons = pd.read_sql(f'select id_lesson from homeworks where status = TRUE and id_user = {_user_id}', con)
+            id_lessons_list = set(id_lessons['id_lesson'].to_list())
+            # homeworks_list_data = data_store.get_rows({'where': f'id_user = {_user_id} and status is True'.format(
+            #     _user_id=_user_id
+            # )})
         else:
             data_store = DataStore('homeworks')
 
             homeworks_list_data = data_store.get_rows({'id_user': _user_id, 'status': True})
 
-        id_lessons_list = set()
-        if homeworks_list_data:
-            for homework_data in homeworks_list_data:
-                id_lessons_list.add(homework_data['id_lesson'])
+            id_lessons_list = set()
+            if homeworks_list_data:
+                for homework_data in homeworks_list_data:
+                    id_lessons_list.add(homework_data['id_lesson'])
 
         return id_lessons_list
 

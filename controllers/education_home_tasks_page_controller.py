@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 from services.homeworks_service import HomeworksService
 
@@ -28,7 +29,7 @@ class EducationHomeTasksPageController():
             return None
 
         user = homeworks_service.get_user_by_id(_id_user)
-        education_stream = homeworks_service.get_education_stream(_id_education_stream)
+        education_stream = homeworks_service.get_education_stream(_id_education_stream, _id_current_user)
         data_list = []
         if homeworks_service.is_there_homework_in_sql():
             homework_list = homeworks_service.get_homeworks_list_by_id_user_no_verified(education_stream.course.id,
@@ -54,7 +55,7 @@ class EducationHomeTasksPageController():
 
         return data_list
 
-    def get_chat_without_homework(self, _id_current_user, _id_education_stream, _id_user):
+    def get_chat_without_homework(self, _id_current_user: int, _id_education_stream: int, _id_user: int) -> list:
         """
         Возвращает чаты, по урокам которых не были сданы домашние работы
 
@@ -69,7 +70,7 @@ class EducationHomeTasksPageController():
         homeworks_service = HomeworksService()
 
         user = homeworks_service.get_user_by_id(_id_user)
-        education_stream = homeworks_service.get_education_stream(_id_education_stream)
+        education_stream = homeworks_service.get_education_stream(_id_education_stream, _id_current_user)
         data_list = []
         if homeworks_service.is_there_homework_in_sql():
             homeworks_chat_list = homeworks_service.get_homeworks_chats_list_by_id_user(_id_user=user.user_id,
@@ -99,7 +100,7 @@ class EducationHomeTasksPageController():
 
         return data_list
 
-    def get_homework_verified(self, _id_current_user, _id_education_stream, _id_user):
+    def get_homework_verified(self, _id_current_user: int, _id_education_stream: int, _id_user: int) -> list:
         """
         Возвращает данные проверенных домашних работ пользователя
 
@@ -114,7 +115,7 @@ class EducationHomeTasksPageController():
         homeworks_service = HomeworksService()
 
         user = homeworks_service.get_user_by_id(_id_user)
-        education_stream = homeworks_service.get_education_stream(_id_education_stream)
+        education_stream = homeworks_service.get_education_stream(_id_education_stream, _id_current_user)
         data_list = []
         if homeworks_service.is_there_homework_in_sql():
             # если для хранения домашних работ используется postgresql, то мы проходимся по домашним работам
@@ -124,12 +125,11 @@ class EducationHomeTasksPageController():
                                                                               _id_current_user)
 
             data_list = self.get_view_data_from_sql_test(homework_list, homework_chats_df)
-            # data_list = homework_list.applymap(lambda x: self.get_view_data_from_sql(x, homework_chats_df))
             # for homework in homework_list:
-                # homework_chat = homeworks_service.get_homework_chat(homework['doc_id_lesson'], user.user_id,
-                #                                                     _id_current_user)
-                # data = self.get_view_data_from_sql(homework, homework_chat)
-                # data_list.append(data)
+            # homework_chat = homeworks_service.get_homework_chat(homework['doc_id_lesson'], user.user_id,
+            #                                                     _id_current_user)
+            # data = self.get_view_data_from_sql(homework, homework_chat)
+            # data_list.append(data)
 
         else:
             # если нет, то проходимся по каждому уроку и проверяем домашние работы
@@ -171,10 +171,11 @@ class EducationHomeTasksPageController():
 
         if _homework_chat is not None:
             _homework_chat = _homework_chat.rename(columns={'doc_id': 'id'})
-            _homework_chat['unread_message_amount'] = _homework_chat['unread_message_amount'].apply(lambda x: 0 if x is None else x)
 
         if _homework is not None and _homework_chat is not None:
             data = pd.merge(_homework, _homework_chat, how='outer', on=['doc_id_lesson', 'id_user'])
+            data['unread_message_amount'] = data['unread_message_amount'].apply(
+                lambda x: 0 if pd.isnull(x) else int(x))
 
             data_df = pd.DataFrame()
             data_df_homeworks = data[['status', 'date_delivery', 'doc_id']]
@@ -330,7 +331,7 @@ class EducationHomeTasksPageController():
 
         return education_streams_list_view
 
-    def get_current_education_stream(self, _id_education_stream, _current_user_id):
+    def get_current_education_stream(self, _id_education_stream: int, _current_user_id: int) -> list:
         """
         Возвращает данные текущего потока потока
 
@@ -344,7 +345,7 @@ class EducationHomeTasksPageController():
 
         homeworks_service = HomeworksService()
 
-        education_stream = homeworks_service.get_education_stream(_id_education_stream)
+        education_stream = homeworks_service.get_education_stream(_id_education_stream, _current_user_id)
         education_stream_view = {
             'id': education_stream.id,
             'name': education_stream.name,
@@ -353,20 +354,34 @@ class EducationHomeTasksPageController():
         }
         lessons_list = homeworks_service.get_lessons_by_id_course(education_stream.course.id)
         id_lessons_list = set(lesson.id for lesson in lessons_list)
-        for user_data in education_stream.students_list:
-            user_view = {
-                "user_id": user_data.user_id,
-                'name': user_data.name
-            }
-            # проверяем есть ли непрочитанные сообщения у текущего пользователя и
-            # сколько принято/не принято домашних работ у пользователей потока
-            user_view['is_unread_message'] = homeworks_service.is_unread_messages(id_lessons_list, user_data.user_id,
-                                                                                  education_stream.course.id)
+        if isinstance(education_stream.students_list, pd.DataFrame):
+            students_df = education_stream.students_list
+            students_df = students_df.rename(columns={'doc_id': 'user_id'})
+            students_df['is_unread_message'] = students_df['user_id'].apply(
+                lambda x: homeworks_service.is_unread_messages(_user_id=x, _course_id=education_stream.course.id))
+            students_df['amount_accepted_homeworks'] = students_df['user_id'].apply(
+                lambda x: homeworks_service.get_amount_accepted_homework(_user_id=x,
+                                                               _id_lessons_list=id_lessons_list))
+            students_df['amount_no_accepted_homeworks'] = students_df['amount_accepted_homeworks'].apply(
+                lambda x: len(id_lessons_list) - x)
+            students_df = students_df.drop(columns=['email', 'login'], axis=1)
+            education_stream_view['students_list'] = students_df.to_dict('records')
+        else:
+            for user_data in education_stream.students_list:
+                user_view = {
+                    "user_id": user_data.user_id,
+                    'name': user_data.name
+                }
+                # проверяем есть ли непрочитанные сообщения у текущего пользователя и
+                # сколько принято/не принято домашних работ у пользователей потока
+                user_view['is_unread_message'] = homeworks_service.is_unread_messages(user_data.user_id,
+                                                                                      id_lessons_list,
+                                                                                      education_stream.course.id)
 
-            user_view['amount_accepted_homeworks'], user_view['amount_no_accepted_homeworks'] = \
-                homeworks_service.get_amount_accepted_homework(user_data.user_id, id_lessons_list,
-                                                               education_stream.course.id)
-            education_stream_view['students_list'].append(user_view)
+                user_view['amount_accepted_homeworks'], user_view['amount_no_accepted_homeworks'] = \
+                    homeworks_service.get_amount_accepted_homework(user_data.user_id, id_lessons_list,
+                                                                   education_stream.course.id)
+                education_stream_view['students_list'].append(user_view)
 
         return education_stream_view
 

@@ -106,12 +106,10 @@ class EducationStreamManager():
             _id(Int): идентификатор обучающего потока
         """
 
-        data_store = DataStore('education_streams')
+        data_store = DataStore('education_streams', force_adapter='PostgreSQLDataAdapter')
 
         education_stream = data_store.get_row_by_id(_id)
-
-        if education_stream != []:
-
+        if education_stream:
             return self.education_stream_row_to_education_stream(education_stream)
         else:
             return None
